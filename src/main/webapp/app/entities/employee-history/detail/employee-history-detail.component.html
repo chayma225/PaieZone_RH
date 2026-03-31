@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (employeeHistory(); as employeeHistoryRef) {
+      <div>
+        <h2 data-cy="employeeHistoryDetailsHeading">
+          <span pzTranslate="paieZoneRhApp.employeeHistory.detail.title">Employee History</span>
+        </h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ employeeHistoryRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.employeeHistory.fieldName">Field Name</span></dt>
+          <dd>
+            <span>{{ employeeHistoryRef.fieldName }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.employeeHistory.oldValue">Old Value</span></dt>
+          <dd>
+            <span>{{ employeeHistoryRef.oldValue }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.employeeHistory.newValue">New Value</span></dt>
+          <dd>
+            <span>{{ employeeHistoryRef.newValue }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.employeeHistory.changedAt">Changed At</span></dt>
+          <dd>
+            <span>{{ employeeHistoryRef.changedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.employeeHistory.changedBy">Changed By</span></dt>
+          <dd>
+            <span>{{ employeeHistoryRef.changedBy }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.employeeHistory.reason">Reason</span></dt>
+          <dd>
+            <span>{{ employeeHistoryRef.reason }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.employeeHistory.employee">Employee</span></dt>
+          <dd>
+            @if (employeeHistory()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', employeeHistory()!.employee?.id, 'view']">{{ employeeHistoryRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/employee-history', employeeHistoryRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

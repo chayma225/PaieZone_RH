@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "advance": {
+      "home": {
+        "title": "Advances",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Advance",
+        "createOrEditLabel": "Créer ou éditer un Advance",
+        "notFound": "Aucun Advance trouvé"
+      },
+      "created": "Un nouveau Advance a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Advance avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Advance avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Advance {{ id }} ?"
+      },
+      "detail": {
+        "title": "Advance"
+      },
+      "id": "ID",
+      "requestDate": "Request Date",
+      "amount": "Amount",
+      "deductionMonth": "Deduction Month",
+      "deductionYear": "Deduction Year",
+      "status": "Status",
+      "approvedBy": "Approved By",
+      "notes": "Notes",
+      "employee": "Employee",
+      "paySlip": "Pay Slip",
+      "approvedByUser": "Approved By User"
+    }
+  }
+}

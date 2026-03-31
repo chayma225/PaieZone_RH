@@ -1,0 +1,209 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="pz-pay-slip-line-heading"
+        data-cy="PaySlipLineCreateUpdateHeading"
+        pzTranslate="paieZoneRhApp.paySlipLine.home.createOrEditLabel"
+      >
+        Créer ou éditer un Pay Slip Line
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="paieZoneRhApp.paySlipLine.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let sortOrderRef = editForm.get('sortOrder')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_sortOrder" pzTranslate="paieZoneRhApp.paySlipLine.sortOrder">Sort Order</label>
+          <input type="number" class="form-control" name="sortOrder" id="field_sortOrder" data-cy="sortOrder" formControlName="sortOrder" />
+          @if (sortOrderRef.invalid && (sortOrderRef.dirty || sortOrderRef.touched)) {
+            <div>
+              @if (editForm.get('sortOrder')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('sortOrder')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let rubriqueCodeRef = editForm.get('rubriqueCode')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_rubriqueCode" pzTranslate="paieZoneRhApp.paySlipLine.rubriqueCode">Rubrique Code</label>
+          <input
+            type="text"
+            class="form-control"
+            name="rubriqueCode"
+            id="field_rubriqueCode"
+            data-cy="rubriqueCode"
+            formControlName="rubriqueCode"
+          />
+          @if (rubriqueCodeRef.invalid && (rubriqueCodeRef.dirty || rubriqueCodeRef.touched)) {
+            <div>
+              @if (editForm.get('rubriqueCode')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('rubriqueCode')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >Ce champ doit faire moins de 20 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let rubriqueLabelRef = editForm.get('rubriqueLabel')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_rubriqueLabel" pzTranslate="paieZoneRhApp.paySlipLine.rubriqueLabel">Rubrique Label</label>
+          <input
+            type="text"
+            class="form-control"
+            name="rubriqueLabel"
+            id="field_rubriqueLabel"
+            data-cy="rubriqueLabel"
+            formControlName="rubriqueLabel"
+          />
+          @if (rubriqueLabelRef.invalid && (rubriqueLabelRef.dirty || rubriqueLabelRef.touched)) {
+            <div>
+              @if (editForm.get('rubriqueLabel')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('rubriqueLabel')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
+                  >Ce champ doit faire moins de 150 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let rubriqueTypeRef = editForm.get('rubriqueType')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_rubriqueType" pzTranslate="paieZoneRhApp.paySlipLine.rubriqueType">Rubrique Type</label>
+          <select class="form-control" name="rubriqueType" formControlName="rubriqueType" id="field_rubriqueType" data-cy="rubriqueType">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.RubriqueType.null' | translate }}</option>
+            @for (rubriqueType of rubriqueTypeValues; track $index) {
+              <option [value]="rubriqueType">{{ 'paieZoneRhApp.RubriqueType.' + rubriqueType | translate }}</option>
+            }
+          </select>
+          @if (rubriqueTypeRef.invalid && (rubriqueTypeRef.dirty || rubriqueTypeRef.touched)) {
+            <div>
+              @if (editForm.get('rubriqueType')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_base" pzTranslate="paieZoneRhApp.paySlipLine.base">Base</label>
+          <input type="number" class="form-control" name="base" id="field_base" data-cy="base" formControlName="base" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_rate" pzTranslate="paieZoneRhApp.paySlipLine.rate">Rate</label>
+          <input type="number" class="form-control" name="rate" id="field_rate" data-cy="rate" formControlName="rate" />
+        </div>
+
+        @let amountRef = editForm.get('amount')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_amount" pzTranslate="paieZoneRhApp.paySlipLine.amount">Amount</label>
+          <input type="number" class="form-control" name="amount" id="field_amount" data-cy="amount" formControlName="amount" />
+          @if (amountRef.invalid && (amountRef.dirty || amountRef.touched)) {
+            <div>
+              @if (editForm.get('amount')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('amount')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let taxableRef = editForm.get('taxable')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_taxable" pzTranslate="paieZoneRhApp.paySlipLine.taxable">Taxable</label>
+          <input type="checkbox" class="form-check" name="taxable" id="field_taxable" data-cy="taxable" formControlName="taxable" />
+          @if (taxableRef.invalid && (taxableRef.dirty || taxableRef.touched)) {
+            <div>
+              @if (editForm.get('taxable')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_paySlip" pzTranslate="paieZoneRhApp.paySlipLine.paySlip">Pay Slip</label>
+          <select
+            class="form-control"
+            id="field_paySlip"
+            data-cy="paySlip"
+            name="paySlip"
+            formControlName="paySlip"
+            [compareWith]="comparePaySlip"
+          >
+            @if (!editForm.get('paySlip')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (paySlipOption of paySlipsSharedCollection; track $index) {
+              <option [ngValue]="paySlipOption">{{ paySlipOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['paySlip'])!.invalid && (editForm.get(['paySlip'])!.dirty || editForm.get(['paySlip'])!.touched)) {
+          <div>
+            @if (editForm.get(['paySlip'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_rubrique" pzTranslate="paieZoneRhApp.paySlipLine.rubrique">Rubrique</label>
+          <select
+            class="form-control"
+            id="field_rubrique"
+            data-cy="rubrique"
+            name="rubrique"
+            formControlName="rubrique"
+            [compareWith]="compareRubrique"
+          >
+            <option [ngValue]="null"></option>
+            @for (rubriqueOption of rubriquesSharedCollection; track $index) {
+              <option [ngValue]="rubriqueOption">{{ rubriqueOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

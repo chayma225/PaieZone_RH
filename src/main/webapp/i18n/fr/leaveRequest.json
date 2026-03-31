@@ -1,0 +1,35 @@
+{
+  "paieZoneRhApp": {
+    "leaveRequest": {
+      "home": {
+        "title": "LeaveRequests",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Leave Request",
+        "createOrEditLabel": "Créer ou éditer un Leave Request",
+        "notFound": "Aucun Leave Request trouvé"
+      },
+      "created": "Un nouveau Leave Request a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Leave Request avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Leave Request avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Leave Request {{ id }} ?"
+      },
+      "detail": {
+        "title": "Leave Request"
+      },
+      "id": "ID",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "numberOfDays": "Number Of Days",
+      "status": "Status",
+      "requestedAt": "Requested At",
+      "processedAt": "Processed At",
+      "managerComment": "Manager Comment",
+      "employeeComment": "Employee Comment",
+      "documentUrl": "Document Url",
+      "employee": "Employee",
+      "leaveType": "Leave Type",
+      "approvedBy": "Approved By"
+    }
+  }
+}

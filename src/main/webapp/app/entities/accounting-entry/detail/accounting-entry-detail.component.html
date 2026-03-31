@@ -1,0 +1,100 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (accountingEntry(); as accountingEntryRef) {
+      <div>
+        <h2 data-cy="accountingEntryDetailsHeading">
+          <span pzTranslate="paieZoneRhApp.accountingEntry.detail.title">Accounting Entry</span>
+        </h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.entryDate">Entry Date</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.entryDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.journalRef">Journal Ref</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.journalRef }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.entryType">Entry Type</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.AccountingEntryType.' + (accountingEntryRef.entryType ?? 'null')">{{
+              {
+                null: '',
+                SALARY_EXPENSE: 'SALARY_EXPENSE',
+                CNSS_EXPENSE: 'CNSS_EXPENSE',
+                CNSS_PAYABLE: 'CNSS_PAYABLE',
+                SALARY_PAYABLE: 'SALARY_PAYABLE',
+                BANK_TRANSFER: 'BANK_TRANSFER',
+                TAX_PAYABLE: 'TAX_PAYABLE',
+              }[accountingEntryRef.entryType ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.description">Description</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.description }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.debitAccount">Debit Account</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.debitAccount }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.creditAccount">Credit Account</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.creditAccount }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.amount">Amount</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.amount }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.exportedAt">Exported At</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.exportedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.exportFormat">Export Format</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.exportFormat }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.exportRef">Export Ref</span></dt>
+          <dd>
+            <span>{{ accountingEntryRef.exportRef }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.company">Company</span></dt>
+          <dd>
+            @if (accountingEntry()!.company) {
+              <div>
+                <a [routerLink]="['/company', accountingEntry()!.company?.id, 'view']">{{ accountingEntryRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountingEntry.payrollPeriod">Payroll Period</span></dt>
+          <dd>
+            @if (accountingEntry()!.payrollPeriod) {
+              <div>
+                <a [routerLink]="['/payroll-period', accountingEntry()!.payrollPeriod?.id, 'view']">{{
+                  accountingEntryRef.payrollPeriod?.id
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/accounting-entry', accountingEntryRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

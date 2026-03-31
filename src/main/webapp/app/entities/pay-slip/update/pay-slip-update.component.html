@@ -1,0 +1,576 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="pz-pay-slip-heading" data-cy="PaySlipCreateUpdateHeading" pzTranslate="paieZoneRhApp.paySlip.home.createOrEditLabel">
+        Créer ou éditer un Pay Slip
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="paieZoneRhApp.paySlip.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let monthRef = editForm.get('month')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_month" pzTranslate="paieZoneRhApp.paySlip.month">Month</label>
+          <input type="number" class="form-control" name="month" id="field_month" data-cy="month" formControlName="month" />
+          @if (monthRef.invalid && (monthRef.dirty || monthRef.touched)) {
+            <div>
+              @if (editForm.get('month')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('month')?.errors?.min) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
+                  >Ce champ doit être supérieur à 1.</small
+                >
+              }
+              @if (editForm.get('month')?.errors?.max) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.max" [translateValues]="{ max: '12' }"
+                  >Ce champ doit être inférieur à 12.</small
+                >
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('month')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let yearRef = editForm.get('year')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_year" pzTranslate="paieZoneRhApp.paySlip.year">Year</label>
+          <input type="number" class="form-control" name="year" id="field_year" data-cy="year" formControlName="year" />
+          @if (yearRef.invalid && (yearRef.dirty || yearRef.touched)) {
+            <div>
+              @if (editForm.get('year')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('year')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let baseSalaryRef = editForm.get('baseSalary')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_baseSalary" pzTranslate="paieZoneRhApp.paySlip.baseSalary">Base Salary</label>
+          <input
+            type="number"
+            class="form-control"
+            name="baseSalary"
+            id="field_baseSalary"
+            data-cy="baseSalary"
+            formControlName="baseSalary"
+          />
+          @if (baseSalaryRef.invalid && (baseSalaryRef.dirty || baseSalaryRef.touched)) {
+            <div>
+              @if (editForm.get('baseSalary')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('baseSalary')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let totalGainsRef = editForm.get('totalGains')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totalGains" pzTranslate="paieZoneRhApp.paySlip.totalGains">Total Gains</label>
+          <input
+            type="number"
+            class="form-control"
+            name="totalGains"
+            id="field_totalGains"
+            data-cy="totalGains"
+            formControlName="totalGains"
+          />
+          @if (totalGainsRef.invalid && (totalGainsRef.dirty || totalGainsRef.touched)) {
+            <div>
+              @if (editForm.get('totalGains')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totalGains')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let totalDeductionsRef = editForm.get('totalDeductions')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totalDeductions" pzTranslate="paieZoneRhApp.paySlip.totalDeductions">Total Deductions</label>
+          <input
+            type="number"
+            class="form-control"
+            name="totalDeductions"
+            id="field_totalDeductions"
+            data-cy="totalDeductions"
+            formControlName="totalDeductions"
+          />
+          @if (totalDeductionsRef.invalid && (totalDeductionsRef.dirty || totalDeductionsRef.touched)) {
+            <div>
+              @if (editForm.get('totalDeductions')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totalDeductions')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let grossSalaryRef = editForm.get('grossSalary')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_grossSalary" pzTranslate="paieZoneRhApp.paySlip.grossSalary">Gross Salary</label>
+          <input
+            type="number"
+            class="form-control"
+            name="grossSalary"
+            id="field_grossSalary"
+            data-cy="grossSalary"
+            formControlName="grossSalary"
+          />
+          @if (grossSalaryRef.invalid && (grossSalaryRef.dirty || grossSalaryRef.touched)) {
+            <div>
+              @if (editForm.get('grossSalary')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('grossSalary')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let cnssSalaryAmountRef = editForm.get('cnssSalaryAmount')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_cnssSalaryAmount" pzTranslate="paieZoneRhApp.paySlip.cnssSalaryAmount"
+            >Cnss Salary Amount</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="cnssSalaryAmount"
+            id="field_cnssSalaryAmount"
+            data-cy="cnssSalaryAmount"
+            formControlName="cnssSalaryAmount"
+          />
+          @if (cnssSalaryAmountRef.invalid && (cnssSalaryAmountRef.dirty || cnssSalaryAmountRef.touched)) {
+            <div>
+              @if (editForm.get('cnssSalaryAmount')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('cnssSalaryAmount')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_cavisAmount" pzTranslate="paieZoneRhApp.paySlip.cavisAmount">Cavis Amount</label>
+          <input
+            type="number"
+            class="form-control"
+            name="cavisAmount"
+            id="field_cavisAmount"
+            data-cy="cavisAmount"
+            formControlName="cavisAmount"
+          />
+        </div>
+
+        @let taxableIncomeRef = editForm.get('taxableIncome')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_taxableIncome" pzTranslate="paieZoneRhApp.paySlip.taxableIncome">Taxable Income</label>
+          <input
+            type="number"
+            class="form-control"
+            name="taxableIncome"
+            id="field_taxableIncome"
+            data-cy="taxableIncome"
+            formControlName="taxableIncome"
+          />
+          @if (taxableIncomeRef.invalid && (taxableIncomeRef.dirty || taxableIncomeRef.touched)) {
+            <div>
+              @if (editForm.get('taxableIncome')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('taxableIncome')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let irppAmountRef = editForm.get('irppAmount')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_irppAmount" pzTranslate="paieZoneRhApp.paySlip.irppAmount">Irpp Amount</label>
+          <input
+            type="number"
+            class="form-control"
+            name="irppAmount"
+            id="field_irppAmount"
+            data-cy="irppAmount"
+            formControlName="irppAmount"
+          />
+          @if (irppAmountRef.invalid && (irppAmountRef.dirty || irppAmountRef.touched)) {
+            <div>
+              @if (editForm.get('irppAmount')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('irppAmount')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let netSalaryRef = editForm.get('netSalary')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_netSalary" pzTranslate="paieZoneRhApp.paySlip.netSalary">Net Salary</label>
+          <input type="number" class="form-control" name="netSalary" id="field_netSalary" data-cy="netSalary" formControlName="netSalary" />
+          @if (netSalaryRef.invalid && (netSalaryRef.dirty || netSalaryRef.touched)) {
+            <div>
+              @if (editForm.get('netSalary')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('netSalary')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let employerCnssRef = editForm.get('employerCnss')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_employerCnss" pzTranslate="paieZoneRhApp.paySlip.employerCnss">Employer Cnss</label>
+          <input
+            type="number"
+            class="form-control"
+            name="employerCnss"
+            id="field_employerCnss"
+            data-cy="employerCnss"
+            formControlName="employerCnss"
+          />
+          @if (employerCnssRef.invalid && (employerCnssRef.dirty || employerCnssRef.touched)) {
+            <div>
+              @if (editForm.get('employerCnss')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('employerCnss')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_employerCavis" pzTranslate="paieZoneRhApp.paySlip.employerCavis">Employer Cavis</label>
+          <input
+            type="number"
+            class="form-control"
+            name="employerCavis"
+            id="field_employerCavis"
+            data-cy="employerCavis"
+            formControlName="employerCavis"
+          />
+        </div>
+
+        @let totalEmployerCostRef = editForm.get('totalEmployerCost')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totalEmployerCost" pzTranslate="paieZoneRhApp.paySlip.totalEmployerCost"
+            >Total Employer Cost</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="totalEmployerCost"
+            id="field_totalEmployerCost"
+            data-cy="totalEmployerCost"
+            formControlName="totalEmployerCost"
+          />
+          @if (totalEmployerCostRef.invalid && (totalEmployerCostRef.dirty || totalEmployerCostRef.touched)) {
+            <div>
+              @if (editForm.get('totalEmployerCost')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totalEmployerCost')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_workedDays" pzTranslate="paieZoneRhApp.paySlip.workedDays">Worked Days</label>
+          <input
+            type="number"
+            class="form-control"
+            name="workedDays"
+            id="field_workedDays"
+            data-cy="workedDays"
+            formControlName="workedDays"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_paidLeaveDays" pzTranslate="paieZoneRhApp.paySlip.paidLeaveDays">Paid Leave Days</label>
+          <input
+            type="number"
+            class="form-control"
+            name="paidLeaveDays"
+            id="field_paidLeaveDays"
+            data-cy="paidLeaveDays"
+            formControlName="paidLeaveDays"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_unpaidDays" pzTranslate="paieZoneRhApp.paySlip.unpaidDays">Unpaid Days</label>
+          <input
+            type="number"
+            class="form-control"
+            name="unpaidDays"
+            id="field_unpaidDays"
+            data-cy="unpaidDays"
+            formControlName="unpaidDays"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_overtimeHours" pzTranslate="paieZoneRhApp.paySlip.overtimeHours">Overtime Hours</label>
+          <input
+            type="number"
+            class="form-control"
+            name="overtimeHours"
+            id="field_overtimeHours"
+            data-cy="overtimeHours"
+            formControlName="overtimeHours"
+          />
+        </div>
+
+        @let statusRef = editForm.get('status')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_status" pzTranslate="paieZoneRhApp.paySlip.status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.PayrollStatus.null' | translate }}</option>
+            @for (payrollStatus of payrollStatusValues; track $index) {
+              <option [value]="payrollStatus">{{ 'paieZoneRhApp.PayrollStatus.' + payrollStatus | translate }}</option>
+            }
+          </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let pdfUrlRef = editForm.get('pdfUrl')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_pdfUrl" pzTranslate="paieZoneRhApp.paySlip.pdfUrl">Pdf Url</label>
+          <input type="text" class="form-control" name="pdfUrl" id="field_pdfUrl" data-cy="pdfUrl" formControlName="pdfUrl" />
+          @if (pdfUrlRef.invalid && (pdfUrlRef.dirty || pdfUrlRef.touched)) {
+            <div>
+              @if (editForm.get('pdfUrl')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Ce champ doit faire moins de 500 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_generatedAt" pzTranslate="paieZoneRhApp.paySlip.generatedAt">Generated At</label>
+          <div class="d-flex">
+            <input
+              id="field_generatedAt"
+              data-cy="generatedAt"
+              type="datetime-local"
+              class="form-control"
+              name="generatedAt"
+              formControlName="generatedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_sentToEmployeeAt" pzTranslate="paieZoneRhApp.paySlip.sentToEmployeeAt"
+            >Sent To Employee At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_sentToEmployeeAt"
+              data-cy="sentToEmployeeAt"
+              type="datetime-local"
+              class="form-control"
+              name="sentToEmployeeAt"
+              formControlName="sentToEmployeeAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        @let bankTransferRefRef = editForm.get('bankTransferRef')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_bankTransferRef" pzTranslate="paieZoneRhApp.paySlip.bankTransferRef"
+            >Bank Transfer Ref</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="bankTransferRef"
+            id="field_bankTransferRef"
+            data-cy="bankTransferRef"
+            formControlName="bankTransferRef"
+          />
+          @if (bankTransferRefRef.invalid && (bankTransferRefRef.dirty || bankTransferRefRef.touched)) {
+            <div>
+              @if (editForm.get('bankTransferRef')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire moins de 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_employee" pzTranslate="paieZoneRhApp.paySlip.employee">Employee</label>
+          <select
+            class="form-control"
+            id="field_employee"
+            data-cy="employee"
+            name="employee"
+            formControlName="employee"
+            [compareWith]="compareEmployee"
+          >
+            @if (!editForm.get('employee')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (employeeOption of employeesSharedCollection; track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['employee'])!.invalid && (editForm.get(['employee'])!.dirty || editForm.get(['employee'])!.touched)) {
+          <div>
+            @if (editForm.get(['employee'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_payrollPeriod" pzTranslate="paieZoneRhApp.paySlip.payrollPeriod">Payroll Period</label>
+          <select
+            class="form-control"
+            id="field_payrollPeriod"
+            data-cy="payrollPeriod"
+            name="payrollPeriod"
+            formControlName="payrollPeriod"
+            [compareWith]="comparePayrollPeriod"
+          >
+            @if (!editForm.get('payrollPeriod')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (payrollPeriodOption of payrollPeriodsSharedCollection; track $index) {
+              <option [ngValue]="payrollPeriodOption">{{ payrollPeriodOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (
+          editForm.get(['payrollPeriod'])!.invalid && (editForm.get(['payrollPeriod'])!.dirty || editForm.get(['payrollPeriod'])!.touched)
+        ) {
+          <div>
+            @if (editForm.get(['payrollPeriod'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_contract" pzTranslate="paieZoneRhApp.paySlip.contract">Contract</label>
+          <select
+            class="form-control"
+            id="field_contract"
+            data-cy="contract"
+            name="contract"
+            formControlName="contract"
+            [compareWith]="compareContract"
+          >
+            @if (!editForm.get('contract')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (contractOption of contractsSharedCollection; track $index) {
+              <option [ngValue]="contractOption">{{ contractOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['contract'])!.invalid && (editForm.get(['contract'])!.dirty || editForm.get(['contract'])!.touched)) {
+          <div>
+            @if (editForm.get(['contract'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

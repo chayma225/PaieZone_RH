@@ -1,0 +1,15 @@
+export enum EmployeeCategory {
+  WORKER = 'WORKER',
+
+  EMPLOYEE = 'EMPLOYEE',
+
+  TECHNICIAN = 'TECHNICIAN',
+
+  SUPERVISOR = 'SUPERVISOR',
+
+  MANAGER = 'MANAGER',
+
+  EXECUTIVE = 'EXECUTIVE',
+
+  DIRECTOR = 'DIRECTOR',
+}

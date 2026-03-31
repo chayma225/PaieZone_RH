@@ -1,0 +1,46 @@
+<div>
+  <h2>
+    <span id="metrics-page-heading" data-cy="metricsPageHeading" pzTranslate="metrics.title">Métriques de l&apos;application</span>
+
+    <button class="btn btn-primary float-end" (click)="refresh()">
+      <fa-icon icon="sync"></fa-icon> <span pzTranslate="metrics.refresh.button">Rafraîchir</span>
+    </button>
+  </h2>
+
+  <h3 pzTranslate="metrics.jvm.title">Métriques de la JVM</h3>
+
+  @let metricsRef = metrics();
+  @if (metricsRef && !updatingMetrics()) {
+    <div class="row">
+      <pz-jvm-memory class="col-md-4" [updating]="updatingMetrics()" [jvmMemoryMetrics]="metricsRef.jvm" />
+
+      <pz-jvm-threads class="col-md-4" [threads]="threads()" />
+
+      <pz-metrics-system class="col-md-4" [updating]="updatingMetrics()" [systemMetrics]="metricsRef.processMetrics" />
+    </div>
+  }
+
+  @if (metricsRef?.garbageCollector; as metricsRefGarbageCollector) {
+    <pz-metrics-garbagecollector [updating]="updatingMetrics()" [garbageCollectorMetrics]="metricsRefGarbageCollector" />
+  }
+
+  @if (updatingMetrics()) {
+    <div class="well well-lg" pzTranslate="metrics.updating">Mise à jour...</div>
+  }
+
+  @if (metricsRef?.['http.server.requests']; as metricsRefHttpServerRequests) {
+    <pz-metrics-request [updating]="updatingMetrics()" [requestMetrics]="metricsRefHttpServerRequests" />
+  }
+
+  @if (metricsRef?.services; as metricsRefServices) {
+    <pz-metrics-endpoints-requests [updating]="updatingMetrics()" [endpointsRequestsMetrics]="metricsRefServices" />
+  }
+
+  @if (metricsRef?.cache; as metricsRefCache) {
+    <pz-metrics-cache [updating]="updatingMetrics()" [cacheMetrics]="metricsRefCache" />
+  }
+
+  @if (metricsRef && metricsKeyExistsAndObjectNotEmpty('databases')) {
+    <pz-metrics-datasource [updating]="updatingMetrics()" [datasourceMetrics]="metricsRef.databases" />
+  }
+</div>

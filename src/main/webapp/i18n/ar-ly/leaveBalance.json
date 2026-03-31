@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "leaveBalance": {
+      "home": {
+        "title": "Leave Balances",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Leave Balance جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Leave Balance",
+        "notFound": "لم يتم العثور على Leave Balances"
+      },
+      "created": "Leave Balance جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Leave Balance تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Leave Balance تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Leave Balance {{ id }}؟"
+      },
+      "detail": {
+        "title": "Leave Balance"
+      },
+      "id": "ID",
+      "year": "Year",
+      "entitled": "Entitled",
+      "taken": "Taken",
+      "pending": "Pending",
+      "carryOver": "Carry Over",
+      "remaining": "Remaining",
+      "lastUpdatedAt": "Last Updated At",
+      "employee": "Employee",
+      "leaveType": "Leave Type"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "paieZoneRhApp": {
+    "PlanType": {
+      "null": "",
+      "STARTER": "STARTER",
+      "PME": "PME",
+      "BUSINESS": "BUSINESS",
+      "ENTERPRISE": "ENTERPRISE",
+      "CUSTOM": "CUSTOM"
+    }
+  }
+}

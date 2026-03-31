@@ -1,0 +1,150 @@
+<div>
+  <h2 id="page-heading" data-cy="JobPositionHeading">
+    <span pzTranslate="paieZoneRhApp.jobPosition.home.title">JobPositions</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.jobPosition.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-job-position"
+        [routerLink]="['/job-position/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.jobPosition.home.createLabel">Créer un nouveau Job Position</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (jobPositions().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.jobPosition.home.notFound">Aucun Job Position trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="code">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.code">Code</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="title">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.title">Title</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="description">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="minSalary">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.minSalary">Min Salary</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="maxSalary">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.maxSalary">Max Salary</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="active">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.company">Company</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="department.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.jobPosition.department">Department</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (jobPosition of jobPositions(); track trackId(jobPosition)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/job-position', jobPosition.id, 'view']">{{ jobPosition.id }}</a>
+              </td>
+              <td>{{ jobPosition.code }}</td>
+              <td>{{ jobPosition.title }}</td>
+              <td>{{ jobPosition.description }}</td>
+              <td>{{ jobPosition.minSalary }}</td>
+              <td>{{ jobPosition.maxSalary }}</td>
+              <td>{{ jobPosition.active }}</td>
+              <td>
+                @if (jobPosition.company) {
+                  <div>
+                    <a [routerLink]="['/company', jobPosition.company.id, 'view']">{{ jobPosition.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (jobPosition.department) {
+                  <div>
+                    <a [routerLink]="['/department', jobPosition.department.id, 'view']">{{ jobPosition.department.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/job-position', jobPosition.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/job-position', jobPosition.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(jobPosition)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,13 @@
+{
+  "paieZoneRhApp": {
+    "AccountingEntryType": {
+      "null": "",
+      "SALARY_EXPENSE": "SALARY_EXPENSE",
+      "CNSS_EXPENSE": "CNSS_EXPENSE",
+      "CNSS_PAYABLE": "CNSS_PAYABLE",
+      "SALARY_PAYABLE": "SALARY_PAYABLE",
+      "BANK_TRANSFER": "BANK_TRANSFER",
+      "TAX_PAYABLE": "TAX_PAYABLE"
+    }
+  }
+}

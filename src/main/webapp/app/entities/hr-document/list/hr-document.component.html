@@ -1,0 +1,207 @@
+<div>
+  <h2 id="page-heading" data-cy="HrDocumentHeading">
+    <span pzTranslate="paieZoneRhApp.hrDocument.home.title">HrDocuments</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.hrDocument.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-hr-document"
+        [routerLink]="['/hr-document/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.hrDocument.home.createLabel">Créer un nouveau Hr Document</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (hrDocuments().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.hrDocument.home.notFound">Aucun Hr Document trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="documentType">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.documentType">Document Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="title">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.title">Title</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="description">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="fileUrl">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.fileUrl">File Url</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="fileSize">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.fileSize">File Size</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="mimeType">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.mimeType">Mime Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="uploadedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.uploadedAt">Uploaded At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="expiryDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.expiryDate">Expiry Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="active">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employee.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="uploadedBy.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.hrDocument.uploadedBy">Uploaded By</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (hrDocument of hrDocuments(); track trackId(hrDocument)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/hr-document', hrDocument.id, 'view']">{{ hrDocument.id }}</a>
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.DocumentType.' + (hrDocument.documentType ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    CONTRACT: 'CONTRACT',
+                    CIN_COPY: 'CIN_COPY',
+                    DIPLOMA: 'DIPLOMA',
+                    MEDICAL_CERT: 'MEDICAL_CERT',
+                    DISCIPLINARY: 'DISCIPLINARY',
+                    PAYSLIP: 'PAYSLIP',
+                    ATTESTATION: 'ATTESTATION',
+                    OTHER: 'OTHER',
+                  }[hrDocument.documentType ?? 'null']
+                }}
+              </td>
+              <td>{{ hrDocument.title }}</td>
+              <td>{{ hrDocument.description }}</td>
+              <td>{{ hrDocument.fileUrl }}</td>
+              <td>{{ hrDocument.fileSize }}</td>
+              <td>{{ hrDocument.mimeType }}</td>
+              <td>{{ hrDocument.uploadedAt | formatMediumDatetime }}</td>
+              <td>{{ hrDocument.expiryDate | formatMediumDate }}</td>
+              <td>{{ hrDocument.active }}</td>
+              <td>
+                @if (hrDocument.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', hrDocument.employee.id, 'view']">{{ hrDocument.employee.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (hrDocument.uploadedBy) {
+                  <div>
+                    <a [routerLink]="['/user-profile', hrDocument.uploadedBy.id, 'view']">{{ hrDocument.uploadedBy.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/hr-document', hrDocument.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/hr-document', hrDocument.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(hrDocument)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (hrDocuments().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

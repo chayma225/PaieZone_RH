@@ -1,0 +1,11 @@
+id;sort_order;rubrique_code;rubrique_label;rubrique_type;base;rate;amount;taxable;pay_slip_id
+1;7472;parmi d’autant que;avant que pendant que de manière à;DEDUCTION;30013.32;21526.97;21305.64;true;1
+2;11804;par suite de main-d’;quitte à;DEDUCTION;21346.46;10931.57;8335.67;true;2
+3;1442;de crainte que prest;sans que;EMPLOYER_CHARGE;163.9;434.67;21246.06;false;3
+4;17837;loufoque cot cot qua;membre du personnel pschitt;EMPLOYER_CHARGE;29285.71;11695.53;20813.68;true;4
+5;801;juriste à seule fin ;grandement comment conseil municipal;INFO;10072.54;28830.71;23267.98;true;5
+6;25121;moderne à condition ;quelquefois badaboum;GAIN;19345.17;9904.83;31407.74;true;6
+7;5644;naguère articuler do;coac coac tandis que;EMPLOYER_CHARGE;31512.88;28701.83;7919.73;true;7
+8;1861;plouf;quitte à comme agréable;GAIN;21678.92;2691.53;21355.17;true;8
+9;28434;de crainte que;après que;GAIN;13297.18;17502;27985.12;true;9
+10;7160;psitt diablement;terne autrefois;INFO;16934.07;8192.66;27237.88;true;10

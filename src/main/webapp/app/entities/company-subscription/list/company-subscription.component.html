@@ -1,0 +1,168 @@
+<div>
+  <h2 id="page-heading" data-cy="CompanySubscriptionHeading">
+    <span pzTranslate="paieZoneRhApp.companySubscription.home.title">CompanySubscriptions</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.companySubscription.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-company-subscription"
+        [routerLink]="['/company-subscription/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.companySubscription.home.createLabel">Créer un nouveau Company Subscription</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (companySubscriptions().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.companySubscription.home.notFound">Aucun Company Subscription trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="plan">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.plan">Plan</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="status">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="maxEmployees">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.maxEmployees">Max Employees</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="priceHT">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.priceHT">Price HT</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="billingDay">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.billingDay">Billing Day</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="startDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.startDate">Start Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="endDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.endDate">End Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="renewalDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.renewalDate">Renewal Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="notes">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.companySubscription.notes">Notes</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (companySubscription of companySubscriptions(); track trackId(companySubscription)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/company-subscription', companySubscription.id, 'view']">{{ companySubscription.id }}</a>
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.PlanType.' + (companySubscription.plan ?? 'null')">
+                {{
+                  { null: '', STARTER: 'STARTER', PME: 'PME', BUSINESS: 'BUSINESS', ENTERPRISE: 'ENTERPRISE', CUSTOM: 'CUSTOM' }[
+                    companySubscription.plan ?? 'null'
+                  ]
+                }}
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.SubscriptionStatus.' + (companySubscription.status ?? 'null')">
+                {{
+                  { null: '', TRIAL: 'TRIAL', ACTIVE: 'ACTIVE', SUSPENDED: 'SUSPENDED', CANCELLED: 'CANCELLED' }[
+                    companySubscription.status ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ companySubscription.maxEmployees }}</td>
+              <td>{{ companySubscription.priceHT }}</td>
+              <td>{{ companySubscription.billingDay }}</td>
+              <td>{{ companySubscription.startDate | formatMediumDate }}</td>
+              <td>{{ companySubscription.endDate | formatMediumDate }}</td>
+              <td>{{ companySubscription.renewalDate | formatMediumDate }}</td>
+              <td>{{ companySubscription.notes }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a
+                    [routerLink]="['/company-subscription', companySubscription.id, 'view']"
+                    class="btn btn-info btn-sm"
+                    data-cy="entityDetailsButton"
+                  >
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a
+                    [routerLink]="['/company-subscription', companySubscription.id, 'edit']"
+                    class="btn btn-primary btn-sm"
+                    data-cy="entityEditButton"
+                  >
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(companySubscription)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,29 @@
+{
+  "paieZoneRhApp": {
+    "accountPlan": {
+      "home": {
+        "title": "AccountPlans",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Account Plan",
+        "createOrEditLabel": "Créer ou éditer un Account Plan",
+        "notFound": "Aucun Account Plan trouvé"
+      },
+      "created": "Un nouveau Account Plan a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Account Plan avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Account Plan avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Account Plan {{ id }} ?"
+      },
+      "detail": {
+        "title": "Account Plan"
+      },
+      "id": "ID",
+      "accountCode": "Account Code",
+      "accountLabel": "Account Label",
+      "accountLabelAr": "Account Label Ar",
+      "accountType": "Account Type",
+      "active": "Active",
+      "company": "Company"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "annotations": {
+    "changelogDate": "20260331181310"
+  },
+  "applications": ["paieZoneRH"],
+  "documentation": "Paramètres réglementaires (partagés, versionnés)",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "paramKey",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "paramLabel",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "numericValue",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "textValue",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "effectiveFrom",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "effectiveTo",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "legalReference",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "active",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "RegulatoryParam",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "knowledgeDocument": {
+      "home": {
+        "title": "KnowledgeDocuments",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Knowledge Document",
+        "createOrEditLabel": "Créer ou éditer un Knowledge Document",
+        "notFound": "Aucun Knowledge Document trouvé"
+      },
+      "created": "Un nouveau Knowledge Document a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Knowledge Document avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Knowledge Document avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Knowledge Document {{ id }} ?"
+      },
+      "detail": {
+        "title": "Knowledge Document"
+      },
+      "id": "ID",
+      "title": "Title",
+      "category": "Category",
+      "content": "Content",
+      "fileUrl": "File Url",
+      "vectorIndexed": "Vector Indexed",
+      "indexedAt": "Indexed At",
+      "active": "Active",
+      "createdAt": "Created At",
+      "company": "Company"
+    }
+  }
+}

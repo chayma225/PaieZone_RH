@@ -1,0 +1,15 @@
+{
+  "paieZoneRhApp": {
+    "DocumentType": {
+      "null": "",
+      "CONTRACT": "CONTRACT",
+      "CIN_COPY": "CIN_COPY",
+      "DIPLOMA": "DIPLOMA",
+      "MEDICAL_CERT": "MEDICAL_CERT",
+      "DISCIPLINARY": "DISCIPLINARY",
+      "PAYSLIP": "PAYSLIP",
+      "ATTESTATION": "ATTESTATION",
+      "OTHER": "OTHER"
+    }
+  }
+}

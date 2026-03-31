@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "chatSession": {
+      "home": {
+        "title": "Chat Sessions",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Chat Session جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Chat Session",
+        "notFound": "لم يتم العثور على Chat Sessions"
+      },
+      "created": "Chat Session جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Chat Session تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Chat Session تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Chat Session {{ id }}؟"
+      },
+      "detail": {
+        "title": "Chat Session"
+      },
+      "id": "ID",
+      "channel": "Channel",
+      "status": "Status",
+      "startedAt": "Started At",
+      "endedAt": "Ended At",
+      "escalatedAt": "Escalated At",
+      "escalatedTo": "Escalated To",
+      "contextData": "Context Data",
+      "satisfactionScore": "Satisfaction Score",
+      "employee": "Employee"
+    }
+  }
+}

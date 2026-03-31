@@ -1,0 +1,11 @@
+id;channel;status;started_at;ended_at;escalated_at;escalated_to;context_data;satisfaction_score;employee_id
+1;WHATSAPP;ACTIVE;2026-03-31T11:08:35;2026-03-30T19:50:35;2026-03-31T03:55:21;lâche communauté étudiante raide;../fake-data/blob/hipster.txt;1;1
+2;MOBILE;ACTIVE;2026-03-31T18:11:39;2026-03-31T07:57:32;2026-03-31T10:05:56;que joliment;../fake-data/blob/hipster.txt;4;2
+3;MOBILE;ESCALATED;2026-03-31T00:33:41;2026-03-31T00:30:43;2026-03-31T11:50:18;tellement égoïste près de;../fake-data/blob/hipster.txt;5;3
+4;WHATSAPP;ESCALATED;2026-03-31T08:59:19;2026-03-31T15:55:41;2026-03-31T04:13:07;incognito suivant;../fake-data/blob/hipster.txt;5;4
+5;MOBILE;EXPIRED;2026-03-30T20:43:16;2026-03-31T05:30:55;2026-03-31T09:50:18;bang;../fake-data/blob/hipster.txt;5;5
+6;MOBILE;ESCALATED;2026-03-31T11:56:03;2026-03-31T10:04:52;2026-03-31T14:15:39;snif d'avec;../fake-data/blob/hipster.txt;2;6
+7;WHATSAPP;ESCALATED;2026-03-31T02:43:53;2026-03-31T16:33:07;2026-03-30T22:08:57;du fait que sus secouriste;../fake-data/blob/hipster.txt;5;7
+8;WEB;ACTIVE;2026-03-31T04:05:30;2026-03-31T16:57:15;2026-03-31T03:28:28;perplexe manier;../fake-data/blob/hipster.txt;3;8
+9;WHATSAPP;EXPIRED;2026-03-31T09:43:07;2026-03-31T03:10:57;2026-03-31T08:12:45;mairie membre de l’équipe aïe;../fake-data/blob/hipster.txt;1;9
+10;WHATSAPP;ACTIVE;2026-03-31T03:05:08;2026-03-31T15:37:07;2026-03-30T19:49:01;commis;../fake-data/blob/hipster.txt;5;10

@@ -1,0 +1,4 @@
+org.springframework.test.context.ContextCustomizerFactory = \
+    tn.paiezone.rh.config.SqlTestContainersSpringContextCustomizerFactory,tn.\
+    paiezone.rh.config.RedisTestContainersSpringContextCustomizerFactory,tn.\
+    paiezone.rh.config.KafkaTestContainersSpringContextCustomizerFactory

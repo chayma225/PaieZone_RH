@@ -1,0 +1,115 @@
+{
+  "annotations": {
+    "changelogDate": "20260331175910"
+  },
+  "applications": ["paieZoneRH"],
+  "documentation": "Contrat de travail",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "reference",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "contractType",
+      "fieldType": "ContractType",
+      "fieldTypeDocumentation": "Type de contrat",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "CDI,CDD,CIVP,KARAMA,INTERIMAIRE,STAGE"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "ContractStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "DRAFT,ACTIVE,SUSPENDED,TERMINATED,EXPIRED"
+    },
+    {
+      "fieldName": "startDate",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "signedDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "baseSalary",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "workingHoursWeek",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min", "max"],
+      "fieldValidateRulesMax": "48",
+      "fieldValidateRulesMin": "1"
+    },
+    {
+      "fieldName": "workingDaysWeek",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min", "max"],
+      "fieldValidateRulesMax": "7",
+      "fieldValidateRulesMin": "1"
+    },
+    {
+      "fieldName": "conventionCollective",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "trialPeriodMonths",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["min", "max"],
+      "fieldValidateRulesMax": "12",
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "renewalCount",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "documentUrl",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "createdAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Contract",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "employee",
+      "relationshipName": "employee",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "userProfile",
+      "relationshipName": "createdBy",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

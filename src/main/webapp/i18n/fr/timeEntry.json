@@ -1,0 +1,36 @@
+{
+  "paieZoneRhApp": {
+    "timeEntry": {
+      "home": {
+        "title": "TimeEntries",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Time Entry",
+        "createOrEditLabel": "Créer ou éditer un Time Entry",
+        "notFound": "Aucun Time Entry trouvé"
+      },
+      "created": "Un nouveau Time Entry a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Time Entry avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Time Entry avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Time Entry {{ id }} ?"
+      },
+      "detail": {
+        "title": "Time Entry"
+      },
+      "id": "ID",
+      "entryDate": "Entry Date",
+      "checkIn": "Check In",
+      "checkOut": "Check Out",
+      "workedHours": "Worked Hours",
+      "overtimeHours": "Overtime Hours",
+      "lateMinutes": "Late Minutes",
+      "source": "Source",
+      "status": "Status",
+      "anomalyNote": "Anomaly Note",
+      "validatedBy": "Validated By",
+      "validatedAt": "Validated At",
+      "employee": "Employee",
+      "validatedByUser": "Validated By User"
+    }
+  }
+}

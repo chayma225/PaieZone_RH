@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (jobPosition(); as jobPositionRef) {
+      <div>
+        <h2 data-cy="jobPositionDetailsHeading"><span pzTranslate="paieZoneRhApp.jobPosition.detail.title">Job Position</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ jobPositionRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.code">Code</span></dt>
+          <dd>
+            <span>{{ jobPositionRef.code }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.title">Title</span></dt>
+          <dd>
+            <span>{{ jobPositionRef.title }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.description">Description</span></dt>
+          <dd>
+            <span>{{ jobPositionRef.description }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.minSalary">Min Salary</span></dt>
+          <dd>
+            <span>{{ jobPositionRef.minSalary }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.maxSalary">Max Salary</span></dt>
+          <dd>
+            <span>{{ jobPositionRef.maxSalary }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.active">Active</span></dt>
+          <dd>
+            <span>{{ jobPositionRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.company">Company</span></dt>
+          <dd>
+            @if (jobPosition()!.company) {
+              <div>
+                <a [routerLink]="['/company', jobPosition()!.company?.id, 'view']">{{ jobPositionRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.jobPosition.department">Department</span></dt>
+          <dd>
+            @if (jobPosition()!.department) {
+              <div>
+                <a [routerLink]="['/department', jobPosition()!.department?.id, 'view']">{{ jobPositionRef.department?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/job-position', jobPositionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

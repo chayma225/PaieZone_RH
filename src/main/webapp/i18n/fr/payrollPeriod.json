@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "payrollPeriod": {
+      "home": {
+        "title": "PayrollPeriods",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Payroll Period",
+        "createOrEditLabel": "Créer ou éditer un Payroll Period",
+        "notFound": "Aucun Payroll Period trouvé"
+      },
+      "created": "Un nouveau Payroll Period a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Payroll Period avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Payroll Period avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Payroll Period {{ id }} ?"
+      },
+      "detail": {
+        "title": "Payroll Period"
+      },
+      "id": "ID",
+      "month": "Month",
+      "year": "Year",
+      "status": "Status",
+      "calculatedAt": "Calculated At",
+      "validatedAt": "Validated At",
+      "lockedAt": "Locked At",
+      "notes": "Notes",
+      "company": "Company",
+      "createdBy": "Created By"
+    }
+  }
+}

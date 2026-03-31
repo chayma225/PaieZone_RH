@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "userProfile": {
+      "home": {
+        "title": "UserProfiles",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau User Profile",
+        "createOrEditLabel": "Créer ou éditer un User Profile",
+        "notFound": "Aucun User Profile trouvé"
+      },
+      "created": "Un nouveau User Profile a été créé avec l'identifiant {{ param }}",
+      "updated": "Le User Profile avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le User Profile avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le User Profile {{ id }} ?"
+      },
+      "detail": {
+        "title": "User Profile"
+      },
+      "id": "ID",
+      "jhiUserId": "Jhi User Id",
+      "role": "Role",
+      "phoneNumber": "Phone Number",
+      "avatarUrl": "Avatar Url",
+      "locale": "Locale",
+      "lastLoginAt": "Last Login At",
+      "twoFactorEnabled": "Two Factor Enabled",
+      "twoFactorSecret": "Two Factor Secret",
+      "active": "Active",
+      "company": "Company"
+    }
+  }
+}

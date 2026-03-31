@@ -1,0 +1,186 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="pz-audit-log-heading" data-cy="AuditLogCreateUpdateHeading" pzTranslate="paieZoneRhApp.auditLog.home.createOrEditLabel">
+        Créer ou éditer un Audit Log
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="paieZoneRhApp.auditLog.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let actionRef = editForm.get('action')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_action" pzTranslate="paieZoneRhApp.auditLog.action">Action</label>
+          <input type="text" class="form-control" name="action" id="field_action" data-cy="action" formControlName="action" />
+          @if (actionRef.invalid && (actionRef.dirty || actionRef.touched)) {
+            <div>
+              @if (editForm.get('action')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('action')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire moins de 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let entityTypeRef = editForm.get('entityType')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_entityType" pzTranslate="paieZoneRhApp.auditLog.entityType">Entity Type</label>
+          <input
+            type="text"
+            class="form-control"
+            name="entityType"
+            id="field_entityType"
+            data-cy="entityType"
+            formControlName="entityType"
+          />
+          @if (entityTypeRef.invalid && (entityTypeRef.dirty || entityTypeRef.touched)) {
+            <div>
+              @if (editForm.get('entityType')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire moins de 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_entityId" pzTranslate="paieZoneRhApp.auditLog.entityId">Entity Id</label>
+          <input type="number" class="form-control" name="entityId" id="field_entityId" data-cy="entityId" formControlName="entityId" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_oldValue" pzTranslate="paieZoneRhApp.auditLog.oldValue">Old Value</label>
+          <textarea class="form-control" name="oldValue" id="field_oldValue" data-cy="oldValue" formControlName="oldValue"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_newValue" pzTranslate="paieZoneRhApp.auditLog.newValue">New Value</label>
+          <textarea class="form-control" name="newValue" id="field_newValue" data-cy="newValue" formControlName="newValue"></textarea>
+        </div>
+
+        @let ipAddressRef = editForm.get('ipAddress')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_ipAddress" pzTranslate="paieZoneRhApp.auditLog.ipAddress">Ip Address</label>
+          <input type="text" class="form-control" name="ipAddress" id="field_ipAddress" data-cy="ipAddress" formControlName="ipAddress" />
+          @if (ipAddressRef.invalid && (ipAddressRef.dirty || ipAddressRef.touched)) {
+            <div>
+              @if (editForm.get('ipAddress')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '45' }"
+                  >Ce champ doit faire moins de 45 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let userAgentRef = editForm.get('userAgent')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_userAgent" pzTranslate="paieZoneRhApp.auditLog.userAgent">User Agent</label>
+          <input type="text" class="form-control" name="userAgent" id="field_userAgent" data-cy="userAgent" formControlName="userAgent" />
+          @if (userAgentRef.invalid && (userAgentRef.dirty || userAgentRef.touched)) {
+            <div>
+              @if (editForm.get('userAgent')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '255' }"
+                  >Ce champ doit faire moins de 255 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let occurredAtRef = editForm.get('occurredAt')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_occurredAt" pzTranslate="paieZoneRhApp.auditLog.occurredAt">Occurred At</label>
+          <div class="d-flex">
+            <input
+              id="field_occurredAt"
+              data-cy="occurredAt"
+              type="datetime-local"
+              class="form-control"
+              name="occurredAt"
+              formControlName="occurredAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (occurredAtRef.invalid && (occurredAtRef.dirty || occurredAtRef.touched)) {
+            <div>
+              @if (editForm.get('occurredAt')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('occurredAt')?.errors?.datetimelocal"
+                pzTranslate="entity.validation.datetimelocal"
+                >Ce champ doit être une date et une heure.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_user" pzTranslate="paieZoneRhApp.auditLog.user">User</label>
+          <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUserProfile">
+            <option [ngValue]="null"></option>
+            @for (userProfileOption of userProfilesSharedCollection; track $index) {
+              <option [ngValue]="userProfileOption">{{ userProfileOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.auditLog.company">Company</label>
+          <select
+            class="form-control"
+            id="field_company"
+            data-cy="company"
+            name="company"
+            formControlName="company"
+            [compareWith]="compareCompany"
+          >
+            @if (!editForm.get('company')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (companyOption of companiesSharedCollection; track $index) {
+              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
+          <div>
+            @if (editForm.get(['company'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

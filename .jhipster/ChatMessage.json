@@ -1,0 +1,57 @@
+{
+  "annotations": {
+    "changelogDate": "20260331182010"
+  },
+  "applications": ["paieZoneRH"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "role",
+      "fieldType": "MessageRole",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "USER,ASSISTANT,SYSTEM"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "TextBlob",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "intent",
+      "fieldType": "MessageIntent",
+      "fieldValues": "LEAVE_REQUEST,PAYSLIP_QUERY,ATTESTATION_REQUEST,LEAVE_BALANCE,HR_QUESTION,SMALL_TALK,ESCALATION,OTHER"
+    },
+    {
+      "fieldName": "actionTaken",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "tokenUsed",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "sentAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "errorOccurred",
+      "fieldType": "Boolean"
+    }
+  ],
+  "name": "ChatMessage",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "chatSession",
+      "relationshipName": "session",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

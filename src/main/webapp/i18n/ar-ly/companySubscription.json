@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "companySubscription": {
+      "home": {
+        "title": "Company Subscriptions",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Company Subscription جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Company Subscription",
+        "notFound": "لم يتم العثور على Company Subscriptions"
+      },
+      "created": "Company Subscription جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Company Subscription تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Company Subscription تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Company Subscription {{ id }}؟"
+      },
+      "detail": {
+        "title": "Company Subscription"
+      },
+      "id": "ID",
+      "plan": "Plan",
+      "status": "Status",
+      "maxEmployees": "Max Employees",
+      "priceHT": "Price HT",
+      "billingDay": "Billing Day",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "renewalDate": "Renewal Date",
+      "notes": "Notes",
+      "company": "Company"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+id;code;label;label_ar;rubrique_type;base;rate;fixed_amount;formula;taxable;cnss_salary;cnss_employer;sort_order;active;company_id
+1;toc répartir;responsable terne;avant que combien;EMPLOYER_CHARGE;PERCENT_BRUT;18949;15360.4;de façon que;true;true;true;19379;true;1
+2;aussitôt que;d'entre admirablement;ensuite;EMPLOYER_CHARGE;FORMULA;21818.46;32165.62;après que candide désagréable;false;true;true;23569;false;2
+3;ouch spécialiste;boum multiple;pour que;DEDUCTION;PERCENT_NET;32125.34;20371.79;soudain jadis;false;true;false;26153;false;3
+4;à condition que conc;ouille gens;secours;EMPLOYER_CHARGE;FIXED;13549.63;28794.84;combien;false;true;false;7710;false;4
+5;prout;commis;croâ;DEDUCTION;FIXED;9264.8;8808.67;dès que chut;true;false;true;28962;false;5
+6;plouf parce que selo;quoique;devenir fade;GAIN;HOURS;29777.22;4260.88;rectangulaire police avant de;true;true;false;16839;false;6
+7;divinement tant spéc;porte-parole à demi;ha que;EMPLOYER_CHARGE;PERCENT_BRUT;5687.4;9465.79;coin-coin extra raconter;false;false;true;4593;true;7
+8;crac blême derrière;pourvu que hirsute innombrable;carrément;GAIN;PERCENT_NET;27570.7;2752.03;à cause de;false;true;true;12229;false;8
+9;diplomate commis;durant;tout à fait pour;DEDUCTION;HOURS;5463.73;14867.69;de peur que à raison de;true;false;false;11062;true;9
+10;dans;triste quoique;parmi tandis que consulter;DEDUCTION;FORMULA;21121.82;10045.6;cadre transporter bon;true;true;true;1157;false;10

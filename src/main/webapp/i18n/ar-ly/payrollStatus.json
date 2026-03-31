@@ -1,0 +1,12 @@
+{
+  "paieZoneRhApp": {
+    "PayrollStatus": {
+      "null": "",
+      "DRAFT": "DRAFT",
+      "CALCULATED": "CALCULATED",
+      "VALIDATED": "VALIDATED",
+      "LOCKED": "LOCKED",
+      "EXPORTED": "EXPORTED"
+    }
+  }
+}

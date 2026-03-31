@@ -1,0 +1,40 @@
+{
+  "paieZoneRhApp": {
+    "contract": {
+      "home": {
+        "title": "Contracts",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Contract",
+        "createOrEditLabel": "Créer ou éditer un Contract",
+        "notFound": "Aucun Contract trouvé"
+      },
+      "created": "Un nouveau Contract a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Contract avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Contract avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Contract {{ id }} ?"
+      },
+      "detail": {
+        "title": "Contract"
+      },
+      "id": "ID",
+      "reference": "Reference",
+      "contractType": "Contract Type",
+      "status": "Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "signedDate": "Signed Date",
+      "baseSalary": "Base Salary",
+      "workingHoursWeek": "Working Hours Week",
+      "workingDaysWeek": "Working Days Week",
+      "conventionCollective": "Convention Collective",
+      "trialPeriodMonths": "Trial Period Months",
+      "renewalCount": "Renewal Count",
+      "documentUrl": "Document Url",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "employee": "Employee",
+      "createdBy": "Created By"
+    }
+  }
+}

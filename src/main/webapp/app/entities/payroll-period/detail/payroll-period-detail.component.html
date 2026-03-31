@@ -1,0 +1,78 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (payrollPeriod(); as payrollPeriodRef) {
+      <div>
+        <h2 data-cy="payrollPeriodDetailsHeading"><span pzTranslate="paieZoneRhApp.payrollPeriod.detail.title">Payroll Period</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ payrollPeriodRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.month">Month</span></dt>
+          <dd>
+            <span>{{ payrollPeriodRef.month }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.year">Year</span></dt>
+          <dd>
+            <span>{{ payrollPeriodRef.year }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.status">Status</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.PayrollStatus.' + (payrollPeriodRef.status ?? 'null')">{{
+              { null: '', DRAFT: 'DRAFT', CALCULATED: 'CALCULATED', VALIDATED: 'VALIDATED', LOCKED: 'LOCKED', EXPORTED: 'EXPORTED' }[
+                payrollPeriodRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.calculatedAt">Calculated At</span></dt>
+          <dd>
+            <span>{{ payrollPeriodRef.calculatedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.validatedAt">Validated At</span></dt>
+          <dd>
+            <span>{{ payrollPeriodRef.validatedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.lockedAt">Locked At</span></dt>
+          <dd>
+            <span>{{ payrollPeriodRef.lockedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.notes">Notes</span></dt>
+          <dd>
+            <span>{{ payrollPeriodRef.notes }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.company">Company</span></dt>
+          <dd>
+            @if (payrollPeriod()!.company) {
+              <div>
+                <a [routerLink]="['/company', payrollPeriod()!.company?.id, 'view']">{{ payrollPeriodRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.payrollPeriod.createdBy">Created By</span></dt>
+          <dd>
+            @if (payrollPeriod()!.createdBy) {
+              <div>
+                <a [routerLink]="['/user-profile', payrollPeriod()!.createdBy?.id, 'view']">{{ payrollPeriodRef.createdBy?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/payroll-period', payrollPeriodRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

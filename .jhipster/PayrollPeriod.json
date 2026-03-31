@@ -1,0 +1,63 @@
+{
+  "annotations": {
+    "changelogDate": "20260331180710"
+  },
+  "applications": ["paieZoneRH"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "month",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min", "max"],
+      "fieldValidateRulesMax": "12",
+      "fieldValidateRulesMin": "1"
+    },
+    {
+      "fieldName": "year",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "PayrollStatus",
+      "fieldTypeDocumentation": "Période de paie",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "DRAFT,CALCULATED,VALIDATED,LOCKED,EXPORTED"
+    },
+    {
+      "fieldName": "calculatedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "validatedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "lockedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "TextBlob"
+    }
+  ],
+  "name": "PayrollPeriod",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "company",
+      "relationshipName": "company",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "userProfile",
+      "relationshipName": "createdBy",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

@@ -1,0 +1,38 @@
+{
+  "paieZoneRhApp": {
+    "company": {
+      "home": {
+        "title": "Companies",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Company جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Company",
+        "notFound": "لم يتم العثور على Companies"
+      },
+      "created": "Company جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Company تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Company تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Company {{ id }}؟"
+      },
+      "detail": {
+        "title": "Company"
+      },
+      "id": "ID",
+      "name": "Name",
+      "tradeName": "Trade Name",
+      "taxId": "Tax Id",
+      "cnssId": "Cnss Id",
+      "address": "Address",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "phone": "Phone",
+      "email": "Email",
+      "logoUrl": "Logo Url",
+      "tenantSchema": "Tenant Schema",
+      "active": "Active",
+      "trialEnd": "Trial End",
+      "createdAt": "Created At",
+      "subscription": "Subscription"
+    }
+  }
+}

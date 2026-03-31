@@ -1,0 +1,30 @@
+{
+  "paieZoneRhApp": {
+    "employeeHistory": {
+      "home": {
+        "title": "Employee Histories",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Employee History جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Employee History",
+        "notFound": "لم يتم العثور على Employee Histories"
+      },
+      "created": "Employee History جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Employee History تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Employee History تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Employee History {{ id }}؟"
+      },
+      "detail": {
+        "title": "Employee History"
+      },
+      "id": "ID",
+      "fieldName": "Field Name",
+      "oldValue": "Old Value",
+      "newValue": "New Value",
+      "changedAt": "Changed At",
+      "changedBy": "Changed By",
+      "reason": "Reason",
+      "employee": "Employee"
+    }
+  }
+}

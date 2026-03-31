@@ -1,0 +1,91 @@
+{
+  "annotations": {
+    "changelogDate": "20260331180810"
+  },
+  "applications": ["paieZoneRH"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "code",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique", "maxlength"],
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "label",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "150"
+    },
+    {
+      "fieldName": "labelAr",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "150"
+    },
+    {
+      "fieldName": "rubriqueType",
+      "fieldType": "RubriqueType",
+      "fieldTypeDocumentation": "Rubrique de paie (plan de rubriques)",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "GAIN,DEDUCTION,EMPLOYER_CHARGE,INFO"
+    },
+    {
+      "fieldName": "base",
+      "fieldType": "RubriqueBase",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "FIXED,PERCENT_BRUT,PERCENT_NET,HOURS,FORMULA"
+    },
+    {
+      "fieldName": "rate",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "fixedAmount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "formula",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "taxable",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "cnssSalary",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "cnssEmployer",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "sortOrder",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "active",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Rubrique",
+  "relationships": [
+    {
+      "otherEntityName": "company",
+      "relationshipName": "company",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

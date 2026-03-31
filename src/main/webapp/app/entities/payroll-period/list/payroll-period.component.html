@@ -1,0 +1,183 @@
+<div>
+  <h2 id="page-heading" data-cy="PayrollPeriodHeading">
+    <span pzTranslate="paieZoneRhApp.payrollPeriod.home.title">PayrollPeriods</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.payrollPeriod.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-payroll-period"
+        [routerLink]="['/payroll-period/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.payrollPeriod.home.createLabel">Créer un nouveau Payroll Period</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (payrollPeriods().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.payrollPeriod.home.notFound">Aucun Payroll Period trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="month">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.month">Month</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="year">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.year">Year</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="status">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="calculatedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.calculatedAt">Calculated At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="validatedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.validatedAt">Validated At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="lockedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.lockedAt">Locked At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="notes">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.notes">Notes</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.company">Company</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="createdBy.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.payrollPeriod.createdBy">Created By</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (payrollPeriod of payrollPeriods(); track trackId(payrollPeriod)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/payroll-period', payrollPeriod.id, 'view']">{{ payrollPeriod.id }}</a>
+              </td>
+              <td>{{ payrollPeriod.month }}</td>
+              <td>{{ payrollPeriod.year }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.PayrollStatus.' + (payrollPeriod.status ?? 'null')">
+                {{
+                  { null: '', DRAFT: 'DRAFT', CALCULATED: 'CALCULATED', VALIDATED: 'VALIDATED', LOCKED: 'LOCKED', EXPORTED: 'EXPORTED' }[
+                    payrollPeriod.status ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ payrollPeriod.calculatedAt | formatMediumDatetime }}</td>
+              <td>{{ payrollPeriod.validatedAt | formatMediumDatetime }}</td>
+              <td>{{ payrollPeriod.lockedAt | formatMediumDatetime }}</td>
+              <td>{{ payrollPeriod.notes }}</td>
+              <td>
+                @if (payrollPeriod.company) {
+                  <div>
+                    <a [routerLink]="['/company', payrollPeriod.company.id, 'view']">{{ payrollPeriod.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (payrollPeriod.createdBy) {
+                  <div>
+                    <a [routerLink]="['/user-profile', payrollPeriod.createdBy.id, 'view']">{{ payrollPeriod.createdBy.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/payroll-period', payrollPeriod.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/payroll-period', payrollPeriod.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(payrollPeriod)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (payrollPeriods().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

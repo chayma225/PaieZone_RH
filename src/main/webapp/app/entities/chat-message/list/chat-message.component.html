@@ -1,0 +1,180 @@
+<div>
+  <h2 id="page-heading" data-cy="ChatMessageHeading">
+    <span pzTranslate="paieZoneRhApp.chatMessage.home.title">ChatMessages</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.chatMessage.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-chat-message"
+        [routerLink]="['/chat-message/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.chatMessage.home.createLabel">Créer un nouveau Chat Message</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (chatMessages().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.chatMessage.home.notFound">Aucun Chat Message trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="role">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.role">Role</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="content">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.content">Content</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="intent">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.intent">Intent</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="actionTaken">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.actionTaken">Action Taken</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="tokenUsed">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.tokenUsed">Token Used</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="sentAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.sentAt">Sent At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="errorOccurred">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.errorOccurred">Error Occurred</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="session.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatMessage.session">Session</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (chatMessage of chatMessages(); track trackId(chatMessage)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/chat-message', chatMessage.id, 'view']">{{ chatMessage.id }}</a>
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.MessageRole.' + (chatMessage.role ?? 'null')">
+                {{ { null: '', USER: 'USER', ASSISTANT: 'ASSISTANT', SYSTEM: 'SYSTEM' }[chatMessage.role ?? 'null'] }}
+              </td>
+              <td>{{ chatMessage.content }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.MessageIntent.' + (chatMessage.intent ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    LEAVE_REQUEST: 'LEAVE_REQUEST',
+                    PAYSLIP_QUERY: 'PAYSLIP_QUERY',
+                    ATTESTATION_REQUEST: 'ATTESTATION_REQUEST',
+                    LEAVE_BALANCE: 'LEAVE_BALANCE',
+                    HR_QUESTION: 'HR_QUESTION',
+                    SMALL_TALK: 'SMALL_TALK',
+                    ESCALATION: 'ESCALATION',
+                    OTHER: 'OTHER',
+                  }[chatMessage.intent ?? 'null']
+                }}
+              </td>
+              <td>{{ chatMessage.actionTaken }}</td>
+              <td>{{ chatMessage.tokenUsed }}</td>
+              <td>{{ chatMessage.sentAt | formatMediumDatetime }}</td>
+              <td>{{ chatMessage.errorOccurred }}</td>
+              <td>
+                @if (chatMessage.session) {
+                  <div>
+                    <a [routerLink]="['/chat-session', chatMessage.session.id, 'view']">{{ chatMessage.session.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/chat-message', chatMessage.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/chat-message', chatMessage.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(chatMessage)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (chatMessages().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,63 @@
+{
+  "annotations": {
+    "changelogDate": "20260331181910"
+  },
+  "applications": ["paieZoneRH"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "channel",
+      "fieldType": "ChatChannel",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "WEB,WHATSAPP,MOBILE"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "ChatSessionStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "ACTIVE,RESOLVED,ESCALATED,EXPIRED"
+    },
+    {
+      "fieldName": "startedAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "endedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "escalatedAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "escalatedTo",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "contextData",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "satisfactionScore",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["min", "max"],
+      "fieldValidateRulesMax": "5",
+      "fieldValidateRulesMin": "1"
+    }
+  ],
+  "name": "ChatSession",
+  "relationships": [
+    {
+      "otherEntityName": "employee",
+      "relationshipName": "employee",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "paySlipLine": {
+      "home": {
+        "title": "PaySlipLines",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Pay Slip Line",
+        "createOrEditLabel": "Créer ou éditer un Pay Slip Line",
+        "notFound": "Aucun Pay Slip Line trouvé"
+      },
+      "created": "Un nouveau Pay Slip Line a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Pay Slip Line avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Pay Slip Line avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Pay Slip Line {{ id }} ?"
+      },
+      "detail": {
+        "title": "Pay Slip Line"
+      },
+      "id": "ID",
+      "sortOrder": "Sort Order",
+      "rubriqueCode": "Rubrique Code",
+      "rubriqueLabel": "Rubrique Label",
+      "rubriqueType": "Rubrique Type",
+      "base": "Base",
+      "rate": "Rate",
+      "amount": "Amount",
+      "taxable": "Taxable",
+      "paySlip": "Pay Slip",
+      "rubrique": "Rubrique"
+    }
+  }
+}

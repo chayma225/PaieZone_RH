@@ -1,0 +1,214 @@
+<div>
+  <h2 id="page-heading" data-cy="LeaveRequestHeading">
+    <span pzTranslate="paieZoneRhApp.leaveRequest.home.title">LeaveRequests</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.leaveRequest.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-leave-request"
+        [routerLink]="['/leave-request/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.leaveRequest.home.createLabel">Créer un nouveau Leave Request</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  <pz-filter [filters]="filters" />
+
+  @if (leaveRequests().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.leaveRequest.home.notFound">Aucun Leave Request trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="startDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.startDate">Start Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="endDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.endDate">End Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="numberOfDays">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.numberOfDays">Number Of Days</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="status">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="requestedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.requestedAt">Requested At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="processedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.processedAt">Processed At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="managerComment">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.managerComment">Manager Comment</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employeeComment">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.employeeComment">Employee Comment</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="documentUrl">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.documentUrl">Document Url</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employee.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="leaveType.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.leaveType">Leave Type</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="approvedBy.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.leaveRequest.approvedBy">Approved By</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (leaveRequest of leaveRequests(); track trackId(leaveRequest)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/leave-request', leaveRequest.id, 'view']">{{ leaveRequest.id }}</a>
+              </td>
+              <td>{{ leaveRequest.startDate | formatMediumDate }}</td>
+              <td>{{ leaveRequest.endDate | formatMediumDate }}</td>
+              <td>{{ leaveRequest.numberOfDays }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.LeaveStatus.' + (leaveRequest.status ?? 'null')">
+                {{
+                  { null: '', DRAFT: 'DRAFT', PENDING: 'PENDING', APPROVED: 'APPROVED', REJECTED: 'REJECTED', CANCELLED: 'CANCELLED' }[
+                    leaveRequest.status ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ leaveRequest.requestedAt | formatMediumDatetime }}</td>
+              <td>{{ leaveRequest.processedAt | formatMediumDatetime }}</td>
+              <td>{{ leaveRequest.managerComment }}</td>
+              <td>{{ leaveRequest.employeeComment }}</td>
+              <td>{{ leaveRequest.documentUrl }}</td>
+              <td>
+                @if (leaveRequest.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', leaveRequest.employee.id, 'view']">{{ leaveRequest.employee.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (leaveRequest.leaveType) {
+                  <div>
+                    <a [routerLink]="['/leave-type', leaveRequest.leaveType.id, 'view']">{{ leaveRequest.leaveType.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (leaveRequest.approvedBy) {
+                  <div>
+                    <a [routerLink]="['/user-profile', leaveRequest.approvedBy.id, 'view']">{{ leaveRequest.approvedBy.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/leave-request', leaveRequest.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/leave-request', leaveRequest.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(leaveRequest)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (leaveRequests().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

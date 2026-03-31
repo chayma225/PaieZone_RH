@@ -1,0 +1,11 @@
+id;reference;contract_type;status;start_date;end_date;signed_date;base_salary;working_hours_week;working_days_week;convention_collective;trial_period_months;renewal_count;document_url;notes;created_at;employee_id
+1;ouch;INTERIMAIRE;EXPIRED;2026-03-31;2026-03-31;2026-03-31;10944.08;4;4;étudier ouah;8;2179;immense;../fake-data/blob/hipster.txt;2026-03-31T12:35:06;1
+2;redonner;STAGE;ACTIVE;2026-03-31;2026-03-30;2026-03-31;12554.89;29;5;oh;1;31676;tandis que contre;../fake-data/blob/hipster.txt;2026-03-31T13:25:37;2
+3;du moment que tic-tac;INTERIMAIRE;TERMINATED;2026-03-31;2026-03-31;2026-03-31;29072.81;33;3;meuh;6;10285;en dedans de de par dring;../fake-data/blob/hipster.txt;2026-03-31T07:57:22;3
+4;éteindre si;STAGE;EXPIRED;2026-03-31;2026-03-30;2026-03-31;542.55;45;5;tant;4;19433;vroum raide chef;../fake-data/blob/hipster.txt;2026-03-31T10:44:28;4
+5;sans en plus de;KARAMA;SUSPENDED;2026-03-30;2026-03-31;2026-03-31;26710.7;13;6;débile comme;1;31916;glouglou neutre;../fake-data/blob/hipster.txt;2026-03-30T18:51:54;5
+6;volontiers;CIVP;DRAFT;2026-03-31;2026-03-31;2026-03-31;17587.35;43;1;vlan;5;30889;au moyen de;../fake-data/blob/hipster.txt;2026-03-31T09:15:27;6
+7;conduire du moment que triste;CDD;TERMINATED;2026-03-31;2026-03-31;2026-03-31;21908.8;21;3;ronron ouah dans la mesure où;6;19661;rose;../fake-data/blob/hipster.txt;2026-03-31T00:39:26;7
+8;porte-parole coin-coin paf;CDD;DRAFT;2026-03-31;2026-03-31;2026-03-31;1700.49;13;5;dessous de crainte que grrr;2;26606;quasi psitt camarade;../fake-data/blob/hipster.txt;2026-03-31T15:07:21;8
+9;membre du personnel;INTERIMAIRE;TERMINATED;2026-03-31;2026-03-31;2026-03-31;9435.63;12;7;raide;10;27876;extatique blablabla;../fake-data/blob/hipster.txt;2026-03-30T21:42:42;9
+10;en dehors de clientèle électorat;CIVP;DRAFT;2026-03-31;2026-03-31;2026-03-30;16188.9;14;1;boum en outre de antique;10;16153;plutôt;../fake-data/blob/hipster.txt;2026-03-30T21:37:45;10

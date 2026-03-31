@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "chatSession": {
+      "home": {
+        "title": "ChatSessions",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Chat Session",
+        "createOrEditLabel": "Créer ou éditer un Chat Session",
+        "notFound": "Aucun Chat Session trouvé"
+      },
+      "created": "Un nouveau Chat Session a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Chat Session avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Chat Session avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Chat Session {{ id }} ?"
+      },
+      "detail": {
+        "title": "Chat Session"
+      },
+      "id": "ID",
+      "channel": "Channel",
+      "status": "Status",
+      "startedAt": "Started At",
+      "endedAt": "Ended At",
+      "escalatedAt": "Escalated At",
+      "escalatedTo": "Escalated To",
+      "contextData": "Context Data",
+      "satisfactionScore": "Satisfaction Score",
+      "employee": "Employee"
+    }
+  }
+}

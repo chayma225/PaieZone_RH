@@ -1,0 +1,175 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="pz-account-plan-heading"
+        data-cy="AccountPlanCreateUpdateHeading"
+        pzTranslate="paieZoneRhApp.accountPlan.home.createOrEditLabel"
+      >
+        Créer ou éditer un Account Plan
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="paieZoneRhApp.accountPlan.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let accountCodeRef = editForm.get('accountCode')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_accountCode" pzTranslate="paieZoneRhApp.accountPlan.accountCode">Account Code</label>
+          <input
+            type="text"
+            class="form-control"
+            name="accountCode"
+            id="field_accountCode"
+            data-cy="accountCode"
+            formControlName="accountCode"
+          />
+          @if (accountCodeRef.invalid && (accountCodeRef.dirty || accountCodeRef.touched)) {
+            <div>
+              @if (editForm.get('accountCode')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('accountCode')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >Ce champ doit faire moins de 20 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let accountLabelRef = editForm.get('accountLabel')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_accountLabel" pzTranslate="paieZoneRhApp.accountPlan.accountLabel">Account Label</label>
+          <input
+            type="text"
+            class="form-control"
+            name="accountLabel"
+            id="field_accountLabel"
+            data-cy="accountLabel"
+            formControlName="accountLabel"
+          />
+          @if (accountLabelRef.invalid && (accountLabelRef.dirty || accountLabelRef.touched)) {
+            <div>
+              @if (editForm.get('accountLabel')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('accountLabel')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire moins de 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let accountLabelArRef = editForm.get('accountLabelAr')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_accountLabelAr" pzTranslate="paieZoneRhApp.accountPlan.accountLabelAr"
+            >Account Label Ar</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="accountLabelAr"
+            id="field_accountLabelAr"
+            data-cy="accountLabelAr"
+            formControlName="accountLabelAr"
+          />
+          @if (accountLabelArRef.invalid && (accountLabelArRef.dirty || accountLabelArRef.touched)) {
+            <div>
+              @if (editForm.get('accountLabelAr')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire moins de 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let accountTypeRef = editForm.get('accountType')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_accountType" pzTranslate="paieZoneRhApp.accountPlan.accountType">Account Type</label>
+          <input
+            type="text"
+            class="form-control"
+            name="accountType"
+            id="field_accountType"
+            data-cy="accountType"
+            formControlName="accountType"
+          />
+          @if (accountTypeRef.invalid && (accountTypeRef.dirty || accountTypeRef.touched)) {
+            <div>
+              @if (editForm.get('accountType')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >Ce champ doit faire moins de 50 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let activeRef = editForm.get('active')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.accountPlan.active">Active</label>
+          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
+          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
+            <div>
+              @if (editForm.get('active')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.accountPlan.company">Company</label>
+          <select
+            class="form-control"
+            id="field_company"
+            data-cy="company"
+            name="company"
+            formControlName="company"
+            [compareWith]="compareCompany"
+          >
+            @if (!editForm.get('company')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (companyOption of companiesSharedCollection; track $index) {
+              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
+          <div>
+            @if (editForm.get(['company'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

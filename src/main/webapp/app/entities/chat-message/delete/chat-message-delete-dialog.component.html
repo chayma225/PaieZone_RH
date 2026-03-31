@@ -1,0 +1,28 @@
+@if (chatMessage) {
+  <form name="deleteForm" (ngSubmit)="confirmDelete(chatMessage.id!)">
+    <div class="modal-header">
+      <h4 class="modal-title" data-cy="chatMessageDeleteDialogHeading" pzTranslate="entity.delete.title">Confirmation de suppression</h4>
+    </div>
+
+    <div class="modal-body">
+      <pz-alert-error />
+      <p
+        id="pz-delete-chatMessage-heading"
+        pzTranslate="paieZoneRhApp.chatMessage.delete.question"
+        [translateValues]="{ id: chatMessage.id }"
+      >
+        Êtes-vous certain de vouloir supprimer le Chat Message {{ chatMessage.id }} ?
+      </p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+        <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+      </button>
+
+      <button id="pz-confirm-delete-chatMessage" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
+        <fa-icon icon="times"></fa-icon>&nbsp;<span pzTranslate="entity.action.delete">Supprimer</span>
+      </button>
+    </div>
+  </form>
+}

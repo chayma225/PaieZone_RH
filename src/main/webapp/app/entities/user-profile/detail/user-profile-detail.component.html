@@ -1,0 +1,83 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (userProfile(); as userProfileRef) {
+      <div>
+        <h2 data-cy="userProfileDetailsHeading"><span pzTranslate="paieZoneRhApp.userProfile.detail.title">User Profile</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ userProfileRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.jhiUserId">Jhi User Id</span></dt>
+          <dd>
+            <span>{{ userProfileRef.jhiUserId }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.role">Role</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.AppRole.' + (userProfileRef.role ?? 'null')">{{
+              {
+                null: '',
+                SUPER_ADMIN: 'SUPER_ADMIN',
+                ADMIN: 'ADMIN',
+                RH_COMPTABLE: 'RH_COMPTABLE',
+                MANAGER: 'MANAGER',
+                EMPLOYE: 'EMPLOYE',
+              }[userProfileRef.role ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.phoneNumber">Phone Number</span></dt>
+          <dd>
+            <span>{{ userProfileRef.phoneNumber }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.avatarUrl">Avatar Url</span></dt>
+          <dd>
+            <span>{{ userProfileRef.avatarUrl }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.locale">Locale</span></dt>
+          <dd>
+            <span>{{ userProfileRef.locale }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.lastLoginAt">Last Login At</span></dt>
+          <dd>
+            <span>{{ userProfileRef.lastLoginAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.twoFactorEnabled">Two Factor Enabled</span></dt>
+          <dd>
+            <span>{{ userProfileRef.twoFactorEnabled }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.twoFactorSecret">Two Factor Secret</span></dt>
+          <dd>
+            <span>{{ userProfileRef.twoFactorSecret }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.active">Active</span></dt>
+          <dd>
+            <span>{{ userProfileRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.userProfile.company">Company</span></dt>
+          <dd>
+            @if (userProfile()!.company) {
+              <div>
+                <a [routerLink]="['/company', userProfile()!.company?.id, 'view']">{{ userProfileRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/user-profile', userProfileRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,31 @@
+{
+  "paieZoneRhApp": {
+    "regulatoryParam": {
+      "home": {
+        "title": "RegulatoryParams",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Regulatory Param",
+        "createOrEditLabel": "Créer ou éditer un Regulatory Param",
+        "notFound": "Aucun Regulatory Param trouvé"
+      },
+      "created": "Un nouveau Regulatory Param a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Regulatory Param avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Regulatory Param avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Regulatory Param {{ id }} ?"
+      },
+      "detail": {
+        "title": "Regulatory Param"
+      },
+      "id": "ID",
+      "paramKey": "Param Key",
+      "paramLabel": "Param Label",
+      "numericValue": "Numeric Value",
+      "textValue": "Text Value",
+      "effectiveFrom": "Effective From",
+      "effectiveTo": "Effective To",
+      "legalReference": "Legal Reference",
+      "active": "Active"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "bonus": {
+      "home": {
+        "title": "Bonuses",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Bonus جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Bonus",
+        "notFound": "لم يتم العثور على Bonuses"
+      },
+      "created": "Bonus جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Bonus تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Bonus تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Bonus {{ id }}؟"
+      },
+      "detail": {
+        "title": "Bonus"
+      },
+      "id": "ID",
+      "bonusType": "Bonus Type",
+      "label": "Label",
+      "amount": "Amount",
+      "taxable": "Taxable",
+      "month": "Month",
+      "year": "Year",
+      "notes": "Notes",
+      "employee": "Employee",
+      "paySlip": "Pay Slip"
+    }
+  }
+}

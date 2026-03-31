@@ -1,0 +1,29 @@
+{
+  "paieZoneRhApp": {
+    "accountPlan": {
+      "home": {
+        "title": "Account Plans",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Account Plan جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Account Plan",
+        "notFound": "لم يتم العثور على Account Plans"
+      },
+      "created": "Account Plan جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Account Plan تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Account Plan تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Account Plan {{ id }}؟"
+      },
+      "detail": {
+        "title": "Account Plan"
+      },
+      "id": "ID",
+      "accountCode": "Account Code",
+      "accountLabel": "Account Label",
+      "accountLabelAr": "Account Label Ar",
+      "accountType": "Account Type",
+      "active": "Active",
+      "company": "Company"
+    }
+  }
+}

@@ -1,0 +1,726 @@
+// =============================================================================
+// JDL – SaaS RH & Paie Tunisie
+// JHipster 8.x | PostgreSQL | Multi-tenant (schéma par tenant)
+// =============================================================================
+
+// =============================================================================
+// APPLICATION CONFIG
+// =============================================================================
+
+application {
+  config {
+    baseName paieZoneRH
+    applicationType monolith
+    packageName tn.paiezone.rh
+    authenticationType jwt
+    databaseType sql
+    devDatabaseType postgresql
+    prodDatabaseType postgresql
+    buildTool maven
+    clientFramework angular
+    enableSwaggerCodegen true
+    testFrameworks [cypress]
+    languages [fr, ar-ly]
+    nativeLanguage fr
+    enableTranslation true
+    serviceDiscoveryType no
+    messageBroker kafka
+    cacheProvider redis
+    enableHibernateCache true
+    jhiPrefix pz
+
+  }
+  entities *
+}
+
+// =============================================================================
+// MODULE 6 – AUTHENTIFICATION & SÉCURITÉ / MULTI-TENANT
+// =============================================================================
+
+/** Entreprise = Tenant SaaS */
+entity Company {
+  name            String  required minlength(2) maxlength(150)
+  tradeName       String  maxlength(150)
+  taxId           String  required unique maxlength(20)   // Matricule fiscal
+  cnssId          String  maxlength(20)                  // Numéro affilié CNSS
+  address         String  maxlength(255)
+  city            String  maxlength(100)
+  postalCode      String  maxlength(10)
+  phone           String  maxlength(20)
+  email           String  maxlength(100)
+  logoUrl         String  maxlength(500)
+  tenantSchema    String  required unique maxlength(63)   // nom du schéma PG
+  active          Boolean required
+  trialEnd        LocalDate
+  createdAt       Instant required
+}
+
+/** Abonnement SaaS */
+enum PlanType {
+  STARTER, PME, BUSINESS, ENTERPRISE, CUSTOM
+}
+enum SubscriptionStatus {
+  TRIAL, ACTIVE, SUSPENDED, CANCELLED
+}
+entity CompanySubscription {
+  plan            PlanType        required
+  status          SubscriptionStatus required
+  maxEmployees    Integer         required
+  priceHT         BigDecimal      required
+  billingDay      Integer         required   // jour du mois facturation
+  startDate       LocalDate       required
+  endDate         LocalDate
+  renewalDate     LocalDate
+  notes           String          maxlength(500)
+}
+
+/** Rôles applicatifs */
+enum AppRole {
+  SUPER_ADMIN, ADMIN, RH_COMPTABLE, MANAGER, EMPLOYE
+}
+
+/** Profil utilisateur étendu (lié au User JHipster) */
+entity UserProfile {
+  jhiUserId       String  required unique maxlength(50)   // lien vers JHipster User
+  role            AppRole required
+  phoneNumber     String  maxlength(20)
+  avatarUrl       String  maxlength(500)
+  locale          String  maxlength(10)
+  lastLoginAt     Instant
+  twoFactorEnabled Boolean
+  twoFactorSecret  String  maxlength(100)
+  active          Boolean required
+}
+
+/** Journal d'audit / logs activité */
+entity AuditLog {
+  action          String  required maxlength(100)
+  entityType      String  maxlength(100)
+  entityId        Long
+  oldValue        TextBlob
+  newValue        TextBlob
+  ipAddress       String  maxlength(45)
+  userAgent       String  maxlength(255)
+  occurredAt      Instant required
+}
+
+// =============================================================================
+// MODULE 1 – GESTION ADMINISTRATIVE
+// =============================================================================
+
+/** Département / Service */
+entity Department {
+  code            String  required unique maxlength(20)
+  name            String  required maxlength(100)
+  description     String  maxlength(255)
+  active          Boolean required
+}
+
+/** Poste / Fonction */
+entity JobPosition {
+  code            String  required maxlength(20)
+  title           String  required maxlength(150)
+  description     String  maxlength(500)
+  minSalary       BigDecimal
+  maxSalary       BigDecimal
+  active          Boolean required
+}
+
+/** Genre */
+enum Gender {
+  MALE, FEMALE
+}
+/** Situation familiale */
+enum MaritalStatus {
+  SINGLE, MARRIED, DIVORCED, WIDOWED
+}
+/** Catégorie socio-professionnelle */
+enum EmployeeCategory {
+  WORKER, EMPLOYEE, TECHNICIAN, SUPERVISOR, MANAGER, EXECUTIVE, DIRECTOR
+}
+
+/** Dossier Employé */
+entity Employee {
+  matricule         String  required unique maxlength(20)
+  firstName         String  required maxlength(100)
+  lastName          String  required maxlength(100)
+  firstNameAr       String  maxlength(100)
+  lastNameAr        String  maxlength(100)
+  birthDate         LocalDate required
+  birthPlace        String  maxlength(100)
+  gender            Gender  required
+  maritalStatus     MaritalStatus required
+  numberOfChildren  Integer required min(0) max(10)
+  chefDeFamille     Boolean required        // déduction fiscale Tunisie
+  nationalId        String  required unique maxlength(20)   // CIN
+  passportNumber    String  maxlength(20)
+  nationality       String  maxlength(50)
+  address           String  maxlength(255)
+  city              String  maxlength(100)
+  personalEmail     String  maxlength(100)
+  professionalEmail String  maxlength(100)
+  phoneNumber       String  maxlength(20)
+  cnssNumber        String  maxlength(20)
+  category          EmployeeCategory required
+  photoUrl          String  maxlength(500)
+  hireDate          LocalDate required
+  trialEndDate      LocalDate
+  active            Boolean required
+  notes             TextBlob
+  createdAt         Instant required
+  updatedAt         Instant
+}
+
+/** Type de contrat */
+enum ContractType {
+  CDI, CDD, CIVP, KARAMA, INTERIMAIRE, STAGE
+}
+enum ContractStatus {
+  DRAFT, ACTIVE, SUSPENDED, TERMINATED, EXPIRED
+}
+
+/** Contrat de travail */
+entity Contract {
+  reference         String  required unique maxlength(50)
+  contractType      ContractType required
+  status            ContractStatus required
+  startDate         LocalDate required
+  endDate           LocalDate                  // null = CDI
+  signedDate        LocalDate
+  baseSalary        BigDecimal required
+  workingHoursWeek  Integer  required min(1) max(48)
+  workingDaysWeek   Integer  required min(1) max(7)
+  conventionCollective String maxlength(100)
+  trialPeriodMonths Integer  min(0) max(12)
+  renewalCount      Integer  min(0)
+  documentUrl       String   maxlength(500)
+  notes             TextBlob
+  createdAt         Instant  required
+}
+
+/** Document RH (GED) */
+enum DocumentType {
+  CONTRACT, CIN_COPY, DIPLOMA, MEDICAL_CERT, DISCIPLINARY,
+  PAYSLIP, ATTESTATION, OTHER
+}
+
+entity HrDocument {
+  documentType    DocumentType required
+  title           String  required maxlength(200)
+  description     String  maxlength(500)
+  fileUrl         String  required maxlength(500)
+  fileSize        Long
+  mimeType        String  maxlength(100)
+  uploadedAt      Instant required
+  expiryDate      LocalDate
+  active          Boolean required
+}
+
+/** Historique des modifications du dossier */
+entity EmployeeHistory {
+  fieldName       String  required maxlength(100)
+  oldValue        String  maxlength(500)
+  newValue        String  maxlength(500)
+  changedAt       Instant required
+  changedBy       String  maxlength(100)
+  reason          String  maxlength(255)
+}
+
+// =============================================================================
+// MODULE 3 – TEMPS ET CONGÉS
+// =============================================================================
+
+/** Type de congé */
+enum LeaveTypeName {
+  ANNUAL, SICK, MATERNITY, PATERNITY, UNPAID,
+  MARRIAGE, BEREAVEMENT, EXCEPTIONAL
+}
+
+entity LeaveType {
+  name            LeaveTypeName required
+  label           String  required maxlength(100)
+  maxDaysPerYear  Integer required
+  carryOverDays   Integer required min(0)
+  paid            Boolean required
+  requiresMedical Boolean required
+  active          Boolean required
+}
+
+enum LeaveStatus {
+  DRAFT, PENDING, APPROVED, REJECTED, CANCELLED
+}
+
+/** Demande de congé */
+entity LeaveRequest {
+  startDate         LocalDate required
+  endDate           LocalDate required
+  numberOfDays      Integer   required min(1)
+  status            LeaveStatus required
+  requestedAt       Instant   required
+  processedAt       Instant
+  managerComment    String    maxlength(500)
+  employeeComment   String    maxlength(500)
+  documentUrl       String    maxlength(500)   // arrêt maladie
+}
+
+/** Solde de congés par employé et par type */
+entity LeaveBalance {
+  year            Integer     required
+  entitled        BigDecimal  required     // droits acquis
+  taken           BigDecimal  required
+  pending         BigDecimal  required
+  carryOver       BigDecimal  required
+  remaining       BigDecimal  required     // calculé
+  lastUpdatedAt   Instant     required
+}
+
+/** Jours fériés */
+entity PublicHoliday {
+  name            String    required maxlength(150)
+  nameAr          String    maxlength(150)
+  holidayDate     LocalDate required
+  year            Integer   required
+  isRecurring     Boolean   required
+  active          Boolean   required
+}
+
+/** Pointage / Feuille de temps */
+enum TimeEntrySource {
+  MANUAL, BADGE, IMPORT, CHATBOT
+}
+enum TimeEntryStatus {
+  PENDING, VALIDATED, ANOMALY, CORRECTED
+}
+
+entity TimeEntry {
+  entryDate       LocalDate   required
+  checkIn         Instant
+  checkOut        Instant
+  workedHours     BigDecimal
+  overtimeHours   BigDecimal
+  lateMinutes     Integer
+  source          TimeEntrySource required
+  status          TimeEntryStatus required
+  anomalyNote     String      maxlength(500)
+  validatedBy     String      maxlength(100)
+  validatedAt     Instant
+}
+
+// =============================================================================
+// MODULE 2 – GESTION DE LA PAIE
+// =============================================================================
+
+/** Période de paie */
+enum PayrollStatus {
+  DRAFT, CALCULATED, VALIDATED, LOCKED, EXPORTED
+}
+
+entity PayrollPeriod {
+  month           Integer     required min(1) max(12)
+  year            Integer     required
+  status          PayrollStatus required
+  calculatedAt    Instant
+  validatedAt     Instant
+  lockedAt        Instant
+  notes           TextBlob
+}
+
+/** Rubrique de paie (plan de rubriques) */
+enum RubriqueType {
+  GAIN, DEDUCTION, EMPLOYER_CHARGE, INFO
+}
+enum RubriqueBase {
+  FIXED, PERCENT_BRUT, PERCENT_NET, HOURS, FORMULA
+}
+
+entity Rubrique {
+  code            String      required unique maxlength(20)
+  label           String      required maxlength(150)
+  labelAr         String      maxlength(150)
+  rubriqueType    RubriqueType required
+  base            RubriqueBase required
+  rate            BigDecimal                   // taux si PERCENT
+  fixedAmount     BigDecimal                   // montant si FIXED
+  formula         String      maxlength(500)   // formule si FORMULA
+  taxable         Boolean     required         // soumis à l'IRPP
+  cnssSalary      Boolean     required         // soumis au CNSS salarial
+  cnssEmployer    Boolean     required         // soumis au CNSS patronal
+  sortOrder       Integer     required
+  active          Boolean     required
+}
+
+/** Bulletin de paie */
+entity PaySlip {
+  month               Integer     required min(1) max(12)
+  year                Integer     required
+  baseSalary          BigDecimal  required
+  totalGains          BigDecimal  required
+  totalDeductions     BigDecimal  required
+  grossSalary         BigDecimal  required      // brut imposable
+  cnssSalaryAmount    BigDecimal  required
+  cavisAmount         BigDecimal
+  taxableIncome       BigDecimal  required      // après déductions légales
+  irppAmount          BigDecimal  required
+  netSalary           BigDecimal  required
+  employerCnss        BigDecimal  required
+  employerCavis       BigDecimal
+  totalEmployerCost   BigDecimal  required
+  workedDays          Integer
+  paidLeaveDays       Integer
+  unpaidDays          Integer
+  overtimeHours       BigDecimal
+  status              PayrollStatus required
+  pdfUrl              String      maxlength(500)
+  generatedAt         Instant
+  sentToEmployeeAt    Instant
+  bankTransferRef     String      maxlength(100)
+}
+
+/** Ligne de bulletin (détail rubrique par rubrique) */
+entity PaySlipLine {
+  sortOrder       Integer     required
+  rubriqueCode    String      required maxlength(20)
+  rubriqueLabel   String      required maxlength(150)
+  rubriqueType    RubriqueType required
+  base            BigDecimal
+  rate            BigDecimal
+  amount          BigDecimal  required
+  taxable         Boolean     required
+}
+
+/** Prime */
+enum BonusType {
+  PERFORMANCE, TRANSPORT, MEAL, RAMADAN, END_OF_YEAR,
+  SENIORITY, EXCEPTIONAL, OTHER
+}
+
+entity Bonus {
+  bonusType       BonusType   required
+  label           String      required maxlength(150)
+  amount          BigDecimal  required
+  taxable         Boolean     required
+  month           Integer     required min(1) max(12)
+  year            Integer     required
+  notes           String      maxlength(500)
+}
+
+/** Avance / Acompte */
+enum AdvanceStatus {
+  REQUESTED, APPROVED, REJECTED, DEDUCTED
+}
+
+entity Advance {
+  requestDate     LocalDate   required
+  amount          BigDecimal  required
+  deductionMonth  Integer     min(1) max(12)
+  deductionYear   Integer
+  status          AdvanceStatus required
+  approvedBy      String      maxlength(100)
+  notes           String      maxlength(500)
+}
+
+/** Paramètres réglementaires (partagés, versionnés) */
+entity RegulatoryParam {
+  paramKey        String      required maxlength(100)
+  paramLabel      String      required maxlength(200)
+  numericValue    BigDecimal
+  textValue       String      maxlength(500)
+  effectiveFrom   LocalDate   required
+  effectiveTo     LocalDate
+  legalReference  String      maxlength(200)   // ex: "LF 2026 art. 24"
+  active          Boolean     required
+}
+
+/** Tranche IRPP */
+entity TaxBracket {
+  year            Integer     required
+  minIncome       BigDecimal  required
+  maxIncome       BigDecimal              // null = illimité
+  rate            BigDecimal  required    // ex: 0.26
+  fixedDeduction  BigDecimal  required    // déduction forfaitaire de la tranche
+  sortOrder       Integer     required
+}
+
+/** Taux CNSS */
+entity CnssRate {
+  year            Integer     required
+  salaryCeiling   BigDecimal               // plafond salarial (6x SMIG)
+  employeeRate    BigDecimal  required     // ex: 0.0918
+  employerRate    BigDecimal  required     // ex: 0.1657
+  cavisEmployee   BigDecimal               // ex: 0.01
+  cavisEmployer   BigDecimal
+  smig            BigDecimal  required
+  effectiveFrom   LocalDate   required
+}
+
+// =============================================================================
+// MODULE 4 – INTÉGRATION COMPTABLE
+// =============================================================================
+
+/** Plan comptable de l'entreprise */
+entity AccountPlan {
+  accountCode     String      required maxlength(20)
+  accountLabel    String      required maxlength(200)
+  accountLabelAr  String      maxlength(200)
+  accountType     String      maxlength(50)    // Charge, Passif, etc.
+  active          Boolean     required
+}
+
+/** Écriture comptable générée par la paie */
+enum AccountingEntryType {
+  SALARY_EXPENSE, CNSS_EXPENSE, CNSS_PAYABLE, SALARY_PAYABLE,
+  BANK_TRANSFER, TAX_PAYABLE
+}
+
+entity AccountingEntry {
+  entryDate       LocalDate   required
+  journalRef      String      required maxlength(50)
+  entryType       AccountingEntryType required
+  description     String      required maxlength(300)
+  debitAccount    String      required maxlength(20)
+  creditAccount   String      required maxlength(20)
+  amount          BigDecimal  required
+  exportedAt      Instant
+  exportFormat    String      maxlength(50)     // SAGE100, CSV, etc.
+  exportRef       String      maxlength(100)
+}
+
+// =============================================================================
+// MODULE 5 – DÉCLARATIONS ET CONFORMITÉ
+// =============================================================================
+
+/** Type de document officiel */
+enum OfficialDocType {
+  WORK_CERTIFICATE, SALARY_ATTESTATION, CNSS_DECLARATION,
+  EMPLOYER_DECLARATION, CAVIS_DECLARATION, IRPP_WITHHOLDING
+}
+
+entity OfficialDocument {
+  docType         OfficialDocType required
+  title           String      required maxlength(200)
+  month           Integer     min(1) max(12)
+  year            Integer     required
+  generatedAt     Instant     required
+  fileUrl         String      maxlength(500)
+  signedBy        String      maxlength(100)
+  sentAt          Instant
+  notes           String      maxlength(500)
+}
+
+// =============================================================================
+// MODULE 7 – CHATBOT RH IA
+// =============================================================================
+
+enum ChatChannel {
+  WEB, WHATSAPP, MOBILE
+}
+enum ChatSessionStatus {
+  ACTIVE, RESOLVED, ESCALATED, EXPIRED
+}
+
+entity ChatSession {
+  channel         ChatChannel required
+  status          ChatSessionStatus required
+  startedAt       Instant     required
+  endedAt         Instant
+  escalatedAt     Instant
+  escalatedTo     String      maxlength(100)
+  contextData     TextBlob                    // JSON contexte employé
+  satisfactionScore Integer   min(1) max(5)
+}
+
+enum MessageRole {
+  USER, ASSISTANT, SYSTEM
+}
+enum MessageIntent {
+  LEAVE_REQUEST, PAYSLIP_QUERY, ATTESTATION_REQUEST,
+  LEAVE_BALANCE, HR_QUESTION, SMALL_TALK, ESCALATION, OTHER
+}
+
+entity ChatMessage {
+  role            MessageRole required
+  content         TextBlob    required
+  intent          MessageIntent
+  actionTaken     String      maxlength(200)  // ex: "LEAVE_CREATED:45"
+  tokenUsed       Integer
+  sentAt          Instant     required
+  errorOccurred   Boolean
+}
+
+/** Documents indexés pour le RAG */
+entity KnowledgeDocument {
+  title           String      required maxlength(200)
+  category        String      maxlength(100)
+  content         TextBlob    required
+  fileUrl         String      maxlength(500)
+  vectorIndexed   Boolean     required
+  indexedAt       Instant
+  active          Boolean     required
+  createdAt       Instant     required
+}
+
+// =============================================================================
+// RELATIONS
+// =============================================================================
+
+// --- Tenant / Souscription ---
+relationship OneToOne {
+  Company{subscription} to CompanySubscription
+}
+
+// --- UserProfile ---
+relationship ManyToOne {
+  UserProfile{company required} to Company
+}
+
+// --- AuditLog ---
+relationship ManyToOne {
+  AuditLog{user} to UserProfile
+  AuditLog{company required} to Company
+}
+
+// --- Structure organisationnelle ---
+relationship ManyToOne {
+  Department{company required} to Company
+  Department{manager} to Employee
+  JobPosition{company required} to Company
+  JobPosition{department} to Department
+}
+
+// --- Employé ---
+relationship ManyToOne {
+  Employee{company required} to Company
+  Employee{department required} to Department
+  Employee{position required} to JobPosition
+  Employee{manager} to Employee
+  Employee{userProfile} to UserProfile
+}
+
+// --- Contrat ---
+relationship ManyToOne {
+  Contract{employee required} to Employee
+  Contract{createdBy} to UserProfile
+}
+
+// --- Documents RH ---
+relationship ManyToOne {
+  HrDocument{employee required} to Employee
+  HrDocument{uploadedBy} to UserProfile
+}
+
+// --- Historique employé ---
+relationship ManyToOne {
+  EmployeeHistory{employee required} to Employee
+}
+
+// --- Congés ---
+relationship ManyToOne {
+  LeaveType{company required} to Company
+  LeaveRequest{employee required} to Employee
+  LeaveRequest{leaveType required} to LeaveType
+  LeaveRequest{approvedBy} to UserProfile
+  LeaveBalance{employee required} to Employee
+  LeaveBalance{leaveType required} to LeaveType
+}
+
+// --- Pointage ---
+relationship ManyToOne {
+  TimeEntry{employee required} to Employee
+  TimeEntry{validatedByUser} to UserProfile
+}
+
+// --- Période de paie ---
+relationship ManyToOne {
+  PayrollPeriod{company required} to Company
+  PayrollPeriod{createdBy} to UserProfile
+}
+
+// --- Rubrique ---
+relationship ManyToOne {
+  Rubrique{company required} to Company
+}
+
+// --- Bulletin de paie ---
+relationship ManyToOne {
+  PaySlip{employee required} to Employee
+  PaySlip{payrollPeriod required} to PayrollPeriod
+  PaySlip{contract required} to Contract
+}
+
+// --- Lignes du bulletin ---
+relationship ManyToOne {
+  PaySlipLine{paySlip required} to PaySlip
+  PaySlipLine{rubrique} to Rubrique
+}
+
+// --- Primes et avances ---
+relationship ManyToOne {
+  Bonus{employee required} to Employee
+  Bonus{paySlip} to PaySlip
+  Advance{employee required} to Employee
+  Advance{paySlip} to PaySlip
+  Advance{approvedByUser} to UserProfile
+}
+
+// --- Paramètres réglementaires ---
+relationship ManyToOne {
+  TaxBracket{company} to Company    // null = global partagé
+  CnssRate{company} to Company
+}
+
+// --- Comptabilité ---
+relationship ManyToOne {
+  AccountPlan{company required} to Company
+  AccountingEntry{company required} to Company
+  AccountingEntry{payrollPeriod} to PayrollPeriod
+}
+
+// --- Documents officiels ---
+relationship ManyToOne {
+  OfficialDocument{company required} to Company
+  OfficialDocument{employee} to Employee
+  OfficialDocument{generatedBy} to UserProfile
+}
+
+// --- Chatbot ---
+relationship ManyToOne {
+  ChatSession{employee required} to Employee
+  ChatMessage{session required} to ChatSession
+  KnowledgeDocument{company required} to Company
+}
+
+// =============================================================================
+// PAGINATION & SEARCH
+// =============================================================================
+
+paginate Employee, Contract, PaySlip, LeaveRequest,
+         TimeEntry, AuditLog, ChatMessage with pagination
+
+paginate PayrollPeriod, OfficialDocument, HrDocument,
+         AccountingEntry, Bonus, Advance with pagination
+
+search Employee, Contract, PaySlip, LeaveRequest with elasticsearch
+
+// =============================================================================
+// SERVICE LAYER
+// =============================================================================
+
+service Employee, Contract, PaySlip, PaySlipLine,
+        LeaveRequest, LeaveBalance, TimeEntry,
+        Bonus, Advance with serviceImpl
+
+service PayrollPeriod, AccountingEntry, OfficialDocument,
+        ChatSession, ChatMessage with serviceImpl
+
+// =============================================================================
+// DTO
+// =============================================================================
+
+dto * with mapstruct
+
+// =============================================================================
+// FILTER (Spring Filter sur les entités principales)
+// =============================================================================
+
+filter Employee, Contract, PaySlip, LeaveRequest,
+       TimeEntry, Bonus, Advance, AuditLog, OfficialDocument

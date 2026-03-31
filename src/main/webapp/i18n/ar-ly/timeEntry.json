@@ -1,0 +1,36 @@
+{
+  "paieZoneRhApp": {
+    "timeEntry": {
+      "home": {
+        "title": "Time Entries",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Time Entry جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Time Entry",
+        "notFound": "لم يتم العثور على Time Entries"
+      },
+      "created": "Time Entry جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Time Entry تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Time Entry تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Time Entry {{ id }}؟"
+      },
+      "detail": {
+        "title": "Time Entry"
+      },
+      "id": "ID",
+      "entryDate": "Entry Date",
+      "checkIn": "Check In",
+      "checkOut": "Check Out",
+      "workedHours": "Worked Hours",
+      "overtimeHours": "Overtime Hours",
+      "lateMinutes": "Late Minutes",
+      "source": "Source",
+      "status": "Status",
+      "anomalyNote": "Anomaly Note",
+      "validatedBy": "Validated By",
+      "validatedAt": "Validated At",
+      "employee": "Employee",
+      "validatedByUser": "Validated By User"
+    }
+  }
+}

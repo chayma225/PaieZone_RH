@@ -1,0 +1,210 @@
+<div>
+  <h2 id="page-heading" data-cy="RubriqueHeading">
+    <span pzTranslate="paieZoneRhApp.rubrique.home.title">Rubriques</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.rubrique.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-rubrique"
+        [routerLink]="['/rubrique/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.rubrique.home.createLabel">Créer un nouveau Rubrique</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (rubriques().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.rubrique.home.notFound">Aucun Rubrique trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="code">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.code">Code</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="label">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.label">Label</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="labelAr">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.labelAr">Label Ar</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rubriqueType">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.rubriqueType">Rubrique Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="base">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.base">Base</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.rate">Rate</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="fixedAmount">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.fixedAmount">Fixed Amount</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="formula">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.formula">Formula</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="taxable">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.taxable">Taxable</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="cnssSalary">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.cnssSalary">Cnss Salary</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="cnssEmployer">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.cnssEmployer">Cnss Employer</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="sortOrder">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.sortOrder">Sort Order</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="active">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.rubrique.company">Company</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rubrique of rubriques(); track trackId(rubrique)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/rubrique', rubrique.id, 'view']">{{ rubrique.id }}</a>
+              </td>
+              <td>{{ rubrique.code }}</td>
+              <td>{{ rubrique.label }}</td>
+              <td>{{ rubrique.labelAr }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.RubriqueType.' + (rubrique.rubriqueType ?? 'null')">
+                {{
+                  { null: '', GAIN: 'GAIN', DEDUCTION: 'DEDUCTION', EMPLOYER_CHARGE: 'EMPLOYER_CHARGE', INFO: 'INFO' }[
+                    rubrique.rubriqueType ?? 'null'
+                  ]
+                }}
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.RubriqueBase.' + (rubrique.base ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    FIXED: 'FIXED',
+                    PERCENT_BRUT: 'PERCENT_BRUT',
+                    PERCENT_NET: 'PERCENT_NET',
+                    HOURS: 'HOURS',
+                    FORMULA: 'FORMULA',
+                  }[rubrique.base ?? 'null']
+                }}
+              </td>
+              <td>{{ rubrique.rate }}</td>
+              <td>{{ rubrique.fixedAmount }}</td>
+              <td>{{ rubrique.formula }}</td>
+              <td>{{ rubrique.taxable }}</td>
+              <td>{{ rubrique.cnssSalary }}</td>
+              <td>{{ rubrique.cnssEmployer }}</td>
+              <td>{{ rubrique.sortOrder }}</td>
+              <td>{{ rubrique.active }}</td>
+              <td>
+                @if (rubrique.company) {
+                  <div>
+                    <a [routerLink]="['/company', rubrique.company.id, 'view']">{{ rubrique.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/rubrique', rubrique.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/rubrique', rubrique.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(rubrique)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

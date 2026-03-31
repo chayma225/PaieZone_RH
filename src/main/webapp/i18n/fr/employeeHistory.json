@@ -1,0 +1,30 @@
+{
+  "paieZoneRhApp": {
+    "employeeHistory": {
+      "home": {
+        "title": "EmployeeHistories",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Employee History",
+        "createOrEditLabel": "Créer ou éditer un Employee History",
+        "notFound": "Aucun Employee History trouvé"
+      },
+      "created": "Un nouveau Employee History a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Employee History avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Employee History avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Employee History {{ id }} ?"
+      },
+      "detail": {
+        "title": "Employee History"
+      },
+      "id": "ID",
+      "fieldName": "Field Name",
+      "oldValue": "Old Value",
+      "newValue": "New Value",
+      "changedAt": "Changed At",
+      "changedBy": "Changed By",
+      "reason": "Reason",
+      "employee": "Employee"
+    }
+  }
+}

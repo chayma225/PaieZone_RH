@@ -1,0 +1,172 @@
+<div>
+  <h2 id="page-heading" data-cy="UserProfileHeading">
+    <span pzTranslate="paieZoneRhApp.userProfile.home.title">UserProfiles</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.userProfile.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-user-profile"
+        [routerLink]="['/user-profile/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.userProfile.home.createLabel">Créer un nouveau User Profile</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (userProfiles().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.userProfile.home.notFound">Aucun User Profile trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="jhiUserId">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.jhiUserId">Jhi User Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="role">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.role">Role</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="phoneNumber">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.phoneNumber">Phone Number</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="avatarUrl">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.avatarUrl">Avatar Url</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="locale">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.locale">Locale</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="lastLoginAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.lastLoginAt">Last Login At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="twoFactorEnabled">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.twoFactorEnabled">Two Factor Enabled</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="twoFactorSecret">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.twoFactorSecret">Two Factor Secret</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="active">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.userProfile.company">Company</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (userProfile of userProfiles(); track trackId(userProfile)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/user-profile', userProfile.id, 'view']">{{ userProfile.id }}</a>
+              </td>
+              <td>{{ userProfile.jhiUserId }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.AppRole.' + (userProfile.role ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    SUPER_ADMIN: 'SUPER_ADMIN',
+                    ADMIN: 'ADMIN',
+                    RH_COMPTABLE: 'RH_COMPTABLE',
+                    MANAGER: 'MANAGER',
+                    EMPLOYE: 'EMPLOYE',
+                  }[userProfile.role ?? 'null']
+                }}
+              </td>
+              <td>{{ userProfile.phoneNumber }}</td>
+              <td>{{ userProfile.avatarUrl }}</td>
+              <td>{{ userProfile.locale }}</td>
+              <td>{{ userProfile.lastLoginAt | formatMediumDatetime }}</td>
+              <td>{{ userProfile.twoFactorEnabled }}</td>
+              <td>{{ userProfile.twoFactorSecret }}</td>
+              <td>{{ userProfile.active }}</td>
+              <td>
+                @if (userProfile.company) {
+                  <div>
+                    <a [routerLink]="['/company', userProfile.company.id, 'view']">{{ userProfile.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/user-profile', userProfile.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/user-profile', userProfile.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(userProfile)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

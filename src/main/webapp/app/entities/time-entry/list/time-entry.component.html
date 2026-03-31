@@ -1,0 +1,219 @@
+<div>
+  <h2 id="page-heading" data-cy="TimeEntryHeading">
+    <span pzTranslate="paieZoneRhApp.timeEntry.home.title">TimeEntries</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.timeEntry.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-time-entry"
+        [routerLink]="['/time-entry/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.timeEntry.home.createLabel">Créer un nouveau Time Entry</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  <pz-filter [filters]="filters" />
+
+  @if (timeEntries().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.timeEntry.home.notFound">Aucun Time Entry trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="entryDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.entryDate">Entry Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="checkIn">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.checkIn">Check In</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="checkOut">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.checkOut">Check Out</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="workedHours">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.workedHours">Worked Hours</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="overtimeHours">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.overtimeHours">Overtime Hours</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="lateMinutes">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.lateMinutes">Late Minutes</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="source">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.source">Source</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="status">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="anomalyNote">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.anomalyNote">Anomaly Note</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="validatedBy">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.validatedBy">Validated By</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="validatedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.validatedAt">Validated At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employee.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="validatedByUser.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.timeEntry.validatedByUser">Validated By User</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (timeEntry of timeEntries(); track trackId(timeEntry)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/time-entry', timeEntry.id, 'view']">{{ timeEntry.id }}</a>
+              </td>
+              <td>{{ timeEntry.entryDate | formatMediumDate }}</td>
+              <td>{{ timeEntry.checkIn | formatMediumDatetime }}</td>
+              <td>{{ timeEntry.checkOut | formatMediumDatetime }}</td>
+              <td>{{ timeEntry.workedHours }}</td>
+              <td>{{ timeEntry.overtimeHours }}</td>
+              <td>{{ timeEntry.lateMinutes }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.TimeEntrySource.' + (timeEntry.source ?? 'null')">
+                {{ { null: '', MANUAL: 'MANUAL', BADGE: 'BADGE', IMPORT: 'IMPORT', CHATBOT: 'CHATBOT' }[timeEntry.source ?? 'null'] }}
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.TimeEntryStatus.' + (timeEntry.status ?? 'null')">
+                {{
+                  { null: '', PENDING: 'PENDING', VALIDATED: 'VALIDATED', ANOMALY: 'ANOMALY', CORRECTED: 'CORRECTED' }[
+                    timeEntry.status ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ timeEntry.anomalyNote }}</td>
+              <td>{{ timeEntry.validatedBy }}</td>
+              <td>{{ timeEntry.validatedAt | formatMediumDatetime }}</td>
+              <td>
+                @if (timeEntry.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', timeEntry.employee.id, 'view']">{{ timeEntry.employee.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (timeEntry.validatedByUser) {
+                  <div>
+                    <a [routerLink]="['/user-profile', timeEntry.validatedByUser.id, 'view']">{{ timeEntry.validatedByUser.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/time-entry', timeEntry.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/time-entry', timeEntry.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(timeEntry)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (timeEntries().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

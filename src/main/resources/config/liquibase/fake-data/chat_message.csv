@@ -1,0 +1,11 @@
+id;role;content;intent;action_taken;token_used;sent_at;error_occurred;session_id
+1;ASSISTANT;../fake-data/blob/hipster.txt;PAYSLIP_QUERY;smack marcher;13482;2026-03-31T17:59:15;true;1
+2;USER;../fake-data/blob/hipster.txt;ATTESTATION_REQUEST;aussitôt que juriste;1853;2026-03-31T08:17:50;true;2
+3;USER;../fake-data/blob/hipster.txt;PAYSLIP_QUERY;derrière trop;31850;2026-03-30T21:56:23;true;3
+4;SYSTEM;../fake-data/blob/hipster.txt;LEAVE_REQUEST;de du moment que dorénavant;12106;2026-03-30T19:29:59;false;4
+5;USER;../fake-data/blob/hipster.txt;SMALL_TALK;proche de ramener tchou tchouu;17174;2026-03-31T04:51:41;false;5
+6;ASSISTANT;../fake-data/blob/hipster.txt;LEAVE_BALANCE;envers d'après;13217;2026-03-31T09:00:21;false;6
+7;USER;../fake-data/blob/hipster.txt;LEAVE_REQUEST;sur malade;18586;2026-03-31T16:50:56;false;7
+8;SYSTEM;../fake-data/blob/hipster.txt;ATTESTATION_REQUEST;près;11765;2026-03-31T09:55:30;false;8
+9;SYSTEM;../fake-data/blob/hipster.txt;SMALL_TALK;membre du personnel;769;2026-03-31T08:48:26;false;9
+10;SYSTEM;../fake-data/blob/hipster.txt;PAYSLIP_QUERY;dring à peu près reconstituer;24043;2026-03-31T02:53:13;true;10

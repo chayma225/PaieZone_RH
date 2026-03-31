@@ -1,0 +1,223 @@
+<div>
+  <h2 id="page-heading" data-cy="AccountingEntryHeading">
+    <span pzTranslate="paieZoneRhApp.accountingEntry.home.title">AccountingEntries</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.accountingEntry.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-accounting-entry"
+        [routerLink]="['/accounting-entry/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span pzTranslate="paieZoneRhApp.accountingEntry.home.createLabel">Créer un nouveau Accounting Entry</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (accountingEntries().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.accountingEntry.home.notFound">Aucun Accounting Entry trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="entryDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.entryDate">Entry Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="journalRef">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.journalRef">Journal Ref</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="entryType">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.entryType">Entry Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="description">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="debitAccount">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.debitAccount">Debit Account</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="creditAccount">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.creditAccount">Credit Account</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="amount">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.amount">Amount</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="exportedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.exportedAt">Exported At</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="exportFormat">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.exportFormat">Export Format</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="exportRef">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.exportRef">Export Ref</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.company">Company</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" pzSortBy="payrollPeriod.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.accountingEntry.payrollPeriod">Payroll Period</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (accountingEntry of accountingEntries(); track trackId(accountingEntry)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/accounting-entry', accountingEntry.id, 'view']">{{ accountingEntry.id }}</a>
+              </td>
+              <td>{{ accountingEntry.entryDate | formatMediumDate }}</td>
+              <td>{{ accountingEntry.journalRef }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.AccountingEntryType.' + (accountingEntry.entryType ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    SALARY_EXPENSE: 'SALARY_EXPENSE',
+                    CNSS_EXPENSE: 'CNSS_EXPENSE',
+                    CNSS_PAYABLE: 'CNSS_PAYABLE',
+                    SALARY_PAYABLE: 'SALARY_PAYABLE',
+                    BANK_TRANSFER: 'BANK_TRANSFER',
+                    TAX_PAYABLE: 'TAX_PAYABLE',
+                  }[accountingEntry.entryType ?? 'null']
+                }}
+              </td>
+              <td>{{ accountingEntry.description }}</td>
+              <td>{{ accountingEntry.debitAccount }}</td>
+              <td>{{ accountingEntry.creditAccount }}</td>
+              <td>{{ accountingEntry.amount }}</td>
+              <td>{{ accountingEntry.exportedAt | formatMediumDatetime }}</td>
+              <td>{{ accountingEntry.exportFormat }}</td>
+              <td>{{ accountingEntry.exportRef }}</td>
+              <td>
+                @if (accountingEntry.company) {
+                  <div>
+                    <a [routerLink]="['/company', accountingEntry.company.id, 'view']">{{ accountingEntry.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (accountingEntry.payrollPeriod) {
+                  <div>
+                    <a [routerLink]="['/payroll-period', accountingEntry.payrollPeriod.id, 'view']">{{
+                      accountingEntry.payrollPeriod.id
+                    }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a
+                    [routerLink]="['/accounting-entry', accountingEntry.id, 'view']"
+                    class="btn btn-info btn-sm"
+                    data-cy="entityDetailsButton"
+                  >
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a
+                    [routerLink]="['/accounting-entry', accountingEntry.id, 'edit']"
+                    class="btn btn-primary btn-sm"
+                    data-cy="entityEditButton"
+                  >
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(accountingEntry)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (accountingEntries().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page, totalItems, itemsPerPage }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

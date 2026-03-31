@@ -1,0 +1,11 @@
+{
+  "paieZoneRhApp": {
+    "ChatSessionStatus": {
+      "null": "",
+      "ACTIVE": "ACTIVE",
+      "RESOLVED": "RESOLVED",
+      "ESCALATED": "ESCALATED",
+      "EXPIRED": "EXPIRED"
+    }
+  }
+}

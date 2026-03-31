@@ -1,0 +1,195 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="pz-regulatory-param-heading"
+        data-cy="RegulatoryParamCreateUpdateHeading"
+        pzTranslate="paieZoneRhApp.regulatoryParam.home.createOrEditLabel"
+      >
+        Créer ou éditer un Regulatory Param
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="paieZoneRhApp.regulatoryParam.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let paramKeyRef = editForm.get('paramKey')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_paramKey" pzTranslate="paieZoneRhApp.regulatoryParam.paramKey">Param Key</label>
+          <input type="text" class="form-control" name="paramKey" id="field_paramKey" data-cy="paramKey" formControlName="paramKey" />
+          @if (paramKeyRef.invalid && (paramKeyRef.dirty || paramKeyRef.touched)) {
+            <div>
+              @if (editForm.get('paramKey')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('paramKey')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire moins de 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let paramLabelRef = editForm.get('paramLabel')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_paramLabel" pzTranslate="paieZoneRhApp.regulatoryParam.paramLabel">Param Label</label>
+          <input
+            type="text"
+            class="form-control"
+            name="paramLabel"
+            id="field_paramLabel"
+            data-cy="paramLabel"
+            formControlName="paramLabel"
+          />
+          @if (paramLabelRef.invalid && (paramLabelRef.dirty || paramLabelRef.touched)) {
+            <div>
+              @if (editForm.get('paramLabel')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('paramLabel')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire moins de 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_numericValue" pzTranslate="paieZoneRhApp.regulatoryParam.numericValue">Numeric Value</label>
+          <input
+            type="number"
+            class="form-control"
+            name="numericValue"
+            id="field_numericValue"
+            data-cy="numericValue"
+            formControlName="numericValue"
+          />
+        </div>
+
+        @let textValueRef = editForm.get('textValue')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_textValue" pzTranslate="paieZoneRhApp.regulatoryParam.textValue">Text Value</label>
+          <input type="text" class="form-control" name="textValue" id="field_textValue" data-cy="textValue" formControlName="textValue" />
+          @if (textValueRef.invalid && (textValueRef.dirty || textValueRef.touched)) {
+            <div>
+              @if (editForm.get('textValue')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Ce champ doit faire moins de 500 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let effectiveFromRef = editForm.get('effectiveFrom')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_effectiveFrom" pzTranslate="paieZoneRhApp.regulatoryParam.effectiveFrom"
+            >Effective From</label
+          >
+          <div class="input-group">
+            <input
+              id="field_effectiveFrom"
+              data-cy="effectiveFrom"
+              type="text"
+              class="form-control"
+              name="effectiveFrom"
+              ngbDatepicker
+              #effectiveFromDp="ngbDatepicker"
+              formControlName="effectiveFrom"
+            />
+            <button type="button" class="btn btn-secondary" (click)="effectiveFromDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+          @if (effectiveFromRef.invalid && (effectiveFromRef.dirty || effectiveFromRef.touched)) {
+            <div>
+              @if (editForm.get('effectiveFrom')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_effectiveTo" pzTranslate="paieZoneRhApp.regulatoryParam.effectiveTo">Effective To</label>
+          <div class="input-group">
+            <input
+              id="field_effectiveTo"
+              data-cy="effectiveTo"
+              type="text"
+              class="form-control"
+              name="effectiveTo"
+              ngbDatepicker
+              #effectiveToDp="ngbDatepicker"
+              formControlName="effectiveTo"
+            />
+            <button type="button" class="btn btn-secondary" (click)="effectiveToDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        @let legalReferenceRef = editForm.get('legalReference')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_legalReference" pzTranslate="paieZoneRhApp.regulatoryParam.legalReference"
+            >Legal Reference</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="legalReference"
+            id="field_legalReference"
+            data-cy="legalReference"
+            formControlName="legalReference"
+          />
+          @if (legalReferenceRef.invalid && (legalReferenceRef.dirty || legalReferenceRef.touched)) {
+            <div>
+              @if (editForm.get('legalReference')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire moins de 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let activeRef = editForm.get('active')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.regulatoryParam.active">Active</label>
+          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
+          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
+            <div>
+              @if (editForm.get('active')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

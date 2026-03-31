@@ -1,0 +1,15 @@
+{
+  "paieZoneRhApp": {
+    "LeaveTypeName": {
+      "null": "",
+      "ANNUAL": "ANNUAL",
+      "SICK": "SICK",
+      "MATERNITY": "MATERNITY",
+      "PATERNITY": "PATERNITY",
+      "UNPAID": "UNPAID",
+      "MARRIAGE": "MARRIAGE",
+      "BEREAVEMENT": "BEREAVEMENT",
+      "EXCEPTIONAL": "EXCEPTIONAL"
+    }
+  }
+}

@@ -1,0 +1,78 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (auditLog(); as auditLogRef) {
+      <div>
+        <h2 data-cy="auditLogDetailsHeading"><span pzTranslate="paieZoneRhApp.auditLog.detail.title">Audit Log</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ auditLogRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.action">Action</span></dt>
+          <dd>
+            <span>{{ auditLogRef.action }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.entityType">Entity Type</span></dt>
+          <dd>
+            <span>{{ auditLogRef.entityType }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.entityId">Entity Id</span></dt>
+          <dd>
+            <span>{{ auditLogRef.entityId }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.oldValue">Old Value</span></dt>
+          <dd>
+            <span>{{ auditLogRef.oldValue }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.newValue">New Value</span></dt>
+          <dd>
+            <span>{{ auditLogRef.newValue }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.ipAddress">Ip Address</span></dt>
+          <dd>
+            <span>{{ auditLogRef.ipAddress }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.userAgent">User Agent</span></dt>
+          <dd>
+            <span>{{ auditLogRef.userAgent }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.occurredAt">Occurred At</span></dt>
+          <dd>
+            <span>{{ auditLogRef.occurredAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.user">User</span></dt>
+          <dd>
+            @if (auditLog()!.user) {
+              <div>
+                <a [routerLink]="['/user-profile', auditLog()!.user?.id, 'view']">{{ auditLogRef.user?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.auditLog.company">Company</span></dt>
+          <dd>
+            @if (auditLog()!.company) {
+              <div>
+                <a [routerLink]="['/company', auditLog()!.company?.id, 'view']">{{ auditLogRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/audit-log', auditLogRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

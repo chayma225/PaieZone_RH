@@ -1,0 +1,78 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (leaveType(); as leaveTypeRef) {
+      <div>
+        <h2 data-cy="leaveTypeDetailsHeading"><span pzTranslate="paieZoneRhApp.leaveType.detail.title">Leave Type</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ leaveTypeRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.name">Name</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.LeaveTypeName.' + (leaveTypeRef.name ?? 'null')">{{
+              {
+                null: '',
+                ANNUAL: 'ANNUAL',
+                SICK: 'SICK',
+                MATERNITY: 'MATERNITY',
+                PATERNITY: 'PATERNITY',
+                UNPAID: 'UNPAID',
+                MARRIAGE: 'MARRIAGE',
+                BEREAVEMENT: 'BEREAVEMENT',
+                EXCEPTIONAL: 'EXCEPTIONAL',
+              }[leaveTypeRef.name ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.label">Label</span></dt>
+          <dd>
+            <span>{{ leaveTypeRef.label }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.maxDaysPerYear">Max Days Per Year</span></dt>
+          <dd>
+            <span>{{ leaveTypeRef.maxDaysPerYear }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.carryOverDays">Carry Over Days</span></dt>
+          <dd>
+            <span>{{ leaveTypeRef.carryOverDays }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.paid">Paid</span></dt>
+          <dd>
+            <span>{{ leaveTypeRef.paid }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.requiresMedical">Requires Medical</span></dt>
+          <dd>
+            <span>{{ leaveTypeRef.requiresMedical }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.active">Active</span></dt>
+          <dd>
+            <span>{{ leaveTypeRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveType.company">Company</span></dt>
+          <dd>
+            @if (leaveType()!.company) {
+              <div>
+                <a [routerLink]="['/company', leaveType()!.company?.id, 'view']">{{ leaveTypeRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/leave-type', leaveTypeRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

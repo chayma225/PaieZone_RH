@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "auditLog": {
+      "home": {
+        "title": "Audit Logs",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Audit Log جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Audit Log",
+        "notFound": "لم يتم العثور على Audit Logs"
+      },
+      "created": "Audit Log جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Audit Log تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Audit Log تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Audit Log {{ id }}؟"
+      },
+      "detail": {
+        "title": "Audit Log"
+      },
+      "id": "ID",
+      "action": "Action",
+      "entityType": "Entity Type",
+      "entityId": "Entity Id",
+      "oldValue": "Old Value",
+      "newValue": "New Value",
+      "ipAddress": "Ip Address",
+      "userAgent": "User Agent",
+      "occurredAt": "Occurred At",
+      "user": "User",
+      "company": "Company"
+    }
+  }
+}

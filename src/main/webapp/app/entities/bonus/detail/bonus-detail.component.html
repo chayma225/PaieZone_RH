@@ -1,0 +1,86 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (bonus(); as bonusRef) {
+      <div>
+        <h2 data-cy="bonusDetailsHeading"><span pzTranslate="paieZoneRhApp.bonus.detail.title">Bonus</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ bonusRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.bonusType">Bonus Type</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.BonusType.' + (bonusRef.bonusType ?? 'null')">{{
+              {
+                null: '',
+                PERFORMANCE: 'PERFORMANCE',
+                TRANSPORT: 'TRANSPORT',
+                MEAL: 'MEAL',
+                RAMADAN: 'RAMADAN',
+                END_OF_YEAR: 'END_OF_YEAR',
+                SENIORITY: 'SENIORITY',
+                EXCEPTIONAL: 'EXCEPTIONAL',
+                OTHER: 'OTHER',
+              }[bonusRef.bonusType ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.label">Label</span></dt>
+          <dd>
+            <span>{{ bonusRef.label }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.amount">Amount</span></dt>
+          <dd>
+            <span>{{ bonusRef.amount }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.taxable">Taxable</span></dt>
+          <dd>
+            <span>{{ bonusRef.taxable }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.month">Month</span></dt>
+          <dd>
+            <span>{{ bonusRef.month }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.year">Year</span></dt>
+          <dd>
+            <span>{{ bonusRef.year }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.notes">Notes</span></dt>
+          <dd>
+            <span>{{ bonusRef.notes }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.employee">Employee</span></dt>
+          <dd>
+            @if (bonus()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', bonus()!.employee?.id, 'view']">{{ bonusRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.bonus.paySlip">Pay Slip</span></dt>
+          <dd>
+            @if (bonus()!.paySlip) {
+              <div>
+                <a [routerLink]="['/pay-slip', bonus()!.paySlip?.id, 'view']">{{ bonusRef.paySlip?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/bonus', bonusRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

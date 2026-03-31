@@ -1,0 +1,40 @@
+{
+  "paieZoneRhApp": {
+    "contract": {
+      "home": {
+        "title": "Contracts",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Contract جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Contract",
+        "notFound": "لم يتم العثور على Contracts"
+      },
+      "created": "Contract جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Contract تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Contract تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Contract {{ id }}؟"
+      },
+      "detail": {
+        "title": "Contract"
+      },
+      "id": "ID",
+      "reference": "Reference",
+      "contractType": "Contract Type",
+      "status": "Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "signedDate": "Signed Date",
+      "baseSalary": "Base Salary",
+      "workingHoursWeek": "Working Hours Week",
+      "workingDaysWeek": "Working Days Week",
+      "conventionCollective": "Convention Collective",
+      "trialPeriodMonths": "Trial Period Months",
+      "renewalCount": "Renewal Count",
+      "documentUrl": "Document Url",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "employee": "Employee",
+      "createdBy": "Created By"
+    }
+  }
+}

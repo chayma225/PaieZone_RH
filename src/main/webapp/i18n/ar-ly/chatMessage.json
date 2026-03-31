@@ -1,0 +1,31 @@
+{
+  "paieZoneRhApp": {
+    "chatMessage": {
+      "home": {
+        "title": "Chat Messages",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Chat Message جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Chat Message",
+        "notFound": "لم يتم العثور على Chat Messages"
+      },
+      "created": "Chat Message جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Chat Message تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Chat Message تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Chat Message {{ id }}؟"
+      },
+      "detail": {
+        "title": "Chat Message"
+      },
+      "id": "ID",
+      "role": "Role",
+      "content": "Content",
+      "intent": "Intent",
+      "actionTaken": "Action Taken",
+      "tokenUsed": "Token Used",
+      "sentAt": "Sent At",
+      "errorOccurred": "Error Occurred",
+      "session": "Session"
+    }
+  }
+}

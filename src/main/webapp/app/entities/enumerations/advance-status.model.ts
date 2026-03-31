@@ -1,0 +1,9 @@
+export enum AdvanceStatus {
+  REQUESTED = 'REQUESTED',
+
+  APPROVED = 'APPROVED',
+
+  REJECTED = 'REJECTED',
+
+  DEDUCTED = 'DEDUCTED',
+}

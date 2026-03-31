@@ -1,0 +1,56 @@
+{
+  "paieZoneRhApp": {
+    "employee": {
+      "home": {
+        "title": "Employees",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Employee جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Employee",
+        "notFound": "لم يتم العثور على Employees"
+      },
+      "created": "Employee جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Employee تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Employee تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Employee {{ id }}؟"
+      },
+      "detail": {
+        "title": "Employee"
+      },
+      "id": "ID",
+      "matricule": "Matricule",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "firstNameAr": "First Name Ar",
+      "lastNameAr": "Last Name Ar",
+      "birthDate": "Birth Date",
+      "birthPlace": "Birth Place",
+      "gender": "Gender",
+      "maritalStatus": "Marital Status",
+      "numberOfChildren": "Number Of Children",
+      "chefDeFamille": "Chef De Famille",
+      "nationalId": "National Id",
+      "passportNumber": "Passport Number",
+      "nationality": "Nationality",
+      "address": "Address",
+      "city": "City",
+      "personalEmail": "Personal Email",
+      "professionalEmail": "Professional Email",
+      "phoneNumber": "Phone Number",
+      "cnssNumber": "Cnss Number",
+      "category": "Category",
+      "photoUrl": "Photo Url",
+      "hireDate": "Hire Date",
+      "trialEndDate": "Trial End Date",
+      "active": "Active",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "company": "Company",
+      "department": "Department",
+      "position": "Position",
+      "manager": "Manager",
+      "userProfile": "User Profile"
+    }
+  }
+}

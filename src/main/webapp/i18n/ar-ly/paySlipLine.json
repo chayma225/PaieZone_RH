@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "paySlipLine": {
+      "home": {
+        "title": "Pay Slip Lines",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Pay Slip Line جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Pay Slip Line",
+        "notFound": "لم يتم العثور على Pay Slip Lines"
+      },
+      "created": "Pay Slip Line جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Pay Slip Line تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Pay Slip Line تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Pay Slip Line {{ id }}؟"
+      },
+      "detail": {
+        "title": "Pay Slip Line"
+      },
+      "id": "ID",
+      "sortOrder": "Sort Order",
+      "rubriqueCode": "Rubrique Code",
+      "rubriqueLabel": "Rubrique Label",
+      "rubriqueType": "Rubrique Type",
+      "base": "Base",
+      "rate": "Rate",
+      "amount": "Amount",
+      "taxable": "Taxable",
+      "paySlip": "Pay Slip",
+      "rubrique": "Rubrique"
+    }
+  }
+}

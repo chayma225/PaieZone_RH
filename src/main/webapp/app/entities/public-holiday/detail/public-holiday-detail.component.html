@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (publicHoliday(); as publicHolidayRef) {
+      <div>
+        <h2 data-cy="publicHolidayDetailsHeading"><span pzTranslate="paieZoneRhApp.publicHoliday.detail.title">Public Holiday</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ publicHolidayRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.publicHoliday.name">Name</span></dt>
+          <dd>
+            <span>{{ publicHolidayRef.name }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.publicHoliday.nameAr">Name Ar</span></dt>
+          <dd>
+            <span>{{ publicHolidayRef.nameAr }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.publicHoliday.holidayDate">Holiday Date</span></dt>
+          <dd>
+            <span>{{ publicHolidayRef.holidayDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.publicHoliday.year">Year</span></dt>
+          <dd>
+            <span>{{ publicHolidayRef.year }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.publicHoliday.isRecurring">Is Recurring</span></dt>
+          <dd>
+            <span>{{ publicHolidayRef.isRecurring }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.publicHoliday.active">Active</span></dt>
+          <dd>
+            <span>{{ publicHolidayRef.active }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/public-holiday', publicHolidayRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,35 @@
+{
+  "paieZoneRhApp": {
+    "accountingEntry": {
+      "home": {
+        "title": "AccountingEntries",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Accounting Entry",
+        "createOrEditLabel": "Créer ou éditer un Accounting Entry",
+        "notFound": "Aucun Accounting Entry trouvé"
+      },
+      "created": "Un nouveau Accounting Entry a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Accounting Entry avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Accounting Entry avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Accounting Entry {{ id }} ?"
+      },
+      "detail": {
+        "title": "Accounting Entry"
+      },
+      "id": "ID",
+      "entryDate": "Entry Date",
+      "journalRef": "Journal Ref",
+      "entryType": "Entry Type",
+      "description": "Description",
+      "debitAccount": "Debit Account",
+      "creditAccount": "Credit Account",
+      "amount": "Amount",
+      "exportedAt": "Exported At",
+      "exportFormat": "Export Format",
+      "exportRef": "Export Ref",
+      "company": "Company",
+      "payrollPeriod": "Payroll Period"
+    }
+  }
+}

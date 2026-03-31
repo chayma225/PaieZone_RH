@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (cnssRate(); as cnssRateRef) {
+      <div>
+        <h2 data-cy="cnssRateDetailsHeading"><span pzTranslate="paieZoneRhApp.cnssRate.detail.title">Cnss Rate</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.year">Year</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.year }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.salaryCeiling">Salary Ceiling</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.salaryCeiling }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.employeeRate">Employee Rate</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.employeeRate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.employerRate">Employer Rate</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.employerRate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.cavisEmployee">Cavis Employee</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.cavisEmployee }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.cavisEmployer">Cavis Employer</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.cavisEmployer }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.smig">Smig</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.smig }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.effectiveFrom">Effective From</span></dt>
+          <dd>
+            <span>{{ cnssRateRef.effectiveFrom | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.cnssRate.company">Company</span></dt>
+          <dd>
+            @if (cnssRate()!.company) {
+              <div>
+                <a [routerLink]="['/company', cnssRate()!.company?.id, 'view']">{{ cnssRateRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/cnss-rate', cnssRateRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

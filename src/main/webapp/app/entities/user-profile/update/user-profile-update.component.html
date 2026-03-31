@@ -1,0 +1,220 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="pz-user-profile-heading"
+        data-cy="UserProfileCreateUpdateHeading"
+        pzTranslate="paieZoneRhApp.userProfile.home.createOrEditLabel"
+      >
+        Créer ou éditer un User Profile
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="paieZoneRhApp.userProfile.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let jhiUserIdRef = editForm.get('jhiUserId')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_jhiUserId" pzTranslate="paieZoneRhApp.userProfile.jhiUserId">Jhi User Id</label>
+          <input type="text" class="form-control" name="jhiUserId" id="field_jhiUserId" data-cy="jhiUserId" formControlName="jhiUserId" />
+          @if (jhiUserIdRef.invalid && (jhiUserIdRef.dirty || jhiUserIdRef.touched)) {
+            <div>
+              @if (editForm.get('jhiUserId')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('jhiUserId')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
+                  >Ce champ doit faire moins de 50 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let roleRef = editForm.get('role')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_role" pzTranslate="paieZoneRhApp.userProfile.role">Role</label>
+          <select class="form-control" name="role" formControlName="role" id="field_role" data-cy="role">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.AppRole.null' | translate }}</option>
+            @for (appRole of appRoleValues; track $index) {
+              <option [value]="appRole">{{ 'paieZoneRhApp.AppRole.' + appRole | translate }}</option>
+            }
+          </select>
+          @if (roleRef.invalid && (roleRef.dirty || roleRef.touched)) {
+            <div>
+              @if (editForm.get('role')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let phoneNumberRef = editForm.get('phoneNumber')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_phoneNumber" pzTranslate="paieZoneRhApp.userProfile.phoneNumber">Phone Number</label>
+          <input
+            type="text"
+            class="form-control"
+            name="phoneNumber"
+            id="field_phoneNumber"
+            data-cy="phoneNumber"
+            formControlName="phoneNumber"
+          />
+          @if (phoneNumberRef.invalid && (phoneNumberRef.dirty || phoneNumberRef.touched)) {
+            <div>
+              @if (editForm.get('phoneNumber')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >Ce champ doit faire moins de 20 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let avatarUrlRef = editForm.get('avatarUrl')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_avatarUrl" pzTranslate="paieZoneRhApp.userProfile.avatarUrl">Avatar Url</label>
+          <input type="text" class="form-control" name="avatarUrl" id="field_avatarUrl" data-cy="avatarUrl" formControlName="avatarUrl" />
+          @if (avatarUrlRef.invalid && (avatarUrlRef.dirty || avatarUrlRef.touched)) {
+            <div>
+              @if (editForm.get('avatarUrl')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Ce champ doit faire moins de 500 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let localeRef = editForm.get('locale')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_locale" pzTranslate="paieZoneRhApp.userProfile.locale">Locale</label>
+          <input type="text" class="form-control" name="locale" id="field_locale" data-cy="locale" formControlName="locale" />
+          @if (localeRef.invalid && (localeRef.dirty || localeRef.touched)) {
+            <div>
+              @if (editForm.get('locale')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '10' }"
+                  >Ce champ doit faire moins de 10 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_lastLoginAt" pzTranslate="paieZoneRhApp.userProfile.lastLoginAt">Last Login At</label>
+          <div class="d-flex">
+            <input
+              id="field_lastLoginAt"
+              data-cy="lastLoginAt"
+              type="datetime-local"
+              class="form-control"
+              name="lastLoginAt"
+              formControlName="lastLoginAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_twoFactorEnabled" pzTranslate="paieZoneRhApp.userProfile.twoFactorEnabled"
+            >Two Factor Enabled</label
+          >
+          <input
+            type="checkbox"
+            class="form-check"
+            name="twoFactorEnabled"
+            id="field_twoFactorEnabled"
+            data-cy="twoFactorEnabled"
+            formControlName="twoFactorEnabled"
+          />
+        </div>
+
+        @let twoFactorSecretRef = editForm.get('twoFactorSecret')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_twoFactorSecret" pzTranslate="paieZoneRhApp.userProfile.twoFactorSecret"
+            >Two Factor Secret</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="twoFactorSecret"
+            id="field_twoFactorSecret"
+            data-cy="twoFactorSecret"
+            formControlName="twoFactorSecret"
+          />
+          @if (twoFactorSecretRef.invalid && (twoFactorSecretRef.dirty || twoFactorSecretRef.touched)) {
+            <div>
+              @if (editForm.get('twoFactorSecret')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire moins de 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let activeRef = editForm.get('active')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.userProfile.active">Active</label>
+          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
+          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
+            <div>
+              @if (editForm.get('active')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.userProfile.company">Company</label>
+          <select
+            class="form-control"
+            id="field_company"
+            data-cy="company"
+            name="company"
+            formControlName="company"
+            [compareWith]="compareCompany"
+          >
+            @if (!editForm.get('company')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (companyOption of companiesSharedCollection; track $index) {
+              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
+          <div>
+            @if (editForm.get(['company'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

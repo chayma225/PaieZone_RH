@@ -1,0 +1,264 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="pz-official-document-heading"
+        data-cy="OfficialDocumentCreateUpdateHeading"
+        pzTranslate="paieZoneRhApp.officialDocument.home.createOrEditLabel"
+      >
+        Créer ou éditer un Official Document
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="paieZoneRhApp.officialDocument.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let docTypeRef = editForm.get('docType')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_docType" pzTranslate="paieZoneRhApp.officialDocument.docType">Doc Type</label>
+          <select class="form-control" name="docType" formControlName="docType" id="field_docType" data-cy="docType">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.OfficialDocType.null' | translate }}</option>
+            @for (officialDocType of officialDocTypeValues; track $index) {
+              <option [value]="officialDocType">{{ 'paieZoneRhApp.OfficialDocType.' + officialDocType | translate }}</option>
+            }
+          </select>
+          @if (docTypeRef.invalid && (docTypeRef.dirty || docTypeRef.touched)) {
+            <div>
+              @if (editForm.get('docType')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let titleRef = editForm.get('title')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_title" pzTranslate="paieZoneRhApp.officialDocument.title">Title</label>
+          <input type="text" class="form-control" name="title" id="field_title" data-cy="title" formControlName="title" />
+          @if (titleRef.invalid && (titleRef.dirty || titleRef.touched)) {
+            <div>
+              @if (editForm.get('title')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('title')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire moins de 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let monthRef = editForm.get('month')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_month" pzTranslate="paieZoneRhApp.officialDocument.month">Month</label>
+          <input type="number" class="form-control" name="month" id="field_month" data-cy="month" formControlName="month" />
+          @if (monthRef.invalid && (monthRef.dirty || monthRef.touched)) {
+            <div>
+              @if (editForm.get('month')?.errors?.min) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
+                  >Ce champ doit être supérieur à 1.</small
+                >
+              }
+              @if (editForm.get('month')?.errors?.max) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.max" [translateValues]="{ max: '12' }"
+                  >Ce champ doit être inférieur à 12.</small
+                >
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('month')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let yearRef = editForm.get('year')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_year" pzTranslate="paieZoneRhApp.officialDocument.year">Year</label>
+          <input type="number" class="form-control" name="year" id="field_year" data-cy="year" formControlName="year" />
+          @if (yearRef.invalid && (yearRef.dirty || yearRef.touched)) {
+            <div>
+              @if (editForm.get('year')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('year')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let generatedAtRef = editForm.get('generatedAt')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_generatedAt" pzTranslate="paieZoneRhApp.officialDocument.generatedAt">Generated At</label>
+          <div class="d-flex">
+            <input
+              id="field_generatedAt"
+              data-cy="generatedAt"
+              type="datetime-local"
+              class="form-control"
+              name="generatedAt"
+              formControlName="generatedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (generatedAtRef.invalid && (generatedAtRef.dirty || generatedAtRef.touched)) {
+            <div>
+              @if (editForm.get('generatedAt')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('generatedAt')?.errors?.datetimelocal"
+                pzTranslate="entity.validation.datetimelocal"
+                >Ce champ doit être une date et une heure.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let fileUrlRef = editForm.get('fileUrl')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_fileUrl" pzTranslate="paieZoneRhApp.officialDocument.fileUrl">File Url</label>
+          <input type="text" class="form-control" name="fileUrl" id="field_fileUrl" data-cy="fileUrl" formControlName="fileUrl" />
+          @if (fileUrlRef.invalid && (fileUrlRef.dirty || fileUrlRef.touched)) {
+            <div>
+              @if (editForm.get('fileUrl')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Ce champ doit faire moins de 500 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let signedByRef = editForm.get('signedBy')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_signedBy" pzTranslate="paieZoneRhApp.officialDocument.signedBy">Signed By</label>
+          <input type="text" class="form-control" name="signedBy" id="field_signedBy" data-cy="signedBy" formControlName="signedBy" />
+          @if (signedByRef.invalid && (signedByRef.dirty || signedByRef.touched)) {
+            <div>
+              @if (editForm.get('signedBy')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire moins de 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_sentAt" pzTranslate="paieZoneRhApp.officialDocument.sentAt">Sent At</label>
+          <div class="d-flex">
+            <input
+              id="field_sentAt"
+              data-cy="sentAt"
+              type="datetime-local"
+              class="form-control"
+              name="sentAt"
+              formControlName="sentAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        @let notesRef = editForm.get('notes')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_notes" pzTranslate="paieZoneRhApp.officialDocument.notes">Notes</label>
+          <input type="text" class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes" />
+          @if (notesRef.invalid && (notesRef.dirty || notesRef.touched)) {
+            <div>
+              @if (editForm.get('notes')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Ce champ doit faire moins de 500 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.officialDocument.company">Company</label>
+          <select
+            class="form-control"
+            id="field_company"
+            data-cy="company"
+            name="company"
+            formControlName="company"
+            [compareWith]="compareCompany"
+          >
+            @if (!editForm.get('company')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (companyOption of companiesSharedCollection; track $index) {
+              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
+          <div>
+            @if (editForm.get(['company'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_employee" pzTranslate="paieZoneRhApp.officialDocument.employee">Employee</label>
+          <select
+            class="form-control"
+            id="field_employee"
+            data-cy="employee"
+            name="employee"
+            formControlName="employee"
+            [compareWith]="compareEmployee"
+          >
+            <option [ngValue]="null"></option>
+            @for (employeeOption of employeesSharedCollection; track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_generatedBy" pzTranslate="paieZoneRhApp.officialDocument.generatedBy">Generated By</label>
+          <select
+            class="form-control"
+            id="field_generatedBy"
+            data-cy="generatedBy"
+            name="generatedBy"
+            formControlName="generatedBy"
+            [compareWith]="compareUserProfile"
+          >
+            <option [ngValue]="null"></option>
+            @for (userProfileOption of userProfilesSharedCollection; track $index) {
+              <option [ngValue]="userProfileOption">{{ userProfileOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
