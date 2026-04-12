@@ -1,0 +1,31 @@
+{
+  "paieZoneRhApp": {
+    "regulatoryParam": {
+      "home": {
+        "title": "Regulatory Params",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Regulatory Param جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Regulatory Param",
+        "notFound": "لم يتم العثور على Regulatory Params"
+      },
+      "created": "Regulatory Param جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Regulatory Param تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Regulatory Param تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Regulatory Param {{ id }}؟"
+      },
+      "detail": {
+        "title": "Regulatory Param"
+      },
+      "id": "ID",
+      "paramKey": "Param Key",
+      "paramLabel": "Param Label",
+      "numericValue": "Numeric Value",
+      "textValue": "Text Value",
+      "effectiveFrom": "Effective From",
+      "effectiveTo": "Effective To",
+      "legalReference": "Legal Reference",
+      "active": "Active"
+    }
+  }
+}

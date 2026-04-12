@@ -1,0 +1,11 @@
+{
+  "paieZoneRhApp": {
+    "TimeEntryStatus": {
+      "null": "",
+      "PENDING": "PENDING",
+      "VALIDATED": "VALIDATED",
+      "ANOMALY": "ANOMALY",
+      "CORRECTED": "CORRECTED"
+    }
+  }
+}

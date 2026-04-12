@@ -1,0 +1,10 @@
+{
+  "paieZoneRhApp": {
+    "ChatChannel": {
+      "null": "",
+      "WEB": "WEB",
+      "WHATSAPP": "WHATSAPP",
+      "MOBILE": "MOBILE"
+    }
+  }
+}

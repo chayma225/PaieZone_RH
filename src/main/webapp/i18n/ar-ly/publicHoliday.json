@@ -1,0 +1,29 @@
+{
+  "paieZoneRhApp": {
+    "publicHoliday": {
+      "home": {
+        "title": "Public Holidays",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Public Holiday جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Public Holiday",
+        "notFound": "لم يتم العثور على Public Holidays"
+      },
+      "created": "Public Holiday جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Public Holiday تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Public Holiday تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Public Holiday {{ id }}؟"
+      },
+      "detail": {
+        "title": "Public Holiday"
+      },
+      "id": "ID",
+      "name": "Name",
+      "nameAr": "Name Ar",
+      "holidayDate": "Holiday Date",
+      "year": "Year",
+      "isRecurring": "Is Recurring",
+      "active": "Active"
+    }
+  }
+}

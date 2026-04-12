@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (department(); as departmentRef) {
+      <div>
+        <h2 data-cy="departmentDetailsHeading"><span pzTranslate="paieZoneRhApp.department.detail.title">Department</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ departmentRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.department.code">Code</span></dt>
+          <dd>
+            <span>{{ departmentRef.code }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.department.name">Name</span></dt>
+          <dd>
+            <span>{{ departmentRef.name }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.department.description">Description</span></dt>
+          <dd>
+            <span>{{ departmentRef.description }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.department.active">Active</span></dt>
+          <dd>
+            <span>{{ departmentRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.department.company">Company</span></dt>
+          <dd>
+            @if (department()!.company) {
+              <div>
+                <a [routerLink]="['/company', department()!.company?.id, 'view']">{{ departmentRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.department.manager">Manager</span></dt>
+          <dd>
+            @if (department()!.manager) {
+              <div>
+                <a [routerLink]="['/employee', department()!.manager?.id, 'view']">{{ departmentRef.manager?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/department', departmentRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

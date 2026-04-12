@@ -1,0 +1,134 @@
+<div>
+  <h2 id="page-heading" data-cy="DepartmentHeading">
+    <span pzTranslate="paieZoneRhApp.department.home.title">Departments</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.department.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-department"
+        [routerLink]="['/department/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.department.home.createLabel">Créer un nouveau Department</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (departments().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.department.home.notFound">Aucun Department trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="code">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.department.code">Code</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="name">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.department.name">Name</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="description">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.department.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="active">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.department.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.department.company">Company</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="manager.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.department.manager">Manager</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (department of departments(); track trackId(department)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/department', department.id, 'view']">{{ department.id }}</a>
+              </td>
+              <td>{{ department.code }}</td>
+              <td>{{ department.name }}</td>
+              <td>{{ department.description }}</td>
+              <td>{{ department.active }}</td>
+              <td>
+                @if (department.company) {
+                  <div>
+                    <a [routerLink]="['/company', department.company.id, 'view']">{{ department.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (department.manager) {
+                  <div>
+                    <a [routerLink]="['/employee', department.manager.id, 'view']">{{ department.manager.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/department', department.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/department', department.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(department)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

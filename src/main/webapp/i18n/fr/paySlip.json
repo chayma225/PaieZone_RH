@@ -1,0 +1,49 @@
+{
+  "paieZoneRhApp": {
+    "paySlip": {
+      "home": {
+        "title": "PaySlips",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Pay Slip",
+        "createOrEditLabel": "Créer ou éditer un Pay Slip",
+        "notFound": "Aucun Pay Slip trouvé"
+      },
+      "created": "Un nouveau Pay Slip a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Pay Slip avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Pay Slip avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Pay Slip {{ id }} ?"
+      },
+      "detail": {
+        "title": "Pay Slip"
+      },
+      "id": "ID",
+      "month": "Month",
+      "year": "Year",
+      "baseSalary": "Base Salary",
+      "totalGains": "Total Gains",
+      "totalDeductions": "Total Deductions",
+      "grossSalary": "Gross Salary",
+      "cnssSalaryAmount": "Cnss Salary Amount",
+      "cavisAmount": "Cavis Amount",
+      "taxableIncome": "Taxable Income",
+      "irppAmount": "Irpp Amount",
+      "netSalary": "Net Salary",
+      "employerCnss": "Employer Cnss",
+      "employerCavis": "Employer Cavis",
+      "totalEmployerCost": "Total Employer Cost",
+      "workedDays": "Worked Days",
+      "paidLeaveDays": "Paid Leave Days",
+      "unpaidDays": "Unpaid Days",
+      "overtimeHours": "Overtime Hours",
+      "status": "Status",
+      "pdfUrl": "Pdf Url",
+      "generatedAt": "Generated At",
+      "sentToEmployeeAt": "Sent To Employee At",
+      "bankTransferRef": "Bank Transfer Ref",
+      "employee": "Employee",
+      "payrollPeriod": "Payroll Period",
+      "contract": "Contract"
+    }
+  }
+}

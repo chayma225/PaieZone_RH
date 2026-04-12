@@ -1,0 +1,205 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="pz-leave-type-heading" data-cy="LeaveTypeCreateUpdateHeading" pzTranslate="paieZoneRhApp.leaveType.home.createOrEditLabel">
+        Créer ou éditer un Leave Type
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let nameRef = editForm.get('name')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_name" pzTranslate="paieZoneRhApp.leaveType.name">Name</label>
+          <select class="form-control" name="name" formControlName="name" id="field_name" data-cy="name">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.LeaveTypeName.null' | translate }}</option>
+            @for (leaveTypeName of leaveTypeNameValues; track $index) {
+              <option [value]="leaveTypeName">{{ 'paieZoneRhApp.LeaveTypeName.' + leaveTypeName | translate }}</option>
+            }
+          </select>
+          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
+            <div>
+              @if (editForm.get('name')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let labelRef = editForm.get('label')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_label" pzTranslate="paieZoneRhApp.leaveType.label">Label</label>
+          <input type="text" class="form-control" name="label" id="field_label" data-cy="label" formControlName="label" />
+          @if (labelRef.invalid && (labelRef.dirty || labelRef.touched)) {
+            <div>
+              @if (editForm.get('label')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('label')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire au maximum 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let maxDaysPerYearRef = editForm.get('maxDaysPerYear')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_maxDaysPerYear" pzTranslate="paieZoneRhApp.leaveType.maxDaysPerYear"
+            >Max Days Per Year</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="maxDaysPerYear"
+            id="field_maxDaysPerYear"
+            data-cy="maxDaysPerYear"
+            formControlName="maxDaysPerYear"
+          />
+          @if (maxDaysPerYearRef.invalid && (maxDaysPerYearRef.dirty || maxDaysPerYearRef.touched)) {
+            <div>
+              @if (editForm.get('maxDaysPerYear')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('maxDaysPerYear')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let carryOverDaysRef = editForm.get('carryOverDays')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_carryOverDays" pzTranslate="paieZoneRhApp.leaveType.carryOverDays">Carry Over Days</label>
+          <input
+            type="number"
+            class="form-control"
+            name="carryOverDays"
+            id="field_carryOverDays"
+            data-cy="carryOverDays"
+            formControlName="carryOverDays"
+          />
+          @if (carryOverDaysRef.invalid && (carryOverDaysRef.dirty || carryOverDaysRef.touched)) {
+            <div>
+              @if (editForm.get('carryOverDays')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('carryOverDays')?.errors?.min) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
+                  >Ce champ doit être supérieur à 0.</small
+                >
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('carryOverDays')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let paidRef = editForm.get('paid')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_paid" pzTranslate="paieZoneRhApp.leaveType.paid">Paid</label>
+          <input type="checkbox" class="form-check" name="paid" id="field_paid" data-cy="paid" formControlName="paid" />
+          @if (paidRef.invalid && (paidRef.dirty || paidRef.touched)) {
+            <div>
+              @if (editForm.get('paid')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let requiresMedicalRef = editForm.get('requiresMedical')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_requiresMedical" pzTranslate="paieZoneRhApp.leaveType.requiresMedical"
+            >Requires Medical</label
+          >
+          <input
+            type="checkbox"
+            class="form-check"
+            name="requiresMedical"
+            id="field_requiresMedical"
+            data-cy="requiresMedical"
+            formControlName="requiresMedical"
+          />
+          @if (requiresMedicalRef.invalid && (requiresMedicalRef.dirty || requiresMedicalRef.touched)) {
+            <div>
+              @if (editForm.get('requiresMedical')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let activeRef = editForm.get('active')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.leaveType.active">Active</label>
+          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
+          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
+            <div>
+              @if (editForm.get('active')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.leaveType.company">Company</label>
+          <select
+            class="form-control"
+            id="field_company"
+            data-cy="company"
+            name="company"
+            formControlName="company"
+            [compareWith]="compareCompany"
+          >
+            @if (!editForm.get('company')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (companyOption of companiesSharedCollection(); track $index) {
+              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
+          <div>
+            @if (editForm.get(['company'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving()"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

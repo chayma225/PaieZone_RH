@@ -1,0 +1,201 @@
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+
+import { IChatSession } from '../chat-session.model';
+import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../chat-session.test-samples';
+
+import { ChatSessionService, RestChatSession } from './chat-session.service';
+
+const requireRestSample: RestChatSession = {
+  ...sampleWithRequiredData,
+  startedAt: sampleWithRequiredData.startedAt?.toJSON(),
+  endedAt: sampleWithRequiredData.endedAt?.toJSON(),
+  escalatedAt: sampleWithRequiredData.escalatedAt?.toJSON(),
+};
+
+describe('ChatSession Service', () => {
+  let service: ChatSessionService;
+  let httpMock: HttpTestingController;
+  let expectedResult: IChatSession | IChatSession[] | boolean | null;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClientTesting()],
+    });
+    expectedResult = null;
+    service = TestBed.inject(ChatSessionService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  describe('Service methods', () => {
+    it('should find an element', () => {
+      const returnedFromService = { ...requireRestSample };
+      const expected = { ...sampleWithRequiredData };
+
+      service.find(123).subscribe(resp => (expectedResult = resp));
+
+      const req = httpMock.expectOne({ method: 'GET' });
+      req.flush(returnedFromService);
+      expect(expectedResult).toMatchObject(expected);
+    });
+
+    it('should create a ChatSession', () => {
+      const chatSession = { ...sampleWithNewData };
+      const returnedFromService = { ...requireRestSample };
+      const expected = { ...sampleWithRequiredData };
+
+      service.create(chatSession).subscribe(resp => (expectedResult = resp));
+
+      const req = httpMock.expectOne({ method: 'POST' });
+      req.flush(returnedFromService);
+      expect(expectedResult).toMatchObject(expected);
+    });
+
+    it('should update a ChatSession', () => {
+      const chatSession = { ...sampleWithRequiredData };
+      const returnedFromService = { ...requireRestSample };
+      const expected = { ...sampleWithRequiredData };
+
+      service.update(chatSession).subscribe(resp => (expectedResult = resp));
+
+      const req = httpMock.expectOne({ method: 'PUT' });
+      req.flush(returnedFromService);
+      expect(expectedResult).toMatchObject(expected);
+    });
+
+    it('should partial update a ChatSession', () => {
+      const patchObject = { ...sampleWithPartialData };
+      const returnedFromService = { ...requireRestSample };
+      const expected = { ...sampleWithRequiredData };
+
+      service.partialUpdate(patchObject).subscribe(resp => (expectedResult = resp));
+
+      const req = httpMock.expectOne({ method: 'PATCH' });
+      req.flush(returnedFromService);
+      expect(expectedResult).toMatchObject(expected);
+    });
+
+    it('should return a list of ChatSession', () => {
+      const returnedFromService = { ...requireRestSample };
+
+      const expected = { ...sampleWithRequiredData };
+
+      service.query().subscribe(resp => (expectedResult = resp.body));
+
+      const req = httpMock.expectOne({ method: 'GET' });
+      req.flush([returnedFromService]);
+      httpMock.verify();
+      expect(expectedResult).toMatchObject([expected]);
+    });
+
+    it('should delete a ChatSession', () => {
+      service.delete(123).subscribe();
+
+      const requests = httpMock.match({ method: 'DELETE' });
+      expect(requests.length).toBe(1);
+    });
+
+    describe('addChatSessionToCollectionIfMissing', () => {
+      it('should add a ChatSession to an empty array', () => {
+        const chatSession: IChatSession = sampleWithRequiredData;
+        expectedResult = service.addChatSessionToCollectionIfMissing([], chatSession);
+        expect(expectedResult).toEqual([chatSession]);
+      });
+
+      it('should not add a ChatSession to an array that contains it', () => {
+        const chatSession: IChatSession = sampleWithRequiredData;
+        const chatSessionCollection: IChatSession[] = [
+          {
+            ...chatSession,
+          },
+          sampleWithPartialData,
+        ];
+        expectedResult = service.addChatSessionToCollectionIfMissing(chatSessionCollection, chatSession);
+        expect(expectedResult).toHaveLength(2);
+      });
+
+      it("should add a ChatSession to an array that doesn't contain it", () => {
+        const chatSession: IChatSession = sampleWithRequiredData;
+        const chatSessionCollection: IChatSession[] = [sampleWithPartialData];
+        expectedResult = service.addChatSessionToCollectionIfMissing(chatSessionCollection, chatSession);
+        expect(expectedResult).toHaveLength(2);
+        expect(expectedResult).toContain(chatSession);
+      });
+
+      it('should add only unique ChatSession to an array', () => {
+        const chatSessionArray: IChatSession[] = [sampleWithRequiredData, sampleWithPartialData, sampleWithFullData];
+        const chatSessionCollection: IChatSession[] = [sampleWithRequiredData];
+        expectedResult = service.addChatSessionToCollectionIfMissing(chatSessionCollection, ...chatSessionArray);
+        expect(expectedResult).toHaveLength(3);
+      });
+
+      it('should accept varargs', () => {
+        const chatSession: IChatSession = sampleWithRequiredData;
+        const chatSession2: IChatSession = sampleWithPartialData;
+        expectedResult = service.addChatSessionToCollectionIfMissing([], chatSession, chatSession2);
+        expect(expectedResult).toEqual([chatSession, chatSession2]);
+      });
+
+      it('should accept null and undefined values', () => {
+        const chatSession: IChatSession = sampleWithRequiredData;
+        expectedResult = service.addChatSessionToCollectionIfMissing([], null, chatSession, undefined);
+        expect(expectedResult).toEqual([chatSession]);
+      });
+
+      it('should return initial array if no ChatSession is added', () => {
+        const chatSessionCollection: IChatSession[] = [sampleWithRequiredData];
+        expectedResult = service.addChatSessionToCollectionIfMissing(chatSessionCollection, undefined, null);
+        expect(expectedResult).toEqual(chatSessionCollection);
+      });
+    });
+
+    describe('compareChatSession', () => {
+      it('should return true if both entities are null', () => {
+        const entity1 = null;
+        const entity2 = null;
+
+        const compareResult = service.compareChatSession(entity1, entity2);
+
+        expect(compareResult).toEqual(true);
+      });
+
+      it('should return false if one entity is null', () => {
+        const entity1 = { id: 29816 };
+        const entity2 = null;
+
+        const compareResult1 = service.compareChatSession(entity1, entity2);
+        const compareResult2 = service.compareChatSession(entity2, entity1);
+
+        expect(compareResult1).toEqual(false);
+        expect(compareResult2).toEqual(false);
+      });
+
+      it('should return false if primaryKey differs', () => {
+        const entity1 = { id: 29816 };
+        const entity2 = { id: 10840 };
+
+        const compareResult1 = service.compareChatSession(entity1, entity2);
+        const compareResult2 = service.compareChatSession(entity2, entity1);
+
+        expect(compareResult1).toEqual(false);
+        expect(compareResult2).toEqual(false);
+      });
+
+      it('should return false if primaryKey matches', () => {
+        const entity1 = { id: 29816 };
+        const entity2 = { id: 29816 };
+
+        const compareResult1 = service.compareChatSession(entity1, entity2);
+        const compareResult2 = service.compareChatSession(entity2, entity1);
+
+        expect(compareResult1).toEqual(true);
+        expect(compareResult2).toEqual(true);
+      });
+    });
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+  });
+});

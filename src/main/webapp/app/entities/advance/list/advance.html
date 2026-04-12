@@ -1,0 +1,198 @@
+<div>
+  <h2 id="page-heading" data-cy="AdvanceHeading">
+    <span pzTranslate="paieZoneRhApp.advance.home.title">Advances</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.advance.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-advance"
+        [routerLink]="['/advance/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.advance.home.createLabel">Créer un nouveau Advance</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  <pz-filter [filters]="filters" />
+
+  @if (advances().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.advance.home.notFound">Aucun Advance trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="requestDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.requestDate">Request Date</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="amount">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.amount">Amount</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="deductionMonth">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.deductionMonth">Deduction Month</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="deductionYear">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.deductionYear">Deduction Year</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="status">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="approvedBy">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.approvedBy">Approved By</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="notes">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.notes">Notes</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employee.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="paySlip.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.paySlip">Pay Slip</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="approvedByUser.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.advance.approvedByUser">Approved By User</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (advance of advances(); track trackId(advance)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/advance', advance.id, 'view']">{{ advance.id }}</a>
+              </td>
+              <td>{{ advance.requestDate | formatMediumDate }}</td>
+              <td>{{ advance.amount }}</td>
+              <td>{{ advance.deductionMonth }}</td>
+              <td>{{ advance.deductionYear }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.AdvanceStatus.' + (advance.status ?? 'null')">
+                {{
+                  { null: '', REQUESTED: 'REQUESTED', APPROVED: 'APPROVED', REJECTED: 'REJECTED', DEDUCTED: 'DEDUCTED' }[
+                    advance.status ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ advance.approvedBy }}</td>
+              <td>{{ advance.notes }}</td>
+              <td>
+                @if (advance.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', advance.employee.id, 'view']">{{ advance.employee.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (advance.paySlip) {
+                  <div>
+                    <a [routerLink]="['/pay-slip', advance.paySlip.id, 'view']">{{ advance.paySlip.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (advance.approvedByUser) {
+                  <div>
+                    <a [routerLink]="['/user-profile', advance.approvedByUser.id, 'view']">{{ advance.approvedByUser.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/advance', advance.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/advance', advance.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(advance)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (advances().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page: page(), totalItems: totalItems(), itemsPerPage: itemsPerPage() }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems()"
+          [page]="page()"
+          [pageSize]="itemsPerPage()"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        />
+      </div>
+    </div>
+  }
+</div>

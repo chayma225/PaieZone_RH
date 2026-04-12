@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "leaveBalance": {
+      "home": {
+        "title": "LeaveBalances",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Leave Balance",
+        "createOrEditLabel": "Créer ou éditer un Leave Balance",
+        "notFound": "Aucun Leave Balance trouvé"
+      },
+      "created": "Un nouveau Leave Balance a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Leave Balance avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Leave Balance avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Leave Balance {{ id }} ?"
+      },
+      "detail": {
+        "title": "Leave Balance"
+      },
+      "id": "ID",
+      "year": "Year",
+      "entitled": "Entitled",
+      "taken": "Taken",
+      "pending": "Pending",
+      "carryOver": "Carry Over",
+      "remaining": "Remaining",
+      "lastUpdatedAt": "Last Updated At",
+      "employee": "Employee",
+      "leaveType": "Leave Type"
+    }
+  }
+}

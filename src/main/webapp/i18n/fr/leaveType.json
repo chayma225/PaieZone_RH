@@ -1,0 +1,31 @@
+{
+  "paieZoneRhApp": {
+    "leaveType": {
+      "home": {
+        "title": "LeaveTypes",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Leave Type",
+        "createOrEditLabel": "Créer ou éditer un Leave Type",
+        "notFound": "Aucun Leave Type trouvé"
+      },
+      "created": "Un nouveau Leave Type a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Leave Type avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Leave Type avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Leave Type {{ id }} ?"
+      },
+      "detail": {
+        "title": "Leave Type"
+      },
+      "id": "ID",
+      "name": "Name",
+      "label": "Label",
+      "maxDaysPerYear": "Max Days Per Year",
+      "carryOverDays": "Carry Over Days",
+      "paid": "Paid",
+      "requiresMedical": "Requires Medical",
+      "active": "Active",
+      "company": "Company"
+    }
+  }
+}

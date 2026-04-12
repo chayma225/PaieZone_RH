@@ -1,0 +1,13 @@
+{
+  "paieZoneRhApp": {
+    "ContractType": {
+      "null": "",
+      "CDI": "CDI",
+      "CDD": "CDD",
+      "CIVP": "CIVP",
+      "KARAMA": "KARAMA",
+      "INTERIMAIRE": "INTERIMAIRE",
+      "STAGE": "STAGE"
+    }
+  }
+}

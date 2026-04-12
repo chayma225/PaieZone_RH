@@ -1,0 +1,31 @@
+id;name;label;max_days_per_year;carry_over_days;paid;requires_medical;active;company_id
+1;UNPAID;quand;4841;28990;true;true;true;1
+2;UNPAID;bzzz autour de gratis;7411;23744;false;false;false;2
+3;UNPAID;tant que svelte oups;29087;15193;false;true;false;3
+4;EXCEPTIONAL;raide;10342;4990;false;false;false;4
+5;EXCEPTIONAL;euh triangulaire proche de;2939;14541;true;false;false;5
+6;MATERNITY;tandis que prestataire de services même;11239;4828;true;false;true;6
+7;ANNUAL;à l'instar de tirer;3643;21014;false;false;true;7
+8;MATERNITY;ouah sous couleur de;12125;10566;false;false;false;8
+9;UNPAID;contre neutre;9845;9167;false;false;false;9
+10;PATERNITY;tant que ferme;27890;31349;false;true;false;10
+11;PATERNITY;au lieu de;22466;3419;false;true;false;11
+12;ANNUAL;vu que triste;899;29785;true;true;true;12
+13;EXCEPTIONAL;autrefois avant de;899;1475;true;true;true;13
+14;MATERNITY;assez présidence;26340;22103;true;false;false;14
+15;EXCEPTIONAL;toc tant que à raison de;2602;28930;false;true;false;15
+16;BEREAVEMENT;euh;8723;13760;true;false;false;16
+17;PATERNITY;envoyer;19234;5140;false;false;true;17
+18;MARRIAGE;population du Québec combien;13867;5498;false;false;false;18
+19;MATERNITY;pschitt patientèle;322;28363;false;true;false;19
+20;UNPAID;conseil municipal;11182;22950;false;true;true;20
+21;SICK;derrière personnel professionnel conclure;28341;25761;false;true;true;21
+22;EXCEPTIONAL;administration de façon à ce que outre;21814;1894;true;false;true;22
+23;MARRIAGE;tchou tchouu;7005;28506;true;true;true;23
+24;MARRIAGE;de façon à ce que;11108;1650;true;false;true;24
+25;MATERNITY;brave sur accéder;19646;29393;false;false;false;25
+26;ANNUAL;conseil municipal;23677;28884;true;true;true;26
+27;UNPAID;exprès;245;15859;false;false;false;27
+28;SICK;au-dessous de de sorte que;23068;25231;true;false;false;28
+29;ANNUAL;descendre jamais longtemps;17988;17551;true;false;true;29
+30;SICK;désormais communauté étudiante débile;15182;7861;true;false;false;30

@@ -1,0 +1,172 @@
+<div>
+  <h2 id="page-heading" data-cy="PaySlipLineHeading">
+    <span pzTranslate="paieZoneRhApp.paySlipLine.home.title">PaySlipLines</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.paySlipLine.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-pay-slip-line"
+        [routerLink]="['/pay-slip-line/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.paySlipLine.home.createLabel">Créer un nouveau Pay Slip Line</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (paySlipLines().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.paySlipLine.home.notFound">Aucun Pay Slip Line trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="sortOrder">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.sortOrder">Sort Order</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rubriqueCode">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.rubriqueCode">Rubrique Code</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rubriqueLabel">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.rubriqueLabel">Rubrique Label</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rubriqueType">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.rubriqueType">Rubrique Type</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="base">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.base">Base</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.rate">Rate</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="amount">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.amount">Amount</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="taxable">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.taxable">Taxable</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="paySlip.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.paySlip">Pay Slip</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rubrique.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.paySlipLine.rubrique">Rubrique</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (paySlipLine of paySlipLines(); track trackId(paySlipLine)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/pay-slip-line', paySlipLine.id, 'view']">{{ paySlipLine.id }}</a>
+              </td>
+              <td>{{ paySlipLine.sortOrder }}</td>
+              <td>{{ paySlipLine.rubriqueCode }}</td>
+              <td>{{ paySlipLine.rubriqueLabel }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.RubriqueType.' + (paySlipLine.rubriqueType ?? 'null')">
+                {{
+                  { null: '', GAIN: 'GAIN', DEDUCTION: 'DEDUCTION', EMPLOYER_CHARGE: 'EMPLOYER_CHARGE', INFO: 'INFO' }[
+                    paySlipLine.rubriqueType ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ paySlipLine.base }}</td>
+              <td>{{ paySlipLine.rate }}</td>
+              <td>{{ paySlipLine.amount }}</td>
+              <td>{{ paySlipLine.taxable }}</td>
+              <td>
+                @if (paySlipLine.paySlip) {
+                  <div>
+                    <a [routerLink]="['/pay-slip', paySlipLine.paySlip.id, 'view']">{{ paySlipLine.paySlip.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (paySlipLine.rubrique) {
+                  <div>
+                    <a [routerLink]="['/rubrique', paySlipLine.rubrique.id, 'view']">{{ paySlipLine.rubrique.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/pay-slip-line', paySlipLine.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/pay-slip-line', paySlipLine.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(paySlipLine)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

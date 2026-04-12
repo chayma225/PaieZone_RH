@@ -1,0 +1,11 @@
+export enum PayrollStatus {
+  DRAFT = 'DRAFT',
+
+  CALCULATED = 'CALCULATED',
+
+  VALIDATED = 'VALIDATED',
+
+  LOCKED = 'LOCKED',
+
+  EXPORTED = 'EXPORTED',
+}

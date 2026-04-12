@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "auditLog": {
+      "home": {
+        "title": "AuditLogs",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Audit Log",
+        "createOrEditLabel": "Créer ou éditer un Audit Log",
+        "notFound": "Aucun Audit Log trouvé"
+      },
+      "created": "Un nouveau Audit Log a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Audit Log avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Audit Log avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Audit Log {{ id }} ?"
+      },
+      "detail": {
+        "title": "Audit Log"
+      },
+      "id": "ID",
+      "action": "Action",
+      "entityType": "Entity Type",
+      "entityId": "Entity Id",
+      "oldValue": "Old Value",
+      "newValue": "New Value",
+      "ipAddress": "Ip Address",
+      "userAgent": "User Agent",
+      "occurredAt": "Occurred At",
+      "user": "User",
+      "company": "Company"
+    }
+  }
+}

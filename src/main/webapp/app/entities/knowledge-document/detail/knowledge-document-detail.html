@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (knowledgeDocument(); as knowledgeDocumentRef) {
+      <div>
+        <h2 data-cy="knowledgeDocumentDetailsHeading">
+          <span pzTranslate="paieZoneRhApp.knowledgeDocument.detail.title">Knowledge Document</span>
+        </h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.title">Title</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.title }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.category">Category</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.category }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.content">Content</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.content }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.fileUrl">File Url</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.fileUrl }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.vectorIndexed">Vector Indexed</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.vectorIndexed }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.indexedAt">Indexed At</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.indexedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.active">Active</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.createdAt">Created At</span></dt>
+          <dd>
+            <span>{{ knowledgeDocumentRef.createdAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.knowledgeDocument.company">Company</span></dt>
+          <dd>
+            @if (knowledgeDocument()!.company) {
+              <div>
+                <a [routerLink]="['/company', knowledgeDocument()!.company?.id, 'view']">{{ knowledgeDocumentRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/knowledge-document', knowledgeDocumentRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

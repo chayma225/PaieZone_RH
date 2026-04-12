@@ -1,0 +1,11 @@
+export enum AppRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+
+  ADMIN = 'ADMIN',
+
+  RH_COMPTABLE = 'RH_COMPTABLE',
+
+  MANAGER = 'MANAGER',
+
+  EMPLOYE = 'EMPLOYE',
+}

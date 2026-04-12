@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity Employee.
+    -->
+    <changeSet id="20260408181740-1" author="jhipster">
+        <createTable tableName="employee" remarks="Dossier Employé">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="matricule" type="varchar(20)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_employee__matricule" />
+            </column>
+            <column name="first_name" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="last_name" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="first_name_ar" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="last_name_ar" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="birth_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="birth_place" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="gender" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="marital_status" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="number_of_children" type="integer">
+                <constraints nullable="false" />
+            </column>
+            <column name="chef_de_famille" type="boolean">
+                <constraints nullable="false" />
+            </column>
+            <column name="national_id" type="varchar(20)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_employee__national_id" />
+            </column>
+            <column name="passport_number" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="nationality" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="city" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="personal_email" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="professional_email" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="phone_number" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="cnss_number" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="category" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="photo_url" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="hire_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="trial_end_date" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="active" type="boolean">
+                <constraints nullable="false" />
+            </column>
+            <column name="notes" type="${clobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_at" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated_at" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="company_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="department_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="position_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="manager_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="user_profile_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+        <dropDefaultValue tableName="employee" columnName="created_at" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="employee" columnName="updated_at" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+
+    <!--
+        Load sample data generated with Faker.js
+        - This data can be easily edited using a CSV editor (or even MS Excel) and
+          is located in the 'src/main/resources/config/liquibase/fake-data' directory
+        - By default this data is applied when running with the JHipster 'dev' profile.
+          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
+          Spring Boot configuration key.
+    -->
+    <changeSet id="20260408181740-1-data" author="jhipster" context="faker">
+        <loadData
+                  file="config/liquibase/fake-data/employee.csv"
+                  separator=";"
+                  tableName="employee"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="matricule" type="string"/>
+            <column name="first_name" type="string"/>
+            <column name="last_name" type="string"/>
+            <column name="first_name_ar" type="string"/>
+            <column name="last_name_ar" type="string"/>
+            <column name="birth_date" type="date"/>
+            <column name="birth_place" type="string"/>
+            <column name="gender" type="string"/>
+            <column name="marital_status" type="string"/>
+            <column name="number_of_children" type="numeric"/>
+            <column name="chef_de_famille" type="boolean"/>
+            <column name="national_id" type="string"/>
+            <column name="passport_number" type="string"/>
+            <column name="nationality" type="string"/>
+            <column name="address" type="string"/>
+            <column name="city" type="string"/>
+            <column name="personal_email" type="string"/>
+            <column name="professional_email" type="string"/>
+            <column name="phone_number" type="string"/>
+            <column name="cnss_number" type="string"/>
+            <column name="category" type="string"/>
+            <column name="photo_url" type="string"/>
+            <column name="hire_date" type="date"/>
+            <column name="trial_end_date" type="date"/>
+            <column name="active" type="boolean"/>
+            <column name="notes" type="clob"/>
+            <column name="created_at" type="date"/>
+            <column name="updated_at" type="date"/>
+            <column name="company_id" type="numeric"/>
+            <column name="department_id" type="numeric"/>
+            <column name="position_id" type="numeric"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

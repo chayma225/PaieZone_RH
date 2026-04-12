@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "payrollPeriod": {
+      "home": {
+        "title": "Payroll Periods",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Payroll Period جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Payroll Period",
+        "notFound": "لم يتم العثور على Payroll Periods"
+      },
+      "created": "Payroll Period جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Payroll Period تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Payroll Period تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Payroll Period {{ id }}؟"
+      },
+      "detail": {
+        "title": "Payroll Period"
+      },
+      "id": "ID",
+      "month": "Month",
+      "year": "Year",
+      "status": "Status",
+      "calculatedAt": "Calculated At",
+      "validatedAt": "Validated At",
+      "lockedAt": "Locked At",
+      "notes": "Notes",
+      "company": "Company",
+      "createdBy": "Created By"
+    }
+  }
+}

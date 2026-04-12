@@ -1,0 +1,10 @@
+{
+  "paieZoneRhApp": {
+    "MessageRole": {
+      "null": "",
+      "USER": "USER",
+      "ASSISTANT": "ASSISTANT",
+      "SYSTEM": "SYSTEM"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "annotations": {
+    "changelogDate": "20260408181240"
+  },
+  "applications": ["paieZoneRH"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "plan",
+      "fieldType": "PlanType",
+      "fieldTypeDocumentation": "Abonnement SaaS",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "STARTER,PME,BUSINESS,ENTERPRISE,CUSTOM"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "CompanySubscriptionStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "TRIAL,ACTIVE,SUSPENDED,CANCELLED"
+    },
+    {
+      "fieldName": "maxEmployees",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "priceHT",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "billingDay",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "startDate",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "renewalDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    }
+  ],
+  "name": "CompanySubscription",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

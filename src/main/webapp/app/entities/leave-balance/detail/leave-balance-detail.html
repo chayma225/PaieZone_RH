@@ -1,0 +1,74 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (leaveBalance(); as leaveBalanceRef) {
+      <div>
+        <h2 data-cy="leaveBalanceDetailsHeading"><span pzTranslate="paieZoneRhApp.leaveBalance.detail.title">Leave Balance</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.year">Year</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.year }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.entitled">Entitled</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.entitled }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.taken">Taken</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.taken }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.pending">Pending</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.pending }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.carryOver">Carry Over</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.carryOver }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.remaining">Remaining</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.remaining }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.lastUpdatedAt">Last Updated At</span></dt>
+          <dd>
+            <span>{{ leaveBalanceRef.lastUpdatedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.employee">Employee</span></dt>
+          <dd>
+            @if (leaveBalance()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', leaveBalance()!.employee?.id, 'view']">{{ leaveBalanceRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.leaveBalance.leaveType">Leave Type</span></dt>
+          <dd>
+            @if (leaveBalance()!.leaveType) {
+              <div>
+                <a [routerLink]="['/leave-type', leaveBalance()!.leaveType?.id, 'view']">{{ leaveBalanceRef.leaveType?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/leave-balance', leaveBalanceRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

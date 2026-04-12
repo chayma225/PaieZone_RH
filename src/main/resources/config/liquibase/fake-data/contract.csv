@@ -1,0 +1,31 @@
+id;reference;contract_type;status;start_date;end_date;signed_date;base_salary;working_hours_week;working_days_week;convention_collective;trial_period_months;renewal_count;document_url;notes;created_at;employee_id
+1;ouch;INTERIMAIRE;EXPIRED;2026-04-08;2026-04-08;2026-04-08;10944.08;4;4;étudier ouah;8;2179;immense;../fake-data/blob/hipster.txt;2026-04-08T12:54:36;1
+2;redonner;STAGE;ACTIVE;2026-04-08;2026-04-07;2026-04-08;12554.89;29;5;oh;1;31676;tandis que contre;../fake-data/blob/hipster.txt;2026-04-08T13:45:07;2
+3;du moment que tic-tac;INTERIMAIRE;TERMINATED;2026-04-08;2026-04-08;2026-04-08;29072.81;33;3;meuh;6;10285;en dedans de de par dring;../fake-data/blob/hipster.txt;2026-04-08T08:16:52;3
+4;éteindre si;STAGE;EXPIRED;2026-04-08;2026-04-07;2026-04-08;542.55;45;5;tant;4;19433;vroum raide chef;../fake-data/blob/hipster.txt;2026-04-08T11:03:58;4
+5;sans en plus de;KARAMA;SUSPENDED;2026-04-07;2026-04-08;2026-04-08;26710.7;13;6;débile comme;1;31916;glouglou neutre;../fake-data/blob/hipster.txt;2026-04-07T19:11:24;5
+6;volontiers;CIVP;DRAFT;2026-04-08;2026-04-08;2026-04-08;17587.35;43;1;vlan;5;30889;au moyen de;../fake-data/blob/hipster.txt;2026-04-08T09:34:57;6
+7;conduire du moment que triste;CDD;TERMINATED;2026-04-08;2026-04-08;2026-04-08;21908.8;21;3;ronron ouah dans la mesure où;6;19661;rose;../fake-data/blob/hipster.txt;2026-04-08T00:58:56;7
+8;porte-parole coin-coin paf;CDD;DRAFT;2026-04-08;2026-04-08;2026-04-08;1700.49;13;5;dessous de crainte que grrr;2;26606;quasi psitt camarade;../fake-data/blob/hipster.txt;2026-04-08T15:26:51;8
+9;membre du personnel;INTERIMAIRE;TERMINATED;2026-04-08;2026-04-08;2026-04-08;9435.63;12;7;raide;10;27876;extatique blablabla;../fake-data/blob/hipster.txt;2026-04-07T22:02:12;9
+10;en dehors de clientèle électorat;CIVP;DRAFT;2026-04-08;2026-04-08;2026-04-07;16188.9;14;1;boum en outre de antique;10;16153;plutôt;../fake-data/blob/hipster.txt;2026-04-07T21:57:15;10
+11;pacifique vivace;STAGE;ACTIVE;2026-04-08;2026-04-08;2026-04-07;15176.04;1;4;groin groin athlète;0;7672;soigner patientèle;../fake-data/blob/hipster.txt;2026-04-08T00:45:47;11
+12;tout à fait sitôt que;STAGE;SUSPENDED;2026-04-08;2026-04-08;2026-04-07;2622.71;5;6;régner;7;30902;sitôt toucher auprès de;../fake-data/blob/hipster.txt;2026-04-07T18:35:14;12
+13;au point que nourrir;CIVP;ACTIVE;2026-04-08;2026-04-08;2026-04-07;30663.07;45;3;parlementaire joliment rédaction;1;4146;danser adorable comme;../fake-data/blob/hipster.txt;2026-04-08T04:35:59;13
+14;bang;STAGE;TERMINATED;2026-04-08;2026-04-08;2026-04-08;31482.27;34;7;complètement surmonter de manière à ce que;3;24167;prout exprimer proclamer;../fake-data/blob/hipster.txt;2026-04-08T02:41:41;14
+15;foule;CIVP;ACTIVE;2026-04-08;2026-04-07;2026-04-08;12607.76;33;7;aigre tant sur;5;493;miaou maîtriser;../fake-data/blob/hipster.txt;2026-04-07T21:53:37;15
+16;pff souvent;KARAMA;ACTIVE;2026-04-08;2026-04-07;2026-04-08;23618.66;22;6;lorsque;4;9836;équipe sous couleur de large;../fake-data/blob/hipster.txt;2026-04-08T02:37:57;16
+17;tandis que pacifique;CDD;SUSPENDED;2026-04-08;2026-04-07;2026-04-07;12631.86;9;2;vraisemblablement tenir plutôt;9;21375;oh;../fake-data/blob/hipster.txt;2026-04-08T14:34:30;17
+18;ensuite souvent partenaire;CIVP;EXPIRED;2026-04-07;2026-04-08;2026-04-07;11767.42;2;5;hors diététiste;10;29799;deçà sitôt que croâ;../fake-data/blob/hipster.txt;2026-04-08T05:42:19;18
+19;proche;CIVP;SUSPENDED;2026-04-08;2026-04-08;2026-04-08;25899.7;42;6;presque;5;25156;main-d’œuvre;../fake-data/blob/hipster.txt;2026-04-07T19:46:10;19
+20;avant à seule fin de;CDI;ACTIVE;2026-04-08;2026-04-08;2026-04-08;21492.76;20;4;plouf lâche pacifique;0;23369;à même sur;../fake-data/blob/hipster.txt;2026-04-07T21:21:12;20
+21;hier à l'encontre de au prix de;STAGE;ACTIVE;2026-04-08;2026-04-07;2026-04-08;29560.13;35;6;au moyen de affable;5;1232;étant donné que discerner;../fake-data/blob/hipster.txt;2026-04-08T04:05:49;21
+22;livrer;CDI;SUSPENDED;2026-04-08;2026-04-08;2026-04-08;24303.78;32;1;sous couleur de conseil d’administration;3;10795;prout responsable émerger;../fake-data/blob/hipster.txt;2026-04-07T18:44:04;22
+23;aligner dynamique cadre;INTERIMAIRE;EXPIRED;2026-04-08;2026-04-07;2026-04-08;6503;5;2;énumérer membre titulaire quand;8;9912;vu que à bas de en guise de;../fake-data/blob/hipster.txt;2026-04-07T22:27:23;23
+24;que volontiers;STAGE;ACTIVE;2026-04-07;2026-04-07;2026-04-08;2545.19;27;3;repérer;9;14650;après que pin-pon persuader;../fake-data/blob/hipster.txt;2026-04-07T19:48:16;24
+25;pourvu que entre-temps;INTERIMAIRE;SUSPENDED;2026-04-08;2026-04-07;2026-04-08;16430.4;31;5;cuicui aussitôt que grrr;2;4999;ça touchant;../fake-data/blob/hipster.txt;2026-04-08T15:48:53;25
+26;fort tellement désagréable;CDD;ACTIVE;2026-04-08;2026-04-07;2026-04-08;26843.12;2;3;ha ha;9;32332;rectorat tandis que;../fake-data/blob/hipster.txt;2026-04-08T17:15:19;26
+27;lectorat de manière à ce que;CIVP;SUSPENDED;2026-04-08;2026-04-08;2026-04-08;25615.71;2;1;de manière à;1;7295;après sauvage;../fake-data/blob/hipster.txt;2026-04-08T10:28:11;27
+28;ébranler;CDI;ACTIVE;2026-04-08;2026-04-08;2026-04-07;26078.9;26;6;de sorte que;7;4343;marron;../fake-data/blob/hipster.txt;2026-04-07T19:14:36;28
+29;lunatique séduire moderne;CDI;DRAFT;2026-04-08;2026-04-08;2026-04-08;5193.99;24;6;afin que;12;32437;vlan parler sans que;../fake-data/blob/hipster.txt;2026-04-08T11:35:33;29
+30;envers;INTERIMAIRE;DRAFT;2026-04-07;2026-04-08;2026-04-08;1722.45;3;6;novice;9;3490;lunatique aussitôt que diplomate;../fake-data/blob/hipster.txt;2026-04-07T22:26:34;30

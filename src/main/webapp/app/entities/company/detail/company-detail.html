@@ -1,0 +1,96 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (company(); as companyRef) {
+      <div>
+        <h2 data-cy="companyDetailsHeading"><span pzTranslate="paieZoneRhApp.company.detail.title">Company</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ companyRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.name">Name</span></dt>
+          <dd>
+            <span>{{ companyRef.name }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.tradeName">Trade Name</span></dt>
+          <dd>
+            <span>{{ companyRef.tradeName }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.taxId">Tax Id</span></dt>
+          <dd>
+            <span>{{ companyRef.taxId }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.cnssId">Cnss Id</span></dt>
+          <dd>
+            <span>{{ companyRef.cnssId }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.address">Address</span></dt>
+          <dd>
+            <span>{{ companyRef.address }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.city">City</span></dt>
+          <dd>
+            <span>{{ companyRef.city }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.postalCode">Postal Code</span></dt>
+          <dd>
+            <span>{{ companyRef.postalCode }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.phone">Phone</span></dt>
+          <dd>
+            <span>{{ companyRef.phone }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.email">Email</span></dt>
+          <dd>
+            <span>{{ companyRef.email }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.logoUrl">Logo Url</span></dt>
+          <dd>
+            <span>{{ companyRef.logoUrl }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.tenantSchema">Tenant Schema</span></dt>
+          <dd>
+            <span>{{ companyRef.tenantSchema }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.active">Active</span></dt>
+          <dd>
+            <span>{{ companyRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.trialEnd">Trial End</span></dt>
+          <dd>
+            <span>{{ companyRef.trialEnd | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.createdAt">Created At</span></dt>
+          <dd>
+            <span>{{ companyRef.createdAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.company.companySubscription">Company Subscription</span></dt>
+          <dd>
+            @if (company()!.companySubscription) {
+              <div>
+                <a [routerLink]="['/company-subscription', company()!.companySubscription?.id, 'view']">{{
+                  companyRef.companySubscription?.id
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/company', companyRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,72 @@
+{
+  "annotations": {
+    "changelogDate": "20260408181340"
+  },
+  "applications": ["paieZoneRH"],
+  "documentation": "Profil utilisateur étendu (lié au User JHipster)",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "jhiUserId",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "role",
+      "fieldType": "AppRole",
+      "fieldTypeDocumentation": "Rôles applicatifs",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "SUPER_ADMIN,ADMIN,RH_COMPTABLE,MANAGER,EMPLOYE"
+    },
+    {
+      "fieldName": "phoneNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "avatarUrl",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "locale",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "10"
+    },
+    {
+      "fieldName": "lastLoginAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "twoFactorEnabled",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "twoFactorSecret",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "active",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "UserProfile",
+  "relationships": [
+    {
+      "otherEntityName": "company",
+      "relationshipName": "company",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

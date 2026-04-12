@@ -1,0 +1,267 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="pz-time-entry-heading" data-cy="TimeEntryCreateUpdateHeading" pzTranslate="paieZoneRhApp.timeEntry.home.createOrEditLabel">
+        Créer ou éditer un Time Entry
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let entryDateRef = editForm.get('entryDate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_entryDate" pzTranslate="paieZoneRhApp.timeEntry.entryDate">Entry Date</label>
+          <div class="input-group">
+            <input
+              id="field_entryDate"
+              data-cy="entryDate"
+              type="text"
+              class="form-control"
+              name="entryDate"
+              ngbDatepicker
+              #entryDateDp="ngbDatepicker"
+              formControlName="entryDate"
+            />
+            <button type="button" class="btn btn-secondary" (click)="entryDateDp.toggle()"><fa-icon icon="calendar-alt" /></button>
+          </div>
+          @if (entryDateRef.invalid && (entryDateRef.dirty || entryDateRef.touched)) {
+            <div>
+              @if (editForm.get('entryDate')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_checkIn" pzTranslate="paieZoneRhApp.timeEntry.checkIn">Check In</label>
+          <div class="d-flex">
+            <input
+              id="field_checkIn"
+              data-cy="checkIn"
+              type="datetime-local"
+              class="form-control"
+              name="checkIn"
+              formControlName="checkIn"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_checkOut" pzTranslate="paieZoneRhApp.timeEntry.checkOut">Check Out</label>
+          <div class="d-flex">
+            <input
+              id="field_checkOut"
+              data-cy="checkOut"
+              type="datetime-local"
+              class="form-control"
+              name="checkOut"
+              formControlName="checkOut"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_workedHours" pzTranslate="paieZoneRhApp.timeEntry.workedHours">Worked Hours</label>
+          <input
+            type="number"
+            class="form-control"
+            name="workedHours"
+            id="field_workedHours"
+            data-cy="workedHours"
+            formControlName="workedHours"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_overtimeHours" pzTranslate="paieZoneRhApp.timeEntry.overtimeHours">Overtime Hours</label>
+          <input
+            type="number"
+            class="form-control"
+            name="overtimeHours"
+            id="field_overtimeHours"
+            data-cy="overtimeHours"
+            formControlName="overtimeHours"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_lateMinutes" pzTranslate="paieZoneRhApp.timeEntry.lateMinutes">Late Minutes</label>
+          <input
+            type="number"
+            class="form-control"
+            name="lateMinutes"
+            id="field_lateMinutes"
+            data-cy="lateMinutes"
+            formControlName="lateMinutes"
+          />
+        </div>
+
+        @let sourceRef = editForm.get('source')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_source" pzTranslate="paieZoneRhApp.timeEntry.source">Source</label>
+          <select class="form-control" name="source" formControlName="source" id="field_source" data-cy="source">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.TimeEntrySource.null' | translate }}</option>
+            @for (timeEntrySource of timeEntrySourceValues; track $index) {
+              <option [value]="timeEntrySource">{{ 'paieZoneRhApp.TimeEntrySource.' + timeEntrySource | translate }}</option>
+            }
+          </select>
+          @if (sourceRef.invalid && (sourceRef.dirty || sourceRef.touched)) {
+            <div>
+              @if (editForm.get('source')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let statusRef = editForm.get('status')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_status" pzTranslate="paieZoneRhApp.timeEntry.status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.TimeEntryStatus.null' | translate }}</option>
+            @for (timeEntryStatus of timeEntryStatusValues; track $index) {
+              <option [value]="timeEntryStatus">{{ 'paieZoneRhApp.TimeEntryStatus.' + timeEntryStatus | translate }}</option>
+            }
+          </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let anomalyNoteRef = editForm.get('anomalyNote')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_anomalyNote" pzTranslate="paieZoneRhApp.timeEntry.anomalyNote">Anomaly Note</label>
+          <input
+            type="text"
+            class="form-control"
+            name="anomalyNote"
+            id="field_anomalyNote"
+            data-cy="anomalyNote"
+            formControlName="anomalyNote"
+          />
+          @if (anomalyNoteRef.invalid && (anomalyNoteRef.dirty || anomalyNoteRef.touched)) {
+            <div>
+              @if (editForm.get('anomalyNote')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Ce champ doit faire au maximum 500 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let validatedByRef = editForm.get('validatedBy')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_validatedBy" pzTranslate="paieZoneRhApp.timeEntry.validatedBy">Validated By</label>
+          <input
+            type="text"
+            class="form-control"
+            name="validatedBy"
+            id="field_validatedBy"
+            data-cy="validatedBy"
+            formControlName="validatedBy"
+          />
+          @if (validatedByRef.invalid && (validatedByRef.dirty || validatedByRef.touched)) {
+            <div>
+              @if (editForm.get('validatedBy')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
+                  >Ce champ doit faire au maximum 100 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_validatedAt" pzTranslate="paieZoneRhApp.timeEntry.validatedAt">Validated At</label>
+          <div class="d-flex">
+            <input
+              id="field_validatedAt"
+              data-cy="validatedAt"
+              type="datetime-local"
+              class="form-control"
+              name="validatedAt"
+              formControlName="validatedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_employee" pzTranslate="paieZoneRhApp.timeEntry.employee">Employee</label>
+          <select
+            class="form-control"
+            id="field_employee"
+            data-cy="employee"
+            name="employee"
+            formControlName="employee"
+            [compareWith]="compareEmployee"
+          >
+            @if (!editForm.get('employee')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (employeeOption of employeesSharedCollection(); track $index) {
+              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['employee'])!.invalid && (editForm.get(['employee'])!.dirty || editForm.get(['employee'])!.touched)) {
+          <div>
+            @if (editForm.get(['employee'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_validatedByUser" pzTranslate="paieZoneRhApp.timeEntry.validatedByUser"
+            >Validated By User</label
+          >
+          <select
+            class="form-control"
+            id="field_validatedByUser"
+            data-cy="validatedByUser"
+            name="validatedByUser"
+            formControlName="validatedByUser"
+            [compareWith]="compareUserProfile"
+          >
+            <option [ngValue]="null"></option>
+            @for (userProfileOption of userProfilesSharedCollection(); track $index) {
+              <option [ngValue]="userProfileOption">{{ userProfileOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving()"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

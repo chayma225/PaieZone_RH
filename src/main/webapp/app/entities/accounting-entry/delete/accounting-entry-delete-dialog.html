@@ -1,0 +1,30 @@
+@if (accountingEntry) {
+  <form name="deleteForm" (ngSubmit)="confirmDelete(accountingEntry.id!)">
+    <div class="modal-header">
+      <h4 class="modal-title" data-cy="accountingEntryDeleteDialogHeading" pzTranslate="entity.delete.title">
+        Confirmation de suppression
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <pz-alert-error />
+      <p
+        id="pz-delete-accountingEntry-heading"
+        pzTranslate="paieZoneRhApp.accountingEntry.delete.question"
+        [translateValues]="{ id: accountingEntry.id }"
+      >
+        Êtes-vous certain de vouloir supprimer le Accounting Entry {{ accountingEntry.id }} ?
+      </p>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+        <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+      </button>
+
+      <button id="pz-confirm-delete-accountingEntry" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
+        <fa-icon icon="times" />&nbsp;<span pzTranslate="entity.action.delete">Supprimer</span>
+      </button>
+    </div>
+  </form>
+}

@@ -1,0 +1,147 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="pz-public-holiday-heading"
+        data-cy="PublicHolidayCreateUpdateHeading"
+        pzTranslate="paieZoneRhApp.publicHoliday.home.createOrEditLabel"
+      >
+        Créer ou éditer un Public Holiday
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let nameRef = editForm.get('name')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_name" pzTranslate="paieZoneRhApp.publicHoliday.name">Name</label>
+          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
+          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
+            <div>
+              @if (editForm.get('name')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              @if (editForm.get('name')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
+                  >Ce champ doit faire au maximum 150 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let nameArRef = editForm.get('nameAr')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_nameAr" pzTranslate="paieZoneRhApp.publicHoliday.nameAr">Name Ar</label>
+          <input type="text" class="form-control" name="nameAr" id="field_nameAr" data-cy="nameAr" formControlName="nameAr" />
+          @if (nameArRef.invalid && (nameArRef.dirty || nameArRef.touched)) {
+            <div>
+              @if (editForm.get('nameAr')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
+                  >Ce champ doit faire au maximum 150 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let holidayDateRef = editForm.get('holidayDate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_holidayDate" pzTranslate="paieZoneRhApp.publicHoliday.holidayDate">Holiday Date</label>
+          <div class="input-group">
+            <input
+              id="field_holidayDate"
+              data-cy="holidayDate"
+              type="text"
+              class="form-control"
+              name="holidayDate"
+              ngbDatepicker
+              #holidayDateDp="ngbDatepicker"
+              formControlName="holidayDate"
+            />
+            <button type="button" class="btn btn-secondary" (click)="holidayDateDp.toggle()"><fa-icon icon="calendar-alt" /></button>
+          </div>
+          @if (holidayDateRef.invalid && (holidayDateRef.dirty || holidayDateRef.touched)) {
+            <div>
+              @if (editForm.get('holidayDate')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let yearRef = editForm.get('year')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_year" pzTranslate="paieZoneRhApp.publicHoliday.year">Year</label>
+          <input type="number" class="form-control" name="year" id="field_year" data-cy="year" formControlName="year" />
+          @if (yearRef.invalid && (yearRef.dirty || yearRef.touched)) {
+            <div>
+              @if (editForm.get('year')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('year')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let isRecurringRef = editForm.get('isRecurring')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_isRecurring" pzTranslate="paieZoneRhApp.publicHoliday.isRecurring">Is Recurring</label>
+          <input
+            type="checkbox"
+            class="form-check"
+            name="isRecurring"
+            id="field_isRecurring"
+            data-cy="isRecurring"
+            formControlName="isRecurring"
+          />
+          @if (isRecurringRef.invalid && (isRecurringRef.dirty || isRecurringRef.touched)) {
+            <div>
+              @if (editForm.get('isRecurring')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let activeRef = editForm.get('active')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.publicHoliday.active">Active</label>
+          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
+          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
+            <div>
+              @if (editForm.get('active')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving()"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

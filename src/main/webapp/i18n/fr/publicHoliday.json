@@ -1,0 +1,29 @@
+{
+  "paieZoneRhApp": {
+    "publicHoliday": {
+      "home": {
+        "title": "PublicHolidays",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Public Holiday",
+        "createOrEditLabel": "Créer ou éditer un Public Holiday",
+        "notFound": "Aucun Public Holiday trouvé"
+      },
+      "created": "Un nouveau Public Holiday a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Public Holiday avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Public Holiday avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Public Holiday {{ id }} ?"
+      },
+      "detail": {
+        "title": "Public Holiday"
+      },
+      "id": "ID",
+      "name": "Name",
+      "nameAr": "Name Ar",
+      "holidayDate": "Holiday Date",
+      "year": "Year",
+      "isRecurring": "Is Recurring",
+      "active": "Active"
+    }
+  }
+}

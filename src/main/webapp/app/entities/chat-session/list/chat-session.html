@@ -1,0 +1,161 @@
+<div>
+  <h2 id="page-heading" data-cy="ChatSessionHeading">
+    <span pzTranslate="paieZoneRhApp.chatSession.home.title">ChatSessions</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.chatSession.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-chat-session"
+        [routerLink]="['/chat-session/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.chatSession.home.createLabel">Créer un nouveau Chat Session</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (chatSessions().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.chatSession.home.notFound">Aucun Chat Session trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="channel">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.channel">Channel</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="status">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.status">Status</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="startedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.startedAt">Started At</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="endedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.endedAt">Ended At</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="escalatedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.escalatedAt">Escalated At</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="escalatedTo">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.escalatedTo">Escalated To</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="contextData">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.contextData">Context Data</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="satisfactionScore">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.satisfactionScore">Satisfaction Score</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employee.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.chatSession.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (chatSession of chatSessions(); track trackId(chatSession)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/chat-session', chatSession.id, 'view']">{{ chatSession.id }}</a>
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.ChatChannel.' + (chatSession.channel ?? 'null')">
+                {{ { null: '', WEB: 'WEB', WHATSAPP: 'WHATSAPP', MOBILE: 'MOBILE' }[chatSession.channel ?? 'null'] }}
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.ChatSessionStatus.' + (chatSession.status ?? 'null')">
+                {{
+                  { null: '', ACTIVE: 'ACTIVE', RESOLVED: 'RESOLVED', ESCALATED: 'ESCALATED', EXPIRED: 'EXPIRED' }[
+                    chatSession.status ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ chatSession.startedAt | formatMediumDatetime }}</td>
+              <td>{{ chatSession.endedAt | formatMediumDatetime }}</td>
+              <td>{{ chatSession.escalatedAt | formatMediumDatetime }}</td>
+              <td>{{ chatSession.escalatedTo }}</td>
+              <td>{{ chatSession.contextData }}</td>
+              <td>{{ chatSession.satisfactionScore }}</td>
+              <td>
+                @if (chatSession.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', chatSession.employee.id, 'view']">{{ chatSession.employee.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/chat-session', chatSession.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/chat-session', chatSession.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(chatSession)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,76 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (chatSession(); as chatSessionRef) {
+      <div>
+        <h2 data-cy="chatSessionDetailsHeading"><span pzTranslate="paieZoneRhApp.chatSession.detail.title">Chat Session</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ chatSessionRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.channel">Channel</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.ChatChannel.' + (chatSessionRef.channel ?? 'null')">{{
+              { null: '', WEB: 'WEB', WHATSAPP: 'WHATSAPP', MOBILE: 'MOBILE' }[chatSessionRef.channel ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.status">Status</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.ChatSessionStatus.' + (chatSessionRef.status ?? 'null')">{{
+              { null: '', ACTIVE: 'ACTIVE', RESOLVED: 'RESOLVED', ESCALATED: 'ESCALATED', EXPIRED: 'EXPIRED' }[
+                chatSessionRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.startedAt">Started At</span></dt>
+          <dd>
+            <span>{{ chatSessionRef.startedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.endedAt">Ended At</span></dt>
+          <dd>
+            <span>{{ chatSessionRef.endedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.escalatedAt">Escalated At</span></dt>
+          <dd>
+            <span>{{ chatSessionRef.escalatedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.escalatedTo">Escalated To</span></dt>
+          <dd>
+            <span>{{ chatSessionRef.escalatedTo }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.contextData">Context Data</span></dt>
+          <dd>
+            <span>{{ chatSessionRef.contextData }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.satisfactionScore">Satisfaction Score</span></dt>
+          <dd>
+            <span>{{ chatSessionRef.satisfactionScore }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatSession.employee">Employee</span></dt>
+          <dd>
+            @if (chatSession()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', chatSession()!.employee?.id, 'view']">{{ chatSessionRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/chat-session', chatSessionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

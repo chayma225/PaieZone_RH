@@ -1,0 +1,407 @@
+<div>
+  <h2 id="page-heading" data-cy="EmployeeHeading">
+    <span pzTranslate="paieZoneRhApp.employee.home.title">Employees</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.employee.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-employee"
+        [routerLink]="['/employee/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.employee.home.createLabel">Créer un nouveau Employee</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  <pz-filter [filters]="filters" />
+
+  @if (employees().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.employee.home.notFound">Aucun Employee trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="matricule">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.matricule">Matricule</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="firstName">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.firstName">First Name</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="lastName">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.lastName">Last Name</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="firstNameAr">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.firstNameAr">First Name Ar</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="lastNameAr">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.lastNameAr">Last Name Ar</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="birthDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.birthDate">Birth Date</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="birthPlace">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.birthPlace">Birth Place</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="gender">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.gender">Gender</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="maritalStatus">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.maritalStatus">Marital Status</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="numberOfChildren">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.numberOfChildren">Number Of Children</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="chefDeFamille">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.chefDeFamille">Chef De Famille</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="nationalId">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.nationalId">National Id</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="passportNumber">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.passportNumber">Passport Number</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="nationality">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.nationality">Nationality</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="address">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.address">Address</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="city">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.city">City</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="personalEmail">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.personalEmail">Personal Email</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="professionalEmail">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.professionalEmail">Professional Email</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="phoneNumber">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.phoneNumber">Phone Number</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="cnssNumber">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.cnssNumber">Cnss Number</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="category">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.category">Category</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="photoUrl">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.photoUrl">Photo Url</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="hireDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.hireDate">Hire Date</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="trialEndDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.trialEndDate">Trial End Date</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="active">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="notes">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.notes">Notes</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="createdAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.createdAt">Created At</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="updatedAt">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.updatedAt">Updated At</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.company">Company</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="department.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.department">Department</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="position.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.position">Position</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="manager.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.manager">Manager</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="userProfile.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.employee.userProfile">User Profile</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (employee of employees(); track trackId(employee)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/employee', employee.id, 'view']">{{ employee.id }}</a>
+              </td>
+              <td>{{ employee.matricule }}</td>
+              <td>{{ employee.firstName }}</td>
+              <td>{{ employee.lastName }}</td>
+              <td>{{ employee.firstNameAr }}</td>
+              <td>{{ employee.lastNameAr }}</td>
+              <td>{{ employee.birthDate | formatMediumDate }}</td>
+              <td>{{ employee.birthPlace }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.Gender.' + (employee.gender ?? 'null')">
+                {{ { null: '', MALE: 'MALE', FEMALE: 'FEMALE' }[employee.gender ?? 'null'] }}
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.MaritalStatus.' + (employee.maritalStatus ?? 'null')">
+                {{
+                  { null: '', SINGLE: 'SINGLE', MARRIED: 'MARRIED', DIVORCED: 'DIVORCED', WIDOWED: 'WIDOWED' }[
+                    employee.maritalStatus ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ employee.numberOfChildren }}</td>
+              <td>{{ employee.chefDeFamille }}</td>
+              <td>{{ employee.nationalId }}</td>
+              <td>{{ employee.passportNumber }}</td>
+              <td>{{ employee.nationality }}</td>
+              <td>{{ employee.address }}</td>
+              <td>{{ employee.city }}</td>
+              <td>{{ employee.personalEmail }}</td>
+              <td>{{ employee.professionalEmail }}</td>
+              <td>{{ employee.phoneNumber }}</td>
+              <td>{{ employee.cnssNumber }}</td>
+              <td [pzTranslate]="'paieZoneRhApp.EmployeeCategory.' + (employee.category ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    WORKER: 'WORKER',
+                    EMPLOYEE: 'EMPLOYEE',
+                    TECHNICIAN: 'TECHNICIAN',
+                    SUPERVISOR: 'SUPERVISOR',
+                    MANAGER: 'MANAGER',
+                    EXECUTIVE: 'EXECUTIVE',
+                    DIRECTOR: 'DIRECTOR',
+                  }[employee.category ?? 'null']
+                }}
+              </td>
+              <td>{{ employee.photoUrl }}</td>
+              <td>{{ employee.hireDate | formatMediumDate }}</td>
+              <td>{{ employee.trialEndDate | formatMediumDate }}</td>
+              <td>{{ employee.active }}</td>
+              <td>{{ employee.notes }}</td>
+              <td>{{ employee.createdAt | formatMediumDatetime }}</td>
+              <td>{{ employee.updatedAt | formatMediumDatetime }}</td>
+              <td>
+                @if (employee.company) {
+                  <div>
+                    <a [routerLink]="['/company', employee.company.id, 'view']">{{ employee.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (employee.department) {
+                  <div>
+                    <a [routerLink]="['/department', employee.department.id, 'view']">{{ employee.department.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (employee.position) {
+                  <div>
+                    <a [routerLink]="['/job-position', employee.position.id, 'view']">{{ employee.position.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (employee.manager) {
+                  <div>
+                    <a [routerLink]="['/employee', employee.manager.id, 'view']">{{ employee.manager.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (employee.userProfile) {
+                  <div>
+                    <a [routerLink]="['/user-profile', employee.userProfile.id, 'view']">{{ employee.userProfile.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/employee', employee.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/employee', employee.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(employee)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (employees().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page: page(), totalItems: totalItems(), itemsPerPage: itemsPerPage() }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems()"
+          [page]="page()"
+          [pageSize]="itemsPerPage()"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        />
+      </div>
+    </div>
+  }
+</div>

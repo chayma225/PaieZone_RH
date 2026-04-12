@@ -1,0 +1,114 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (contract(); as contractRef) {
+      <div>
+        <h2 data-cy="contractDetailsHeading"><span pzTranslate="paieZoneRhApp.contract.detail.title">Contract</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ contractRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.reference">Reference</span></dt>
+          <dd>
+            <span>{{ contractRef.reference }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.contractType">Contract Type</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.ContractType.' + (contractRef.contractType ?? 'null')">{{
+              { null: '', CDI: 'CDI', CDD: 'CDD', CIVP: 'CIVP', KARAMA: 'KARAMA', INTERIMAIRE: 'INTERIMAIRE', STAGE: 'STAGE' }[
+                contractRef.contractType ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.status">Status</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.ContractStatus.' + (contractRef.status ?? 'null')">{{
+              { null: '', DRAFT: 'DRAFT', ACTIVE: 'ACTIVE', SUSPENDED: 'SUSPENDED', TERMINATED: 'TERMINATED', EXPIRED: 'EXPIRED' }[
+                contractRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.startDate">Start Date</span></dt>
+          <dd>
+            <span>{{ contractRef.startDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.endDate">End Date</span></dt>
+          <dd>
+            <span>{{ contractRef.endDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.signedDate">Signed Date</span></dt>
+          <dd>
+            <span>{{ contractRef.signedDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.baseSalary">Base Salary</span></dt>
+          <dd>
+            <span>{{ contractRef.baseSalary }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.workingHoursWeek">Working Hours Week</span></dt>
+          <dd>
+            <span>{{ contractRef.workingHoursWeek }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.workingDaysWeek">Working Days Week</span></dt>
+          <dd>
+            <span>{{ contractRef.workingDaysWeek }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.conventionCollective">Convention Collective</span></dt>
+          <dd>
+            <span>{{ contractRef.conventionCollective }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.trialPeriodMonths">Trial Period Months</span></dt>
+          <dd>
+            <span>{{ contractRef.trialPeriodMonths }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.renewalCount">Renewal Count</span></dt>
+          <dd>
+            <span>{{ contractRef.renewalCount }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.documentUrl">Document Url</span></dt>
+          <dd>
+            <span>{{ contractRef.documentUrl }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.notes">Notes</span></dt>
+          <dd>
+            <span>{{ contractRef.notes }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.createdAt">Created At</span></dt>
+          <dd>
+            <span>{{ contractRef.createdAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.employee">Employee</span></dt>
+          <dd>
+            @if (contract()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', contract()!.employee?.id, 'view']">{{ contractRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.contract.createdBy">Created By</span></dt>
+          <dd>
+            @if (contract()!.createdBy) {
+              <div>
+                <a [routerLink]="['/user-profile', contract()!.createdBy?.id, 'view']">{{ contractRef.createdBy?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/contract', contractRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

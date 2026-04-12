@@ -1,0 +1,30 @@
+{
+  "paieZoneRhApp": {
+    "taxBracket": {
+      "home": {
+        "title": "Tax Brackets",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Tax Bracket جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Tax Bracket",
+        "notFound": "لم يتم العثور على Tax Brackets"
+      },
+      "created": "Tax Bracket جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Tax Bracket تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Tax Bracket تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Tax Bracket {{ id }}؟"
+      },
+      "detail": {
+        "title": "Tax Bracket"
+      },
+      "id": "ID",
+      "year": "Year",
+      "minIncome": "Min Income",
+      "maxIncome": "Max Income",
+      "rate": "Rate",
+      "fixedDeduction": "Fixed Deduction",
+      "sortOrder": "Sort Order",
+      "company": "Company"
+    }
+  }
+}

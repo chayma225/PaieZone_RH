@@ -1,0 +1,137 @@
+<div>
+  <h2 id="page-heading" data-cy="TaxBracketHeading">
+    <span pzTranslate="paieZoneRhApp.taxBracket.home.title">TaxBrackets</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.taxBracket.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-tax-bracket"
+        [routerLink]="['/tax-bracket/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.taxBracket.home.createLabel">Créer un nouveau Tax Bracket</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (taxBrackets().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.taxBracket.home.notFound">Aucun Tax Bracket trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="year">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.taxBracket.year">Year</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="minIncome">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.taxBracket.minIncome">Min Income</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="maxIncome">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.taxBracket.maxIncome">Max Income</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="rate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.taxBracket.rate">Rate</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="fixedDeduction">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.taxBracket.fixedDeduction">Fixed Deduction</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="sortOrder">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.taxBracket.sortOrder">Sort Order</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.taxBracket.company">Company</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (taxBracket of taxBrackets(); track trackId(taxBracket)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/tax-bracket', taxBracket.id, 'view']">{{ taxBracket.id }}</a>
+              </td>
+              <td>{{ taxBracket.year }}</td>
+              <td>{{ taxBracket.minIncome }}</td>
+              <td>{{ taxBracket.maxIncome }}</td>
+              <td>{{ taxBracket.rate }}</td>
+              <td>{{ taxBracket.fixedDeduction }}</td>
+              <td>{{ taxBracket.sortOrder }}</td>
+              <td>
+                @if (taxBracket.company) {
+                  <div>
+                    <a [routerLink]="['/company', taxBracket.company.id, 'view']">{{ taxBracket.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/tax-bracket', taxBracket.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/tax-bracket', taxBracket.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(taxBracket)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

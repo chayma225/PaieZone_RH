@@ -1,0 +1,153 @@
+<div>
+  <h2 id="page-heading" data-cy="CnssRateHeading">
+    <span pzTranslate="paieZoneRhApp.cnssRate.home.title">CnssRates</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.cnssRate.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-cnss-rate"
+        [routerLink]="['/cnss-rate/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.cnssRate.home.createLabel">Créer un nouveau Cnss Rate</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (cnssRates().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.cnssRate.home.notFound">Aucun Cnss Rate trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="year">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.year">Year</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="salaryCeiling">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.salaryCeiling">Salary Ceiling</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employeeRate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.employeeRate">Employee Rate</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employerRate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.employerRate">Employer Rate</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="cavisEmployee">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.cavisEmployee">Cavis Employee</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="cavisEmployer">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.cavisEmployer">Cavis Employer</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="smig">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.smig">Smig</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="effectiveFrom">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.effectiveFrom">Effective From</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="company.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.cnssRate.company">Company</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cnssRate of cnssRates(); track trackId(cnssRate)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/cnss-rate', cnssRate.id, 'view']">{{ cnssRate.id }}</a>
+              </td>
+              <td>{{ cnssRate.year }}</td>
+              <td>{{ cnssRate.salaryCeiling }}</td>
+              <td>{{ cnssRate.employeeRate }}</td>
+              <td>{{ cnssRate.employerRate }}</td>
+              <td>{{ cnssRate.cavisEmployee }}</td>
+              <td>{{ cnssRate.cavisEmployer }}</td>
+              <td>{{ cnssRate.smig }}</td>
+              <td>{{ cnssRate.effectiveFrom | formatMediumDate }}</td>
+              <td>
+                @if (cnssRate.company) {
+                  <div>
+                    <a [routerLink]="['/company', cnssRate.company.id, 'view']">{{ cnssRate.company.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/cnss-rate', cnssRate.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/cnss-rate', cnssRate.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(cnssRate)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

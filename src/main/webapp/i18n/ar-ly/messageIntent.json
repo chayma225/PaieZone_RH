@@ -1,0 +1,15 @@
+{
+  "paieZoneRhApp": {
+    "MessageIntent": {
+      "null": "",
+      "LEAVE_REQUEST": "LEAVE_REQUEST",
+      "PAYSLIP_QUERY": "PAYSLIP_QUERY",
+      "ATTESTATION_REQUEST": "ATTESTATION_REQUEST",
+      "LEAVE_BALANCE": "LEAVE_BALANCE",
+      "HR_QUESTION": "HR_QUESTION",
+      "SMALL_TALK": "SMALL_TALK",
+      "ESCALATION": "ESCALATION",
+      "OTHER": "OTHER"
+    }
+  }
+}

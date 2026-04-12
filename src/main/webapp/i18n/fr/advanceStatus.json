@@ -1,0 +1,11 @@
+{
+  "paieZoneRhApp": {
+    "AdvanceStatus": {
+      "null": "",
+      "REQUESTED": "REQUESTED",
+      "APPROVED": "APPROVED",
+      "REJECTED": "REJECTED",
+      "DEDUCTED": "DEDUCTED"
+    }
+  }
+}

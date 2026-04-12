@@ -1,0 +1,20 @@
+{
+  "error": {
+    "title": "Page d'erreur !",
+    "http": {
+      "400": "Mauvaise requête.",
+      "403": "Vous n'avez pas les droits pour accéder à cette page.",
+      "404": "La page n'existe pas.",
+      "405": "Le verbe HTTP que vous avez utilisé n'est pas reconnu par cet URL.",
+      "500": "Erreur interne du serveur."
+    },
+    "concurrencyFailure": "Un autre utilisateur a modifié ces données en même temps que vous. Vos changements n'ont pas été sauvegardés.",
+    "validation": "Erreur de validation côté serveur.",
+    "invalidMaxEmployees": "Le nombre d'employés maximum ne correspond pas au plan sélectionné. Veuillez vérifier les limites de votre plan.",
+    "taxIdExists": "Un matricule fiscal identique existe déjà.",
+    "tenantSchemaExists": "Ce schéma tenant est déjà utilisé.",
+    "invalidTenantSchema": "Format du schéma tenant invalide. Utilisez uniquement des lettres minuscules, chiffres et underscore.",
+    "maxEmployeesExceeded": "Impossible de réduire la limite : le nombre d'employés actifs dépasse la nouvelle limite.",
+    "jhiUserIdExists": "Un profil existe déjà pour cet utilisateur."
+  }
+}

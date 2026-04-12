@@ -1,0 +1,31 @@
+id;sort_order;rubrique_code;rubrique_label;rubrique_type;base;rate;amount;taxable;pay_slip_id
+1;7472;parmi d’autant que;avant que pendant que de manière à;DEDUCTION;30013.32;21526.97;21305.64;true;1
+2;11804;par suite de main-d’;quitte à;DEDUCTION;21346.46;10931.57;8335.67;true;2
+3;1442;de crainte que prest;sans que;EMPLOYER_CHARGE;163.9;434.67;21246.06;false;3
+4;17837;loufoque cot cot qua;membre du personnel pschitt;EMPLOYER_CHARGE;29285.71;11695.53;20813.68;true;4
+5;801;juriste à seule fin ;grandement comment conseil municipal;INFO;10072.54;28830.71;23267.98;true;5
+6;25121;moderne à condition ;quelquefois badaboum;GAIN;19345.17;9904.83;31407.74;true;6
+7;5644;naguère articuler do;coac coac tandis que;EMPLOYER_CHARGE;31512.88;28701.83;7919.73;true;7
+8;1861;plouf;quitte à comme agréable;GAIN;21678.92;2691.53;21355.17;true;8
+9;28434;de crainte que;après que;GAIN;13297.18;17502;27985.12;true;9
+10;7160;psitt diablement;terne autrefois;INFO;16934.07;8192.66;27237.88;true;10
+11;11664;surprendre;pourvu que corps enseignant;DEDUCTION;24535.17;14298.18;10379.33;true;11
+12;1618;propre de sorte que;ouille considérable commis;INFO;13539.55;8591.3;20104.44;true;12
+13;8394;certainement commis ;tranquille clientèle grrr;INFO;9029.3;23382.55;7433.3;false;13
+14;21979;grâce à raccrocher a;avant de;DEDUCTION;1163.81;28577.05;16984.04;true;14
+15;16838;plic toc juriste;beaucoup paf;INFO;579.39;12118.75;10390.13;true;15
+16;17011;présidence;de sorte que;INFO;2057.88;6400.19;17664.29;false;16
+17;1189;apparemment;tant sincère;DEDUCTION;29716.91;19443.21;12282.3;false;17
+18;19269;autant;psitt;GAIN;1054.38;25307.01;14894.81;true;18
+19;20758;assurément cyan seco;de peur de;INFO;14856.22;24263.03;23451.24;true;19
+20;5465;grâce à assigner;lâche au point que;GAIN;25792.05;3814.98;18954.66;false;20
+21;19784;direction pour;vide fonctionnaire;EMPLOYER_CHARGE;19233.21;30852.48;10796.37;true;21
+22;9755;novice sauvegarder s;hirsute clac soit;DEDUCTION;961.51;31175.62;6328.64;true;22
+23;17906;pff;perplexe;EMPLOYER_CHARGE;1187.07;21978.21;10178;true;23
+24;4421;divinement au point ;super;DEDUCTION;10518.43;7466.31;22691.95;false;24
+25;10441;dès que;déjà triangulaire;DEDUCTION;18931.6;9993.24;25986.53;true;25
+26;21143;bzzz probablement co;coac coac;INFO;4788.82;11961.74;24524.58;true;26
+27;31467;dring;confondre drelin ouch;GAIN;2839.37;11542.55;8985.64;false;27
+28;6091;ouf;tsoin-tsoin;EMPLOYER_CHARGE;8812.72;31129.46;7781.92;false;28
+29;29526;quoique;crac immense à raison de;INFO;225.46;22766.91;29279.59;true;29
+30;15613;hors de;pschitt;DEDUCTION;9045.22;13739.52;18949.48;false;30

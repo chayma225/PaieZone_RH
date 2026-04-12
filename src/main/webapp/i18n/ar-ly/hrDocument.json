@@ -1,0 +1,34 @@
+{
+  "paieZoneRhApp": {
+    "hrDocument": {
+      "home": {
+        "title": "Hr Documents",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Hr Document جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Hr Document",
+        "notFound": "لم يتم العثور على Hr Documents"
+      },
+      "created": "Hr Document جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Hr Document تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Hr Document تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Hr Document {{ id }}؟"
+      },
+      "detail": {
+        "title": "Hr Document"
+      },
+      "id": "ID",
+      "documentType": "Document Type",
+      "title": "Title",
+      "description": "Description",
+      "fileUrl": "File Url",
+      "fileSize": "File Size",
+      "mimeType": "Mime Type",
+      "uploadedAt": "Uploaded At",
+      "expiryDate": "Expiry Date",
+      "active": "Active",
+      "employee": "Employee",
+      "uploadedBy": "Uploaded By"
+    }
+  }
+}

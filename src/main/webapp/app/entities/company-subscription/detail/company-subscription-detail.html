@@ -1,0 +1,76 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (companySubscription(); as companySubscriptionRef) {
+      <div>
+        <h2 data-cy="companySubscriptionDetailsHeading">
+          <span pzTranslate="paieZoneRhApp.companySubscription.detail.title">Company Subscription</span>
+        </h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.plan">Plan</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.PlanType.' + (companySubscriptionRef.plan ?? 'null')">{{
+              { null: '', STARTER: 'STARTER', PME: 'PME', BUSINESS: 'BUSINESS', ENTERPRISE: 'ENTERPRISE', CUSTOM: 'CUSTOM' }[
+                companySubscriptionRef.plan ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.status">Status</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.CompanySubscriptionStatus.' + (companySubscriptionRef.status ?? 'null')">{{
+              { null: '', TRIAL: 'TRIAL', ACTIVE: 'ACTIVE', SUSPENDED: 'SUSPENDED', CANCELLED: 'CANCELLED' }[
+                companySubscriptionRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.maxEmployees">Max Employees</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.maxEmployees }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.priceHT">Price HT</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.priceHT }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.billingDay">Billing Day</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.billingDay }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.startDate">Start Date</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.startDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.endDate">End Date</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.endDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.renewalDate">Renewal Date</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.renewalDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.companySubscription.notes">Notes</span></dt>
+          <dd>
+            <span>{{ companySubscriptionRef.notes }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/company-subscription', companySubscriptionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,49 @@
+{
+  "paieZoneRhApp": {
+    "paySlip": {
+      "home": {
+        "title": "Pay Slips",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Pay Slip جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Pay Slip",
+        "notFound": "لم يتم العثور على Pay Slips"
+      },
+      "created": "Pay Slip جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Pay Slip تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Pay Slip تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Pay Slip {{ id }}؟"
+      },
+      "detail": {
+        "title": "Pay Slip"
+      },
+      "id": "ID",
+      "month": "Month",
+      "year": "Year",
+      "baseSalary": "Base Salary",
+      "totalGains": "Total Gains",
+      "totalDeductions": "Total Deductions",
+      "grossSalary": "Gross Salary",
+      "cnssSalaryAmount": "Cnss Salary Amount",
+      "cavisAmount": "Cavis Amount",
+      "taxableIncome": "Taxable Income",
+      "irppAmount": "Irpp Amount",
+      "netSalary": "Net Salary",
+      "employerCnss": "Employer Cnss",
+      "employerCavis": "Employer Cavis",
+      "totalEmployerCost": "Total Employer Cost",
+      "workedDays": "Worked Days",
+      "paidLeaveDays": "Paid Leave Days",
+      "unpaidDays": "Unpaid Days",
+      "overtimeHours": "Overtime Hours",
+      "status": "Status",
+      "pdfUrl": "Pdf Url",
+      "generatedAt": "Generated At",
+      "sentToEmployeeAt": "Sent To Employee At",
+      "bankTransferRef": "Bank Transfer Ref",
+      "employee": "Employee",
+      "payrollPeriod": "Payroll Period",
+      "contract": "Contract"
+    }
+  }
+}

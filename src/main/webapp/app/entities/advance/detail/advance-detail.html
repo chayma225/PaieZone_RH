@@ -1,0 +1,86 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (advance(); as advanceRef) {
+      <div>
+        <h2 data-cy="advanceDetailsHeading"><span pzTranslate="paieZoneRhApp.advance.detail.title">Advance</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ advanceRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.requestDate">Request Date</span></dt>
+          <dd>
+            <span>{{ advanceRef.requestDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.amount">Amount</span></dt>
+          <dd>
+            <span>{{ advanceRef.amount }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.deductionMonth">Deduction Month</span></dt>
+          <dd>
+            <span>{{ advanceRef.deductionMonth }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.deductionYear">Deduction Year</span></dt>
+          <dd>
+            <span>{{ advanceRef.deductionYear }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.status">Status</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.AdvanceStatus.' + (advanceRef.status ?? 'null')">{{
+              { null: '', REQUESTED: 'REQUESTED', APPROVED: 'APPROVED', REJECTED: 'REJECTED', DEDUCTED: 'DEDUCTED' }[
+                advanceRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.approvedBy">Approved By</span></dt>
+          <dd>
+            <span>{{ advanceRef.approvedBy }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.notes">Notes</span></dt>
+          <dd>
+            <span>{{ advanceRef.notes }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.employee">Employee</span></dt>
+          <dd>
+            @if (advance()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', advance()!.employee?.id, 'view']">{{ advanceRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.paySlip">Pay Slip</span></dt>
+          <dd>
+            @if (advance()!.paySlip) {
+              <div>
+                <a [routerLink]="['/pay-slip', advance()!.paySlip?.id, 'view']">{{ advanceRef.paySlip?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.advance.approvedByUser">Approved By User</span></dt>
+          <dd>
+            @if (advance()!.approvedByUser) {
+              <div>
+                <a [routerLink]="['/user-profile', advance()!.approvedByUser?.id, 'view']">{{ advanceRef.approvedByUser?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/advance', advanceRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

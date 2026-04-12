@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "userProfile": {
+      "home": {
+        "title": "User Profiles",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء User Profile جديد",
+        "createOrEditLabel": "إنشاء أو تعديل User Profile",
+        "notFound": "لم يتم العثور على User Profiles"
+      },
+      "created": "User Profile جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "User Profile تم تحديثه بالمعرف {{ param }}",
+      "deleted": "User Profile تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف User Profile {{ id }}؟"
+      },
+      "detail": {
+        "title": "User Profile"
+      },
+      "id": "ID",
+      "jhiUserId": "Jhi User Id",
+      "role": "Role",
+      "phoneNumber": "Phone Number",
+      "avatarUrl": "Avatar Url",
+      "locale": "Locale",
+      "lastLoginAt": "Last Login At",
+      "twoFactorEnabled": "Two Factor Enabled",
+      "twoFactorSecret": "Two Factor Secret",
+      "active": "Active",
+      "company": "Company"
+    }
+  }
+}

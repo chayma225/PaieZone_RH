@@ -1,0 +1,193 @@
+<div>
+  <h2 id="page-heading" data-cy="BonusHeading">
+    <span pzTranslate="paieZoneRhApp.bonus.home.title">Bonuses</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.bonus.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-bonus"
+        [routerLink]="['/bonus/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.bonus.home.createLabel">Créer un nouveau Bonus</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  <pz-filter [filters]="filters" />
+
+  @if (bonuses().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.bonus.home.notFound">Aucun Bonus trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="bonusType">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.bonusType">Bonus Type</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="label">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.label">Label</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="amount">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.amount">Amount</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="taxable">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.taxable">Taxable</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="month">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.month">Month</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="year">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.year">Year</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="notes">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.notes">Notes</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="employee.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.employee">Employee</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="paySlip.id">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.bonus.paySlip">Pay Slip</span>
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (bonus of bonuses(); track trackId(bonus)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/bonus', bonus.id, 'view']">{{ bonus.id }}</a>
+              </td>
+              <td [pzTranslate]="'paieZoneRhApp.BonusType.' + (bonus.bonusType ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    PERFORMANCE: 'PERFORMANCE',
+                    TRANSPORT: 'TRANSPORT',
+                    MEAL: 'MEAL',
+                    RAMADAN: 'RAMADAN',
+                    END_OF_YEAR: 'END_OF_YEAR',
+                    SENIORITY: 'SENIORITY',
+                    EXCEPTIONAL: 'EXCEPTIONAL',
+                    OTHER: 'OTHER',
+                  }[bonus.bonusType ?? 'null']
+                }}
+              </td>
+              <td>{{ bonus.label }}</td>
+              <td>{{ bonus.amount }}</td>
+              <td>{{ bonus.taxable }}</td>
+              <td>{{ bonus.month }}</td>
+              <td>{{ bonus.year }}</td>
+              <td>{{ bonus.notes }}</td>
+              <td>
+                @if (bonus.employee) {
+                  <div>
+                    <a [routerLink]="['/employee', bonus.employee.id, 'view']">{{ bonus.employee.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (bonus.paySlip) {
+                  <div>
+                    <a [routerLink]="['/pay-slip', bonus.paySlip.id, 'view']">{{ bonus.paySlip.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/bonus', bonus.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/bonus', bonus.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(bonus)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (bonuses().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <pz-item-count [params]="{ page: page(), totalItems: totalItems(), itemsPerPage: itemsPerPage() }" />
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems()"
+          [page]="page()"
+          [pageSize]="itemsPerPage()"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        />
+      </div>
+    </div>
+  }
+</div>

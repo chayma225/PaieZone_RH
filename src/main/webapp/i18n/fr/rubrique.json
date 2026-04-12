@@ -1,0 +1,37 @@
+{
+  "paieZoneRhApp": {
+    "rubrique": {
+      "home": {
+        "title": "Rubriques",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Rubrique",
+        "createOrEditLabel": "Créer ou éditer un Rubrique",
+        "notFound": "Aucun Rubrique trouvé"
+      },
+      "created": "Un nouveau Rubrique a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Rubrique avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Rubrique avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Rubrique {{ id }} ?"
+      },
+      "detail": {
+        "title": "Rubrique"
+      },
+      "id": "ID",
+      "code": "Code",
+      "label": "Label",
+      "labelAr": "Label Ar",
+      "rubriqueType": "Rubrique Type",
+      "base": "Base",
+      "rate": "Rate",
+      "fixedAmount": "Fixed Amount",
+      "formula": "Formula",
+      "taxable": "Taxable",
+      "cnssSalary": "Cnss Salary",
+      "cnssEmployer": "Cnss Employer",
+      "sortOrder": "Sort Order",
+      "active": "Active",
+      "company": "Company"
+    }
+  }
+}

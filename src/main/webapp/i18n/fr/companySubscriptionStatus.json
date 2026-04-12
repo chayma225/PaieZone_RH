@@ -1,0 +1,11 @@
+{
+  "paieZoneRhApp": {
+    "CompanySubscriptionStatus": {
+      "null": "",
+      "TRIAL": "TRIAL",
+      "ACTIVE": "ACTIVE",
+      "SUSPENDED": "SUSPENDED",
+      "CANCELLED": "CANCELLED"
+    }
+  }
+}

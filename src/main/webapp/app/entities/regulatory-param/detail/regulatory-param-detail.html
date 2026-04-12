@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (regulatoryParam(); as regulatoryParamRef) {
+      <div>
+        <h2 data-cy="regulatoryParamDetailsHeading">
+          <span pzTranslate="paieZoneRhApp.regulatoryParam.detail.title">Regulatory Param</span>
+        </h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.paramKey">Param Key</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.paramKey }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.paramLabel">Param Label</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.paramLabel }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.numericValue">Numeric Value</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.numericValue }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.textValue">Text Value</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.textValue }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.effectiveFrom">Effective From</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.effectiveFrom | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.effectiveTo">Effective To</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.effectiveTo | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.legalReference">Legal Reference</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.legalReference }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.active">Active</span></dt>
+          <dd>
+            <span>{{ regulatoryParamRef.active }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/regulatory-param', regulatoryParamRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

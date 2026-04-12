@@ -1,0 +1,31 @@
+{
+  "paieZoneRhApp": {
+    "jobPosition": {
+      "home": {
+        "title": "Job Positions",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Job Position جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Job Position",
+        "notFound": "لم يتم العثور على Job Positions"
+      },
+      "created": "Job Position جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Job Position تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Job Position تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Job Position {{ id }}؟"
+      },
+      "detail": {
+        "title": "Job Position"
+      },
+      "id": "ID",
+      "code": "Code",
+      "title": "Title",
+      "description": "Description",
+      "minSalary": "Min Salary",
+      "maxSalary": "Max Salary",
+      "active": "Active",
+      "company": "Company",
+      "department": "Department"
+    }
+  }
+}

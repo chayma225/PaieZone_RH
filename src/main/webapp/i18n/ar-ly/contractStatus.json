@@ -1,0 +1,12 @@
+{
+  "paieZoneRhApp": {
+    "ContractStatus": {
+      "null": "",
+      "DRAFT": "DRAFT",
+      "ACTIVE": "ACTIVE",
+      "SUSPENDED": "SUSPENDED",
+      "TERMINATED": "TERMINATED",
+      "EXPIRED": "EXPIRED"
+    }
+  }
+}

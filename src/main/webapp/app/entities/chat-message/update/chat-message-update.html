@@ -1,0 +1,175 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="pz-chat-message-heading"
+        data-cy="ChatMessageCreateUpdateHeading"
+        pzTranslate="paieZoneRhApp.chatMessage.home.createOrEditLabel"
+      >
+        Créer ou éditer un Chat Message
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let roleRef = editForm.get('role')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_role" pzTranslate="paieZoneRhApp.chatMessage.role">Role</label>
+          <select class="form-control" name="role" formControlName="role" id="field_role" data-cy="role">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.MessageRole.null' | translate }}</option>
+            @for (messageRole of messageRoleValues; track $index) {
+              <option [value]="messageRole">{{ 'paieZoneRhApp.MessageRole.' + messageRole | translate }}</option>
+            }
+          </select>
+          @if (roleRef.invalid && (roleRef.dirty || roleRef.touched)) {
+            <div>
+              @if (editForm.get('role')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let contentRef = editForm.get('content')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_content" pzTranslate="paieZoneRhApp.chatMessage.content">Content</label>
+          <textarea class="form-control" name="content" id="field_content" data-cy="content" formControlName="content"></textarea>
+          @if (contentRef.invalid && (contentRef.dirty || contentRef.touched)) {
+            <div>
+              @if (editForm.get('content')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_intent" pzTranslate="paieZoneRhApp.chatMessage.intent">Intent</label>
+          <select class="form-control" name="intent" formControlName="intent" id="field_intent" data-cy="intent">
+            <option [ngValue]="null">{{ 'paieZoneRhApp.MessageIntent.null' | translate }}</option>
+            @for (messageIntent of messageIntentValues; track $index) {
+              <option [value]="messageIntent">{{ 'paieZoneRhApp.MessageIntent.' + messageIntent | translate }}</option>
+            }
+          </select>
+        </div>
+
+        @let actionTakenRef = editForm.get('actionTaken')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_actionTaken" pzTranslate="paieZoneRhApp.chatMessage.actionTaken">Action Taken</label>
+          <input
+            type="text"
+            class="form-control"
+            name="actionTaken"
+            id="field_actionTaken"
+            data-cy="actionTaken"
+            formControlName="actionTaken"
+          />
+          @if (actionTakenRef.invalid && (actionTakenRef.dirty || actionTakenRef.touched)) {
+            <div>
+              @if (editForm.get('actionTaken')?.errors?.maxlength) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
+                  >Ce champ doit faire au maximum 200 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_tokenUsed" pzTranslate="paieZoneRhApp.chatMessage.tokenUsed">Token Used</label>
+          <input type="number" class="form-control" name="tokenUsed" id="field_tokenUsed" data-cy="tokenUsed" formControlName="tokenUsed" />
+        </div>
+
+        @let sentAtRef = editForm.get('sentAt')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_sentAt" pzTranslate="paieZoneRhApp.chatMessage.sentAt">Sent At</label>
+          <div class="d-flex">
+            <input
+              id="field_sentAt"
+              data-cy="sentAt"
+              type="datetime-local"
+              class="form-control"
+              name="sentAt"
+              formControlName="sentAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (sentAtRef.invalid && (sentAtRef.dirty || sentAtRef.touched)) {
+            <div>
+              @if (editForm.get('sentAt')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('sentAt')?.errors?.datetimelocal"
+                pzTranslate="entity.validation.datetimelocal"
+                >Ce champ doit être une date et une heure.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_errorOccurred" pzTranslate="paieZoneRhApp.chatMessage.errorOccurred">Error Occurred</label>
+          <input
+            type="checkbox"
+            class="form-check"
+            name="errorOccurred"
+            id="field_errorOccurred"
+            data-cy="errorOccurred"
+            formControlName="errorOccurred"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_session" pzTranslate="paieZoneRhApp.chatMessage.session">Session</label>
+          <select
+            class="form-control"
+            id="field_session"
+            data-cy="session"
+            name="session"
+            formControlName="session"
+            [compareWith]="compareChatSession"
+          >
+            @if (!editForm.get('session')!.value) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (chatSessionOption of chatSessionsSharedCollection(); track $index) {
+              <option [ngValue]="chatSessionOption">{{ chatSessionOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['session'])!.invalid && (editForm.get(['session'])!.dirty || editForm.get(['session'])!.touched)) {
+          <div>
+            @if (editForm.get(['session'])?.errors?.required) {
+              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving()"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

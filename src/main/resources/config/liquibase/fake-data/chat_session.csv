@@ -1,0 +1,31 @@
+id;channel;status;started_at;ended_at;escalated_at;escalated_to;context_data;satisfaction_score;employee_id
+1;WHATSAPP;ACTIVE;2026-04-08T11:28:05;2026-04-07T20:10:05;2026-04-08T04:14:51;lâche communauté étudiante raide;../fake-data/blob/hipster.txt;1;1
+2;MOBILE;ACTIVE;2026-04-08T18:31:09;2026-04-08T08:17:02;2026-04-08T10:25:26;que joliment;../fake-data/blob/hipster.txt;4;2
+3;MOBILE;ESCALATED;2026-04-08T00:53:11;2026-04-08T00:50:13;2026-04-08T12:09:48;tellement égoïste près de;../fake-data/blob/hipster.txt;5;3
+4;WHATSAPP;ESCALATED;2026-04-08T09:18:49;2026-04-08T16:15:11;2026-04-08T04:32:37;incognito suivant;../fake-data/blob/hipster.txt;5;4
+5;MOBILE;EXPIRED;2026-04-07T21:02:46;2026-04-08T05:50:25;2026-04-08T10:09:48;bang;../fake-data/blob/hipster.txt;5;5
+6;MOBILE;ESCALATED;2026-04-08T12:15:33;2026-04-08T10:24:22;2026-04-08T14:35:09;snif d'avec;../fake-data/blob/hipster.txt;2;6
+7;WHATSAPP;ESCALATED;2026-04-08T03:03:23;2026-04-08T16:52:37;2026-04-07T22:28:27;du fait que sus secouriste;../fake-data/blob/hipster.txt;5;7
+8;WEB;ACTIVE;2026-04-08T04:25:00;2026-04-08T17:16:45;2026-04-08T03:47:58;perplexe manier;../fake-data/blob/hipster.txt;3;8
+9;WHATSAPP;EXPIRED;2026-04-08T10:02:37;2026-04-08T03:30:27;2026-04-08T08:32:15;mairie membre de l’équipe aïe;../fake-data/blob/hipster.txt;1;9
+10;WHATSAPP;ACTIVE;2026-04-08T03:24:38;2026-04-08T15:56:37;2026-04-07T20:08:31;commis;../fake-data/blob/hipster.txt;5;10
+11;MOBILE;ACTIVE;2026-04-08T18:26:49;2026-04-08T04:31:53;2026-04-08T02:20:11;jusque du moment que de sorte que;../fake-data/blob/hipster.txt;3;11
+12;MOBILE;RESOLVED;2026-04-08T04:11:06;2026-04-08T13:13:34;2026-04-08T09:42:37;ferme;../fake-data/blob/hipster.txt;1;12
+13;MOBILE;ACTIVE;2026-04-08T02:03:35;2026-04-08T04:57:05;2026-04-08T06:12:36;personnel professionnel également que;../fake-data/blob/hipster.txt;1;13
+14;WEB;ACTIVE;2026-04-08T10:17:29;2026-04-08T05:29:32;2026-04-08T11:45:18;clac inspirer assez;../fake-data/blob/hipster.txt;3;14
+15;WHATSAPP;ESCALATED;2026-04-08T01:54:22;2026-04-07T19:04:29;2026-04-08T10:14:09;à l'insu de électorat;../fake-data/blob/hipster.txt;1;15
+16;WEB;ACTIVE;2026-04-08T12:01:10;2026-04-07T22:58:04;2026-04-08T04:22:23;ainsi repasser cadre;../fake-data/blob/hipster.txt;5;16
+17;WHATSAPP;ACTIVE;2026-04-08T00:43:50;2026-04-08T13:37:19;2026-04-07T21:27:35;chialer;../fake-data/blob/hipster.txt;5;17
+18;MOBILE;ACTIVE;2026-04-08T09:14:35;2026-04-08T18:33:19;2026-04-08T11:22:51;drelin craindre chef de cuisine;../fake-data/blob/hipster.txt;1;18
+19;WEB;ACTIVE;2026-04-08T11:13:28;2026-04-08T10:51:30;2026-04-08T02:02:44;ha ha;../fake-data/blob/hipster.txt;3;19
+20;WEB;RESOLVED;2026-04-08T08:43:32;2026-04-08T03:28:58;2026-04-07T19:29:02;tellement;../fake-data/blob/hipster.txt;1;20
+21;WHATSAPP;EXPIRED;2026-04-08T07:43:04;2026-04-08T01:54:18;2026-04-08T01:22:26;population du Québec membre titulaire;../fake-data/blob/hipster.txt;4;21
+22;WEB;ACTIVE;2026-04-08T09:13:47;2026-04-08T02:24:47;2026-04-07T23:41:36;prestataire de services quand;../fake-data/blob/hipster.txt;5;22
+23;WEB;ESCALATED;2026-04-07T21:12:53;2026-04-08T06:38:59;2026-04-08T07:07:38;avant à l'égard de foule;../fake-data/blob/hipster.txt;5;23
+24;WEB;RESOLVED;2026-04-08T12:30:11;2026-04-07T22:22:24;2026-04-08T02:01:54;malgré mairie;../fake-data/blob/hipster.txt;1;24
+25;MOBILE;EXPIRED;2026-04-08T11:35:16;2026-04-08T11:07:20;2026-04-08T08:24:31;police ronron excuser;../fake-data/blob/hipster.txt;4;25
+26;WEB;ACTIVE;2026-04-08T02:37:37;2026-04-07T18:53:12;2026-04-08T08:23:19;en bas de carrément produire;../fake-data/blob/hipster.txt;3;26
+27;WHATSAPP;ACTIVE;2026-04-08T00:54:10;2026-04-08T17:17:02;2026-04-08T05:10:57;à raison de prestataire de services étant donné que;../fake-data/blob/hipster.txt;5;27
+28;WEB;EXPIRED;2026-04-08T00:25:43;2026-04-08T16:42:52;2026-04-08T06:07:25;actionnaire sauvage du moment que;../fake-data/blob/hipster.txt;3;28
+29;MOBILE;ACTIVE;2026-04-08T16:44:51;2026-04-07T19:22:28;2026-04-07T22:46:00;toujours infime à peine;../fake-data/blob/hipster.txt;4;29
+30;MOBILE;RESOLVED;2026-04-08T11:19:05;2026-04-08T06:17:11;2026-04-08T10:06:31;pourvu que;../fake-data/blob/hipster.txt;2;30

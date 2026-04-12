@@ -1,0 +1,70 @@
+{
+  "annotations": {
+    "changelogDate": "20260408182940"
+  },
+  "applications": ["paieZoneRH"],
+  "documentation": "Ligne de bulletin (détail rubrique par rubrique)",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "sortOrder",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "rubriqueCode",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "rubriqueLabel",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "150"
+    },
+    {
+      "fieldName": "rubriqueType",
+      "fieldType": "RubriqueType",
+      "fieldTypeDocumentation": "Rubrique de paie (plan de rubriques)",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "GAIN,DEDUCTION,EMPLOYER_CHARGE,INFO"
+    },
+    {
+      "fieldName": "base",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "rate",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "taxable",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "PaySlipLine",
+  "relationships": [
+    {
+      "otherEntityName": "paySlip",
+      "relationshipName": "paySlip",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "rubrique",
+      "relationshipName": "rubrique",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

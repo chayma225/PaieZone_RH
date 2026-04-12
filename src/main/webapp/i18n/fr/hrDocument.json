@@ -1,0 +1,34 @@
+{
+  "paieZoneRhApp": {
+    "hrDocument": {
+      "home": {
+        "title": "HrDocuments",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Hr Document",
+        "createOrEditLabel": "Créer ou éditer un Hr Document",
+        "notFound": "Aucun Hr Document trouvé"
+      },
+      "created": "Un nouveau Hr Document a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Hr Document avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Hr Document avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Hr Document {{ id }} ?"
+      },
+      "detail": {
+        "title": "Hr Document"
+      },
+      "id": "ID",
+      "documentType": "Document Type",
+      "title": "Title",
+      "description": "Description",
+      "fileUrl": "File Url",
+      "fileSize": "File Size",
+      "mimeType": "Mime Type",
+      "uploadedAt": "Uploaded At",
+      "expiryDate": "Expiry Date",
+      "active": "Active",
+      "employee": "Employee",
+      "uploadedBy": "Uploaded By"
+    }
+  }
+}

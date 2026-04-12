@@ -1,0 +1,198 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="pz-cnss-rate-heading" data-cy="CnssRateCreateUpdateHeading" pzTranslate="paieZoneRhApp.cnssRate.home.createOrEditLabel">
+        Créer ou éditer un Cnss Rate
+      </h2>
+
+      <div>
+        <pz-alert-error />
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let yearRef = editForm.get('year')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_year" pzTranslate="paieZoneRhApp.cnssRate.year">Year</label>
+          <input type="number" class="form-control" name="year" id="field_year" data-cy="year" formControlName="year" />
+          @if (yearRef.invalid && (yearRef.dirty || yearRef.touched)) {
+            <div>
+              @if (editForm.get('year')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('year')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_salaryCeiling" pzTranslate="paieZoneRhApp.cnssRate.salaryCeiling">Salary Ceiling</label>
+          <input
+            type="number"
+            class="form-control"
+            name="salaryCeiling"
+            id="field_salaryCeiling"
+            data-cy="salaryCeiling"
+            formControlName="salaryCeiling"
+          />
+        </div>
+
+        @let employeeRateRef = editForm.get('employeeRate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_employeeRate" pzTranslate="paieZoneRhApp.cnssRate.employeeRate">Employee Rate</label>
+          <input
+            type="number"
+            class="form-control"
+            name="employeeRate"
+            id="field_employeeRate"
+            data-cy="employeeRate"
+            formControlName="employeeRate"
+          />
+          @if (employeeRateRef.invalid && (employeeRateRef.dirty || employeeRateRef.touched)) {
+            <div>
+              @if (editForm.get('employeeRate')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('employeeRate')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let employerRateRef = editForm.get('employerRate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_employerRate" pzTranslate="paieZoneRhApp.cnssRate.employerRate">Employer Rate</label>
+          <input
+            type="number"
+            class="form-control"
+            name="employerRate"
+            id="field_employerRate"
+            data-cy="employerRate"
+            formControlName="employerRate"
+          />
+          @if (employerRateRef.invalid && (employerRateRef.dirty || employerRateRef.touched)) {
+            <div>
+              @if (editForm.get('employerRate')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('employerRate')?.errors?.number"
+                pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_cavisEmployee" pzTranslate="paieZoneRhApp.cnssRate.cavisEmployee">Cavis Employee</label>
+          <input
+            type="number"
+            class="form-control"
+            name="cavisEmployee"
+            id="field_cavisEmployee"
+            data-cy="cavisEmployee"
+            formControlName="cavisEmployee"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_cavisEmployer" pzTranslate="paieZoneRhApp.cnssRate.cavisEmployer">Cavis Employer</label>
+          <input
+            type="number"
+            class="form-control"
+            name="cavisEmployer"
+            id="field_cavisEmployer"
+            data-cy="cavisEmployer"
+            formControlName="cavisEmployer"
+          />
+        </div>
+
+        @let smigRef = editForm.get('smig')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_smig" pzTranslate="paieZoneRhApp.cnssRate.smig">Smig</label>
+          <input type="number" class="form-control" name="smig" id="field_smig" data-cy="smig" formControlName="smig" />
+          @if (smigRef.invalid && (smigRef.dirty || smigRef.touched)) {
+            <div>
+              @if (editForm.get('smig')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('smig')?.errors?.number" pzTranslate="entity.validation.number"
+                >Ce champ doit être un nombre.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let effectiveFromRef = editForm.get('effectiveFrom')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_effectiveFrom" pzTranslate="paieZoneRhApp.cnssRate.effectiveFrom">Effective From</label>
+          <div class="input-group">
+            <input
+              id="field_effectiveFrom"
+              data-cy="effectiveFrom"
+              type="text"
+              class="form-control"
+              name="effectiveFrom"
+              ngbDatepicker
+              #effectiveFromDp="ngbDatepicker"
+              formControlName="effectiveFrom"
+            />
+            <button type="button" class="btn btn-secondary" (click)="effectiveFromDp.toggle()"><fa-icon icon="calendar-alt" /></button>
+          </div>
+          @if (effectiveFromRef.invalid && (effectiveFromRef.dirty || effectiveFromRef.touched)) {
+            <div>
+              @if (editForm.get('effectiveFrom')?.errors?.required) {
+                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.cnssRate.company">Company</label>
+          <select
+            class="form-control"
+            id="field_company"
+            data-cy="company"
+            name="company"
+            formControlName="company"
+            [compareWith]="compareCompany"
+          >
+            <option [ngValue]="null"></option>
+            @for (companyOption of companiesSharedCollection(); track $index) {
+              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving()"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

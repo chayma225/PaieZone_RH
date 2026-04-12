@@ -1,0 +1,82 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (paySlipLine(); as paySlipLineRef) {
+      <div>
+        <h2 data-cy="paySlipLineDetailsHeading"><span pzTranslate="paieZoneRhApp.paySlipLine.detail.title">Pay Slip Line</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.sortOrder">Sort Order</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.sortOrder }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.rubriqueCode">Rubrique Code</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.rubriqueCode }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.rubriqueLabel">Rubrique Label</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.rubriqueLabel }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.rubriqueType">Rubrique Type</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.RubriqueType.' + (paySlipLineRef.rubriqueType ?? 'null')">{{
+              { null: '', GAIN: 'GAIN', DEDUCTION: 'DEDUCTION', EMPLOYER_CHARGE: 'EMPLOYER_CHARGE', INFO: 'INFO' }[
+                paySlipLineRef.rubriqueType ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.base">Base</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.base }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.rate">Rate</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.rate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.amount">Amount</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.amount }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.taxable">Taxable</span></dt>
+          <dd>
+            <span>{{ paySlipLineRef.taxable }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.paySlip">Pay Slip</span></dt>
+          <dd>
+            @if (paySlipLine()!.paySlip) {
+              <div>
+                <a [routerLink]="['/pay-slip', paySlipLine()!.paySlip?.id, 'view']">{{ paySlipLineRef.paySlip?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.paySlipLine.rubrique">Rubrique</span></dt>
+          <dd>
+            @if (paySlipLine()!.rubrique) {
+              <div>
+                <a [routerLink]="['/rubrique', paySlipLine()!.rubrique?.id, 'view']">{{ paySlipLineRef.rubrique?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/pay-slip-line', paySlipLineRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

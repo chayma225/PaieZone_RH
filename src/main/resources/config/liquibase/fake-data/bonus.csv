@@ -1,0 +1,31 @@
+id;bonus_type;label;amount;taxable;month;year;notes;employee_id
+1;RAMADAN;smack commis;29749.04;true;4;28129;prévaloir;1
+2;TRANSPORT;en bas de là-haut précisément;20139.31;false;11;10449;sauf mentionner cot cot;2
+3;PERFORMANCE;marron présidence;20226.22;true;5;7796;explorer suivant cocorico;3
+4;RAMADAN;transmettre;29716.12;false;3;8934;ainsi direction;4
+5;SENIORITY;à bas de;8948.93;false;6;9393;parer;5
+6;EXCEPTIONAL;en plus de;4230.37;true;10;8759;vroum;6
+7;OTHER;novice terne bè;8599.79;false;8;13286;traîner atchoum tellement;7
+8;END_OF_YEAR;devant;10282.23;true;8;5312;ouille adorable au point que;8
+9;PERFORMANCE;émerger pour que drelin;30134.84;false;1;28703;neutre;9
+10;MEAL;où souple;18120.81;true;6;8411;pourpre communauté étudiante corps enseignant;10
+11;PERFORMANCE;tant que d’autant que vide;12889.03;true;1;6152;ouin juriste;11
+12;SENIORITY;téméraire;15759.16;false;5;28984;diriger;12
+13;PERFORMANCE;concurrence oups;10786.2;false;8;18725;solliciter à partir de;13
+14;END_OF_YEAR;hirsute pff;16972.55;false;2;15560;de façon à;14
+15;SENIORITY;de la part de;26469.24;true;3;5161;ding lorsque;15
+16;RAMADAN;d'avec à la merci certes;13806.46;true;10;13464;basculer;16
+17;END_OF_YEAR;hormis;7669.15;false;7;21875;ouin snif;17
+18;RAMADAN;ouch;28447.17;false;9;26765;parlementaire;18
+19;PERFORMANCE;aimable concernant;15626.18;true;2;19479;adorable heurter;19
+20;SENIORITY;parce que triste avant de;6390.03;false;9;31583;assurément;20
+21;SENIORITY;extrêmement hi;13174.17;false;4;1269;spécialiste;21
+22;TRANSPORT;novice;25398.96;true;11;16798;euh;22
+23;EXCEPTIONAL;ouin auprès de ferme;6949.74;false;7;8680;que;23
+24;EXCEPTIONAL;main-d’œuvre altruiste assurément;24591.21;true;3;2078;à la faveur de à bas de détourner;24
+25;OTHER;vraisemblablement sédentaire;10244.47;true;2;1111;plancher puisque;25
+26;MEAL;concurrence chef de cuisine circulaire;18338.9;true;2;23580;perplexe bzzz;26
+27;SENIORITY;partout zzzz insulter;3498.66;true;5;257;chut;27
+28;SENIORITY;bien que à condition que gestionnaire;7016.21;true;2;6299;malade oh tenir;28
+29;EXCEPTIONAL;vroum de crainte que de;10119.41;false;6;29973;comme habile;29
+30;END_OF_YEAR;à raison de assez touchant;10567.8;false;3;18165;franco debout sitôt;30

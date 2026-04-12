@@ -1,0 +1,96 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (timeEntry(); as timeEntryRef) {
+      <div>
+        <h2 data-cy="timeEntryDetailsHeading"><span pzTranslate="paieZoneRhApp.timeEntry.detail.title">Time Entry</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.entryDate">Entry Date</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.entryDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.checkIn">Check In</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.checkIn | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.checkOut">Check Out</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.checkOut | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.workedHours">Worked Hours</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.workedHours }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.overtimeHours">Overtime Hours</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.overtimeHours }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.lateMinutes">Late Minutes</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.lateMinutes }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.source">Source</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.TimeEntrySource.' + (timeEntryRef.source ?? 'null')">{{
+              { null: '', MANUAL: 'MANUAL', BADGE: 'BADGE', IMPORT: 'IMPORT', CHATBOT: 'CHATBOT' }[timeEntryRef.source ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.status">Status</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.TimeEntryStatus.' + (timeEntryRef.status ?? 'null')">{{
+              { null: '', PENDING: 'PENDING', VALIDATED: 'VALIDATED', ANOMALY: 'ANOMALY', CORRECTED: 'CORRECTED' }[
+                timeEntryRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.anomalyNote">Anomaly Note</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.anomalyNote }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.validatedBy">Validated By</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.validatedBy }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.validatedAt">Validated At</span></dt>
+          <dd>
+            <span>{{ timeEntryRef.validatedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.employee">Employee</span></dt>
+          <dd>
+            @if (timeEntry()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', timeEntry()!.employee?.id, 'view']">{{ timeEntryRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.timeEntry.validatedByUser">Validated By User</span></dt>
+          <dd>
+            @if (timeEntry()!.validatedByUser) {
+              <div>
+                <a [routerLink]="['/user-profile', timeEntry()!.validatedByUser?.id, 'view']">{{ timeEntryRef.validatedByUser?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/time-entry', timeEntryRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

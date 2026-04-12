@@ -1,0 +1,80 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (chatMessage(); as chatMessageRef) {
+      <div>
+        <h2 data-cy="chatMessageDetailsHeading"><span pzTranslate="paieZoneRhApp.chatMessage.detail.title">Chat Message</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ chatMessageRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.role">Role</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.MessageRole.' + (chatMessageRef.role ?? 'null')">{{
+              { null: '', USER: 'USER', ASSISTANT: 'ASSISTANT', SYSTEM: 'SYSTEM' }[chatMessageRef.role ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.content">Content</span></dt>
+          <dd>
+            <span>{{ chatMessageRef.content }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.intent">Intent</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.MessageIntent.' + (chatMessageRef.intent ?? 'null')">{{
+              {
+                null: '',
+                LEAVE_REQUEST: 'LEAVE_REQUEST',
+                PAYSLIP_QUERY: 'PAYSLIP_QUERY',
+                ATTESTATION_REQUEST: 'ATTESTATION_REQUEST',
+                LEAVE_BALANCE: 'LEAVE_BALANCE',
+                HR_QUESTION: 'HR_QUESTION',
+                SMALL_TALK: 'SMALL_TALK',
+                ESCALATION: 'ESCALATION',
+                OTHER: 'OTHER',
+              }[chatMessageRef.intent ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.actionTaken">Action Taken</span></dt>
+          <dd>
+            <span>{{ chatMessageRef.actionTaken }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.tokenUsed">Token Used</span></dt>
+          <dd>
+            <span>{{ chatMessageRef.tokenUsed }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.sentAt">Sent At</span></dt>
+          <dd>
+            <span>{{ chatMessageRef.sentAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.errorOccurred">Error Occurred</span></dt>
+          <dd>
+            <span>{{ chatMessageRef.errorOccurred }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.chatMessage.session">Session</span></dt>
+          <dd>
+            @if (chatMessage()!.session) {
+              <div>
+                <a [routerLink]="['/chat-session', chatMessage()!.session?.id, 'view']">{{ chatMessageRef.session?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/chat-message', chatMessageRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

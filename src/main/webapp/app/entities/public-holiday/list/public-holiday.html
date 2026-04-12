@@ -1,0 +1,124 @@
+<div>
+  <h2 id="page-heading" data-cy="PublicHolidayHeading">
+    <span pzTranslate="paieZoneRhApp.publicHoliday.home.title">PublicHolidays</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
+        <span pzTranslate="paieZoneRhApp.publicHoliday.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-public-holiday"
+        [routerLink]="['/public-holiday/new']"
+      >
+        <fa-icon icon="plus" />
+        <span pzTranslate="paieZoneRhApp.publicHoliday.home.createLabel">Créer un nouveau Public Holiday</span>
+      </button>
+    </div>
+  </h2>
+
+  <pz-alert-error />
+
+  <pz-alert />
+
+  @if (publicHolidays().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span pzTranslate="paieZoneRhApp.publicHoliday.home.notFound">Aucun Public Holiday trouvé</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" pzSortBy="id">
+              <div class="d-flex">
+                <span pzTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="name">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.publicHoliday.name">Name</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="nameAr">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.publicHoliday.nameAr">Name Ar</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="holidayDate">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.publicHoliday.holidayDate">Holiday Date</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="year">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.publicHoliday.year">Year</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="isRecurring">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.publicHoliday.isRecurring">Is Recurring</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col" pzSortBy="active">
+              <div class="d-flex">
+                <span pzTranslate="paieZoneRhApp.publicHoliday.active">Active</span>
+
+                <fa-icon class="p-1" icon="sort" />
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (publicHoliday of publicHolidays(); track trackId(publicHoliday)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/public-holiday', publicHoliday.id, 'view']">{{ publicHoliday.id }}</a>
+              </td>
+              <td>{{ publicHoliday.name }}</td>
+              <td>{{ publicHoliday.nameAr }}</td>
+              <td>{{ publicHoliday.holidayDate | formatMediumDate }}</td>
+              <td>{{ publicHoliday.year }}</td>
+              <td>{{ publicHoliday.isRecurring }}</td>
+              <td>{{ publicHoliday.active }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/public-holiday', publicHoliday.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                  </a>
+
+                  <a [routerLink]="['/public-holiday', publicHoliday.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(publicHoliday)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times" />
+                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

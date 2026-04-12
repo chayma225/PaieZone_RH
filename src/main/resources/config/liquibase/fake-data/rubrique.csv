@@ -1,0 +1,31 @@
+id;code;label;label_ar;rubrique_type;base;rate;fixed_amount;formula;taxable;cnss_salary;cnss_employer;sort_order;active;company_id
+1;toc répartir;responsable terne;avant que combien;EMPLOYER_CHARGE;PERCENT_BRUT;18949;15360.4;de façon que;true;true;true;19379;true;1
+2;aussitôt que;d'entre admirablement;ensuite;EMPLOYER_CHARGE;FORMULA;21818.46;32165.62;après que candide désagréable;false;true;true;23569;false;2
+3;ouch spécialiste;boum multiple;pour que;DEDUCTION;PERCENT_NET;32125.34;20371.79;soudain jadis;false;true;false;26153;false;3
+4;à condition que conc;ouille gens;secours;EMPLOYER_CHARGE;FIXED;13549.63;28794.84;combien;false;true;false;7710;false;4
+5;prout;commis;croâ;DEDUCTION;FIXED;9264.8;8808.67;dès que chut;true;false;true;28962;false;5
+6;plouf parce que selo;quoique;devenir fade;GAIN;HOURS;29777.22;4260.88;rectangulaire police avant de;true;true;false;16839;false;6
+7;divinement tant spéc;porte-parole à demi;ha que;EMPLOYER_CHARGE;PERCENT_BRUT;5687.4;9465.79;coin-coin extra raconter;false;false;true;4593;true;7
+8;crac blême derrière;pourvu que hirsute innombrable;carrément;GAIN;PERCENT_NET;27570.7;2752.03;à cause de;false;true;true;12229;false;8
+9;diplomate commis;durant;tout à fait pour;DEDUCTION;HOURS;5463.73;14867.69;de peur que à raison de;true;false;false;11062;true;9
+10;dans;triste quoique;parmi tandis que consulter;DEDUCTION;FORMULA;21121.82;10045.6;cadre transporter bon;true;true;true;1157;false;10
+11;rapporter près ha;alors que vers parlementaire;depuis voler assez;DEDUCTION;FORMULA;21384.66;12463.78;travailler pourvu que;true;true;false;14769;false;11
+12;diplomate;insipide;tracer;INFO;FORMULA;13236.43;8044.2;en outre de;false;false;false;5178;false;12
+13;efficace adepte;lorsque camarade interroger;choir;EMPLOYER_CHARGE;FIXED;18310.91;25194.61;cocorico menacer égoïste;false;false;true;12695;true;13
+14;en plus de;hôte mairie pin-pon;secouer candide;GAIN;PERCENT_BRUT;2977.59;21239.24;biathlète paraître comme;false;true;false;24412;true;14
+15;siffler lâche à moin;près raide atchoum;rapporter;INFO;HOURS;29609.27;8893.82;près bien que insolite;true;false;true;11420;true;15
+16;mairie;miaou;revoir;EMPLOYER_CHARGE;HOURS;32442.65;32082.53;confirmer boum exciter;true;false;true;21275;true;16
+17;tout;surprendre personnel quitte à;secouriste défaire;DEDUCTION;PERCENT_BRUT;10612.21;2418.34;maigre;false;true;true;3098;true;17
+18;confronter emplir;adhérer pour que;d'après glouglou assigner;INFO;PERCENT_BRUT;28404.59;25093.57;membre à vie en;true;false;true;25490;true;18
+19;d'abord ronfler;devant;actionnaire;GAIN;PERCENT_BRUT;27884;10748.11;étant donné que encore;false;true;true;10936;false;19
+20;par suite de autour ;glouglou;du moment que;GAIN;FORMULA;15218.5;13099.36;entre de peur de de;true;true;true;23253;false;20
+21;gens;du moment que devant sous couleur de;autant vétuste concernant;EMPLOYER_CHARGE;FORMULA;98.62;536.04;manier au-dedans de;false;true;true;20323;false;21
+22;tchou tchouu hi au-d;grrr;tandis que svelte diététiste;GAIN;HOURS;20689.12;18126.86;bien que devant antagoniste;false;false;true;13765;false;22
+23;déjà posséder recta;sauf à plic;a pour que affable;EMPLOYER_CHARGE;HOURS;8765.84;28207.27;juriste en faveur de puisque;true;false;false;30237;true;23
+24;concernant;divinement;porte-parole;EMPLOYER_CHARGE;PERCENT_NET;11569.73;6641.32;équipe souvent;true;false;false;13348;true;24
+25;main-d’œuvre hirsute;concurrence;spécialiste ci de crainte que;GAIN;FIXED;28842.44;17577.08;dessus;false;true;false;12853;true;25
+26;tant tant que âcre;chier juriste;population du Québec suffisamment près;EMPLOYER_CHARGE;PERCENT_BRUT;24919.31;32168.43;outre étant donné que de sorte que;false;true;false;14861;true;26
+27;commissionnaire tout;comme;fonctionnaire;GAIN;FORMULA;7142.97;21138.35;dès;true;true;true;19085;false;27
+28;lors;quand;à l'entour de tout secours;INFO;PERCENT_BRUT;1916.78;23898.4;hôte dring;false;false;false;22102;false;28
+29;croâ commis de cuisi;pis chier sitôt que;au point que;INFO;FIXED;23164.3;1000.9;cocorico pin-pon pschitt;false;true;true;7056;true;29
+30;plouf;sans que;comme sale oh;DEDUCTION;PERCENT_BRUT;12805.16;22378.1;assurément;false;false;false;3615;true;30

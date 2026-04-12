@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "cnssRate": {
+      "home": {
+        "title": "Cnss Rates",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء Cnss Rate جديد",
+        "createOrEditLabel": "إنشاء أو تعديل Cnss Rate",
+        "notFound": "لم يتم العثور على Cnss Rates"
+      },
+      "created": "Cnss Rate جديد تم إنشاؤه بالمعرف {{ param }}",
+      "updated": "Cnss Rate تم تحديثه بالمعرف {{ param }}",
+      "deleted": "Cnss Rate تم حذفه بالمعرف {{ param }}",
+      "delete": {
+        "question": "هل أنت متأكد أنك تريد حذف Cnss Rate {{ id }}؟"
+      },
+      "detail": {
+        "title": "Cnss Rate"
+      },
+      "id": "ID",
+      "year": "Year",
+      "salaryCeiling": "Salary Ceiling",
+      "employeeRate": "Employee Rate",
+      "employerRate": "Employer Rate",
+      "cavisEmployee": "Cavis Employee",
+      "cavisEmployer": "Cavis Employer",
+      "smig": "Smig",
+      "effectiveFrom": "Effective From",
+      "company": "Company"
+    }
+  }
+}

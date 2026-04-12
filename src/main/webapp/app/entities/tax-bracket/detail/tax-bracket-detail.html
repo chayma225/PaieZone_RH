@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (taxBracket(); as taxBracketRef) {
+      <div>
+        <h2 data-cy="taxBracketDetailsHeading"><span pzTranslate="paieZoneRhApp.taxBracket.detail.title">Tax Bracket</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ taxBracketRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.taxBracket.year">Year</span></dt>
+          <dd>
+            <span>{{ taxBracketRef.year }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.taxBracket.minIncome">Min Income</span></dt>
+          <dd>
+            <span>{{ taxBracketRef.minIncome }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.taxBracket.maxIncome">Max Income</span></dt>
+          <dd>
+            <span>{{ taxBracketRef.maxIncome }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.taxBracket.rate">Rate</span></dt>
+          <dd>
+            <span>{{ taxBracketRef.rate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.taxBracket.fixedDeduction">Fixed Deduction</span></dt>
+          <dd>
+            <span>{{ taxBracketRef.fixedDeduction }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.taxBracket.sortOrder">Sort Order</span></dt>
+          <dd>
+            <span>{{ taxBracketRef.sortOrder }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.taxBracket.company">Company</span></dt>
+          <dd>
+            @if (taxBracket()!.company) {
+              <div>
+                <a [routerLink]="['/company', taxBracket()!.company?.id, 'view']">{{ taxBracketRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/tax-bracket', taxBracketRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

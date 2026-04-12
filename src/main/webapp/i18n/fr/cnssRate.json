@@ -1,0 +1,32 @@
+{
+  "paieZoneRhApp": {
+    "cnssRate": {
+      "home": {
+        "title": "CnssRates",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Cnss Rate",
+        "createOrEditLabel": "Créer ou éditer un Cnss Rate",
+        "notFound": "Aucun Cnss Rate trouvé"
+      },
+      "created": "Un nouveau Cnss Rate a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Cnss Rate avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Cnss Rate avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Cnss Rate {{ id }} ?"
+      },
+      "detail": {
+        "title": "Cnss Rate"
+      },
+      "id": "ID",
+      "year": "Year",
+      "salaryCeiling": "Salary Ceiling",
+      "employeeRate": "Employee Rate",
+      "employerRate": "Employer Rate",
+      "cavisEmployee": "Cavis Employee",
+      "cavisEmployer": "Cavis Employer",
+      "smig": "Smig",
+      "effectiveFrom": "Effective From",
+      "company": "Company"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (hrDocument(); as hrDocumentRef) {
+      <div>
+        <h2 data-cy="hrDocumentDetailsHeading"><span pzTranslate="paieZoneRhApp.hrDocument.detail.title">Hr Document</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.documentType">Document Type</span></dt>
+          <dd>
+            <span [pzTranslate]="'paieZoneRhApp.DocumentType.' + (hrDocumentRef.documentType ?? 'null')">{{
+              {
+                null: '',
+                CONTRACT: 'CONTRACT',
+                CIN_COPY: 'CIN_COPY',
+                DIPLOMA: 'DIPLOMA',
+                MEDICAL_CERT: 'MEDICAL_CERT',
+                DISCIPLINARY: 'DISCIPLINARY',
+                PAYSLIP: 'PAYSLIP',
+                ATTESTATION: 'ATTESTATION',
+                OTHER: 'OTHER',
+              }[hrDocumentRef.documentType ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.title">Title</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.title }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.description">Description</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.description }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.fileUrl">File Url</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.fileUrl }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.fileSize">File Size</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.fileSize }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.mimeType">Mime Type</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.mimeType }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.uploadedAt">Uploaded At</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.uploadedAt | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.expiryDate">Expiry Date</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.expiryDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.active">Active</span></dt>
+          <dd>
+            <span>{{ hrDocumentRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.employee">Employee</span></dt>
+          <dd>
+            @if (hrDocument()!.employee) {
+              <div>
+                <a [routerLink]="['/employee', hrDocument()!.employee?.id, 'view']">{{ hrDocumentRef.employee?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.hrDocument.uploadedBy">Uploaded By</span></dt>
+          <dd>
+            @if (hrDocument()!.uploadedBy) {
+              <div>
+                <a [routerLink]="['/user-profile', hrDocument()!.uploadedBy?.id, 'view']">{{ hrDocumentRef.uploadedBy?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/hr-document', hrDocumentRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,15 @@
+{
+  "paieZoneRhApp": {
+    "BonusType": {
+      "null": "",
+      "PERFORMANCE": "PERFORMANCE",
+      "TRANSPORT": "TRANSPORT",
+      "MEAL": "MEAL",
+      "RAMADAN": "RAMADAN",
+      "END_OF_YEAR": "END_OF_YEAR",
+      "SENIORITY": "SENIORITY",
+      "EXCEPTIONAL": "EXCEPTIONAL",
+      "OTHER": "OTHER"
+    }
+  }
+}

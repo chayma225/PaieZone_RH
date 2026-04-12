@@ -1,0 +1,83 @@
+{
+  "annotations": {
+    "changelogDate": "20260408182540"
+  },
+  "applications": ["paieZoneRH"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "entryDate",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "checkIn",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "checkOut",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "workedHours",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "overtimeHours",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "lateMinutes",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "source",
+      "fieldType": "TimeEntrySource",
+      "fieldTypeDocumentation": "Pointage / Feuille de temps",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "MANUAL,BADGE,IMPORT,CHATBOT"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "TimeEntryStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING,VALIDATED,ANOMALY,CORRECTED"
+    },
+    {
+      "fieldName": "anomalyNote",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "validatedBy",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "validatedAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TimeEntry",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "employee",
+      "relationshipName": "employee",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "userProfile",
+      "relationshipName": "validatedByUser",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

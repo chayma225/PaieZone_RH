@@ -1,0 +1,33 @@
+{
+  "paieZoneRhApp": {
+    "companySubscription": {
+      "home": {
+        "title": "CompanySubscriptions",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Company Subscription",
+        "createOrEditLabel": "Créer ou éditer un Company Subscription",
+        "notFound": "Aucun Company Subscription trouvé"
+      },
+      "created": "Un nouveau Company Subscription a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Company Subscription avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Company Subscription avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Company Subscription {{ id }} ?"
+      },
+      "detail": {
+        "title": "Company Subscription"
+      },
+      "id": "ID",
+      "plan": "Plan",
+      "status": "Status",
+      "maxEmployees": "Max Employees",
+      "priceHT": "Price HT",
+      "billingDay": "Billing Day",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "renewalDate": "Renewal Date",
+      "notes": "Notes",
+      "company": "Company"
+    }
+  }
+}

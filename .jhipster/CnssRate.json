@@ -1,0 +1,58 @@
+{
+  "annotations": {
+    "changelogDate": "20260408183440"
+  },
+  "applications": ["paieZoneRH"],
+  "documentation": "Taux CNSS",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "year",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "salaryCeiling",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "employeeRate",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "employerRate",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "cavisEmployee",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "cavisEmployer",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "smig",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "effectiveFrom",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "CnssRate",
+  "relationships": [
+    {
+      "otherEntityName": "company",
+      "relationshipName": "company",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

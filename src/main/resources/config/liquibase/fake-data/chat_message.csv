@@ -1,0 +1,31 @@
+id;role;content;intent;action_taken;token_used;sent_at;error_occurred;session_id
+1;ASSISTANT;../fake-data/blob/hipster.txt;PAYSLIP_QUERY;smack marcher;13482;2026-04-08T18:18:45;true;1
+2;USER;../fake-data/blob/hipster.txt;ATTESTATION_REQUEST;aussitôt que juriste;1853;2026-04-08T08:37:20;true;2
+3;USER;../fake-data/blob/hipster.txt;PAYSLIP_QUERY;derrière trop;31850;2026-04-07T22:15:53;true;3
+4;SYSTEM;../fake-data/blob/hipster.txt;LEAVE_REQUEST;de du moment que dorénavant;12106;2026-04-07T19:49:29;false;4
+5;USER;../fake-data/blob/hipster.txt;SMALL_TALK;proche de ramener tchou tchouu;17174;2026-04-08T05:11:11;false;5
+6;ASSISTANT;../fake-data/blob/hipster.txt;LEAVE_BALANCE;envers d'après;13217;2026-04-08T09:19:51;false;6
+7;USER;../fake-data/blob/hipster.txt;LEAVE_REQUEST;sur malade;18586;2026-04-08T17:10:26;false;7
+8;SYSTEM;../fake-data/blob/hipster.txt;ATTESTATION_REQUEST;près;11765;2026-04-08T10:15:00;false;8
+9;SYSTEM;../fake-data/blob/hipster.txt;SMALL_TALK;membre du personnel;769;2026-04-08T09:07:56;false;9
+10;SYSTEM;../fake-data/blob/hipster.txt;PAYSLIP_QUERY;dring à peu près reconstituer;24043;2026-04-08T03:12:43;true;10
+11;ASSISTANT;../fake-data/blob/hipster.txt;OTHER;rectorat;3150;2026-04-08T07:05:33;true;11
+12;ASSISTANT;../fake-data/blob/hipster.txt;LEAVE_BALANCE;guère jusque;27053;2026-04-08T14:17:08;false;12
+13;SYSTEM;../fake-data/blob/hipster.txt;LEAVE_BALANCE;si atchoum;23877;2026-04-08T09:26:34;false;13
+14;ASSISTANT;../fake-data/blob/hipster.txt;LEAVE_BALANCE;plutôt groin groin;25190;2026-04-08T18:22:37;false;14
+15;USER;../fake-data/blob/hipster.txt;ESCALATION;gestionnaire sans doute;12746;2026-04-08T07:32:36;false;15
+16;ASSISTANT;../fake-data/blob/hipster.txt;SMALL_TALK;quelque afin que étonner;253;2026-04-08T11:53:29;false;16
+17;SYSTEM;../fake-data/blob/hipster.txt;ATTESTATION_REQUEST;insipide certainement;12710;2026-04-07T22:03:04;false;17
+18;USER;../fake-data/blob/hipster.txt;LEAVE_BALANCE;aimer aimable;4759;2026-04-08T06:36:24;true;18
+19;SYSTEM;../fake-data/blob/hipster.txt;ATTESTATION_REQUEST;en face de coac coac;29690;2026-04-08T00:30:01;true;19
+20;ASSISTANT;../fake-data/blob/hipster.txt;LEAVE_BALANCE;chef multiple atteindre;12497;2026-04-08T08:01:35;false;20
+21;USER;../fake-data/blob/hipster.txt;ESCALATION;à raison de ronron juriste;5802;2026-04-08T16:11:29;true;21
+22;SYSTEM;../fake-data/blob/hipster.txt;HR_QUESTION;après-demain;20833;2026-04-08T16:54:59;false;22
+23;SYSTEM;../fake-data/blob/hipster.txt;LEAVE_BALANCE;après que;16417;2026-04-07T20:14:20;true;23
+24;SYSTEM;../fake-data/blob/hipster.txt;LEAVE_BALANCE;au cas où;19670;2026-04-08T03:30:59;false;24
+25;ASSISTANT;../fake-data/blob/hipster.txt;LEAVE_REQUEST;équipe déjà dîner;14699;2026-04-08T13:20:28;true;25
+26;SYSTEM;../fake-data/blob/hipster.txt;ESCALATION;racheter guide groin groin;18688;2026-04-08T07:22:49;false;26
+27;SYSTEM;../fake-data/blob/hipster.txt;LEAVE_REQUEST;incognito;9968;2026-04-08T08:39:19;false;27
+28;SYSTEM;../fake-data/blob/hipster.txt;ESCALATION;si;27446;2026-04-08T05:40:22;false;28
+29;ASSISTANT;../fake-data/blob/hipster.txt;HR_QUESTION;membre titulaire;30106;2026-04-08T06:15:58;true;29
+30;SYSTEM;../fake-data/blob/hipster.txt;SMALL_TALK;euh camarade sus;9879;2026-04-08T05:33:34;false;30

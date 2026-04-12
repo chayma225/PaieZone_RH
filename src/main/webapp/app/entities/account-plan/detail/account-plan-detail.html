@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (accountPlan(); as accountPlanRef) {
+      <div>
+        <h2 data-cy="accountPlanDetailsHeading"><span pzTranslate="paieZoneRhApp.accountPlan.detail.title">Account Plan</span></h2>
+
+        <hr />
+
+        <pz-alert-error />
+
+        <pz-alert />
+
+        <dl class="row-md jh-entity-details">
+          <dt><span pzTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ accountPlanRef.id }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountPlan.accountCode">Account Code</span></dt>
+          <dd>
+            <span>{{ accountPlanRef.accountCode }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountPlan.accountLabel">Account Label</span></dt>
+          <dd>
+            <span>{{ accountPlanRef.accountLabel }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountPlan.accountLabelAr">Account Label Ar</span></dt>
+          <dd>
+            <span>{{ accountPlanRef.accountLabelAr }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountPlan.accountType">Account Type</span></dt>
+          <dd>
+            <span>{{ accountPlanRef.accountType }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountPlan.active">Active</span></dt>
+          <dd>
+            <span>{{ accountPlanRef.active }}</span>
+          </dd>
+          <dt><span pzTranslate="paieZoneRhApp.accountPlan.company">Company</span></dt>
+          <dd>
+            @if (accountPlan()!.company) {
+              <div>
+                <a [routerLink]="['/company', accountPlan()!.company?.id, 'view']">{{ accountPlanRef.company?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+        </button>
+
+        <button type="button" [routerLink]="['/account-plan', accountPlanRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>
