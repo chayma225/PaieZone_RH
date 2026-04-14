@@ -42,7 +42,6 @@ public class AuditAspect {
 
     @Around("@annotation(auditable)")
     public Object auditMethod(ProceedingJoinPoint joinPoint, Auditable auditable) throws Throwable {
-        // Capturer l'ancien état avant exécution
         String oldValue = null;
         try {
             Object[] args = joinPoint.getArgs();
@@ -53,12 +52,15 @@ public class AuditAspect {
             LOG.warn("Impossible de sérialiser l'ancien état : {}", e.getMessage());
         }
 
-        // Exécuter la méthode
         Object result = joinPoint.proceed();
 
-        // Enregistrer l'audit après exécution
         try {
-            saveAuditLog(auditable, oldValue, result);
+            // ← Extraire seulement le body de la ResponseEntity
+            Object valueToSave = result;
+            if (result instanceof org.springframework.http.ResponseEntity<?> responseEntity) {
+                valueToSave = responseEntity.getBody();
+            }
+            saveAuditLog(auditable, oldValue, valueToSave);
         } catch (Exception e) {
             LOG.error("Erreur lors de l'enregistrement de l'audit : {}", e.getMessage());
         }

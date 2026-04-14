@@ -339,6 +339,11 @@
             <groupId>tools.jackson.module</groupId>
             <artifactId>jackson-module-jaxb-annotations</artifactId>
         </dependency>
+      <dependency>
+        <groupId>dev.samstevens.totp</groupId>
+        <artifactId>totp-spring-boot-starter</artifactId>
+        <version>1.7.1</version>
+      </dependency>
     </dependencies>
 
     <build>

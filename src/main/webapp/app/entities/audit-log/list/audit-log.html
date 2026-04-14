@@ -7,24 +7,11 @@
         <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
         <span pzTranslate="paieZoneRhApp.auditLog.home.refreshListLabel">Actualiser la liste</span>
       </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-audit-log"
-        [routerLink]="['/audit-log/new']"
-      >
-        <fa-icon icon="plus" />
-        <span pzTranslate="paieZoneRhApp.auditLog.home.createLabel">Créer un nouveau Audit Log</span>
-      </button>
     </div>
   </h2>
 
   <pz-alert-error />
-
   <pz-alert />
-
-  <pz-filter [filters]="filters" />
 
   @if (auditLogs().length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -38,75 +25,48 @@
             <th scope="col" pzSortBy="id">
               <div class="d-flex">
                 <span pzTranslate="global.field.id">ID</span>
-
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
             <th scope="col" pzSortBy="action">
               <div class="d-flex">
                 <span pzTranslate="paieZoneRhApp.auditLog.action">Action</span>
-
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
             <th scope="col" pzSortBy="entityType">
               <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.entityType">Entity Type</span>
-
+                <span pzTranslate="paieZoneRhApp.auditLog.entityType">Type Entité</span>
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
             <th scope="col" pzSortBy="entityId">
               <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.entityId">Entity Id</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="oldValue">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.oldValue">Old Value</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="newValue">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.newValue">New Value</span>
-
+                <span pzTranslate="paieZoneRhApp.auditLog.entityId">ID Entité</span>
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
             <th scope="col" pzSortBy="ipAddress">
               <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.ipAddress">Ip Address</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="userAgent">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.userAgent">User Agent</span>
-
+                <span pzTranslate="paieZoneRhApp.auditLog.ipAddress">Adresse IP</span>
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
             <th scope="col" pzSortBy="occurredAt">
               <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.occurredAt">Occurred At</span>
-
+                <span pzTranslate="paieZoneRhApp.auditLog.occurredAt">Date/Heure</span>
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
             <th scope="col" pzSortBy="user.id">
               <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.user">User</span>
+                <span pzTranslate="paieZoneRhApp.auditLog.user">Utilisateur</span>
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
             <th scope="col" pzSortBy="company.id">
               <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.auditLog.company">Company</span>
+                <span pzTranslate="paieZoneRhApp.auditLog.company">Entreprise</span>
                 <fa-icon class="p-1" icon="sort" />
               </div>
             </th>
@@ -119,44 +79,41 @@
               <td>
                 <a [routerLink]="['/audit-log', auditLog.id, 'view']">{{ auditLog.id }}</a>
               </td>
-              <td>{{ auditLog.action }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-success]="auditLog.action === 'CREATE'"
+                  [class.bg-warning]="auditLog.action === 'UPDATE'"
+                  [class.bg-danger]="auditLog.action === 'DELETE'"
+                  [class.bg-info]="auditLog.action === 'PATCH'"
+                >
+                  {{ auditLog.action }}
+                </span>
+              </td>
               <td>{{ auditLog.entityType }}</td>
               <td>{{ auditLog.entityId }}</td>
-              <td>{{ auditLog.oldValue }}</td>
-              <td>{{ auditLog.newValue }}</td>
               <td>{{ auditLog.ipAddress }}</td>
-              <td>{{ auditLog.userAgent }}</td>
               <td>{{ auditLog.occurredAt | formatMediumDatetime }}</td>
               <td>
                 @if (auditLog.user) {
-                  <div>
-                    <a [routerLink]="['/user-profile', auditLog.user.id, 'view']">{{ auditLog.user.id }}</a>
-                  </div>
+                  <a [routerLink]="['/user-profile', auditLog.user.id, 'view']">
+                    {{ auditLog.user.id }}
+                  </a>
                 }
               </td>
               <td>
                 @if (auditLog.company) {
-                  <div>
-                    <a [routerLink]="['/company', auditLog.company.id, 'view']">{{ auditLog.company.id }}</a>
-                  </div>
+                  <a [routerLink]="['/company', auditLog.company.id, 'view']">
+                    {{ auditLog.company.id }}
+                  </a>
                 }
               </td>
               <td class="text-end">
                 <div class="btn-group">
                   <a [routerLink]="['/audit-log', auditLog.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
                     <fa-icon icon="eye" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
+                    <span class="d-none d-md-inline">Voir</span>
                   </a>
-
-                  <a [routerLink]="['/audit-log', auditLog.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(auditLog)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
-                  </button>
                 </div>
               </td>
             </tr>
@@ -165,12 +122,12 @@
       </table>
     </div>
   }
+
   @if (auditLogs().length > 0) {
     <div>
       <div class="d-flex justify-content-center">
         <pz-item-count [params]="{ page: page(), totalItems: totalItems(), itemsPerPage: itemsPerPage() }" />
       </div>
-
       <div class="d-flex justify-content-center">
         <ngb-pagination
           [collectionSize]="totalItems()"

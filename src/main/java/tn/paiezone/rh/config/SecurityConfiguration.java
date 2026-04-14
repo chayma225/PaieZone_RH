@@ -78,6 +78,8 @@ public class SecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/api/account/reset-password/finish")
                     .permitAll()
+                    .requestMatchers("/api/2fa/**")
+                    .authenticated()
                     // ── SUPER ADMIN uniquement ────────────────────────────
                     .requestMatchers("/api/companies/**")
                     .hasAuthority(AuthoritiesConstants.SUPER_ADMIN)

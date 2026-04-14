@@ -19,15 +19,28 @@
       },
       "id": "ID",
       "action": "Action",
-      "entityType": "Entity Type",
-      "entityId": "Entity Id",
-      "oldValue": "Old Value",
-      "newValue": "New Value",
-      "ipAddress": "Ip Address",
-      "userAgent": "User Agent",
-      "occurredAt": "Occurred At",
-      "user": "User",
-      "company": "Company"
+      "entityType": "Type d'entité",
+      "entityId": "ID Entité",
+      "oldValue": "Ancienne valeur",
+      "newValue": "Nouvelle valeur",
+      "ipAddress": "Adresse IP",
+      "userAgent": "Navigateur",
+      "occurredAt": "Date/Heure",
+      "user": "Utilisateur",
+      "company": "Entreprise",
+      "auditLogCriteria": {
+        "id": "ID",
+        "action": "Action",
+        "entityType": "Type d'entité",
+        "entityId": "ID Entité",
+        "oldValue": "Ancienne valeur",
+        "newValue": "Nouvelle valeur",
+        "ipAddress": "Adresse IP",
+        "userAgent": "Navigateur",
+        "occurredAt": "Date/Heure",
+        "userId": "Utilisateur",
+        "companyId": "Entreprise"
+      }
     }
   }
 }
