@@ -1,0 +1,7 @@
+<div>
+  <h2>Sécurité du compte : 2FA</h2>
+  <div *ngIf="!enabled">
+    <p>Scannez ce QR Code avec Google Authenticator :</p>
+    <img [src]="qrCodeUri" *ngIf="qrCodeUri" alt="QR Code" />
+  </div>
+</div>

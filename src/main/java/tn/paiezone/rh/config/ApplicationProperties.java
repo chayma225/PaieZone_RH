@@ -13,10 +13,17 @@ public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
 
+    private final Totp totp = new Totp(); // Ajout de l'objet Totp
+
     // jhipster-needle-application-properties-property
 
     public Liquibase getLiquibase() {
         return liquibase;
+    }
+
+    public Totp getTotp() {
+        // Getter pour Totp
+        return totp;
     }
 
     // jhipster-needle-application-properties-property-getter
@@ -31,6 +38,29 @@ public class ApplicationProperties {
 
         public void setAsyncStart(Boolean asyncStart) {
             this.asyncStart = asyncStart;
+        }
+    }
+
+    // Ajout de la classe interne Totp pour correspondre au YAML
+    public static class Totp {
+
+        private boolean enabled = false;
+        private String issuer = "PaieZoneRH";
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getIssuer() {
+            return issuer;
+        }
+
+        public void setIssuer(String issuer) {
+            this.issuer = issuer;
         }
     }
 

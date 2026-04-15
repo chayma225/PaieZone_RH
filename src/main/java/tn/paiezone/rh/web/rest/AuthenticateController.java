@@ -27,11 +27,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
 import tn.paiezone.rh.security.DomainUserDetailsService.UserWithId;
+import tn.paiezone.rh.service.TwoFactorAuthService;
 import tn.paiezone.rh.web.rest.vm.LoginVM;
 
-/**
- * Controller to authenticate users.
- */
 @RestController
 @RequestMapping("/api")
 public class AuthenticateController {
@@ -39,6 +37,8 @@ public class AuthenticateController {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticateController.class);
 
     private final JwtEncoder jwtEncoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TwoFactorAuthService twoFactorAuthService;
 
     @Value("${jhipster.security.authentication.jwt.token-validity-in-seconds:0}")
     private long tokenValidityInSeconds;
@@ -46,31 +46,40 @@ public class AuthenticateController {
     @Value("${jhipster.security.authentication.jwt.token-validity-in-seconds-for-remember-me:0}")
     private long tokenValidityInSecondsForRememberMe;
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    public AuthenticateController(JwtEncoder jwtEncoder, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public AuthenticateController(
+        JwtEncoder jwtEncoder,
+        AuthenticationManagerBuilder authenticationManagerBuilder,
+        TwoFactorAuthService twoFactorAuthService
+    ) {
         this.jwtEncoder = jwtEncoder;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.twoFactorAuthService = twoFactorAuthService;
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
+        // 1. Authentification initiale (Login / Mot de passe)
         var authenticationToken = new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
-
         var authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 2. Vérification du Double Facteur (2FA)
+        // La méthode checkAndSendCode vérifie l'activation et envoie le mail automatiquement
+        boolean requires2fa = twoFactorAuthService.checkAndSendCode(loginVM.getUsername());
+
+        if (requires2fa) {
+            LOG.debug("2FA requis pour l'utilisateur : {}", loginVM.getUsername());
+            // On retourne un jeton spécifique "2FA_REQUIRED" pour rediriger le frontend
+            return ResponseEntity.ok().header("X-PaieZone-2FA", "true").body(new JWTToken("2FA_REQUIRED"));
+        }
+
+        // 3. Si pas de 2FA, on génère le token JWT final
         String jwt = this.createToken(authentication, loginVM.isRememberMe());
         var httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(jwt);
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
 
-    /**
-     * {@code GET /authenticate} : check if the user is authenticated.
-     *
-     * @return the {@link ResponseEntity} with status {@code 204 (No Content)},
-     * or with status {@code 401 (Unauthorized)} if not authenticated.
-     */
     @GetMapping("/authenticate")
     public ResponseEntity<Void> isAuthenticated(Principal principal) {
         LOG.debug("REST request to check if the current user is authenticated");
@@ -81,19 +90,16 @@ public class AuthenticateController {
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" "));
 
         var now = Instant.now();
-        Instant validity;
-        if (rememberMe) {
-            validity = now.plus(this.tokenValidityInSecondsForRememberMe, ChronoUnit.SECONDS);
-        } else {
-            validity = now.plus(this.tokenValidityInSeconds, ChronoUnit.SECONDS);
-        }
+        Instant validity = rememberMe
+            ? now.plus(this.tokenValidityInSecondsForRememberMe, ChronoUnit.SECONDS)
+            : now.plus(this.tokenValidityInSeconds, ChronoUnit.SECONDS);
 
-        // @formatter:off
         JwtClaimsSet.Builder builder = JwtClaimsSet.builder()
             .issuedAt(now)
             .expiresAt(validity)
             .subject(authentication.getName())
             .claim(AUTHORITIES_CLAIM, authorities);
+
         if (authentication.getPrincipal() instanceof UserWithId user) {
             builder.claim(USER_ID_CLAIM, user.getId());
         }
@@ -102,9 +108,6 @@ public class AuthenticateController {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, builder.build())).getTokenValue();
     }
 
-    /**
-     * Object to return as body in JWT Authentication.
-     */
     static class JWTToken {
 
         private String idToken;

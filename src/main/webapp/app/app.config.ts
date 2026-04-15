@@ -13,6 +13,10 @@ import {
 } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
+// --- IMPORTATION CORRIGÉE ---
+import { provideNgxWebstorage, withLocalStorage, withSessionStorage } from 'ngx-webstorage';
+// ----------------------------
+
 import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap/datepicker';
 import { environment } from 'environments/environment';
 
@@ -60,5 +64,8 @@ export const appConfig: ApplicationConfig = {
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     FindLanguageFromKeyPipe,
     { provide: TitleStrategy, useClass: AppPageTitleStrategy },
+    // --- BLOC WEBSTORAGE CORRIGÉ ---
+    provideNgxWebstorage(withLocalStorage(), withSessionStorage()),
+    // -------------------------------
   ],
 };

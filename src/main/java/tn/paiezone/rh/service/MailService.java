@@ -117,4 +117,22 @@ public class MailService {
         LOG.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/passwordResetEmail", "email.reset.title");
     }
+
+    public void send2FACode(User user, String code) {
+        LOG.debug("Envoi du code 2FA à : {}", user.getEmail());
+        String subject = "PaieZone RH — Code de vérification";
+        String content = """
+            Bonjour %s,
+
+            Votre code de vérification est :
+
+            🔐  %s
+
+            Ce code expire dans 5 minutes.
+            Si vous n'avez pas demandé ce code, ignorez cet email.
+
+            — L'équipe PaieZone RH
+            """.formatted(user.getFirstName(), code);
+        sendEmail(user.getEmail(), subject, content, false, false);
+    }
 }

@@ -1,23 +1,14 @@
 package tn.paiezone.rh.service;
 
-import dev.samstevens.totp.code.CodeGenerator;
-import dev.samstevens.totp.code.CodeVerifier;
-import dev.samstevens.totp.code.DefaultCodeGenerator;
-import dev.samstevens.totp.code.DefaultCodeVerifier;
-import dev.samstevens.totp.code.HashingAlgorithm;
-import dev.samstevens.totp.qr.QrData;
-import dev.samstevens.totp.qr.QrGenerator;
-import dev.samstevens.totp.qr.ZxingPngQrGenerator;
-import dev.samstevens.totp.secret.DefaultSecretGenerator;
-import dev.samstevens.totp.secret.SecretGenerator;
-import dev.samstevens.totp.time.SystemTimeProvider;
-import dev.samstevens.totp.time.TimeProvider;
-import dev.samstevens.totp.util.Utils;
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.repository.UserProfileRepository;
+import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -26,99 +17,97 @@ public class TwoFactorAuthService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthService.class);
     private static final String ENTITY_NAME = "twoFactorAuth";
-    private static final String ISSUER = "PaieZoneRH";
 
     private final UserProfileRepository userProfileRepository;
-    private final SecretGenerator secretGenerator;
-    private final CodeVerifier codeVerifier;
+    private final UserRepository userRepository;
+    private final MailService mailService;
 
-    public TwoFactorAuthService(UserProfileRepository userProfileRepository) {
+    public TwoFactorAuthService(UserProfileRepository userProfileRepository, UserRepository userRepository, MailService mailService) {
         this.userProfileRepository = userProfileRepository;
-        this.secretGenerator = new DefaultSecretGenerator();
-        TimeProvider timeProvider = new SystemTimeProvider();
-        CodeGenerator codeGenerator = new DefaultCodeGenerator();
-        this.codeVerifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
+        this.userRepository = userRepository;
+        this.mailService = mailService;
     }
 
-    public String generateSecret(String jhiUserId) {
-        LOG.debug("Generating 2FA secret for user : {}", jhiUserId);
-        String secret = secretGenerator.generate();
-        userProfileRepository
-            .findByJhiUserId(jhiUserId)
-            .ifPresentOrElse(
-                userProfile -> {
-                    userProfile.setTwoFactorSecret(secret);
-                    userProfile.setTwoFactorEnabled(false);
-                    userProfileRepository.save(userProfile);
-                },
-                () -> {
-                    throw new BadRequestAlertException("Profil utilisateur introuvable pour : " + jhiUserId, ENTITY_NAME, "userNotFound");
-                }
-            );
-        return secret;
-    }
-
-    public String generateQRUrl(String jhiUserId, String secret) {
-        LOG.debug("Generating QR URL for user : {}", jhiUserId);
-        QrData data = new QrData.Builder()
-            .label(jhiUserId)
-            .secret(secret)
-            .issuer(ISSUER)
-            .algorithm(HashingAlgorithm.SHA1)
-            .digits(6)
-            .period(30)
-            .build();
-        try {
-            QrGenerator generator = new ZxingPngQrGenerator();
-            byte[] imageData = generator.generate(data);
-            String mimeType = generator.getImageMimeType();
-            return Utils.getDataUriForImage(imageData, mimeType);
-        } catch (Exception e) {
-            LOG.error("Erreur génération QR Code : {}", e.getMessage());
-            return data.getUri();
-        }
-    }
-
-    public boolean verifyAndEnable(String jhiUserId, int code) {
-        LOG.debug("Verifying 2FA code for user : {}", jhiUserId);
+    // ── Vérifier si 2FA est activé + envoyer le code par email ──────────────
+    public boolean checkAndSendCode(String login) {
         return userProfileRepository
-            .findByJhiUserId(jhiUserId)
+            .findByJhiUserId(login)
             .map(userProfile -> {
-                String secret = userProfile.getTwoFactorSecret();
-                if (secret == null) {
-                    throw new BadRequestAlertException("Le 2FA n'a pas été initialisé.", ENTITY_NAME, "secretNotFound");
+                if (!Boolean.TRUE.equals(userProfile.getTwoFactorEnabled())) {
+                    return false;
                 }
-                boolean valid = codeVerifier.isValidCode(secret, String.valueOf(code));
+                // Générer code 6 chiffres
+                String code = String.format("%06d", new SecureRandom().nextInt(999999));
+                // Stocker le code temporairement avec expiration 5 min
+                userProfile.setTwoFactorSecret(code + "|" + Instant.now().plus(5, ChronoUnit.MINUTES).toEpochMilli());
+                userProfileRepository.save(userProfile);
+
+                // Envoyer par email
+                userRepository
+                    .findOneByLogin(login)
+                    .ifPresent(user -> {
+                        mailService.send2FACode(user, code);
+                    });
+
+                LOG.debug("Code 2FA envoyé à : {}", login);
+                return true;
+            })
+            .orElse(false);
+    }
+
+    // ── Vérifier le code saisi ────────────────────────────────────────────────
+    public boolean verifyCode(String login, String code) {
+        return userProfileRepository
+            .findByJhiUserId(login)
+            .map(userProfile -> {
+                String stored = userProfile.getTwoFactorSecret();
+                if (stored == null || !stored.contains("|")) return false;
+
+                String[] parts = stored.split("\\|");
+                String storedCode = parts[0];
+                long expiry = Long.parseLong(parts[1]);
+
+                // Vérifier expiration
+                if (Instant.now().toEpochMilli() > expiry) {
+                    LOG.debug("Code 2FA expiré pour : {}", login);
+                    return false;
+                }
+
+                boolean valid = storedCode.equals(code.trim());
                 if (valid) {
-                    userProfile.setTwoFactorEnabled(true);
+                    // Nettoyer le code après utilisation
+                    userProfile.setTwoFactorSecret(null);
                     userProfileRepository.save(userProfile);
                 }
                 return valid;
             })
-            .orElseThrow(() -> new BadRequestAlertException("Profil utilisateur introuvable.", ENTITY_NAME, "userNotFound"));
+            .orElse(false);
     }
 
-    public boolean verifyCode(String jhiUserId, String code) {
-        LOG.debug("Verifying 2FA code at login for user : {}", jhiUserId);
-        return userProfileRepository
-            .findByJhiUserId(jhiUserId)
-            .map(userProfile -> {
-                if (!Boolean.TRUE.equals(userProfile.getTwoFactorEnabled())) {
-                    return true;
-                }
-                return codeVerifier.isValidCode(userProfile.getTwoFactorSecret(), code);
-            })
-            .orElse(true);
-    }
-
-    public void disable(String jhiUserId) {
-        LOG.debug("Disabling 2FA for user : {}", jhiUserId);
+    // ── Activer/Désactiver 2FA ────────────────────────────────────────────────
+    public void enable(String login) {
         userProfileRepository
-            .findByJhiUserId(jhiUserId)
+            .findByJhiUserId(login)
+            .ifPresent(userProfile -> {
+                userProfile.setTwoFactorEnabled(true);
+                userProfileRepository.save(userProfile);
+            });
+    }
+
+    public void disable(String login) {
+        userProfileRepository
+            .findByJhiUserId(login)
             .ifPresent(userProfile -> {
                 userProfile.setTwoFactorEnabled(false);
                 userProfile.setTwoFactorSecret(null);
                 userProfileRepository.save(userProfile);
             });
+    }
+
+    public boolean getStatusByLogin(String login) {
+        return userProfileRepository
+            .findByJhiUserId(login)
+            .map(up -> Boolean.TRUE.equals(up.getTwoFactorEnabled()))
+            .orElse(false);
     }
 }

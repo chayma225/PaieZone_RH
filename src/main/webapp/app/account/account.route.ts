@@ -14,6 +14,16 @@ const accountRoutes: Routes = [
   passwordResetInitRoute,
   registerRoute,
   settingsRoute,
+  {
+    path: '2fa',
+    loadComponent: () => import('./two-factor/two-factor-auth.component').then(m => m.TwoFactorAuthComponent),
+    title: 'Activation 2FA',
+  },
+  {
+    path: '2fa-login',
+    loadComponent: () => import('./two-factor/two-factor-login.component').then(m => m.TwoFactorLoginComponent),
+    title: 'Vérification 2FA',
+  },
 ];
 
 export default accountRoutes;
