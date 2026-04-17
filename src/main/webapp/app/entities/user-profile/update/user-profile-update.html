@@ -1,202 +1,252 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+<div class="d-flex justify-content-center p-4 bg-light min-vh-100">
+  <div class="col-md-9 card shadow border-0 p-0 overflow-hidden rounded-3">
+    <div class="bg-primary p-3 text-white shadow-sm">
       <h2
         id="pz-user-profile-heading"
         data-cy="UserProfileCreateUpdateHeading"
+        class="h4 mb-0 fw-bold d-flex align-items-center"
         pzTranslate="paieZoneRhApp.userProfile.home.createOrEditLabel"
       >
+        <fa-icon icon="user-cog" class="me-2"></fa-icon>
         Créer ou éditer un User Profile
       </h2>
+    </div>
 
-      <div>
-        <pz-alert-error />
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="p-4 bg-white">
+      <pz-alert-error />
+
+      <div class="row">
+        <div class="col-12 border-bottom mb-4">
+          <h5 class="text-primary fw-bold small text-uppercase py-2"><fa-icon icon="id-card" class="me-2"></fa-icon>1. Accès & Identité</h5>
+        </div>
 
         @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          <div class="mb-3 col-12">
+            <label class="form-label text-muted small fw-bold" for="field_id" pzTranslate="global.field.id">ID</label>
+            <input
+              type="number"
+              class="form-control bg-light border-0"
+              name="id"
+              id="field_id"
+              data-cy="id"
+              formControlName="id"
+              [readonly]="true"
+            />
           </div>
         }
 
-        <!-- ✅ US-S1-05 : Login utilisateur au lieu de l'ID technique -->
         @let jhiUserIdRef = editForm.get('jhiUserId')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_jhiUserId">Utilisateur (Login)</label>
-          <select class="form-control" name="jhiUserId" id="field_jhiUserId" data-cy="jhiUserId" formControlName="jhiUserId">
-            <option [ngValue]="null">-- Sélectionner un utilisateur --</option>
-            @for (user of usersSharedCollection(); track $index) {
-              <option [value]="user.login">{{ user.login }} ({{ user.firstName }} {{ user.lastName }})</option>
-            }
-          </select>
+        <div class="mb-3 col-md-6">
+          <label class="form-label fw-bold" for="field_jhiUserId">Utilisateur (Login)</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-primary-subtle text-primary"><fa-icon icon="user" /></span>
+            <select
+              class="form-select border-primary-subtle"
+              name="jhiUserId"
+              id="field_jhiUserId"
+              data-cy="jhiUserId"
+              formControlName="jhiUserId"
+            >
+              <option [ngValue]="null">-- Sélectionner un utilisateur --</option>
+              @for (user of usersSharedCollection(); track $index) {
+                <option [value]="user.login">{{ user.login }} ({{ user.firstName }} {{ user.lastName }})</option>
+              }
+            </select>
+          </div>
           @if (jhiUserIdRef.invalid && (jhiUserIdRef.dirty || jhiUserIdRef.touched)) {
-            <div>
-              @if (editForm.get('jhiUserId')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            <div class="mt-1">
+              @if (jhiUserIdRef.errors?.required) {
+                <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
               }
             </div>
           }
         </div>
 
-        <!-- Rôle -->
         @let roleRef = editForm.get('role')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_role" pzTranslate="paieZoneRhApp.userProfile.role">Rôle</label>
-          <select class="form-control" name="role" formControlName="role" id="field_role" data-cy="role">
-            <option [ngValue]="null">-- Sélectionner un rôle --</option>
-            @for (appRole of appRoleValues; track $index) {
-              <option [value]="appRole">{{ 'paieZoneRhApp.AppRole.' + appRole | translate }}</option>
-            }
-          </select>
+        <div class="mb-3 col-md-6">
+          <label class="form-label fw-bold" for="field_role" pzTranslate="paieZoneRhApp.userProfile.role">Rôle</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-primary-subtle text-primary"><fa-icon icon="user-shield" /></span>
+            <select class="form-select border-primary-subtle" name="role" formControlName="role" id="field_role" data-cy="role">
+              <option [ngValue]="null">-- Sélectionner un rôle --</option>
+              @for (appRole of appRoleValues; track $index) {
+                <option [value]="appRole">{{ 'paieZoneRhApp.AppRole.' + appRole | translate }}</option>
+              }
+            </select>
+          </div>
           @if (roleRef.invalid && (roleRef.dirty || roleRef.touched)) {
-            <div>
-              @if (editForm.get('role')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            <div class="mt-1">
+              @if (roleRef.errors?.required) {
+                <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
               }
             </div>
           }
         </div>
 
-        <!-- Téléphone -->
+        <div class="col-12 border-bottom mb-4 mt-3">
+          <h5 class="text-primary fw-bold small text-uppercase py-2">
+            <fa-icon icon="address-book" class="me-2"></fa-icon>2. Contact & Préférences
+          </h5>
+        </div>
+
         @let phoneNumberRef = editForm.get('phoneNumber')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_phoneNumber">Numéro de téléphone</label>
-          <input
-            type="text"
-            class="form-control"
-            name="phoneNumber"
-            id="field_phoneNumber"
-            data-cy="phoneNumber"
-            formControlName="phoneNumber"
-            placeholder="+216 XX XXX XXX"
-          />
-          @if (phoneNumberRef.invalid && (phoneNumberRef.dirty || phoneNumberRef.touched)) {
-            <div>
-              @if (editForm.get('phoneNumber')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }">
-                  Ce champ doit faire au maximum 20 caractères.
-                </small>
-              }
-            </div>
-          }
-        </div>
-
-        <!-- Avatar URL -->
-        @let avatarUrlRef = editForm.get('avatarUrl')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_avatarUrl">URL Avatar</label>
-          <input
-            type="text"
-            class="form-control"
-            name="avatarUrl"
-            id="field_avatarUrl"
-            data-cy="avatarUrl"
-            formControlName="avatarUrl"
-            placeholder="https://..."
-          />
-          @if (avatarUrlRef.invalid && (avatarUrlRef.dirty || avatarUrlRef.touched)) {
-            <div>
-              @if (editForm.get('avatarUrl')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }">
-                  Ce champ doit faire au maximum 500 caractères.
-                </small>
-              }
-            </div>
-          }
-        </div>
-
-        <!-- Locale -->
-        @let localeRef = editForm.get('locale')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_locale">Langue</label>
-          <select class="form-control" name="locale" id="field_locale" data-cy="locale" formControlName="locale">
-            <option value="fr">Français</option>
-            <option value="ar-ly">العربية</option>
-          </select>
-        </div>
-
-        <!-- Dernière connexion -->
-        <div class="mb-3">
-          <label class="form-label" for="field_lastLoginAt">Dernière connexion</label>
-          <div class="d-flex">
+        <div class="mb-3 col-md-6">
+          <label class="form-label fw-bold" for="field_phoneNumber">Téléphone</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-primary-subtle text-info"><fa-icon icon="phone" /></span>
             <input
-              id="field_lastLoginAt"
-              data-cy="lastLoginAt"
-              type="datetime-local"
-              class="form-control"
-              name="lastLoginAt"
-              formControlName="lastLoginAt"
-              placeholder="YYYY-MM-DD HH:mm"
+              type="text"
+              class="form-control border-primary-subtle"
+              name="phoneNumber"
+              id="field_phoneNumber"
+              data-cy="phoneNumber"
+              formControlName="phoneNumber"
+              placeholder="+216 XX XXX XXX"
             />
+          </div>
+          @if (phoneNumberRef.invalid && (phoneNumberRef.dirty || phoneNumberRef.touched)) {
+            <div class="mt-1">
+              @if (phoneNumberRef.errors?.maxlength) {
+                <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                  >Max 20 caractères.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3 col-md-6">
+          <label class="form-label fw-bold" for="field_locale">Langue du profil</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-primary-subtle text-info"><fa-icon icon="language" /></span>
+            <select class="form-select border-primary-subtle" name="locale" id="field_locale" data-cy="locale" formControlName="locale">
+              <option value="fr">Français</option>
+              <option value="ar-ly">العربية</option>
+            </select>
           </div>
         </div>
 
-        <!-- 2FA -->
-        <div class="mb-3">
-          <label class="form-label" for="field_twoFactorEnabled">Activer la double authentification (2FA)</label>
+        @let avatarUrlRef = editForm.get('avatarUrl')!;
+        <div class="mb-3 col-12">
+          <label class="form-label fw-bold" for="field_avatarUrl">URL de l'Avatar</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-primary-subtle text-secondary"><fa-icon icon="image" /></span>
+            <input
+              type="text"
+              class="form-control border-primary-subtle"
+              name="avatarUrl"
+              id="field_avatarUrl"
+              data-cy="avatarUrl"
+              formControlName="avatarUrl"
+              placeholder="https://..."
+            />
+          </div>
+          @if (avatarUrlRef.invalid && (avatarUrlRef.dirty || avatarUrlRef.touched)) {
+            <div class="mt-1">
+              @if (avatarUrlRef.errors?.maxlength) {
+                <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                  >Lien trop long.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="col-12 border-bottom mb-4 mt-3">
+          <h5 class="text-primary fw-bold small text-uppercase py-2">
+            <fa-icon icon="shield-halved" class="me-2"></fa-icon>3. Entreprise & Sécurité
+          </h5>
+        </div>
+
+        <div class="mb-3 col-md-7">
+          <label class="form-label fw-bold" for="field_company">Rattaché à l'Entreprise</label>
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white border-primary-subtle text-primary"><fa-icon icon="building" /></span>
+            <select
+              class="form-select border-primary-subtle"
+              id="field_company"
+              data-cy="company"
+              name="company"
+              formControlName="company"
+              [compareWith]="compareCompany"
+            >
+              <option [ngValue]="null">-- Sélectionner une entreprise --</option>
+              @for (companyOption of companiesSharedCollection(); track $index) {
+                <option [ngValue]="companyOption">{{ companyOption.name }} ({{ companyOption.taxId }})</option>
+              }
+            </select>
+          </div>
+          @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
+            <div class="mt-1">
+              @if (editForm.get(['company'])?.errors?.required) {
+                <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3 col-md-5">
+          <label class="form-label fw-bold" for="field_lastLoginAt">Dernière connexion</label>
           <input
-            type="checkbox"
-            class="form-check"
-            name="twoFactorEnabled"
-            id="field_twoFactorEnabled"
-            data-cy="twoFactorEnabled"
-            formControlName="twoFactorEnabled"
+            type="datetime-local"
+            class="form-control border-primary-subtle bg-light"
+            name="lastLoginAt"
+            id="field_lastLoginAt"
+            data-cy="lastLoginAt"
+            formControlName="lastLoginAt"
           />
         </div>
 
-        <!-- Actif -->
         @let activeRef = editForm.get('active')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_active">Compte actif</label>
-          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
+        <div class="mb-3 col-md-6 pt-2">
+          <div class="form-check form-switch p-2 ps-5 border rounded bg-light shadow-sm">
+            <input type="checkbox" class="form-check-input" name="active" id="field_active" data-cy="active" formControlName="active" />
+            <label class="form-check-label fw-bold ms-2" for="field_active">Compte actif</label>
+          </div>
           @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
-            <div>
-              @if (editForm.get('active')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            <div class="mt-1">
+              @if (activeRef.errors?.required) {
+                <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Obligatoire.</small>
               }
             </div>
           }
         </div>
 
-        <!-- ✅ Nom de l'entreprise au lieu de l'ID -->
-        <div class="mb-3">
-          <label class="form-label" for="field_company">Entreprise</label>
-          <select
-            class="form-control"
-            id="field_company"
-            data-cy="company"
-            name="company"
-            formControlName="company"
-            [compareWith]="compareCompany"
-          >
-            <option [ngValue]="null">-- Sélectionner une entreprise --</option>
-            @for (companyOption of companiesSharedCollection(); track $index) {
-              <!-- ✅ Affiche le nom au lieu de l'ID -->
-              <option [ngValue]="companyOption">{{ companyOption.name }} ({{ companyOption.taxId }})</option>
-            }
-          </select>
-          @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
-            <div>
-              @if (editForm.get(['company'])?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
+        <div class="mb-3 col-md-6 pt-2">
+          <div class="form-check form-switch p-2 ps-5 border rounded bg-light shadow-sm">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              name="twoFactorEnabled"
+              id="field_twoFactorEnabled"
+              data-cy="twoFactorEnabled"
+              formControlName="twoFactorEnabled"
+            />
+            <label class="form-check-label fw-bold ms-2" for="field_twoFactorEnabled">Activer la Double Auth (2FA)</label>
+          </div>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+      <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+        <button
+          type="button"
+          id="cancel-save"
+          data-cy="entityCreateCancelButton"
+          class="btn btn-outline-secondary px-4 shadow-sm"
+          (click)="previousState()"
+        >
+          <fa-icon icon="ban" class="me-1"></fa-icon>
+          <span pzTranslate="entity.action.cancel">Annuler</span>
         </button>
         <button
           type="submit"
           id="save-entity"
           data-cy="entityCreateSaveButton"
           [disabled]="editForm.invalid || isSaving()"
-          class="btn btn-primary"
+          class="btn btn-primary px-5 shadow"
         >
-          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+          <fa-icon icon="save" class="me-1"></fa-icon>
+          <span pzTranslate="entity.action.save">Sauvegarder</span>
         </button>
       </div>
     </form>

@@ -1,5 +1,6 @@
 package tn.paiezone.rh.repository;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.Department;
@@ -9,4 +10,7 @@ import tn.paiezone.rh.domain.Department;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface DepartmentRepository extends JpaRepository<Department, Long> {}
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
+    boolean existsByCodeAndCompanyId(String code, Long companyId);
+    List<Department> findByCompanyId(Long companyId);
+}

@@ -10,5 +10,10 @@ import tn.paiezone.rh.domain.Employee;
 @SuppressWarnings("unused")
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor<Employee> {
+    boolean existsByMatricule(String matricule);
+    boolean existsByNationalId(String nationalId);
+    boolean existsByProfessionalEmail(String professionalEmail);
     long countByCompanyIdAndActiveTrue(Long companyId);
+    long countByDepartmentId(Long departmentId);
+    long countByPositionId(Long positionId);
 }

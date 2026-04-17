@@ -1,162 +1,207 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+<div class="d-flex justify-content-center p-4">
+  <div class="col-md-9 card shadow border-0 p-0 overflow-hidden">
+    <div class="bg-primary p-3 text-white">
       <h2
         id="pz-job-position-heading"
         data-cy="JobPositionCreateUpdateHeading"
+        class="h4 mb-0 fw-bold"
         pzTranslate="paieZoneRhApp.jobPosition.home.createOrEditLabel"
       >
+        <fa-icon icon="briefcase" class="me-2"></fa-icon>
         Créer ou éditer un Job Position
       </h2>
+    </div>
 
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="p-4">
       <div>
         <pz-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
-        @let codeRef = editForm.get('code')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_code" pzTranslate="paieZoneRhApp.jobPosition.code">Code</label>
-          <input type="text" class="form-control" name="code" id="field_code" data-cy="code" formControlName="code" />
-          @if (codeRef.invalid && (codeRef.dirty || codeRef.touched)) {
-            <div>
-              @if (editForm.get('code')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('code')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
-                  >Ce champ doit faire au maximum 20 caractères.</small
-                >
-              }
+        <div class="row">
+          @if (editForm.controls.id.value !== null) {
+            <div class="mb-3 col-12">
+              <label class="form-label text-muted small fw-bold" for="field_id" pzTranslate="global.field.id">ID</label>
+              <input
+                type="number"
+                class="form-control bg-light border-0"
+                name="id"
+                id="field_id"
+                data-cy="id"
+                formControlName="id"
+                [readonly]="true"
+              />
             </div>
           }
-        </div>
 
-        @let titleRef = editForm.get('title')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_title" pzTranslate="paieZoneRhApp.jobPosition.title">Title</label>
-          <input type="text" class="form-control" name="title" id="field_title" data-cy="title" formControlName="title" />
-          @if (titleRef.invalid && (titleRef.dirty || titleRef.touched)) {
-            <div>
-              @if (editForm.get('title')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('title')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
-                  >Ce champ doit faire au maximum 150 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let descriptionRef = editForm.get('description')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_description" pzTranslate="paieZoneRhApp.jobPosition.description">Description</label>
-          <input
-            type="text"
-            class="form-control"
-            name="description"
-            id="field_description"
-            data-cy="description"
-            formControlName="description"
-          />
-          @if (descriptionRef.invalid && (descriptionRef.dirty || descriptionRef.touched)) {
-            <div>
-              @if (editForm.get('description')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
-                  >Ce champ doit faire au maximum 500 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_minSalary" pzTranslate="paieZoneRhApp.jobPosition.minSalary">Min Salary</label>
-          <input type="number" class="form-control" name="minSalary" id="field_minSalary" data-cy="minSalary" formControlName="minSalary" />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_maxSalary" pzTranslate="paieZoneRhApp.jobPosition.maxSalary">Max Salary</label>
-          <input type="number" class="form-control" name="maxSalary" id="field_maxSalary" data-cy="maxSalary" formControlName="maxSalary" />
-        </div>
-
-        @let activeRef = editForm.get('active')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.jobPosition.active">Active</label>
-          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
-          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
-            <div>
-              @if (editForm.get('active')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.jobPosition.company">Company</label>
-          <select
-            class="form-control"
-            id="field_company"
-            data-cy="company"
-            name="company"
-            formControlName="company"
-            [compareWith]="compareCompany"
-          >
-            @if (!editForm.get('company')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
-            @for (companyOption of companiesSharedCollection(); track $index) {
-              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
-            }
-          </select>
-        </div>
-        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
-          <div>
-            @if (editForm.get(['company'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+          @let codeRef = editForm.get('code')!;
+          <div class="mb-3 col-md-4">
+            <label class="form-label fw-bold" for="field_code" pzTranslate="paieZoneRhApp.jobPosition.code">Code</label>
+            <input
+              type="text"
+              class="form-control border-primary-subtle"
+              name="code"
+              id="field_code"
+              data-cy="code"
+              formControlName="code"
+              placeholder="Ex: DEV-FS"
+            />
+            @if (codeRef.invalid && (codeRef.dirty || codeRef.touched)) {
+              <div class="mt-1">
+                @if (codeRef.errors?.required) {
+                  <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+                }
+                @if (codeRef.errors?.maxlength) {
+                  <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
+                    >Maximum 20 caractères.</small
+                  >
+                }
+              </div>
             }
           </div>
-        }
 
-        <div class="mb-3">
-          <label class="form-label" for="field_department" pzTranslate="paieZoneRhApp.jobPosition.department">Department</label>
-          <select
-            class="form-control"
-            id="field_department"
-            data-cy="department"
-            name="department"
-            formControlName="department"
-            [compareWith]="compareDepartment"
-          >
-            <option [ngValue]="null"></option>
-            @for (departmentOption of departmentsSharedCollection(); track $index) {
-              <option [ngValue]="departmentOption">{{ departmentOption.id }}</option>
+          @let titleRef = editForm.get('title')!;
+          <div class="mb-3 col-md-8">
+            <label class="form-label fw-bold" for="field_title" pzTranslate="paieZoneRhApp.jobPosition.title">Titre</label>
+            <input
+              type="text"
+              class="form-control border-primary-subtle"
+              name="title"
+              id="field_title"
+              data-cy="title"
+              formControlName="title"
+              placeholder="Ex: Développeur Junior"
+            />
+            @if (titleRef.invalid && (titleRef.dirty || titleRef.touched)) {
+              <div class="mt-1">
+                @if (titleRef.errors?.required) {
+                  <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+                }
+                @if (titleRef.errors?.maxlength) {
+                  <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
+                    >Maximum 150 caractères.</small
+                  >
+                }
+              </div>
             }
-          </select>
+          </div>
+
+          @let descriptionRef = editForm.get('description')!;
+          <div class="mb-3 col-12">
+            <label class="form-label fw-bold" for="field_description" pzTranslate="paieZoneRhApp.jobPosition.description"
+              >Description</label
+            >
+            <textarea
+              class="form-control border-primary-subtle"
+              name="description"
+              id="field_description"
+              data-cy="description"
+              formControlName="description"
+              rows="3"
+              placeholder="Décrivez brièvement les responsabilités du poste..."
+            ></textarea>
+            @if (descriptionRef.invalid && (descriptionRef.dirty || descriptionRef.touched)) {
+              <div class="mt-1">
+                @if (descriptionRef.errors?.maxlength) {
+                  <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
+                    >Maximum 500 caractères.</small
+                  >
+                }
+              </div>
+            }
+          </div>
+
+          <div class="mb-3 col-md-6">
+            <label class="form-label fw-bold text-success" for="field_minSalary" pzTranslate="paieZoneRhApp.jobPosition.minSalary"
+              >Min Salary</label
+            >
+            <div class="input-group">
+              <span class="input-group-text bg-white border-primary-subtle text-success"
+                ><fa-icon icon="hand-holding-dollar"></fa-icon
+              ></span>
+              <input
+                type="number"
+                class="form-control border-primary-subtle"
+                name="minSalary"
+                id="field_minSalary"
+                data-cy="minSalary"
+                formControlName="minSalary"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3 col-md-6">
+            <label class="form-label fw-bold text-danger" for="field_maxSalary" pzTranslate="paieZoneRhApp.jobPosition.maxSalary"
+              >Max Salary</label
+            >
+            <div class="input-group">
+              <span class="input-group-text bg-white border-primary-subtle text-danger"
+                ><fa-icon icon="money-bill-trend-up"></fa-icon
+              ></span>
+              <input
+                type="number"
+                class="form-control border-primary-subtle"
+                name="maxSalary"
+                id="field_maxSalary"
+                data-cy="maxSalary"
+                formControlName="maxSalary"
+              />
+            </div>
+          </div>
+
+          @let activeRef = editForm.get('active')!;
+          <div class="mb-4 col-12 mt-2">
+            <div class="form-check form-switch p-2 ps-5 border rounded bg-light shadow-sm">
+              <input type="checkbox" class="form-check-input" name="active" id="field_active" data-cy="active" formControlName="active" />
+              <label class="form-check-label fw-bold ms-2" for="field_active" pzTranslate="paieZoneRhApp.jobPosition.active">Active</label>
+            </div>
+          </div>
+
+          <div class="mb-3 col-md-6">
+            <label class="form-label fw-bold" for="field_company" pzTranslate="paieZoneRhApp.jobPosition.company">Company</label>
+            <select
+              class="form-select border-primary-subtle shadow-sm"
+              id="field_company"
+              data-cy="company"
+              name="company"
+              formControlName="company"
+              [compareWith]="compareCompany"
+            >
+              @if (!editForm.get('company')!.value) {
+                <option [ngValue]="null" selected>-- Choisir une entreprise --</option>
+              }
+              @for (companyOption of companiesSharedCollection(); track companyOption.id) {
+                <option [ngValue]="companyOption">{{ $any(companyOption).name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="mb-4 col-md-6">
+            <label class="form-label fw-bold" for="field_department" pzTranslate="paieZoneRhApp.jobPosition.department">Department</label>
+            <select
+              class="form-select border-primary-subtle shadow-sm"
+              id="field_department"
+              data-cy="department"
+              name="department"
+              formControlName="department"
+              [compareWith]="compareDepartment"
+            >
+              <option [ngValue]="null">-- Choisir un département --</option>
+              @for (departmentOption of departmentsSharedCollection(); track departmentOption.id) {
+                <option [ngValue]="departmentOption">{{ $any(departmentOption).name }}</option>
+              }
+            </select>
+          </div>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
+      <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+        <button type="button" id="cancel-save" class="btn btn-outline-secondary px-4 shadow-sm" (click)="previousState()">
+          <fa-icon icon="ban" class="me-1"></fa-icon>
+          <span pzTranslate="entity.action.cancel">Annuler</span>
         </button>
 
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving()"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+        <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving()" class="btn btn-primary px-5 shadow">
+          <fa-icon icon="save" class="me-1"></fa-icon>
+          <span pzTranslate="entity.action.save">Sauvegarder</span>
         </button>
       </div>
     </form>

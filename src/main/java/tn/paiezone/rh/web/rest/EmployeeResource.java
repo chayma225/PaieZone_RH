@@ -14,36 +14,33 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.repository.EmployeeRepository;
+import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.service.EmployeeQueryService;
 import tn.paiezone.rh.service.EmployeeService;
 import tn.paiezone.rh.service.criteria.EmployeeCriteria;
 import tn.paiezone.rh.service.dto.EmployeeDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
-/**
- * REST controller for managing {@link tn.paiezone.rh.domain.Employee}.
- */
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmployeeResource.class);
-
     private static final String ENTITY_NAME = "employee";
 
     @Value("${jhipster.clientApp.name:paieZoneRH}")
     private String applicationName;
 
     private final EmployeeService employeeService;
-
     private final EmployeeRepository employeeRepository;
-
     private final EmployeeQueryService employeeQueryService;
 
     public EmployeeResource(
@@ -56,18 +53,22 @@ public class EmployeeResource {
         this.employeeQueryService = employeeQueryService;
     }
 
-    /**
-     * {@code POST  /employees} : Create a new employee.
-     *
-     * @param employeeDTO the employeeDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new employeeDTO, or with status {@code 400 (Bad Request)} if the employee has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
+    // ── US-09 : Créer employé ─────────────────────────────────────────────────
     @PostMapping("")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    @Auditable(action = "CREATE", entityType = "Employee")
     public ResponseEntity<EmployeeDTO> createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) throws URISyntaxException {
         LOG.debug("REST request to save Employee : {}", employeeDTO);
         if (employeeDTO.getId() != null) {
-            throw new BadRequestAlertException("A new employee cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("Un nouvel employé ne peut pas déjà avoir un ID.", ENTITY_NAME, "idexists");
         }
         employeeDTO = employeeService.save(employeeDTO);
         return ResponseEntity.created(new URI("/api/employees/" + employeeDTO.getId()))
@@ -75,112 +76,86 @@ public class EmployeeResource {
             .body(employeeDTO);
     }
 
-    /**
-     * {@code PUT  /employees/:id} : Updates an existing employee.
-     *
-     * @param id the id of the employeeDTO to save.
-     * @param employeeDTO the employeeDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated employeeDTO,
-     * or with status {@code 400 (Bad Request)} if the employeeDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the employeeDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
+    // ── US-10 : Modifier employé ──────────────────────────────────────────────
     @PutMapping("/{id}")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    @Auditable(action = "UPDATE", entityType = "Employee")
     public ResponseEntity<EmployeeDTO> updateEmployee(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody EmployeeDTO employeeDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Employee : {}, {}", id, employeeDTO);
         if (employeeDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("ID invalide.", ENTITY_NAME, "idnull");
         }
         if (!Objects.equals(id, employeeDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+            throw new BadRequestAlertException("ID non correspondant.", ENTITY_NAME, "idinvalid");
         }
-
         if (!employeeRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+            throw new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound");
         }
-
         employeeDTO = employeeService.update(employeeDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, employeeDTO.getId().toString()))
             .body(employeeDTO);
     }
 
-    /**
-     * {@code PATCH  /employees/:id} : Partial updates given fields of an existing employee, field will ignore if it is null
-     *
-     * @param id the id of the employeeDTO to save.
-     * @param employeeDTO the employeeDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated employeeDTO,
-     * or with status {@code 400 (Bad Request)} if the employeeDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the employeeDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the employeeDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
     public ResponseEntity<EmployeeDTO> partialUpdateEmployee(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody EmployeeDTO employeeDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to partial update Employee partially : {}, {}", id, employeeDTO);
         if (employeeDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("ID invalide.", ENTITY_NAME, "idnull");
         }
         if (!Objects.equals(id, employeeDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+            throw new BadRequestAlertException("ID non correspondant.", ENTITY_NAME, "idinvalid");
         }
-
         if (!employeeRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+            throw new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound");
         }
-
         Optional<EmployeeDTO> result = employeeService.partialUpdate(employeeDTO);
-
         return ResponseUtil.wrapOrNotFound(
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, employeeDTO.getId().toString())
         );
     }
 
-    /**
-     * {@code GET  /employees} : get all the Employees.
-     *
-     * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Employees in body.
-     */
+    // ── US-09 : Recherche et filtres ──────────────────────────────────────────
     @GetMapping("")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees(
         EmployeeCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get Employees by criteria: {}", criteria);
-
         Page<EmployeeDTO> page = employeeQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /employees/count} : count all the employees.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
     @GetMapping("/count")
     public ResponseEntity<Long> countEmployees(EmployeeCriteria criteria) {
         LOG.debug("REST request to count Employees by criteria: {}", criteria);
         return ResponseEntity.ok().body(employeeQueryService.countByCriteria(criteria));
     }
 
-    /**
-     * {@code GET  /employees/:id} : get the "id" employee.
-     *
-     * @param id the id of the employeeDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the employeeDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Employee : {}", id);
@@ -188,13 +163,10 @@ public class EmployeeResource {
         return ResponseUtil.wrapOrNotFound(employeeDTO);
     }
 
-    /**
-     * {@code DELETE  /employees/:id} : delete the "id" employee.
-     *
-     * @param id the id of the employeeDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
+    // ── Désactiver employé (soft delete) ──────────────────────────────────────
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('" + AuthoritiesConstants.ADMIN + "', '" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    @Auditable(action = "DELETE", entityType = "Employee")
     public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Employee : {}", id);
         employeeService.delete(id);

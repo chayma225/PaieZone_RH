@@ -87,9 +87,9 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.department.company">Company</label>
+          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.department.company">Entreprise</label>
           <select
-            class="form-control"
+            class="form-select shadow-sm"
             id="field_company"
             data-cy="company"
             name="company"
@@ -97,34 +97,27 @@
             [compareWith]="compareCompany"
           >
             @if (!editForm.get('company')!.value) {
-              <option [ngValue]="null" selected></option>
+              <option [ngValue]="null" selected>-- Sélectionner une entreprise --</option>
             }
-            @for (companyOption of companiesSharedCollection(); track $index) {
-              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+            @for (companyOption of companiesSharedCollection(); track companyOption.id) {
+              <option [ngValue]="companyOption">{{ $any(companyOption).name }}</option>
             }
           </select>
         </div>
-        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
-          <div>
-            @if (editForm.get(['company'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
 
         <div class="mb-3">
-          <label class="form-label" for="field_manager" pzTranslate="paieZoneRhApp.department.manager">Manager</label>
+          <label class="form-label" for="field_manager" pzTranslate="paieZoneRhApp.department.manager">Responsable / Manager</label>
           <select
-            class="form-control"
+            class="form-select shadow-sm"
             id="field_manager"
             data-cy="manager"
             name="manager"
             formControlName="manager"
             [compareWith]="compareEmployee"
           >
-            <option [ngValue]="null"></option>
-            @for (employeeOption of employeesSharedCollection(); track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
+            <option [ngValue]="null">-- Aucun manager --</option>
+            @for (employeeOption of employeesSharedCollection(); track employeeOption.id) {
+              <option [ngValue]="employeeOption">{{ $any(employeeOption).firstName }} {{ $any(employeeOption).lastName }}</option>
             }
           </select>
         </div>

@@ -1,6 +1,9 @@
 package tn.paiezone.rh.service;
 
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.service.dto.EmployeeDTO;
 
 /**
@@ -30,6 +33,9 @@ public interface EmployeeService {
      * @return the persisted entity.
      */
     Optional<EmployeeDTO> partialUpdate(EmployeeDTO employeeDTO);
+
+    @Transactional(readOnly = true)
+    Page<EmployeeDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" employee.

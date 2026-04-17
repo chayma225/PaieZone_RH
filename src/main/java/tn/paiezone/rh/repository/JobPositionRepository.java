@@ -1,5 +1,6 @@
 package tn.paiezone.rh.repository;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.JobPosition;
@@ -9,4 +10,6 @@ import tn.paiezone.rh.domain.JobPosition;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface JobPositionRepository extends JpaRepository<JobPosition, Long> {}
+public interface JobPositionRepository extends JpaRepository<JobPosition, Long> {
+    List<JobPosition> findByCompanyId(Long companyId);
+}

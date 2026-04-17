@@ -19,12 +19,12 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5432/paieZoneRH
     username: paieZoneRH
+    password: paiezone
     hikari:
       poolName: Hikari
       auto-commit: false
   liquibase:
-    contexts: dev, faker
-    clear-checksums: true
+    contexts: dev
   mail:
     host: smtp.gmail.com
     port: 587

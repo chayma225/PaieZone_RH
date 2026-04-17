@@ -17,7 +17,7 @@ public final class AuthoritiesConstants {
 
     public static final String MANAGER = "ROLE_MANAGER";
 
-    public static final String EMPLOYE = "ROLR_EMPLOYE";
+    public static final String EMPLOYE = "ROLE_EMPLOYE";
 
     private AuthoritiesConstants() {}
 }

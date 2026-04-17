@@ -588,81 +588,39 @@
 
         <div class="mb-3">
           <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.employee.company">Company</label>
-          <select
-            class="form-control"
-            id="field_company"
-            data-cy="company"
-            name="company"
-            formControlName="company"
-            [compareWith]="compareCompany"
-          >
-            @if (!editForm.get('company')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
+          <select class="form-control" id="field_company" name="company" formControlName="company" [compareWith]="compareCompany">
+            <option [ngValue]="null"></option>
             @for (companyOption of companiesSharedCollection(); track $index) {
-              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
+              <option [ngValue]="companyOption">{{ companyOption.name }}</option>
             }
           </select>
         </div>
-        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
-          <div>
-            @if (editForm.get(['company'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
 
         <div class="mb-3">
           <label class="form-label" for="field_department" pzTranslate="paieZoneRhApp.employee.department">Department</label>
           <select
             class="form-control"
             id="field_department"
-            data-cy="department"
             name="department"
             formControlName="department"
             [compareWith]="compareDepartment"
           >
-            @if (!editForm.get('department')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
+            <option [ngValue]="null"></option>
             @for (departmentOption of departmentsSharedCollection(); track $index) {
-              <option [ngValue]="departmentOption">{{ departmentOption.id }}</option>
+              <option [ngValue]="departmentOption">{{ departmentOption.name }}</option>
             }
           </select>
         </div>
-        @if (editForm.get(['department'])!.invalid && (editForm.get(['department'])!.dirty || editForm.get(['department'])!.touched)) {
-          <div>
-            @if (editForm.get(['department'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
 
         <div class="mb-3">
           <label class="form-label" for="field_position" pzTranslate="paieZoneRhApp.employee.position">Position</label>
-          <select
-            class="form-control"
-            id="field_position"
-            data-cy="position"
-            name="position"
-            formControlName="position"
-            [compareWith]="compareJobPosition"
-          >
-            @if (!editForm.get('position')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
+          <select class="form-control" id="field_position" name="position" formControlName="position" [compareWith]="compareJobPosition">
+            <option [ngValue]="null"></option>
             @for (jobPositionOption of jobPositionsSharedCollection(); track $index) {
-              <option [ngValue]="jobPositionOption">{{ jobPositionOption.id }}</option>
+              <option [ngValue]="jobPositionOption">{{ jobPositionOption.title }}</option>
             }
           </select>
         </div>
-        @if (editForm.get(['position'])!.invalid && (editForm.get(['position'])!.dirty || editForm.get(['position'])!.touched)) {
-          <div>
-            @if (editForm.get(['position'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
 
         <div class="mb-3">
           <label class="form-label" for="field_manager" pzTranslate="paieZoneRhApp.employee.manager">Manager</label>
