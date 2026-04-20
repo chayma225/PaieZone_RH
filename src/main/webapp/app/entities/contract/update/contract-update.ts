@@ -147,4 +147,11 @@ export class ContractUpdate implements OnInit {
       )
       .subscribe((userProfiles: IUserProfile[]) => this.userProfilesSharedCollection.set(userProfiles));
   }
+  getSmigDisplay(): string {
+    return '524.954'; // valeur fixe ou calculée
+  }
+
+  getContractTypeDisplay(): string {
+    return this.editForm.get('contractType')?.value || '';
+  }
 }

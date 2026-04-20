@@ -43,6 +43,13 @@ public class HrDocument implements Serializable {
     @Column(name = "description", length = 500)
     private String description;
 
+    @Lob
+    @Column(name = "file_data")
+    private byte[] fileData;
+
+    @Column(name = "file_data_content_type")
+    private String fileDataContentType;
+
     @NotNull
     @Size(max = 500)
     @Column(name = "file_url", length = 500, nullable = false)

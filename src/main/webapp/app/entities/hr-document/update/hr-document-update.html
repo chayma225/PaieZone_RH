@@ -1,232 +1,122 @@
 <div class="d-flex justify-content-center">
-  <div class="col-8">
+  <div class="col-10">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="pz-hr-document-heading" data-cy="HrDocumentCreateUpdateHeading" pzTranslate="paieZoneRhApp.hrDocument.home.createOrEditLabel">
-        Créer ou éditer un Hr Document
-      </h2>
+      <h2 id="pz-hr-document-heading">{{ editForm.controls.id.value !== null ? 'Modifier' : 'Ajouter' }} un Document RH</h2>
 
-      <div>
-        <pz-alert-error />
+      <pz-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
+      @if (editForm.controls.id.value !== null) {
+        <div class="mb-3">
+          <label class="form-label">ID</label>
+          <input type="number" class="form-control" formControlName="id" [readonly]="true" />
+        </div>
+      }
+
+      <!-- Type de document -->
+      <div class="mb-3">
+        <label class="form-label">Type de document *</label>
+        <select class="form-select" formControlName="documentType">
+          <option [ngValue]="null">-- Sélectionner le type --</option>
+          <option value="CONTRACT">📄 Contrat</option>
+          <option value="CIN_COPY">🪪 Copie CIN</option>
+          <option value="DIPLOMA">🎓 Diplôme</option>
+          <option value="MEDICAL_CERT">🏥 Certificat médical</option>
+          <option value="DISCIPLINARY">⚠️ Disciplinaire</option>
+          <option value="PAYSLIP">💰 Bulletin de paie</option>
+          <option value="ATTESTATION">📋 Attestation</option>
+          <option value="OTHER">📎 Autre</option>
+        </select>
+      </div>
+
+      <!-- Titre -->
+      <div class="mb-3">
+        <label class="form-label">Titre du document *</label>
+        <input type="text" class="form-control" formControlName="title" placeholder="Ex: Copie CIN - Mohamed Ben Ali" />
+        @if (editForm.get('title')?.errors?.required && editForm.get('title')?.touched) {
+          <small class="text-danger">Ce champ est obligatoire.</small>
         }
+      </div>
 
-        @let documentTypeRef = editForm.get('documentType')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_documentType" pzTranslate="paieZoneRhApp.hrDocument.documentType">Document Type</label>
-          <select class="form-control" name="documentType" formControlName="documentType" id="field_documentType" data-cy="documentType">
-            <option [ngValue]="null">{{ 'paieZoneRhApp.DocumentType.null' | translate }}</option>
-            @for (documentType of documentTypeValues; track $index) {
-              <option [value]="documentType">{{ 'paieZoneRhApp.DocumentType.' + documentType | translate }}</option>
-            }
-          </select>
-          @if (documentTypeRef.invalid && (documentTypeRef.dirty || documentTypeRef.touched)) {
-            <div>
-              @if (editForm.get('documentType')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
+      <!-- Description -->
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" formControlName="description" rows="2" placeholder="Notes ou remarques..."></textarea>
+      </div>
+
+      <!-- ✅ UPLOAD RÉEL DU FICHIER -->
+      <div class="mb-3">
+        <label class="form-label">Fichier * <small class="text-muted">(PDF, JPEG, PNG, DOC — max 5 MB)</small></label>
+
+        <div class="border rounded p-3 bg-light">
+          <input type="file" class="form-control" (change)="onFileSelect($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" #fileInput />
+
+          @if (selectedFile) {
+            <div class="mt-2 p-2 bg-white rounded border">
+              <div class="d-flex align-items-center gap-2">
+                <span class="fs-4">{{ getFileIcon(selectedFile.type) }}</span>
+                <div>
+                  <div class="fw-bold">{{ selectedFile.name }}</div>
+                  <small class="text-muted">
+                    {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB —
+                    {{ selectedFile.type }}
+                  </small>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger ms-auto" (click)="clearFile()">✕</button>
+              </div>
             </div>
           }
-        </div>
 
-        @let titleRef = editForm.get('title')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_title" pzTranslate="paieZoneRhApp.hrDocument.title">Title</label>
-          <input type="text" class="form-control" name="title" id="field_title" data-cy="title" formControlName="title" />
-          @if (titleRef.invalid && (titleRef.dirty || titleRef.touched)) {
-            <div>
-              @if (editForm.get('title')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('title')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '200' }"
-                  >Ce champ doit faire au maximum 200 caractères.</small
-                >
-              }
+          @if (fileError) {
+            <div class="alert alert-danger mt-2 py-2">{{ fileError }}</div>
+          }
+
+          <!-- Aperçu image -->
+          @if (filePreview && isImage()) {
+            <div class="mt-2 text-center">
+              <img [src]="filePreview" class="img-fluid rounded shadow" style="max-height: 200px" alt="Aperçu" />
             </div>
           }
-        </div>
 
-        @let descriptionRef = editForm.get('description')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_description" pzTranslate="paieZoneRhApp.hrDocument.description">Description</label>
-          <input
-            type="text"
-            class="form-control"
-            name="description"
-            id="field_description"
-            data-cy="description"
-            formControlName="description"
-          />
-          @if (descriptionRef.invalid && (descriptionRef.dirty || descriptionRef.touched)) {
-            <div>
-              @if (editForm.get('description')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
-                  >Ce champ doit faire au maximum 500 caractères.</small
-                >
-              }
+          <!-- Document existant -->
+          @if (editForm.controls.id.value !== null && !selectedFile) {
+            <div class="mt-2 text-info">
+              <small>📎 Un fichier est déjà associé à ce document. Sélectionnez un nouveau fichier pour le remplacer.</small>
             </div>
           }
-        </div>
-
-        @let fileUrlRef = editForm.get('fileUrl')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_fileUrl" pzTranslate="paieZoneRhApp.hrDocument.fileUrl">File Url</label>
-          <input type="text" class="form-control" name="fileUrl" id="field_fileUrl" data-cy="fileUrl" formControlName="fileUrl" />
-          @if (fileUrlRef.invalid && (fileUrlRef.dirty || fileUrlRef.touched)) {
-            <div>
-              @if (editForm.get('fileUrl')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('fileUrl')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
-                  >Ce champ doit faire au maximum 500 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_fileSize" pzTranslate="paieZoneRhApp.hrDocument.fileSize">File Size</label>
-          <input type="number" class="form-control" name="fileSize" id="field_fileSize" data-cy="fileSize" formControlName="fileSize" />
-        </div>
-
-        @let mimeTypeRef = editForm.get('mimeType')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_mimeType" pzTranslate="paieZoneRhApp.hrDocument.mimeType">Mime Type</label>
-          <input type="text" class="form-control" name="mimeType" id="field_mimeType" data-cy="mimeType" formControlName="mimeType" />
-          @if (mimeTypeRef.invalid && (mimeTypeRef.dirty || mimeTypeRef.touched)) {
-            <div>
-              @if (editForm.get('mimeType')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
-                  >Ce champ doit faire au maximum 100 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let uploadedAtRef = editForm.get('uploadedAt')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_uploadedAt" pzTranslate="paieZoneRhApp.hrDocument.uploadedAt">Uploaded At</label>
-          <div class="d-flex">
-            <input
-              id="field_uploadedAt"
-              data-cy="uploadedAt"
-              type="datetime-local"
-              class="form-control"
-              name="uploadedAt"
-              formControlName="uploadedAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          @if (uploadedAtRef.invalid && (uploadedAtRef.dirty || uploadedAtRef.touched)) {
-            <div>
-              @if (editForm.get('uploadedAt')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('uploadedAt')?.errors?.datetimelocal"
-                pzTranslate="entity.validation.datetimelocal"
-                >Ce champ doit être une date et une heure.</small
-              >
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_expiryDate" pzTranslate="paieZoneRhApp.hrDocument.expiryDate">Expiry Date</label>
-          <div class="input-group">
-            <input
-              id="field_expiryDate"
-              data-cy="expiryDate"
-              type="text"
-              class="form-control"
-              name="expiryDate"
-              ngbDatepicker
-              #expiryDateDp="ngbDatepicker"
-              formControlName="expiryDate"
-            />
-            <button type="button" class="btn btn-secondary" (click)="expiryDateDp.toggle()"><fa-icon icon="calendar-alt" /></button>
-          </div>
-        </div>
-
-        @let activeRef = editForm.get('active')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.hrDocument.active">Active</label>
-          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
-          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
-            <div>
-              @if (editForm.get('active')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_employee" pzTranslate="paieZoneRhApp.hrDocument.employee">Employee</label>
-          <select
-            class="form-control"
-            id="field_employee"
-            data-cy="employee"
-            name="employee"
-            formControlName="employee"
-            [compareWith]="compareEmployee"
-          >
-            @if (!editForm.get('employee')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
-            @for (employeeOption of employeesSharedCollection(); track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
-            }
-          </select>
-        </div>
-        @if (editForm.get(['employee'])!.invalid && (editForm.get(['employee'])!.dirty || editForm.get(['employee'])!.touched)) {
-          <div>
-            @if (editForm.get(['employee'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
-
-        <div class="mb-3">
-          <label class="form-label" for="field_uploadedBy" pzTranslate="paieZoneRhApp.hrDocument.uploadedBy">Uploaded By</label>
-          <select
-            class="form-control"
-            id="field_uploadedBy"
-            data-cy="uploadedBy"
-            name="uploadedBy"
-            formControlName="uploadedBy"
-            [compareWith]="compareUserProfile"
-          >
-            <option [ngValue]="null"></option>
-            @for (userProfileOption of userProfilesSharedCollection(); track $index) {
-              <option [ngValue]="userProfileOption">{{ userProfileOption.id }}</option>
-            }
-          </select>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-        </button>
+      <!-- Date d'expiration -->
+      <div class="mb-3">
+        <label class="form-label">Date d'expiration <small class="text-muted">(optionnel)</small></label>
+        <input type="date" class="form-control" formControlName="expiryDate" />
+        <small class="text-muted">Utile pour les certificats médicaux, CIN, etc.</small>
+      </div>
 
+      <!-- Employé -->
+      <div class="mb-3">
+        <label class="form-label">Employé *</label>
+        <select class="form-select" formControlName="employee" [compareWith]="compareEmployee">
+          <option [ngValue]="null">-- Sélectionner l'employé --</option>
+          @for (emp of employeesSharedCollection(); track $index) {
+            <option [ngValue]="emp">{{ emp.matricule }} — {{ emp.firstName }} {{ emp.lastName }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Boutons -->
+      <div class="d-flex gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="previousState()"><fa-icon icon="ban" /> Annuler</button>
         <button
           type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving()"
           class="btn btn-primary"
+          [disabled]="editForm.invalid || isSaving() || (editForm.controls.id.value === null && !selectedFile)"
         >
-          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+          <fa-icon icon="save" />
+          @if (isSaving()) {
+            <span class="spinner-border spinner-border-sm ms-1"></span>
+          }
+          Sauvegarder
         </button>
       </div>
     </form>

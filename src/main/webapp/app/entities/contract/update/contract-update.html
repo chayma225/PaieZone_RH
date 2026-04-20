@@ -1,77 +1,91 @@
 <div class="d-flex justify-content-center">
-  <div class="col-8">
+  <div class="col-10">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="pz-contract-heading" data-cy="ContractCreateUpdateHeading" pzTranslate="paieZoneRhApp.contract.home.createOrEditLabel">
-        Créer ou éditer un Contract
+        📋 Créer/Éditer Contrat de Travail (LF 2026)
       </h2>
 
-      <div>
-        <pz-alert-error />
+      <pz-alert-error />
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+      <!--  ID (lecture seule) -->
+      @if (editForm.controls.id.value !== null) {
+        <div class="mb-3">
+          <label class="form-label" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" formControlName="id" [readonly]="true" />
+        </div>
+      }
+
+      <!--  RÉFÉRENCE (obligatoire, unique) -->
+      @let referenceRef = editForm.get('reference')!;
+      <div class="mb-3">
+        <label class="form-label fw-bold" for="field_reference"> 📄 Référence Contrat <span class="text-danger">*</span> </label>
+        <input
+          type="text"
+          class="form-control"
+          name="reference"
+          id="field_reference"
+          data-cy="reference"
+          formControlName="reference"
+          maxlength="50"
+        />
+        @if (referenceRef.invalid && (referenceRef.dirty || referenceRef.touched)) {
+          <div class="mt-1">
+            @if (referenceRef.errors?.required) {
+              <small class="form-text text-danger"> ⚠️ Référence obligatoire (ex: CT-2026-001) </small>
+            }
+            @if (referenceRef.errors?.maxlength) {
+              <small class="form-text text-danger"> Maximum 50 caractères </small>
+            }
+            @if (referenceRef.errors?.referenceExists) {
+              <small class="form-text text-danger"> ❌ Référence déjà utilisée </small>
+            }
           </div>
         }
+      </div>
 
-        @let referenceRef = editForm.get('reference')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_reference" pzTranslate="paieZoneRhApp.contract.reference">Reference</label>
-          <input type="text" class="form-control" name="reference" id="field_reference" data-cy="reference" formControlName="reference" />
-          @if (referenceRef.invalid && (referenceRef.dirty || referenceRef.touched)) {
-            <div>
-              @if (editForm.get('reference')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('reference')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '50' }"
-                  >Ce champ doit faire au maximum 50 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
+      <div class="row">
+        <!--  TYPE CONTRAT (LF 2026) -->
         @let contractTypeRef = editForm.get('contractType')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_contractType" pzTranslate="paieZoneRhApp.contract.contractType">Contract Type</label>
-          <select class="form-control" name="contractType" formControlName="contractType" id="field_contractType" data-cy="contractType">
-            <option [ngValue]="null">{{ 'paieZoneRhApp.ContractType.null' | translate }}</option>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold" for="field_contractType"> 📋 Type Contrat <span class="text-danger">*</span> </label>
+          <select class="form-select" name="contractType" formControlName="contractType" id="field_contractType" data-cy="contractType">
+            <option [ngValue]="null" disabled>Choisir type contrat</option>
             @for (contractType of contractTypeValues; track $index) {
-              <option [value]="contractType">{{ 'paieZoneRhApp.ContractType.' + contractType | translate }}</option>
+              <option [ngValue]="contractType">
+                {{ 'paieZoneRhApp.ContractType.' + contractType | translate }}
+              </option>
             }
           </select>
           @if (contractTypeRef.invalid && (contractTypeRef.dirty || contractTypeRef.touched)) {
-            <div>
-              @if (editForm.get('contractType')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+            <div class="mt-1">
+              @if (contractTypeRef.errors?.required) {
+                <small class="form-text text-danger">Type obligatoire</small>
               }
             </div>
           }
         </div>
 
+        <!--  STATUT -->
         @let statusRef = editForm.get('status')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_status" pzTranslate="paieZoneRhApp.contract.status">Status</label>
-          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="field_status">📊 Statut</label>
+          <select class="form-select" name="status" formControlName="status" id="field_status">
             <option [ngValue]="null">{{ 'paieZoneRhApp.ContractStatus.null' | translate }}</option>
             @for (contractStatus of contractStatusValues; track $index) {
-              <option [value]="contractStatus">{{ 'paieZoneRhApp.ContractStatus.' + contractStatus | translate }}</option>
+              <option [ngValue]="contractStatus">
+                {{ 'paieZoneRhApp.ContractStatus.' + contractStatus | translate }}
+              </option>
             }
           </select>
-          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
-            <div>
-              @if (editForm.get('status')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
         </div>
+      </div>
 
-        @let startDateRef = editForm.get('startDate')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_startDate" pzTranslate="paieZoneRhApp.contract.startDate">Start Date</label>
+      <div class="row">
+        <!--  DATES -->
+        <div class="col-md-4 mb-3">
+          @let startDateRef = editForm.get('startDate')!;
+          <label class="form-label fw-bold" for="field_startDate"> 📅 Date Début <span class="text-danger">*</span> </label>
           <div class="input-group">
             <input
               id="field_startDate"
@@ -83,19 +97,17 @@
               #startDateDp="ngbDatepicker"
               formControlName="startDate"
             />
-            <button type="button" class="btn btn-secondary" (click)="startDateDp.toggle()"><fa-icon icon="calendar-alt" /></button>
+            <button class="btn btn-outline-secondary" (click)="startDateDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
           </div>
-          @if (startDateRef.invalid && (startDateRef.dirty || startDateRef.touched)) {
-            <div>
-              @if (editForm.get('startDate')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
+          @if (startDateRef.invalid) {
+            <small class="form-text text-danger mt-1">Date début obligatoire</small>
           }
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_endDate" pzTranslate="paieZoneRhApp.contract.endDate">End Date</label>
+        <div class="col-md-4 mb-3">
+          <label class="form-label" for="field_endDate"> ⏰ Date Fin (CDD/CIVP uniquement) </label>
           <div class="input-group">
             <input
               id="field_endDate"
@@ -107,12 +119,14 @@
               #endDateDp="ngbDatepicker"
               formControlName="endDate"
             />
-            <button type="button" class="btn btn-secondary" (click)="endDateDp.toggle()"><fa-icon icon="calendar-alt" /></button>
+            <button class="btn btn-outline-secondary" (click)="endDateDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
           </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_signedDate" pzTranslate="paieZoneRhApp.contract.signedDate">Signed Date</label>
+        <div class="col-md-4 mb-3">
+          <label class="form-label" for="field_signedDate">✍️ Date Signature</label>
           <div class="input-group">
             <input
               id="field_signedDate"
@@ -124,41 +138,48 @@
               #signedDateDp="ngbDatepicker"
               formControlName="signedDate"
             />
-            <button type="button" class="btn btn-secondary" (click)="signedDateDp.toggle()"><fa-icon icon="calendar-alt" /></button>
+            <button class="btn btn-outline-secondary" (click)="signedDateDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
           </div>
         </div>
+      </div>
 
+      <div class="row">
+        <!--  SALAIRE (LF 2026 SMIG) -->
         @let baseSalaryRef = editForm.get('baseSalary')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_baseSalary" pzTranslate="paieZoneRhApp.contract.baseSalary">Base Salary</label>
-          <input
-            type="number"
-            class="form-control"
-            name="baseSalary"
-            id="field_baseSalary"
-            data-cy="baseSalary"
-            formControlName="baseSalary"
-          />
-          @if (baseSalaryRef.invalid && (baseSalaryRef.dirty || baseSalaryRef.touched)) {
-            <div>
-              @if (editForm.get('baseSalary')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold" for="field_baseSalary"> 💰 Salaire Brut Mensuel <span class="text-danger">*</span> </label>
+          <div class="input-group">
+            <span class="input-group-text">TND</span>
+            <input
+              type="number"
+              class="form-control"
+              name="baseSalary"
+              id="field_baseSalary"
+              data-cy="baseSalary"
+              formControlName="baseSalary"
+              step="0.001"
+              min="262.477"
+              [placeholder]="'SMIG 48h: 524.954' | translate"
+            />
+          </div>
+          @if (baseSalaryRef.invalid) {
+            <div class="mt-1">
+              @if (baseSalaryRef.errors?.salaryBelowSMIG) {
+                <small class="form-text text-danger"> ❌ LF 2026 : Salaire < 524.954 TND (SMIG 48h) </small>
               }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('baseSalary')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
+              @if (baseSalaryRef.errors?.salaryBelowInterimMinimum) {
+                <small class="form-text text-danger"> Intérim : +10% précarité obligatoire </small>
+              }
             </div>
           }
         </div>
 
+        <!--  HEURES -->
         @let workingHoursWeekRef = editForm.get('workingHoursWeek')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_workingHoursWeek" pzTranslate="paieZoneRhApp.contract.workingHoursWeek"
-            >Working Hours Week</label
-          >
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold" for="field_workingHoursWeek"> ⏱️ Heures Semaine <span class="text-danger">*</span> </label>
           <input
             type="number"
             class="form-control"
@@ -166,37 +187,17 @@
             id="field_workingHoursWeek"
             data-cy="workingHoursWeek"
             formControlName="workingHoursWeek"
+            min="1"
+            max="48"
           />
-          @if (workingHoursWeekRef.invalid && (workingHoursWeekRef.dirty || workingHoursWeekRef.touched)) {
-            <div>
-              @if (editForm.get('workingHoursWeek')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('workingHoursWeek')?.errors?.min) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
-                  >Ce champ doit être supérieur à 1.</small
-                >
-              }
-              @if (editForm.get('workingHoursWeek')?.errors?.max) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.max" [translateValues]="{ max: '48' }"
-                  >Ce champ doit être inférieur à 48.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('workingHoursWeek')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
+          @if (workingHoursWeekRef.invalid) {
+            <small class="form-text text-danger mt-1"> LF 2026 : 1-48h/semaine (Code Travail Art.88) </small>
           }
         </div>
 
         @let workingDaysWeekRef = editForm.get('workingDaysWeek')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_workingDaysWeek" pzTranslate="paieZoneRhApp.contract.workingDaysWeek"
-            >Working Days Week</label
-          >
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold" for="field_workingDaysWeek"> 📅 Jours Semaine <span class="text-danger">*</span> </label>
           <input
             type="number"
             class="form-control"
@@ -204,61 +205,17 @@
             id="field_workingDaysWeek"
             data-cy="workingDaysWeek"
             formControlName="workingDaysWeek"
+            min="1"
+            max="7"
           />
-          @if (workingDaysWeekRef.invalid && (workingDaysWeekRef.dirty || workingDaysWeekRef.touched)) {
-            <div>
-              @if (editForm.get('workingDaysWeek')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('workingDaysWeek')?.errors?.min) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
-                  >Ce champ doit être supérieur à 1.</small
-                >
-              }
-              @if (editForm.get('workingDaysWeek')?.errors?.max) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.max" [translateValues]="{ max: '7' }"
-                  >Ce champ doit être inférieur à 7.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('workingDaysWeek')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
         </div>
+      </div>
 
-        @let conventionCollectiveRef = editForm.get('conventionCollective')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_conventionCollective" pzTranslate="paieZoneRhApp.contract.conventionCollective"
-            >Convention Collective</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            name="conventionCollective"
-            id="field_conventionCollective"
-            data-cy="conventionCollective"
-            formControlName="conventionCollective"
-          />
-          @if (conventionCollectiveRef.invalid && (conventionCollectiveRef.dirty || conventionCollectiveRef.touched)) {
-            <div>
-              @if (editForm.get('conventionCollective')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
-                  >Ce champ doit faire au maximum 100 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
+      <div class="row">
+        <!--  PÉRIODE ESSAI (LF 2026) -->
         @let trialPeriodMonthsRef = editForm.get('trialPeriodMonths')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_trialPeriodMonths" pzTranslate="paieZoneRhApp.contract.trialPeriodMonths"
-            >Trial Period Months</label
-          >
+        <div class="col-md-3 mb-3">
+          <label class="form-label" for="field_trialPeriodMonths"> ⏳ Période Essai (mois) </label>
           <input
             type="number"
             class="form-control"
@@ -266,32 +223,18 @@
             id="field_trialPeriodMonths"
             data-cy="trialPeriodMonths"
             formControlName="trialPeriodMonths"
+            min="0"
+            max="12"
           />
-          @if (trialPeriodMonthsRef.invalid && (trialPeriodMonthsRef.dirty || trialPeriodMonthsRef.touched)) {
-            <div>
-              @if (editForm.get('trialPeriodMonths')?.errors?.min) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >Ce champ doit être supérieur à 0.</small
-                >
-              }
-              @if (editForm.get('trialPeriodMonths')?.errors?.max) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.max" [translateValues]="{ max: '12' }"
-                  >Ce champ doit être inférieur à 12.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('trialPeriodMonths')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
+          @if (trialPeriodMonthsRef.invalid) {
+            <small class="form-text text-warning"> CDI: max 6+6 mois | CDD: max 3 mois </small>
           }
         </div>
 
+        <!--  RENOUVELLEMENTS CDD -->
         @let renewalCountRef = editForm.get('renewalCount')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_renewalCount" pzTranslate="paieZoneRhApp.contract.renewalCount">Renewal Count</label>
+        <div class="col-md-3 mb-3">
+          <label class="form-label" for="field_renewalCount"> 🔄 Nb Rénouvellements CDD </label>
           <input
             type="number"
             class="form-control"
@@ -299,139 +242,100 @@
             id="field_renewalCount"
             data-cy="renewalCount"
             formControlName="renewalCount"
+            min="0"
+            readonly
           />
-          @if (renewalCountRef.invalid && (renewalCountRef.dirty || renewalCountRef.touched)) {
-            <div>
-              @if (editForm.get('renewalCount')?.errors?.min) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >Ce champ doit être supérieur à 0.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('renewalCount')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
+          @if ((renewalCountRef.value ?? 0) >= 2) {
+            <small class="form-text text-danger fw-bold"> 🚨 MAX 2 ! → CDI automatique (LF 2026) </small>
           }
         </div>
 
-        @let documentUrlRef = editForm.get('documentUrl')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_documentUrl" pzTranslate="paieZoneRhApp.contract.documentUrl">Document Url</label>
+        <!-- CONVENTION COLLECTIVE -->
+        @let conventionCollectiveRef = editForm.get('conventionCollective')!;
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="field_conventionCollective"> 📜 Convention Collective </label>
           <input
             type="text"
+            class="form-control"
+            name="conventionCollective"
+            id="field_conventionCollective"
+            data-cy="conventionCollective"
+            formControlName="conventionCollective"
+            placeholder="ex: Banque, Commerce, Industrie..."
+          />
+        </div>
+      </div>
+
+      <!--  RELATIONS -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold" for="field_employee"> 👤 Employé <span class="text-danger">*</span> </label>
+          <select class="form-select" id="field_employee" data-cy="employee" formControlName="employee" [compareWith]="compareEmployee">
+            @if (!editForm.get('employee')!.value) {
+              <option [ngValue]="null" disabled>Sélectionner employé</option>
+            }
+            @for (employee of employeesSharedCollection(); track $index) {
+              <option [ngValue]="employee">{{ employee.matricule }} - {{ employee.firstName }} {{ employee.lastName }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="field_createdBy">👮 Créé par</label>
+          <select
+            class="form-select"
+            id="field_createdBy"
+            data-cy="createdBy"
+            formControlName="createdBy"
+            [compareWith]="compareUserProfile"
+          >
+            <option [ngValue]="null">Sélectionner utilisateur</option>
+            @for (userProfile of userProfilesSharedCollection(); track $index) {
+              <option [ngValue]="userProfile">{{ userProfile.jhiUserId }} - {{ userProfile.role }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!--  DOCUMENTS + NOTES -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="field_documentUrl"> 📎 Contrat Signé (PDF) </label>
+          <input
+            type="url"
             class="form-control"
             name="documentUrl"
             id="field_documentUrl"
             data-cy="documentUrl"
             formControlName="documentUrl"
+            placeholder="https://drive.google.com/contrat.pdf"
           />
-          @if (documentUrlRef.invalid && (documentUrlRef.dirty || documentUrlRef.touched)) {
-            <div>
-              @if (editForm.get('documentUrl')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
-                  >Ce champ doit faire au maximum 500 caractères.</small
-                >
-              }
-            </div>
-          }
         </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_notes" pzTranslate="paieZoneRhApp.contract.notes">Notes</label>
-          <textarea class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes"></textarea>
-        </div>
-
-        @let createdAtRef = editForm.get('createdAt')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_createdAt" pzTranslate="paieZoneRhApp.contract.createdAt">Created At</label>
-          <div class="d-flex">
-            <input
-              id="field_createdAt"
-              data-cy="createdAt"
-              type="datetime-local"
-              class="form-control"
-              name="createdAt"
-              formControlName="createdAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          @if (createdAtRef.invalid && (createdAtRef.dirty || createdAtRef.touched)) {
-            <div>
-              @if (editForm.get('createdAt')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
-                pzTranslate="entity.validation.datetimelocal"
-                >Ce champ doit être une date et une heure.</small
-              >
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_employee" pzTranslate="paieZoneRhApp.contract.employee">Employee</label>
-          <select
-            class="form-control"
-            id="field_employee"
-            data-cy="employee"
-            name="employee"
-            formControlName="employee"
-            [compareWith]="compareEmployee"
-          >
-            @if (!editForm.get('employee')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
-            @for (employeeOption of employeesSharedCollection(); track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
-            }
-          </select>
-        </div>
-        @if (editForm.get(['employee'])!.invalid && (editForm.get(['employee'])!.dirty || editForm.get(['employee'])!.touched)) {
-          <div>
-            @if (editForm.get(['employee'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
-
-        <div class="mb-3">
-          <label class="form-label" for="field_createdBy" pzTranslate="paieZoneRhApp.contract.createdBy">Created By</label>
-          <select
-            class="form-control"
-            id="field_createdBy"
-            data-cy="createdBy"
-            name="createdBy"
-            formControlName="createdBy"
-            [compareWith]="compareUserProfile"
-          >
-            <option [ngValue]="null"></option>
-            @for (userProfileOption of userProfilesSharedCollection(); track $index) {
-              <option [ngValue]="userProfileOption">{{ userProfileOption.id }}</option>
-            }
-          </select>
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="field_notes">📝 Notes</label>
+          <textarea class="form-control" rows="3" name="notes" id="field_notes" data-cy="notes" formControlName="notes"></textarea>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving()"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
+      <!--  BOUTONS -->
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-secondary" (click)="previousState()"><fa-icon icon="ban"></fa-icon> Annuler</button>
+        <button type="submit" [disabled]="editForm.invalid || isSaving()" class="btn btn-primary btn-lg" data-cy="saveButton">
+          <fa-icon [icon]="isSaving() ? 'spinner' : 'save'"></fa-icon>
+          <span>{{ isSaving() ? 'Sauvegarde...' : '💾 Sauvegarder Contrat' }}</span>
         </button>
       </div>
+
+      <!-- RÉSUMÉ LF 2026 -->
+      @if (editForm.valid && !isSaving()) {
+        <div class="alert alert-success mt-3">
+          <h6>✅ Conformité LF 2026 vérifiée</h6>
+          <small>
+            SMIG: {{ getSmigDisplay() }} TND | Essai: {{ editForm.get('trialPeriodMonths')?.value || 0 }} mois | Type:
+            {{ getContractTypeDisplay() }}
+          </small>
+        </div>
+      }
     </form>
   </div>
 </div>

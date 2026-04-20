@@ -14,40 +14,37 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.repository.ContractRepository;
+import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.service.ContractQueryService;
-import tn.paiezone.rh.service.ContractService;
 import tn.paiezone.rh.service.criteria.ContractCriteria;
 import tn.paiezone.rh.service.dto.ContractDTO;
+import tn.paiezone.rh.service.impl.ContractServiceImpl;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
-/**
- * REST controller for managing {@link tn.paiezone.rh.domain.Contract}.
- */
 @RestController
 @RequestMapping("/api/contracts")
 public class ContractResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContractResource.class);
-
     private static final String ENTITY_NAME = "contract";
 
     @Value("${jhipster.clientApp.name:paieZoneRH}")
     private String applicationName;
 
-    private final ContractService contractService;
-
+    private final ContractServiceImpl contractService;
     private final ContractRepository contractRepository;
-
     private final ContractQueryService contractQueryService;
 
     public ContractResource(
-        ContractService contractService,
+        ContractServiceImpl contractService,
         ContractRepository contractRepository,
         ContractQueryService contractQueryService
     ) {
@@ -56,18 +53,21 @@ public class ContractResource {
         this.contractQueryService = contractQueryService;
     }
 
-    /**
-     * {@code POST  /contracts} : Create a new contract.
-     *
-     * @param contractDTO the contractDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new contractDTO, or with status {@code 400 (Bad Request)} if the contract has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    @Auditable(action = "CREATE", entityType = "Contract")
     public ResponseEntity<ContractDTO> createContract(@Valid @RequestBody ContractDTO contractDTO) throws URISyntaxException {
         LOG.debug("REST request to save Contract : {}", contractDTO);
         if (contractDTO.getId() != null) {
-            throw new BadRequestAlertException("A new contract cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("Un nouveau contrat ne peut pas déjà avoir un ID.", ENTITY_NAME, "idexists");
         }
         contractDTO = contractService.save(contractDTO);
         return ResponseEntity.created(new URI("/api/contracts/" + contractDTO.getId()))
@@ -75,128 +75,96 @@ public class ContractResource {
             .body(contractDTO);
     }
 
-    /**
-     * {@code PUT  /contracts/:id} : Updates an existing contract.
-     *
-     * @param id the id of the contractDTO to save.
-     * @param contractDTO the contractDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated contractDTO,
-     * or with status {@code 400 (Bad Request)} if the contractDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the contractDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/{id}")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    @Auditable(action = "UPDATE", entityType = "Contract")
     public ResponseEntity<ContractDTO> updateContract(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody ContractDTO contractDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to update Contract : {}, {}", id, contractDTO);
         if (contractDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestAlertException("ID invalide.", ENTITY_NAME, "idnull");
         }
         if (!Objects.equals(id, contractDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+            throw new BadRequestAlertException("ID non correspondant.", ENTITY_NAME, "idinvalid");
         }
-
         if (!contractRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+            throw new BadRequestAlertException("Contrat introuvable.", ENTITY_NAME, "idnotfound");
         }
-
         contractDTO = contractService.update(contractDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, contractDTO.getId().toString()))
             .body(contractDTO);
     }
 
-    /**
-     * {@code PATCH  /contracts/:id} : Partial updates given fields of an existing contract, field will ignore if it is null
-     *
-     * @param id the id of the contractDTO to save.
-     * @param contractDTO the contractDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated contractDTO,
-     * or with status {@code 400 (Bad Request)} if the contractDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the contractDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the contractDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<ContractDTO> partialUpdateContract(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody ContractDTO contractDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to partial update Contract partially : {}, {}", id, contractDTO);
-        if (contractDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, contractDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!contractRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        Optional<ContractDTO> result = contractService.partialUpdate(contractDTO);
-
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, contractDTO.getId().toString())
-        );
+    // ── Activer un contrat ────────────────────────────────────────────────────
+    @PutMapping("/{id}/activate")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    @Auditable(action = "ACTIVATE", entityType = "Contract")
+    public ResponseEntity<ContractDTO> activateContract(@PathVariable Long id) {
+        LOG.debug("REST request to activate Contract : {}", id);
+        ContractDTO result = contractService.activate(id);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .body(result);
     }
 
-    /**
-     * {@code GET  /contracts} : get all the Contracts.
-     *
-     * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Contracts in body.
-     */
+    // ── Terminer un contrat ───────────────────────────────────────────────────
+    @PutMapping("/{id}/terminate")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    @Auditable(action = "TERMINATE", entityType = "Contract")
+    public ResponseEntity<ContractDTO> terminateContract(@PathVariable Long id) {
+        LOG.debug("REST request to terminate Contract : {}", id);
+        ContractDTO result = contractService.terminate(id);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .body(result);
+    }
+
     @GetMapping("")
     public ResponseEntity<List<ContractDTO>> getAllContracts(
         ContractCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
-        LOG.debug("REST request to get Contracts by criteria: {}", criteria);
-
         Page<ContractDTO> page = contractQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /contracts/count} : count all the contracts.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
-    @GetMapping("/count")
-    public ResponseEntity<Long> countContracts(ContractCriteria criteria) {
-        LOG.debug("REST request to count Contracts by criteria: {}", criteria);
-        return ResponseEntity.ok().body(contractQueryService.countByCriteria(criteria));
-    }
-
-    /**
-     * {@code GET  /contracts/:id} : get the "id" contract.
-     *
-     * @param id the id of the contractDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the contractDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ContractDTO> getContract(@PathVariable("id") Long id) {
-        LOG.debug("REST request to get Contract : {}", id);
         Optional<ContractDTO> contractDTO = contractService.findOne(id);
         return ResponseUtil.wrapOrNotFound(contractDTO);
     }
 
-    /**
-     * {@code DELETE  /contracts/:id} : delete the "id" contract.
-     *
-     * @param id the id of the contractDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('" + AuthoritiesConstants.ADMIN + "', '" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    @Auditable(action = "DELETE", entityType = "Contract")
     public ResponseEntity<Void> deleteContract(@PathVariable("id") Long id) {
-        LOG.debug("REST request to delete Contract : {}", id);
         contractService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

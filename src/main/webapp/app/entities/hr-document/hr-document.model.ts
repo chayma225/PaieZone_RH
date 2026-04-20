@@ -9,6 +9,8 @@ export interface IHrDocument {
   documentType?: keyof typeof DocumentType | null;
   title?: string | null;
   description?: string | null;
+  fileData?: string | null;
+  fileDataContentType?: string | null;
   fileUrl?: string | null;
   fileSize?: number | null;
   mimeType?: string | null;
