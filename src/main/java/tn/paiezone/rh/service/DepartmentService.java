@@ -12,8 +12,8 @@ import tn.paiezone.rh.domain.Department;
 import tn.paiezone.rh.repository.DepartmentRepository;
 import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.service.dto.DepartmentDTO;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.service.mapper.DepartmentMapper;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -42,7 +42,7 @@ public class DepartmentService {
 
         // Vérifier unicité du code dans la company
         if (dto.getCompany() != null && departmentRepository.existsByCodeAndCompanyId(dto.getCode(), dto.getCompany().getId())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un département avec le code '" + dto.getCode() + "' existe déjà dans cette entreprise.",
                 ENTITY_NAME,
                 "codeExists"
@@ -59,7 +59,7 @@ public class DepartmentService {
 
         Department existing = departmentRepository
             .findById(dto.getId())
-            .orElseThrow(() -> new BadRequestAlertException("Département introuvable.", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new BusinessException("Département introuvable.", ENTITY_NAME, "idnotfound"));
 
         // Vérifier unicité code si changé
         if (
@@ -67,11 +67,7 @@ public class DepartmentService {
             dto.getCompany() != null &&
             departmentRepository.existsByCodeAndCompanyId(dto.getCode(), dto.getCompany().getId())
         ) {
-            throw new BadRequestAlertException(
-                "Un département avec le code '" + dto.getCode() + "' existe déjà.",
-                ENTITY_NAME,
-                "codeExists"
-            );
+            throw new BusinessException("Un département avec le code '" + dto.getCode() + "' existe déjà.", ENTITY_NAME, "codeExists");
         }
 
         Department department = departmentMapper.toEntity(dto);
@@ -119,7 +115,7 @@ public class DepartmentService {
         // Vérifier s'il y a des employés dans ce département
         long count = employeeRepository.countByDepartmentId(id);
         if (count > 0) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Impossible de supprimer ce département : " + count + " employé(s) y sont affectés.",
                 ENTITY_NAME,
                 "hasEmployees"

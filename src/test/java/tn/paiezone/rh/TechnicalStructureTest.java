@@ -22,13 +22,14 @@ class TechnicalStructureTest {
         .layer("Security").definedBy("..security..")
         .optionalLayer("Persistence").definedBy("..repository..")
         .layer("Domain").definedBy("..domain..")
+        .optionalLayer("AOP").definedBy("..aop..")
 
         .whereLayer("Config").mayNotBeAccessedByAnyLayer()
         .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
-        .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config")
+        .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config", "AOP") // ← ajouter "AOP"
         .whereLayer("Security").mayOnlyBeAccessedByLayers("Config", "Service", "Web")
         .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service", "Security", "Web", "Config")
-        .whereLayer("Domain").mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config")
+        .whereLayer("Domain").mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config","AOP")
 
         .ignoreDependency(belongToAnyOf(PaieZoneRhApp.class), alwaysTrue())
         .ignoreDependency(alwaysTrue(), belongToAnyOf(

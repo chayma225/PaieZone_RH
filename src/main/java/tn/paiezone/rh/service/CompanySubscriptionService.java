@@ -14,8 +14,8 @@ import tn.paiezone.rh.domain.enumeration.PlanType;
 import tn.paiezone.rh.repository.CompanySubscriptionRepository;
 import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.service.dto.CompanySubscriptionDTO;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.service.mapper.CompanySubscriptionMapper;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -57,7 +57,7 @@ public class CompanySubscriptionService {
         // Récupérer l'abonnement actuel
         CompanySubscription existing = companySubscriptionRepository
             .findById(dto.getId())
-            .orElseThrow(() -> new BadRequestAlertException("Abonnement introuvable", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new BusinessException("Abonnement introuvable", ENTITY_NAME, "idnotfound"));
 
         // Valider maxEmployees selon le nouveau plan
         validateMaxEmployees(dto.getPlan(), dto.getMaxEmployees());
@@ -67,7 +67,7 @@ public class CompanySubscriptionService {
             long activeEmployees = employeeRepository.countByCompanyIdAndActiveTrue(existing.getCompany().getId());
 
             if (dto.getMaxEmployees() < activeEmployees) {
-                throw new BadRequestAlertException(
+                throw new BusinessException(
                     "Impossible de réduire la limite : " +
                         activeEmployees +
                         " employés actifs dépassent la nouvelle limite de " +
@@ -133,7 +133,7 @@ public class CompanySubscriptionService {
         int max = getMaxEmployees(plan);
 
         if (maxEmployees < min || maxEmployees > max) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Le plan " +
                     plan.name() +
                     " accepte entre " +

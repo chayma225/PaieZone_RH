@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-leave-types" author="dev">
+    <!--
+        Types de congé globaux (company_id = NULL = partagés par toutes les entreprises)
+        Chaque entreprise peut créer ses propres types en plus de ceux-ci
+    -->
+
+    <!-- Congé annuel : minimum légal tunisien = 18 jours/an
+         Acquisition progressive : 1,5 jour/mois
+         Report possible : 6 jours max -->
+    <insert tableName="leave_type">
+      <column name="id" valueNumeric="1"/>
+      <column name="name"              value="ANNUAL"/>
+      <column name="label"             value="Congé annuel payé"/>
+      <column name="max_days_per_year" value="18"/>
+      <column name="carry_over_days"   value="6"/>
+      <column name="paid"              value="true"/>
+      <column name="requires_medical"  value="false"/>
+      <column name="active"            value="true"/>
+      <column name="company_id" valueNumeric="1"/>
+    </insert>
+
+    <!-- Congé maladie : illimité en théorie, conditionné par un arrêt médical -->
+    <insert tableName="leave_type">
+      <column name="id" valueNumeric="2"/>
+      <column name="name"              value="SICK"/>
+      <column name="label"             value="Congé maladie"/>
+      <column name="max_days_per_year" value="365"/>
+      <column name="carry_over_days"   value="0"/>
+      <column name="paid"              value="true"/>
+      <column name="requires_medical"  value="true"/>
+      <column name="active"            value="true"/>
+      <column name="company_id" valueNumeric="1"/>
+    </insert>
+
+    <!-- Congé maternité : 60 jours légal Tunisie (2 mois) -->
+    <insert tableName="leave_type">
+      <column name="id" valueNumeric="3"/>
+      <column name="name"              value="MATERNITY"/>
+      <column name="label"             value="Congé maternité (60 jours)"/>
+      <column name="max_days_per_year" value="60"/>
+      <column name="carry_over_days"   value="0"/>
+      <column name="paid"              value="true"/>
+      <column name="requires_medical"  value="true"/>
+      <column name="active"            value="true"/>
+      <column name="company_id" valueNumeric="1"/>
+    </insert>
+
+    <!-- Congé paternité -->
+    <insert tableName="leave_type">
+      <column name="id" valueNumeric="4"/>
+      <column name="name"              value="PATERNITY"/>
+      <column name="label"             value="Congé paternité"/>
+      <column name="max_days_per_year" value="3"/>
+      <column name="carry_over_days"   value="0"/>
+      <column name="paid"              value="true"/>
+      <column name="requires_medical"  value="false"/>
+      <column name="active"            value="true"/>
+      <column name="company_id" valueNumeric="1"/>
+    </insert>
+
+    <!-- Congé mariage : 3 jours légal Tunisie -->
+    <insert tableName="leave_type">
+      <column name="id" valueNumeric="5"/>
+      <column name="name"              value="MARRIAGE"/>
+      <column name="label"             value="Congé mariage (3 jours)"/>
+      <column name="max_days_per_year" value="3"/>
+      <column name="carry_over_days"   value="0"/>
+      <column name="paid"              value="true"/>
+      <column name="requires_medical"  value="false"/>
+      <column name="active"            value="true"/>
+      <column name="company_id" valueNumeric="1"/>
+    </insert>
+
+    <!-- Congé deuil : décès d'un proche -->
+    <insert tableName="leave_type">
+      <column name="id" valueNumeric="6"/>
+      <column name="name"              value="BEREAVEMENT"/>
+      <column name="label"             value="Congé deuil"/>
+      <column name="max_days_per_year" value="3"/>
+      <column name="carry_over_days"   value="0"/>
+      <column name="paid"              value="true"/>
+      <column name="requires_medical"  value="false"/>
+      <column name="active"            value="true"/>
+      <column name="company_id" valueNumeric="1"/>
+    </insert>
+
+    <!-- Congé sans solde : non payé, impact sur le salaire du mois -->
+    <insert tableName="leave_type">
+      <column name="id" valueNumeric="7"/>
+      <column name="name"              value="UNPAID"/>
+      <column name="label"             value="Congé sans solde"/>
+      <column name="max_days_per_year" value="30"/>
+      <column name="carry_over_days"   value="0"/>
+      <column name="paid"              value="false"/>
+      <column name="requires_medical"  value="false"/>
+      <column name="active"            value="true"/>
+      <column name="company_id" valueNumeric="1"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>
