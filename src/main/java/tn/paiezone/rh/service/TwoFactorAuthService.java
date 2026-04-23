@@ -36,20 +36,30 @@ public class TwoFactorAuthService {
                 if (!Boolean.TRUE.equals(userProfile.getTwoFactorEnabled())) {
                     return false;
                 }
-                // Générer code 6 chiffres
-                String code = String.format("%06d", new SecureRandom().nextInt(999999));
-                // Stocker le code temporairement avec expiration 5 min
-                userProfile.setTwoFactorSecret(code + "|" + Instant.now().plus(5, ChronoUnit.MINUTES).toEpochMilli());
-                userProfileRepository.save(userProfile);
 
-                // Envoyer par email
+                String stored = userProfile.getTwoFactorSecret();
+                if (stored != null && stored.contains("|")) {
+                    long expiry = Long.parseLong(stored.split("\\|")[1]);
+                    long now = Instant.now().toEpochMilli();
+
+                    // Si le code expire dans plus de 4min 50s, c'est qu'on vient d'en envoyer un.
+                    // On bloque le deuxième envoi.
+                    if (expiry - now > 290000) {
+                        return true;
+                    }
+                }
+
+                String code = String.format("%06d", new java.util.Random().nextInt(999999));
+                userProfile.setTwoFactorSecret(code + "|" + Instant.now().plus(5, java.time.temporal.ChronoUnit.MINUTES).toEpochMilli());
+
+                userProfileRepository.saveAndFlush(userProfile); // On force l'enregistrement immédiat
+
                 userRepository
                     .findOneByLogin(login)
                     .ifPresent(user -> {
                         mailService.send2FACode(user, code);
                     });
 
-                LOG.debug("Code 2FA envoyé à : {}", login);
                 return true;
             })
             .orElse(false);
@@ -61,23 +71,25 @@ public class TwoFactorAuthService {
             .findByJhiUserId(login)
             .map(userProfile -> {
                 String stored = userProfile.getTwoFactorSecret();
-                if (stored == null || !stored.contains("|")) return false;
-
-                String[] parts = stored.split("\\|");
-                String storedCode = parts[0];
-                long expiry = Long.parseLong(parts[1]);
-
-                // Vérifier expiration
-                if (Instant.now().toEpochMilli() > expiry) {
-                    LOG.debug("Code 2FA expiré pour : {}", login);
+                if (stored == null || !stored.contains("|")) {
+                    LOG.error("ERREUR : Aucun code trouvé en base pour {}", login);
                     return false;
                 }
 
-                boolean valid = storedCode.equals(code.trim());
+                String[] parts = stored.split("\\|");
+                String storedCode = parts[0];
+
+                // On affiche exactement ce qu'on compare avec des crochets
+                LOG.info("COMPARAISON -> Saisi: [{}] | En base: [{}]", code, storedCode);
+
+                boolean valid = storedCode.trim().equals(code.trim());
+
                 if (valid) {
-                    // Nettoyer le code après utilisation
                     userProfile.setTwoFactorSecret(null);
                     userProfileRepository.save(userProfile);
+                    LOG.info("CODE VALIDE !");
+                } else {
+                    LOG.error("CODE INVALIDE !");
                 }
                 return valid;
             })

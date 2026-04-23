@@ -82,6 +82,10 @@ public class SecurityConfiguration {
                     .authenticated()
                     .requestMatchers("/api/authenticate")
                     .permitAll()
+                    .requestMatchers("/api/verify-2fa")
+                    .permitAll()
+                    .requestMatchers("/api/2fa/check")
+                    .permitAll()
                     // ── SUPER ADMIN uniquement ────────────────────────────
                     .requestMatchers("/api/companies/**")
                     .hasAuthority(AuthoritiesConstants.SUPER_ADMIN)

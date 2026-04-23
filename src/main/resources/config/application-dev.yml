@@ -26,10 +26,16 @@ spring:
   liquibase:
     contexts: dev
   mail:
-    host: smtp.gmail.com
+    host: mail47.lwspanel.com
     port: 587
-    username: chboug56@gmail.com
-    password: ejrs kxoz qbnz wjbk
+    username: salim.hamidi@comptazone.com
+    password: Ahmed@@@239
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true # Ajouté pour garantir la sécurité sur le port 587
   messages:
     cache-duration: PT1S
   thymeleaf:
@@ -61,6 +67,7 @@ jhipster:
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail:
+    from: salim.hamidi@comptazone.com # INDISPENSABLE : doit être identique au username
     base-url: http://127.0.0.1:8080
   logging:
     use-json-format: false

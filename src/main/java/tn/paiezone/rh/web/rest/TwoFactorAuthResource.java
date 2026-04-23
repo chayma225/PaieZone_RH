@@ -3,8 +3,12 @@ package tn.paiezone.rh.web.rest;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import tn.paiezone.rh.service.TwoFactorAuthService;
@@ -15,37 +19,42 @@ public class TwoFactorAuthResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthResource.class);
     private final TwoFactorAuthService twoFactorAuthService;
+    private final AuthenticateController authenticateController;
 
-    public TwoFactorAuthResource(TwoFactorAuthService twoFactorAuthService) {
+    public TwoFactorAuthResource(TwoFactorAuthService twoFactorAuthService, AuthenticateController authenticateController) {
         this.twoFactorAuthService = twoFactorAuthService;
+        this.authenticateController = authenticateController;
     }
 
-    // ── Vérifier si 2FA requis + envoyer le code ─────────────────────────────
     @PostMapping("/2fa/check")
     public ResponseEntity<Map<String, Object>> check(@RequestBody Map<String, String> body) {
         String login = body.get("login");
-        LOG.debug("REST request to check 2FA for : {}", login);
         boolean required = twoFactorAuthService.checkAndSendCode(login);
-        return ResponseEntity.ok(
-            Map.of("requires2fa", required, "message", required ? "Un code de vérification a été envoyé à votre email." : "2FA non activé.")
-        );
+        return ResponseEntity.ok(Map.of("requires2fa", required));
     }
 
-    // ── Vérifier le code saisi ────────────────────────────────────────────────
     @PostMapping("/verify-2fa")
-    public ResponseEntity<Map<String, Object>> verify(@RequestBody Map<String, String> body) {
-        String login = body.get("login");
+    public ResponseEntity<?> verify(@RequestBody Map<String, String> body) {
+        // On vérifie les deux clés possibles
+        String login = body.get("login") != null ? body.get("login") : body.get("username");
         String code = body.get("code");
-        LOG.debug("REST request to verify 2FA code for : {}", login);
 
-        boolean valid = twoFactorAuthService.verifyCode(login, code);
-        if (valid) {
-            return ResponseEntity.ok(Map.of("success", true, "message", "Code vérifié avec succès !"));
+        // LOG CRITIQUE : Regarde ta console Java après avoir cliqué !
+        LOG.info("VÉRIFICATION : Login reçu = [{}], Code reçu = [{}]", login, code);
+
+        if (login == null || code == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Données manquantes"));
         }
-        return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Code incorrect ou expiré."));
+
+        if (twoFactorAuthService.verifyCode(login, code)) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String jwt = authenticateController.createToken(authentication, false);
+            return ResponseEntity.ok(new AuthenticateController.JWTToken(jwt));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    // ── Statut 2FA ────────────────────────────────────────────────────────────
     @GetMapping("/2fa/status")
     public ResponseEntity<Map<String, Object>> status(@AuthenticationPrincipal Jwt jwt) {
         String login = jwt.getSubject();
@@ -53,17 +62,15 @@ public class TwoFactorAuthResource {
         return ResponseEntity.ok(Map.of("login", login, "twoFactorEnabled", enabled));
     }
 
-    // ── Activer 2FA ───────────────────────────────────────────────────────────
     @PostMapping("/2fa/enable")
     public ResponseEntity<Map<String, String>> enable(@AuthenticationPrincipal Jwt jwt) {
         twoFactorAuthService.enable(jwt.getSubject());
-        return ResponseEntity.ok(Map.of("message", "2FA activé avec succès."));
+        return ResponseEntity.ok(Map.of("message", "2FA activé"));
     }
 
-    // ── Désactiver 2FA ────────────────────────────────────────────────────────
     @DeleteMapping("/2fa/disable")
     public ResponseEntity<Map<String, String>> disable(@AuthenticationPrincipal Jwt jwt) {
         twoFactorAuthService.disable(jwt.getSubject());
-        return ResponseEntity.ok(Map.of("message", "2FA désactivé."));
+        return ResponseEntity.ok(Map.of("message", "2FA désactivé"));
     }
 }

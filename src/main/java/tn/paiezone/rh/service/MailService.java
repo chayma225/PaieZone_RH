@@ -120,19 +120,21 @@ public class MailService {
 
     public void send2FACode(User user, String code) {
         LOG.debug("Envoi du code 2FA à : {}", user.getEmail());
-        String subject = "PaieZone RH — Code de vérification";
-        String content = """
-            Bonjour %s,
+        String subject = "PaieZone RH - Code de verification"; // Suppression du tiret long
 
-            Votre code de vérification est :
+        // Utilisation d'une String simple sans caractères spéciaux invisibles
+        String content =
+            "Bonjour " +
+            user.getFirstName() +
+            ",\n\n" +
+            "Votre code de verification est : " +
+            code.trim() +
+            "\n\n" +
+            "Ce code expire dans 5 minutes.\n" +
+            "Si vous n'avez pas demande ce code, ignorez cet email.\n\n" +
+            "L'equipe PaieZone RH";
 
-            🔐  %s
-
-            Ce code expire dans 5 minutes.
-            Si vous n'avez pas demandé ce code, ignorez cet email.
-
-            — L'équipe PaieZone RH
-            """.formatted(user.getFirstName(), code);
+        // Forcer l'envoi en format simple (false, false)
         sendEmail(user.getEmail(), subject, content, false, false);
     }
 }
