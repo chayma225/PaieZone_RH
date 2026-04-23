@@ -17,8 +17,8 @@ import tn.paiezone.rh.domain.enumeration.ContractType;
 import tn.paiezone.rh.repository.ContractRepository;
 import tn.paiezone.rh.service.ContractService;
 import tn.paiezone.rh.service.dto.ContractDTO;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.service.mapper.ContractMapper;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 /**
  * Implémentation du service de gestion des contrats
@@ -59,7 +59,7 @@ public class ContractServiceImpl implements ContractService {
 
         // 1. Vérifier unicité référence
         if (contractRepository.existsByReference(dto.getReference())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un contrat avec la référence '" + dto.getReference() + "' existe déjà.",
                 ENTITY_NAME,
                 "referenceExists"
@@ -84,14 +84,14 @@ public class ContractServiceImpl implements ContractService {
 
         Contract existing = contractRepository
             .findById(dto.getId())
-            .orElseThrow(() -> new BadRequestAlertException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new BusinessException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
 
         if (ContractStatus.TERMINATED.equals(existing.getStatus()) || ContractStatus.EXPIRED.equals(existing.getStatus())) {
-            throw new BadRequestAlertException("Impossible de modifier un contrat terminé ou expiré.", ENTITY_NAME, "contractClosed");
+            throw new BusinessException("Impossible de modifier un contrat terminé ou expiré.", ENTITY_NAME, "contractClosed");
         }
 
         if (!existing.getReference().equals(dto.getReference()) && contractRepository.existsByReference(dto.getReference())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un contrat avec la référence '" + dto.getReference() + "' existe déjà.",
                 ENTITY_NAME,
                 "referenceExists"
@@ -122,9 +122,9 @@ public class ContractServiceImpl implements ContractService {
     public ContractDTO activate(Long id) {
         Contract contract = contractRepository
             .findById(id)
-            .orElseThrow(() -> new BadRequestAlertException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new BusinessException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
         if (!ContractStatus.DRAFT.equals(contract.getStatus())) {
-            throw new BadRequestAlertException("Seul un contrat en brouillon peut être activé.", ENTITY_NAME, "invalidStatus");
+            throw new BusinessException("Seul un contrat en brouillon peut être activé.", ENTITY_NAME, "invalidStatus");
         }
         contract.setStatus(ContractStatus.ACTIVE);
         return contractMapper.toDto(contractRepository.save(contract));
@@ -134,9 +134,9 @@ public class ContractServiceImpl implements ContractService {
     public ContractDTO terminate(Long id) {
         Contract contract = contractRepository
             .findById(id)
-            .orElseThrow(() -> new BadRequestAlertException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new BusinessException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
         if (!ContractStatus.ACTIVE.equals(contract.getStatus()) && !ContractStatus.SUSPENDED.equals(contract.getStatus())) {
-            throw new BadRequestAlertException("Seul un contrat actif ou suspendu peut être terminé.", ENTITY_NAME, "invalidStatus");
+            throw new BusinessException("Seul un contrat actif ou suspendu peut être terminé.", ENTITY_NAME, "invalidStatus");
         }
         contract.setStatus(ContractStatus.TERMINATED);
         contract.setEndDate(LocalDate.now());
@@ -147,16 +147,16 @@ public class ContractServiceImpl implements ContractService {
     public ContractDTO renew(Long id, LocalDate newEndDate) {
         Contract contract = contractRepository
             .findById(id)
-            .orElseThrow(() -> new BadRequestAlertException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new BusinessException("Contrat introuvable.", ENTITY_NAME, "idnotfound"));
 
         if (!ContractType.CDD.equals(contract.getContractType())) {
-            throw new BadRequestAlertException("Seul un CDD peut être renouvelé.", ENTITY_NAME, "notCDD");
+            throw new BusinessException("Seul un CDD peut être renouvelé.", ENTITY_NAME, "notCDD");
         }
 
         // LF 2026 : max 2 renouvellements → sinon CDI automatique
         int currentRenewals = contract.getRenewalCount() != null ? contract.getRenewalCount() : 0;
         if (currentRenewals >= 2) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "⚠️ Ce CDD a atteint le nombre maximum de renouvellements (2). " +
                     "Conformément à la Loi de Finances 2026, ce contrat doit être " +
                     "transformé en CDI automatiquement.",
@@ -217,7 +217,7 @@ public class ContractServiceImpl implements ContractService {
     private void validateCDI(ContractDTO dto) {
         // Pas de date de fin pour un CDI
         if (dto.getEndDate() != null) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "❌ LF 2026 — Un CDI ne peut pas avoir de date de fin. " + "Pour un contrat limité dans le temps, utilisez un CDD.",
                 ENTITY_NAME,
                 "cdiWithEndDate"
@@ -229,7 +229,7 @@ public class ContractServiceImpl implements ContractService {
 
         // Période d'essai max 6 mois (12 mois avec renouvellement)
         if (dto.getTrialPeriodMonths() != null && dto.getTrialPeriodMonths() > 12) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "❌ LF 2026 — La période d'essai d'un CDI ne peut pas dépasser 12 mois " + "(6 mois + 1 renouvellement de 6 mois maximum).",
                 ENTITY_NAME,
                 "trialPeriodTooLong"
@@ -250,7 +250,7 @@ public class ContractServiceImpl implements ContractService {
     private void validateCDD(ContractDTO dto) {
         // Date de fin obligatoire
         if (dto.getEndDate() == null) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "❌ LF 2026 — Un CDD doit obligatoirement avoir une date de fin.",
                 ENTITY_NAME,
                 "cddWithoutEndDate"
@@ -262,7 +262,7 @@ public class ContractServiceImpl implements ContractService {
 
         // Période d'essai max 3 mois pour CDD
         if (dto.getTrialPeriodMonths() != null && dto.getTrialPeriodMonths() > 3) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "❌ LF 2026 — La période d'essai d'un CDD ne peut pas dépasser 3 mois.",
                 ENTITY_NAME,
                 "trialPeriodTooLong"
@@ -273,7 +273,7 @@ public class ContractServiceImpl implements ContractService {
         if (dto.getStartDate() != null && dto.getEndDate() != null) {
             long months = ChronoUnit.MONTHS.between(dto.getStartDate(), dto.getEndDate());
             if (months > 48) {
-                throw new BadRequestAlertException(
+                throw new BusinessException(
                     "❌ LF 2026 — Un CDD ne peut pas dépasser 48 mois (4 ans) au total.",
                     ENTITY_NAME,
                     "cddTooLong"
@@ -293,7 +293,7 @@ public class ContractServiceImpl implements ContractService {
      */
     private void validateCIVP(ContractDTO dto) {
         if (dto.getEndDate() == null) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "❌ LF 2026 — Un CIVP doit avoir une date de fin (durée max 24 mois).",
                 ENTITY_NAME,
                 "civpWithoutEndDate"
@@ -304,7 +304,7 @@ public class ContractServiceImpl implements ContractService {
         if (dto.getStartDate() != null && dto.getEndDate() != null) {
             long months = ChronoUnit.MONTHS.between(dto.getStartDate(), dto.getEndDate());
             if (months > 24) {
-                throw new BadRequestAlertException(
+                throw new BusinessException(
                     "❌ LF 2026 — Un CIVP ne peut pas dépasser 24 mois. " + "Durée saisie : " + months + " mois.",
                     ENTITY_NAME,
                     "civpTooLong"
@@ -315,7 +315,7 @@ public class ContractServiceImpl implements ContractService {
         validateSalaryMinimum(dto, SMIG_48H, "CIVP");
 
         if (dto.getTrialPeriodMonths() != null && dto.getTrialPeriodMonths() > 3) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "❌ LF 2026 — La période d'essai d'un CIVP ne peut pas dépasser 3 mois.",
                 ENTITY_NAME,
                 "trialPeriodTooLong"
@@ -334,7 +334,7 @@ public class ContractServiceImpl implements ContractService {
      */
     private void validateKARAMA(ContractDTO dto) {
         if (dto.getEndDate() == null) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "❌ LF 2026 — Un contrat KARAMA doit avoir une date de fin (durée max 36 mois).",
                 ENTITY_NAME,
                 "karamaWithoutEndDate"
@@ -345,7 +345,7 @@ public class ContractServiceImpl implements ContractService {
         if (dto.getStartDate() != null && dto.getEndDate() != null) {
             long months = ChronoUnit.MONTHS.between(dto.getStartDate(), dto.getEndDate());
             if (months > 36) {
-                throw new BadRequestAlertException(
+                throw new BusinessException(
                     "❌ LF 2026 — Un contrat KARAMA ne peut pas dépasser 36 mois. " + "Durée saisie : " + months + " mois.",
                     ENTITY_NAME,
                     "karamaTooLong"
@@ -367,7 +367,7 @@ public class ContractServiceImpl implements ContractService {
     private void validateInterim(ContractDTO dto) {
         // Salaire min = SMIG + 10% précarité
         if (dto.getBaseSalary() != null && dto.getBaseSalary().compareTo(INTERIM_MIN) < 0) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 String.format(
                     "❌ LF 2026 — Le salaire d'un contrat intérimaire doit être ≥ %.3f TND " +
                         "(SMIG 524.954 + 10%% prime de précarité). " +
@@ -392,7 +392,7 @@ public class ContractServiceImpl implements ContractService {
     private void validateStage(ContractDTO dto) {
         // Gratification min 50% SMIG
         if (dto.getBaseSalary() != null && dto.getBaseSalary().compareTo(STAGE_MIN) < 0) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 String.format(
                     "❌ LF 2026 — La gratification d'un stage doit être ≥ %.3f TND " + "(50%% du SMIG 48h). " + "Montant saisi : %.3f TND.",
                     STAGE_MIN.doubleValue(),
@@ -407,7 +407,7 @@ public class ContractServiceImpl implements ContractService {
         if (dto.getStartDate() != null && dto.getEndDate() != null) {
             long months = ChronoUnit.MONTHS.between(dto.getStartDate(), dto.getEndDate());
             if (months > 6) {
-                throw new BadRequestAlertException(
+                throw new BusinessException(
                     "❌ LF 2026 — Un stage ne peut pas dépasser 6 mois par an. " + "Durée saisie : " + months + " mois.",
                     ENTITY_NAME,
                     "stageTooLong"
@@ -421,15 +421,15 @@ public class ContractServiceImpl implements ContractService {
     // ── Validation salaire minimum SMIG ───────────────────────────────────────
     private void validateSalaryMinimum(ContractDTO dto, BigDecimal minimum, String contractType) {
         if (dto.getBaseSalary() == null) {
-            throw new BadRequestAlertException("Le salaire de base est obligatoire.", ENTITY_NAME, "salaryRequired");
+            throw new BusinessException("Le salaire de base est obligatoire.", ENTITY_NAME, "salaryRequired");
         }
 
         if (dto.getBaseSalary().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new BadRequestAlertException("Le salaire de base doit être positif.", ENTITY_NAME, "invalidSalary");
+            throw new BusinessException("Le salaire de base doit être positif.", ENTITY_NAME, "invalidSalary");
         }
 
         if (dto.getBaseSalary().compareTo(minimum) < 0) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 String.format(
                     "❌ LF 2026 — Le salaire d'un %s doit être ≥ %.3f TND (SMIG 48h 2026). " + "Salaire saisi : %.3f TND.",
                     contractType,
@@ -445,11 +445,11 @@ public class ContractServiceImpl implements ContractService {
     // ── Validation des dates ──────────────────────────────────────────────────
     private void validateDates(ContractDTO dto) {
         if (dto.getStartDate() == null) {
-            throw new BadRequestAlertException("La date de début est obligatoire.", ENTITY_NAME, "startDateRequired");
+            throw new BusinessException("La date de début est obligatoire.", ENTITY_NAME, "startDateRequired");
         }
 
         if (dto.getEndDate() != null && dto.getEndDate().isBefore(dto.getStartDate())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "La date de fin (" +
                     dto.getEndDate() +
                     ") ne peut pas être " +
@@ -462,7 +462,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (dto.getSignedDate() != null && dto.getStartDate() != null && dto.getSignedDate().isAfter(dto.getStartDate())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "La date de signature (" +
                     dto.getSignedDate() +
                     ") ne peut pas être " +
@@ -477,7 +477,7 @@ public class ContractServiceImpl implements ContractService {
         // Heures de travail
         if (dto.getWorkingHoursWeek() != null) {
             if (dto.getWorkingHoursWeek() < 1 || dto.getWorkingHoursWeek() > 48) {
-                throw new BadRequestAlertException(
+                throw new BusinessException(
                     "❌ LF 2026 — Les heures de travail hebdomadaires doivent être " + "entre 1 et 48h (régime légal tunisien).",
                     ENTITY_NAME,
                     "invalidWorkingHours"

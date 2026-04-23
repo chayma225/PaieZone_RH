@@ -1,67 +1,48 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-
-import dayjs from 'dayjs/esm';
-
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { IHrDocument, NewHrDocument } from '../hr-document.model';
 
-/**
- * A partial Type with required key is used as form input.
- */
-type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>> & { id: T['id'] };
-
-/**
- * Type for createFormGroup and resetForm argument.
- * It accepts IHrDocument for edit and NewHrDocumentFormGroupInput for create.
- */
-type HrDocumentFormGroupInput = IHrDocument | PartialWithRequiredKeyOf<NewHrDocument>;
-
-/**
- * Type that converts some properties for forms.
- */
-type FormValueOf<T extends IHrDocument | NewHrDocument> = Omit<T, 'uploadedAt'> & {
-  uploadedAt?: string | null;
-};
-
-type HrDocumentFormRawValue = FormValueOf<IHrDocument>;
-
-type NewHrDocumentFormRawValue = FormValueOf<NewHrDocument>;
-
-type HrDocumentFormDefaults = Pick<NewHrDocument, 'id' | 'uploadedAt' | 'active'>;
-
 type HrDocumentFormGroupContent = {
-  id: FormControl<HrDocumentFormRawValue['id'] | NewHrDocument['id']>;
-  documentType: FormControl<HrDocumentFormRawValue['documentType']>;
-  title: FormControl<HrDocumentFormRawValue['title']>;
-  description: FormControl<HrDocumentFormRawValue['description']>;
-  fileUrl: FormControl<HrDocumentFormRawValue['fileUrl']>;
-  fileSize: FormControl<HrDocumentFormRawValue['fileSize']>;
-  mimeType: FormControl<HrDocumentFormRawValue['mimeType']>;
-  uploadedAt: FormControl<HrDocumentFormRawValue['uploadedAt']>;
-  expiryDate: FormControl<HrDocumentFormRawValue['expiryDate']>;
-  active: FormControl<HrDocumentFormRawValue['active']>;
-  employee: FormControl<HrDocumentFormRawValue['employee']>;
-  uploadedBy: FormControl<HrDocumentFormRawValue['uploadedBy']>;
+  id: FormControl<IHrDocument['id'] | NewHrDocument['id']>;
+  documentType: FormControl<IHrDocument['documentType']>;
+  title: FormControl<IHrDocument['title']>;
+  description: FormControl<IHrDocument['description']>;
+  fileData: FormControl<IHrDocument['fileData']>;
+  fileDataContentType: FormControl<IHrDocument['fileDataContentType']>;
+  fileUrl: FormControl<IHrDocument['fileUrl']>;
+  fileSize: FormControl<IHrDocument['fileSize']>;
+  mimeType: FormControl<IHrDocument['mimeType']>;
+  uploadedAt: FormControl<IHrDocument['uploadedAt']>;
+  expiryDate: FormControl<IHrDocument['expiryDate']>;
+  active: FormControl<IHrDocument['active']>;
+  employee: FormControl<IHrDocument['employee']>;
+  uploadedBy: FormControl<IHrDocument['uploadedBy']>;
 };
 
 export type HrDocumentFormGroup = FormGroup<HrDocumentFormGroupContent>;
 
 @Injectable({ providedIn: 'root' })
 export class HrDocumentFormService {
-  createHrDocumentFormGroup(hrDocument?: HrDocumentFormGroupInput): HrDocumentFormGroup {
-    const hrDocumentRawValue = this.convertHrDocumentToHrDocumentRawValue({
-      ...this.getFormDefaults(),
-      ...(hrDocument ?? { id: null }),
-    });
+  createHrDocumentFormGroup(hrDocument: IHrDocument | null = null): HrDocumentFormGroup {
+    const hrDocumentRawValue = hrDocument ?? {
+      id: null,
+      documentType: null,
+      title: null,
+      description: null,
+      fileData: null, // ← pas required ici
+      fileDataContentType: null,
+      fileUrl: null,
+      fileSize: null,
+      mimeType: null,
+      uploadedAt: null,
+      expiryDate: null,
+      active: true,
+      employee: null,
+      uploadedBy: null,
+    };
+
     return new FormGroup<HrDocumentFormGroupContent>({
-      id: new FormControl(
-        { value: hrDocumentRawValue.id, disabled: true },
-        {
-          nonNullable: true,
-          validators: [Validators.required],
-        },
-      ),
+      id: new FormControl({ value: hrDocumentRawValue.id, disabled: true }),
       documentType: new FormControl(hrDocumentRawValue.documentType, {
         validators: [Validators.required],
       }),
@@ -71,18 +52,15 @@ export class HrDocumentFormService {
       description: new FormControl(hrDocumentRawValue.description, {
         validators: [Validators.maxLength(500)],
       }),
-      fileUrl: new FormControl(hrDocumentRawValue.fileUrl, {
-        validators: [Validators.required, Validators.maxLength(500)],
-      }),
+      // ← fileData NON required dans le form (validé manuellement dans le composant)
+      fileData: new FormControl(hrDocumentRawValue.fileData),
+      fileDataContentType: new FormControl(hrDocumentRawValue.fileDataContentType),
+      fileUrl: new FormControl(hrDocumentRawValue.fileUrl),
       fileSize: new FormControl(hrDocumentRawValue.fileSize),
-      mimeType: new FormControl(hrDocumentRawValue.mimeType, {
-        validators: [Validators.maxLength(100)],
-      }),
-      uploadedAt: new FormControl(hrDocumentRawValue.uploadedAt, {
-        validators: [Validators.required],
-      }),
+      mimeType: new FormControl(hrDocumentRawValue.mimeType),
+      uploadedAt: new FormControl(hrDocumentRawValue.uploadedAt),
       expiryDate: new FormControl(hrDocumentRawValue.expiryDate),
-      active: new FormControl(hrDocumentRawValue.active, {
+      active: new FormControl(hrDocumentRawValue.active ?? true, {
         validators: [Validators.required],
       }),
       employee: new FormControl(hrDocumentRawValue.employee, {
@@ -93,42 +71,11 @@ export class HrDocumentFormService {
   }
 
   getHrDocument(form: HrDocumentFormGroup): IHrDocument | NewHrDocument {
-    return this.convertHrDocumentRawValueToHrDocument(form.getRawValue() as HrDocumentFormRawValue | NewHrDocumentFormRawValue);
+    return form.getRawValue() as IHrDocument | NewHrDocument;
   }
 
-  resetForm(form: HrDocumentFormGroup, hrDocument: HrDocumentFormGroupInput): void {
-    const hrDocumentRawValue = this.convertHrDocumentToHrDocumentRawValue({ ...this.getFormDefaults(), ...hrDocument });
-    form.reset({
-      ...hrDocumentRawValue,
-      id: { value: hrDocumentRawValue.id, disabled: true },
-    });
-  }
-
-  private getFormDefaults(): HrDocumentFormDefaults {
-    const currentTime = dayjs();
-
-    return {
-      id: null,
-      uploadedAt: currentTime,
-      active: false,
-    };
-  }
-
-  private convertHrDocumentRawValueToHrDocument(
-    rawHrDocument: HrDocumentFormRawValue | NewHrDocumentFormRawValue,
-  ): IHrDocument | NewHrDocument {
-    return {
-      ...rawHrDocument,
-      uploadedAt: dayjs(rawHrDocument.uploadedAt, DATE_TIME_FORMAT),
-    };
-  }
-
-  private convertHrDocumentToHrDocumentRawValue(
-    hrDocument: IHrDocument | (Partial<NewHrDocument> & HrDocumentFormDefaults),
-  ): HrDocumentFormRawValue | PartialWithRequiredKeyOf<NewHrDocumentFormRawValue> {
-    return {
-      ...hrDocument,
-      uploadedAt: hrDocument.uploadedAt ? hrDocument.uploadedAt.format(DATE_TIME_FORMAT) : undefined,
-    };
+  resetForm(form: HrDocumentFormGroup, hrDocument: IHrDocument): void {
+    const hrDocumentRawValue = { ...hrDocument };
+    form.reset({ ...hrDocumentRawValue, id: { value: hrDocumentRawValue.id, disabled: true } } as any);
   }
 }

@@ -73,4 +73,10 @@
     <include file="config/liquibase/changelog/20260415_add_file_data_to_hr_document.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
+
+    <!-- SPRINT 3 — Données réglementaires paie -->
+  <include file="config/liquibase/changelog/sprint3/00_sprint3_master.xml" relativeToChangelogFile="false"/>
+
+
+
 </databaseChangeLog>

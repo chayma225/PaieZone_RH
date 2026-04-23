@@ -2,7 +2,6 @@ package tn.paiezone.rh.aop.logging.audit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.Instant;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,10 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import tn.paiezone.rh.domain.AuditLog;
-import tn.paiezone.rh.repository.AuditLogRepository;
-import tn.paiezone.rh.repository.CompanyRepository;
-import tn.paiezone.rh.repository.UserProfileRepository;
+import tn.paiezone.rh.service.AuditService;
 
 @Aspect
 @Component
@@ -23,20 +19,11 @@ public class AuditAspect {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuditAspect.class);
 
-    private final AuditLogRepository auditLogRepository;
-    private final UserProfileRepository userProfileRepository;
-    private final CompanyRepository companyRepository;
+    private final AuditService auditService;
     private final ObjectMapper objectMapper;
 
-    public AuditAspect(
-        AuditLogRepository auditLogRepository,
-        UserProfileRepository userProfileRepository,
-        CompanyRepository companyRepository,
-        ObjectMapper objectMapper
-    ) {
-        this.auditLogRepository = auditLogRepository;
-        this.userProfileRepository = userProfileRepository;
-        this.companyRepository = companyRepository;
+    public AuditAspect(AuditService auditService, ObjectMapper objectMapper) {
+        this.auditService = auditService;
         this.objectMapper = objectMapper;
     }
 
@@ -55,27 +42,16 @@ public class AuditAspect {
         Object result = joinPoint.proceed();
 
         try {
-            // ← Extraire seulement le body de la ResponseEntity
             Object valueToSave = result;
             if (result instanceof org.springframework.http.ResponseEntity<?> responseEntity) {
                 valueToSave = responseEntity.getBody();
             }
-            saveAuditLog(auditable, oldValue, valueToSave);
-        } catch (Exception e) {
-            LOG.error("Erreur lors de l'enregistrement de l'audit : {}", e.getMessage());
-        }
 
-        return result;
-    }
-
-    private void saveAuditLog(Auditable auditable, String oldValue, Object result) {
-        try {
-            // Récupérer l'utilisateur connecté
+            // Extraction des infos de contexte (IP, User-Agent, Login)
             String login = SecurityContextHolder.getContext().getAuthentication().getName();
-
-            // Récupérer la requête HTTP
             String ipAddress = "unknown";
             String userAgent = "unknown";
+
             ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attrs != null) {
                 HttpServletRequest request = attrs.getRequest();
@@ -86,59 +62,20 @@ public class AuditAspect {
                 }
             }
 
-            // Sérialiser le nouveau état
-            String newValue = null;
-            try {
-                newValue = objectMapper.writeValueAsString(result);
-            } catch (Exception e) {
-                LOG.warn("Impossible de sérialiser le nouveau état : {}", e.getMessage());
-            }
-
-            // Construire l'entrée d'audit
-            AuditLog auditLog = new AuditLog();
-            auditLog.setAction(auditable.action());
-            auditLog.setEntityType(auditable.entityType());
-            auditLog.setOldValue(oldValue);
-            auditLog.setNewValue(newValue);
-            auditLog.setIpAddress(ipAddress);
-            auditLog.setUserAgent(userAgent);
-            auditLog.setOccurredAt(Instant.now());
-
-            // Lier l'utilisateur connecté
-            userProfileRepository
-                .findByJhiUserId(login)
-                .ifPresent(userProfile -> {
-                    auditLog.setUser(userProfile);
-                    // Lier la company de l'utilisateur
-                    if (userProfile.getCompany() != null) {
-                        auditLog.setCompany(userProfile.getCompany());
-                    }
-                });
-
-            // Si pas de company via userProfile → prendre la première company
-            if (auditLog.getCompany() == null) {
-                companyRepository.findAll().stream().findFirst().ifPresent(auditLog::setCompany);
-            }
-
-            auditLogRepository.save(auditLog);
-            LOG.debug("AuditLog enregistré : {} {} par {}", auditable.action(), auditable.entityType(), login);
+            // Appel au Service (Architecture respectée !)
+            auditService.saveAuditLog(login, auditable.action(), auditable.entityType(), oldValue, valueToSave, ipAddress, userAgent);
         } catch (Exception e) {
             LOG.error("Erreur AuditAspect : {}", e.getMessage());
         }
+
+        return result;
     }
 
     private String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty()) {
-            ip = request.getHeader("X-Real-IP");
-        }
-        if (ip == null || ip.isEmpty()) {
-            ip = request.getRemoteAddr();
-        }
-        // Prendre le premier IP si plusieurs
-        if (ip != null && ip.contains(",")) {
-            ip = ip.split(",")[0].trim();
-        }
+        if (ip == null || ip.isEmpty()) ip = request.getHeader("X-Real-IP");
+        if (ip == null || ip.isEmpty()) ip = request.getRemoteAddr();
+        if (ip != null && ip.contains(",")) ip = ip.split(",")[0].trim();
         return ip != null ? ip : "unknown";
     }
 }

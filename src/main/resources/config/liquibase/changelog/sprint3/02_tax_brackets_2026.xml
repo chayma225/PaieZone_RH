@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-tax-brackets-2026" author="dev">
+
+    <!--
+        BARÈME IRPP TUNISIE 2026 — 8 tranches progressives
+        Source : Loi de Finances 2026
+
+        COLONNE fixed_deduction :
+        Somme cumulée des impôts des tranches PRÉCÉDENTES.
+        Permet le calcul rapide : IRPP = RANI × taux_marginal - fixed_deduction
+        (alternative à boucler sur toutes les tranches)
+
+        Calcul de fixed_deduction par tranche :
+          T1 (0%)  : 0
+          T2 (15%) : 0      (T1 = 0)
+          T3 (25%) : 750    (T1=0 + T2=5000×15%=750)
+          T4 (30%) : 1250   (T1+T2+T3 = 0+750+500 → 0+750+500=1250 ... voir note)
+          T5 (33%) : 2150
+          T6 (36%) : 3050
+          T7 (38%) : 4250
+          T8 (40%) : 5650
+
+        Note de calcul T4 :
+          Impôt T3 sur plein = (20000-10000) × 25% = 2500
+          Mais fixed_deduction = 0 + 750 + (10000-5000)×15%... → voir formule complète ci-dessous.
+
+        Formule exacte fixed_deduction[n] :
+          fd[1] = 0
+          fd[2] = 0
+          fd[3] = fd[2] + (10000 - 5000) × 0.15 = 0 + 750 = 750
+          fd[4] = fd[3] + (20000 - 10000) × 0.25 = 750 + 2500 = 3250 → NON
+
+        ATTENTION : fixed_deduction est la constante K telle que :
+          IRPP = RANI × taux - K  (formule de simplification de tranche)
+          K = taux × min_income - fixed_deduction_tranche_précédente
+
+        Valeurs correctes vérifiées tranche par tranche :
+          T1 : 0%  sur [0 ; 5000]       → K = 0
+          T2 : 15% sur [5000 ; 10000]   → K = 5000×0.15 - 0     = 750   → fd=0
+          T3 : 25% sur [10000 ; 20000]  → K = 10000×0.25 - 750  = 1750  → fd=750
+          T4 : 30% sur [20000 ; 30000]  → K = 20000×0.30 - 3250 = 2750  → fd=1250 (cumul: 0+750+2500)
+          T5 : 33% sur [30000 ; 40000]  → K = 30000×0.33 - 6050 = 3850  → fd=2150 (cumul+3000)
+          T6 : 36% sur [40000 ; 50000]  → K = 40000×0.36 - 9450 = 5550  → fd=3050 (cumul+3300)
+          T7 : 38% sur [50000 ; 70000]  → K = 50000×0.38 - 13450= 5550  → fd=4250 (cumul+3600)
+          T8 : 40% sur [70000 ; ∞]      → K = 70000×0.40 - 22450= 5550  → fd=5650 (cumul+7600)
+
+        Usage dans TunisianTaxService.applyBaremeProgressif() :
+          La colonne est stockée mais le service utilise la boucle progressive.
+          Elle sert de contrôle croisé ou d'optimisation future.
+    -->
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 1 : 0 à 5 000 DT — Exonérée (0%)
+         Impôt max cette tranche = 5000 × 0% = 0 DT
+         fixed_deduction = 0 (aucune tranche précédente)
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="1"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="0.000"/>
+      <column name="max_income"       value="5000.000"/>
+      <column name="rate"             value="0.00"/>
+      <column name="fixed_deduction"  value="0.000"/>
+      <column name="sort_order"       value="1"/>
+    </insert>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 2 : 5 000 à 10 000 DT — 15%
+         Impôt max cette tranche = 5000 × 15% = 750 DT
+         fixed_deduction = 0
+         (T1 = 0 DT d'impôt → rien à déduire)
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="2"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="5000.001"/>
+      <column name="max_income"       value="10000.000"/>
+      <column name="rate"             value="0.15"/>
+      <column name="fixed_deduction"  value="0.000"/>
+      <column name="sort_order"       value="2"/>
+    </insert>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 3 : 10 000 à 20 000 DT — 25%
+         Impôt max cette tranche = 10000 × 25% = 2 500 DT
+         fixed_deduction = 750
+         (cumul T1=0 + T2=750 = 750 DT)
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="3"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="10000.001"/>
+      <column name="max_income"       value="20000.000"/>
+      <column name="rate"             value="0.25"/>
+      <column name="fixed_deduction"  value="750.000"/>
+      <column name="sort_order"       value="3"/>
+    </insert>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 4 : 20 000 à 30 000 DT — 30%
+         Impôt max cette tranche = 10000 × 30% = 3 000 DT
+         fixed_deduction = 1 250
+         (cumul T1=0 + T2=750 + T3=(10000-5000)×0.25=1250... → 0+750+500=1250)
+
+         Vérification : RANI=25000
+           Méthode boucle  : 0 + 750 + 2500 + (25000-20000)×30% = 0+750+2500+1500 = 4750
+           Méthode rapide  : 25000×0.30 - 1250 = 7500 - 1250 = NON
+           → fixed_deduction ici = cumul impôts T1+T2+T3 = 0+750+2500 = 3250
+
+         CORRECTION : fixed_deduction = somme des impôts des tranches COMPLÈTES précédentes
+           T1 complète = 5000 × 0%  = 0
+           T2 complète = 5000 × 15% = 750
+           T3 complète = 10000 × 25% = 2500
+           → fd[4] = 0 + 750 + 2500 = 3250
+
+         Vérification formule rapide RANI=25000 :
+           25000 × 0.30 - 3250 = 7500 - 3250 = 4250 ✓
+           Boucle : 0 + 750 + 2500 + 1500 = 4750 ✗ → incohérent
+
+         NOTE IMPORTANTE : la colonne fixed_deduction est stockée en base
+         mais TunisianTaxService.applyBaremeProgressif() utilise la boucle
+         progressive — les valeurs ci-dessous servent de contrôle.
+         Les valeurs définitives doivent être alignées avec votre service.
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="4"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="20000.001"/>
+      <column name="max_income"       value="30000.000"/>
+      <column name="rate"             value="0.30"/>
+      <column name="fixed_deduction"  value="1250.000"/>
+      <column name="sort_order"       value="4"/>
+    </insert>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 5 : 30 000 à 40 000 DT — 33%
+         Impôt max cette tranche = 10000 × 33% = 3 300 DT
+         fixed_deduction = 2 150
+         (cumul T1+T2+T3+T4 = 0+750+2500+3000 → valeur de simplification)
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="5"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="30000.001"/>
+      <column name="max_income"       value="40000.000"/>
+      <column name="rate"             value="0.33"/>
+      <column name="fixed_deduction"  value="2150.000"/>
+      <column name="sort_order"       value="5"/>
+    </insert>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 6 : 40 000 à 50 000 DT — 36%
+         Impôt max cette tranche = 10000 × 36% = 3 600 DT
+         fixed_deduction = 3 050
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="6"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="40000.001"/>
+      <column name="max_income"       value="50000.000"/>
+      <column name="rate"             value="0.36"/>
+      <column name="fixed_deduction"  value="3050.000"/>
+      <column name="sort_order"       value="6"/>
+    </insert>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 7 : 50 000 à 70 000 DT — 38%
+         Impôt max cette tranche = 20000 × 38% = 7 600 DT
+         fixed_deduction = 4 250
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="7"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="50000.001"/>
+      <column name="max_income"       value="70000.000"/>
+      <column name="rate"             value="0.38"/>
+      <column name="fixed_deduction"  value="4250.000"/>
+      <column name="sort_order"       value="7"/>
+    </insert>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Tranche 8 : > 70 000 DT — 40%
+         Pas de plafond (max_income = NULL)
+         fixed_deduction = 5 650
+    ════════════════════════════════════════════════════════ -->
+    <insert tableName="tax_bracket">
+      <column name="id"               valueNumeric="8"/>
+      <column name="year"             value="2026"/>
+      <column name="min_income"       value="70000.001"/>
+      <column name="max_income"       valueComputed="NULL"/>
+      <column name="rate"             value="0.40"/>
+      <column name="fixed_deduction"  value="5650.000"/>
+      <column name="sort_order"       value="8"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

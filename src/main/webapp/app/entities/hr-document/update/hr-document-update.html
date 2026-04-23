@@ -1,86 +1,101 @@
 <div class="d-flex justify-content-center">
   <div class="col-10">
     <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="pz-hr-document-heading">{{ editForm.controls.id.value !== null ? 'Modifier' : 'Ajouter' }} un Document RH</h2>
+      <h2 class="mb-4">
+        <fa-icon icon="file-alt" class="me-2 text-primary" />
+        {{ isNewDocument ? 'Ajouter un Document RH' : 'Modifier un Document RH' }}
+      </h2>
 
       <pz-alert-error />
 
-      @if (editForm.controls.id.value !== null) {
+      @if (!isNewDocument) {
         <div class="mb-3">
-          <label class="form-label">ID</label>
-          <input type="number" class="form-control" formControlName="id" [readonly]="true" />
+          <label class="form-label fw-bold">ID</label>
+          <input type="number" class="form-control" formControlName="id" readonly />
         </div>
       }
 
       <!-- Type de document -->
       <div class="mb-3">
-        <label class="form-label">Type de document *</label>
+        <label class="form-label fw-bold">Type de document *</label>
         <select class="form-select" formControlName="documentType">
           <option [ngValue]="null">-- Sélectionner le type --</option>
-          <option value="CONTRACT">📄 Contrat</option>
+          <option value="CONTRACT">📄 Contrat de travail</option>
           <option value="CIN_COPY">🪪 Copie CIN</option>
-          <option value="DIPLOMA">🎓 Diplôme</option>
+          <option value="DIPLOMA">🎓 Diplôme / Attestation</option>
           <option value="MEDICAL_CERT">🏥 Certificat médical</option>
-          <option value="DISCIPLINARY">⚠️ Disciplinaire</option>
+          <option value="DISCIPLINARY">⚠️ Document disciplinaire</option>
           <option value="PAYSLIP">💰 Bulletin de paie</option>
-          <option value="ATTESTATION">📋 Attestation</option>
+          <option value="ATTESTATION">📋 Attestation de travail</option>
           <option value="OTHER">📎 Autre</option>
         </select>
+        @if (editForm.get('documentType')?.errors?.['required'] && editForm.get('documentType')?.touched) {
+          <small class="text-danger">Ce champ est obligatoire.</small>
+        }
       </div>
 
       <!-- Titre -->
       <div class="mb-3">
-        <label class="form-label">Titre du document *</label>
-        <input type="text" class="form-control" formControlName="title" placeholder="Ex: Copie CIN - Mohamed Ben Ali" />
-        @if (editForm.get('title')?.errors?.required && editForm.get('title')?.touched) {
+        <label class="form-label fw-bold">Titre *</label>
+        <input type="text" class="form-control" formControlName="title" placeholder="Ex : Copie CIN — Mohamed Ben Ali" />
+        @if (editForm.get('title')?.errors?.['required'] && editForm.get('title')?.touched) {
           <small class="text-danger">Ce champ est obligatoire.</small>
         }
       </div>
 
       <!-- Description -->
       <div class="mb-3">
-        <label class="form-label">Description</label>
+        <label class="form-label fw-bold">Description</label>
         <textarea class="form-control" formControlName="description" rows="2" placeholder="Notes ou remarques..."></textarea>
       </div>
 
-      <!-- ✅ UPLOAD RÉEL DU FICHIER -->
+      <!-- ✅ UPLOAD FICHIER RÉEL -->
       <div class="mb-3">
-        <label class="form-label">Fichier * <small class="text-muted">(PDF, JPEG, PNG, DOC — max 5 MB)</small></label>
+        <label class="form-label fw-bold">
+          Fichier *
+          <small class="text-muted fw-normal">(PDF, JPEG, PNG, DOC, DOCX — max 5 MB)</small>
+        </label>
 
-        <div class="border rounded p-3 bg-light">
-          <input type="file" class="form-control" (change)="onFileSelect($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" #fileInput />
+        <div
+          class="border rounded-3 p-3"
+          [class.border-danger]="fileError"
+          [class.border-success]="selectedFile && !fileError"
+          style="background: #f8f9fa"
+        >
+          <input type="file" class="form-control mb-2" (change)="onFileSelect($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
 
-          @if (selectedFile) {
-            <div class="mt-2 p-2 bg-white rounded border">
-              <div class="d-flex align-items-center gap-2">
-                <span class="fs-4">{{ getFileIcon(selectedFile.type) }}</span>
-                <div>
-                  <div class="fw-bold">{{ selectedFile.name }}</div>
-                  <small class="text-muted">
-                    {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB —
-                    {{ selectedFile.type }}
-                  </small>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-danger ms-auto" (click)="clearFile()">✕</button>
+          <!-- Fichier sélectionné -->
+          @if (selectedFile && !fileError) {
+            <div class="d-flex align-items-center gap-3 p-2 bg-white rounded border mt-2">
+              <span style="font-size: 2rem">{{ getFileIcon(selectedFile.type) }}</span>
+              <div class="flex-grow-1">
+                <div class="fw-bold text-truncate">{{ selectedFile.name }}</div>
+                <small class="text-muted"> {{ formatSize(selectedFile.size) }} — {{ selectedFile.type }} </small>
               </div>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="clearFile()">✕ Retirer</button>
             </div>
+
+            <!-- Aperçu image -->
+            @if (filePreview && isImage()) {
+              <div class="text-center mt-2">
+                <img [src]="filePreview" class="img-fluid rounded shadow-sm" style="max-height: 180px" alt="Aperçu du fichier" />
+              </div>
+            }
           }
 
+          <!-- Erreur fichier -->
           @if (fileError) {
-            <div class="alert alert-danger mt-2 py-2">{{ fileError }}</div>
-          }
-
-          <!-- Aperçu image -->
-          @if (filePreview && isImage()) {
-            <div class="mt-2 text-center">
-              <img [src]="filePreview" class="img-fluid rounded shadow" style="max-height: 200px" alt="Aperçu" />
+            <div class="alert alert-danger py-2 mt-2 mb-0">
+              <fa-icon icon="exclamation-triangle" class="me-1" />
+              {{ fileError }}
             </div>
           }
 
-          <!-- Document existant -->
-          @if (editForm.controls.id.value !== null && !selectedFile) {
-            <div class="mt-2 text-info">
-              <small>📎 Un fichier est déjà associé à ce document. Sélectionnez un nouveau fichier pour le remplacer.</small>
+          <!-- Document existant (mode édition) -->
+          @if (!isNewDocument && !selectedFile && !fileError) {
+            <div class="alert alert-info py-2 mt-2 mb-0">
+              <fa-icon icon="info-circle" class="me-1" />
+              Un fichier est déjà associé. Sélectionnez-en un nouveau pour le remplacer.
             </div>
           }
         </div>
@@ -88,37 +103,44 @@
 
       <!-- Date d'expiration -->
       <div class="mb-3">
-        <label class="form-label">Date d'expiration <small class="text-muted">(optionnel)</small></label>
+        <label class="form-label fw-bold">
+          Date d'expiration
+          <small class="text-muted fw-normal">(optionnel — CIN, certificat médical...)</small>
+        </label>
         <input type="date" class="form-control" formControlName="expiryDate" />
-        <small class="text-muted">Utile pour les certificats médicaux, CIN, etc.</small>
       </div>
 
       <!-- Employé -->
       <div class="mb-3">
-        <label class="form-label">Employé *</label>
+        <label class="form-label fw-bold">Employé *</label>
         <select class="form-select" formControlName="employee" [compareWith]="compareEmployee">
           <option [ngValue]="null">-- Sélectionner l'employé --</option>
           @for (emp of employeesSharedCollection(); track $index) {
             <option [ngValue]="emp">{{ emp.matricule }} — {{ emp.firstName }} {{ emp.lastName }}</option>
           }
         </select>
+        @if (editForm.get('employee')?.errors?.['required'] && editForm.get('employee')?.touched) {
+          <small class="text-danger">L'employé est obligatoire.</small>
+        }
       </div>
 
       <!-- Boutons -->
       <div class="d-flex gap-2 mt-4">
         <button type="button" class="btn btn-secondary" (click)="previousState()"><fa-icon icon="ban" /> Annuler</button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          [disabled]="editForm.invalid || isSaving() || (editForm.controls.id.value === null && !selectedFile)"
-        >
-          <fa-icon icon="save" />
+        <button type="submit" class="btn btn-primary" [disabled]="!canSave">
           @if (isSaving()) {
-            <span class="spinner-border spinner-border-sm ms-1"></span>
+            <span class="spinner-border spinner-border-sm me-2"></span>
+          } @else {
+            <fa-icon icon="save" class="me-1" />
           }
           Sauvegarder
         </button>
       </div>
+
+      <!-- Info validité bouton -->
+      @if (isNewDocument && !selectedFile && !isSaving()) {
+        <small class="text-muted d-block mt-2"> ℹ️ Veuillez sélectionner un fichier pour pouvoir sauvegarder. </small>
+      }
     </form>
   </div>
 </div>

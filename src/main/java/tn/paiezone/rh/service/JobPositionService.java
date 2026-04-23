@@ -12,8 +12,8 @@ import tn.paiezone.rh.domain.JobPosition;
 import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.JobPositionRepository;
 import tn.paiezone.rh.service.dto.JobPositionDTO;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.service.mapper.JobPositionMapper;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -52,7 +52,7 @@ public class JobPositionService {
         LOG.debug("Request to update JobPosition : {}", dto);
 
         if (!jobPositionRepository.existsById(dto.getId())) {
-            throw new BadRequestAlertException("Poste introuvable.", ENTITY_NAME, "idnotfound");
+            throw new BusinessException("Poste introuvable.", ENTITY_NAME, "idnotfound");
         }
 
         validateSalaryGrid(dto);
@@ -100,7 +100,7 @@ public class JobPositionService {
 
         long count = employeeRepository.countByPositionId(id);
         if (count > 0) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Impossible de supprimer ce poste : " + count + " employé(s) y sont affectés.",
                 ENTITY_NAME,
                 "hasEmployees"
@@ -114,7 +114,7 @@ public class JobPositionService {
     private void validateSalaryGrid(JobPositionDTO dto) {
         if (dto.getMinSalary() != null && dto.getMaxSalary() != null) {
             if (dto.getMinSalary().compareTo(dto.getMaxSalary()) > 0) {
-                throw new BadRequestAlertException(
+                throw new BusinessException(
                     "Le salaire minimum (" +
                         dto.getMinSalary() +
                         " TND) ne peut pas être supérieur au salaire maximum (" +
@@ -125,7 +125,7 @@ public class JobPositionService {
                 );
             }
             if (dto.getMinSalary().doubleValue() < 0) {
-                throw new BadRequestAlertException("Le salaire minimum ne peut pas être négatif.", ENTITY_NAME, "negativeSalary");
+                throw new BusinessException("Le salaire minimum ne peut pas être négatif.", ENTITY_NAME, "negativeSalary");
             }
         }
     }

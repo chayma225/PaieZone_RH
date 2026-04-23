@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-payroll-params-2026" author="dev">
+
+    <!-- ════════════════════════════════════════════════════
+         CNSS SALARIALE
+         Formule : MIN(Brut, PLAFOND) × TAUX
+         Taux 2026 = 9,68% (base 9,18% + majoration 0,50%)
+         ════════════════════════════════════════════════════ -->
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="1"/>
+      <column name="param_key"       value="CNSS_TAUX_SALARIAL"/>
+      <column name="param_label"     value="Taux CNSS salarial (9,68%)"/>
+      <column name="numeric_value"   value="0.0968"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="legal_reference" value="Décret 2026 - Majoration conjoncturelle CNSS"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- Plafond mensuel : la CNSS ne se calcule que sur 5 000 DT max
+         Même si un employé gagne 10 000 DT, la base CNSS = 5 000 DT -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="2"/>
+      <column name="param_key"       value="CNSS_PLAFOND_MENSUEL"/>
+      <column name="param_label"     value="Plafond mensuel assiette CNSS (5 000 DT)"/>
+      <column name="numeric_value"   value="5000.000"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="legal_reference" value="Décret 2026 - CNSS art. 5"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- ════════════════════════════════════════════════════
+         CNSS PATRONALE
+         Payée par l'employeur, ne touche pas le salaire net
+         Utilisée pour calculer le coût total employé
+         ════════════════════════════════════════════════════ -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="3"/>
+      <column name="param_key"       value="CNSS_TAUX_PATRONAL"/>
+      <column name="param_label"     value="Taux CNSS patronal (16,57%)"/>
+      <column name="numeric_value"   value="0.1657"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="legal_reference" value="Décret 2026 - CNSS patronal"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- ════════════════════════════════════════════════════
+         CSS — Contribution Sociale de Solidarité
+         Assiette : Revenu Net (Brut - CNSS salariale)
+         Taux : 0,50%
+         ════════════════════════════════════════════════════ -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="4"/>
+      <column name="param_key"       value="CSS_TAUX"/>
+      <column name="param_label"     value="Taux CSS - Contribution Sociale de Solidarité (0,50%)"/>
+      <column name="numeric_value"   value="0.005"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="legal_reference" value="LF 2026 - Art. CSS"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- ════════════════════════════════════════════════════
+         FRAIS PROFESSIONNELS
+         Déduction automatique de 10% du revenu annuel
+         pour couvrir les frais liés au travail (transport,
+         tenue professionnelle...), plafonnée à 2 000 DT/an
+         ════════════════════════════════════════════════════ -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="5"/>
+      <column name="param_key"       value="FRAIS_PRO_TAUX"/>
+      <column name="param_label"     value="Taux déduction frais professionnels (10%)"/>
+      <column name="numeric_value"   value="0.10"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="legal_reference" value="Art. 26 CIRPP"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="6"/>
+      <column name="param_key"       value="FRAIS_PRO_PLAFOND"/>
+      <column name="param_label"     value="Plafond déduction frais professionnels/an (2 000 DT)"/>
+      <column name="numeric_value"   value="2000.000"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="legal_reference" value="Art. 26 CIRPP"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- ════════════════════════════════════════════════════
+         DÉDUCTIONS FAMILIALES IRPP
+         Réduisent le revenu imposable → moins d'IRPP à payer
+         ════════════════════════════════════════════════════ -->
+
+    <!-- Déduction chef de famille : 300 DT/an
+         S'applique si Employee.chefDeFamille = true -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="7"/>
+      <column name="param_key"       value="DEDUCTION_CHEF_FAMILLE"/>
+      <column name="param_label"     value="Déduction chef de famille / an (300 DT)"/>
+      <column name="numeric_value"   value="300.000"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- Déduction enfant standard : 100 DT/enfant/an
+         Basé sur Employee.numberOfChildren (max MAX_ENFANTS_DEDUCTIBLES) -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="8"/>
+      <column name="param_key"       value="DEDUCTION_PAR_ENFANT"/>
+      <column name="param_label"     value="Déduction enfant à charge / an (100 DT)"/>
+      <column name="numeric_value"   value="100.000"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- Déduction enfant étudiant non boursier < 25 ans : 1 000 DT/an -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="9"/>
+      <column name="param_key"       value="DEDUCTION_ENFANT_ETUDIANT"/>
+      <column name="param_label"     value="Déduction enfant étudiant non boursier &lt; 25 ans (1 000 DT)"/>
+      <column name="numeric_value"   value="1000.000"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- Déduction enfant infirme : 1 200 DT/an -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="10"/>
+      <column name="param_key"       value="DEDUCTION_ENFANT_INFIRME"/>
+      <column name="param_label"     value="Déduction enfant infirme / an (1 200 DT)"/>
+      <column name="numeric_value"   value="1200.000"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- Déduction parent à charge : 5% du revenu net, max 450 DT/parent -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="11"/>
+      <column name="param_key"       value="DEDUCTION_PARENT_TAUX"/>
+      <column name="param_label"     value="Taux déduction parent à charge (5% du revenu net)"/>
+      <column name="numeric_value"   value="0.05"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="12"/>
+      <column name="param_key"       value="DEDUCTION_PARENT_MAX"/>
+      <column name="param_label"     value="Plafond déduction parent à charge / an (450 DT)"/>
+      <column name="numeric_value"   value="450.000"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- Nombre maximum d'enfants déductibles standard (4 enfants) -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="13"/>
+      <column name="param_key"       value="MAX_ENFANTS_DEDUCTIBLES"/>
+      <column name="param_label"     value="Nombre maximum d'enfants déductibles (4)"/>
+      <column name="numeric_value"   value="4"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- ════════════════════════════════════════════════════
+         CHARGES PATRONALES SUPPLÉMENTAIRES
+         Ne touchent pas le salaire net de l'employé
+         Impactent le coût total pour l'entreprise
+         ════════════════════════════════════════════════════ -->
+
+    <!-- TFP : Taxe de Formation Professionnelle
+         Versée à l'État pour financer la formation professionnelle
+         Industrie = 1% | Autres secteurs = 2% -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="14"/>
+      <column name="param_key"       value="TFP_TAUX_INDUSTRIE"/>
+      <column name="param_label"     value="TFP - Taxe Formation Professionnelle Industrie (1%)"/>
+      <column name="numeric_value"   value="0.01"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="15"/>
+      <column name="param_key"       value="TFP_TAUX_AUTRES"/>
+      <column name="param_label"     value="TFP - Taxe Formation Professionnelle Autres (2%)"/>
+      <column name="numeric_value"   value="0.02"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- FOPROLOS : Fonds de Promotion du Logement Social
+         Aide à financer le logement des salariés -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="16"/>
+      <column name="param_key"       value="FOPROLOS_TAUX"/>
+      <column name="param_label"     value="FOPROLOS - Fonds Promotion Logement Social (1%)"/>
+      <column name="numeric_value"   value="0.01"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- ════════════════════════════════════════════════════
+         PARAMÈTRES TEMPS DE TRAVAIL
+         Utilisés pour calculer le taux horaire (heures sup)
+         ════════════════════════════════════════════════════ -->
+
+    <!-- Base mensuelle : 40h/semaine × 52 semaines / 12 mois = 173,33h -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="17"/>
+      <column name="param_key"       value="HEURES_MENSUELLES_BASE"/>
+      <column name="param_label"     value="Heures mensuelles de base (173,33h)"/>
+      <column name="numeric_value"   value="173.33"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <!-- Taux de majoration des heures supplémentaires
+         25% pour les HS en semaine
+         50% pour les HS la nuit ou le week-end -->
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="18"/>
+      <column name="param_key"       value="TAUX_HS_25"/>
+      <column name="param_label"     value="Coefficient heures supplémentaires 25% (semaine)"/>
+      <column name="numeric_value"   value="1.25"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueNumeric="19"/>
+      <column name="param_key"       value="TAUX_HS_50"/>
+      <column name="param_label"     value="Coefficient heures supplémentaires 50% (nuit/WE)"/>
+      <column name="numeric_value"   value="1.50"/>
+      <column name="effective_from"  value="2026-01-01"/>
+      <column name="active"          value="true"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

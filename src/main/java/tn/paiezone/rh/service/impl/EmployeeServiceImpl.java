@@ -21,8 +21,8 @@ import tn.paiezone.rh.service.MailService;
 import tn.paiezone.rh.service.UserService;
 import tn.paiezone.rh.service.dto.AdminUserDTO;
 import tn.paiezone.rh.service.dto.EmployeeDTO;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.service.mapper.EmployeeMapper;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -61,7 +61,7 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
 
         // 1. Vérifier unicité matricule
         if (employeeRepository.existsByMatricule(dto.getMatricule())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un employé avec le matricule '" + dto.getMatricule() + "' existe déjà.",
                 ENTITY_NAME,
                 "matriculeExists"
@@ -70,7 +70,7 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
 
         // 2. Vérifier unicité CIN (nationalId)
         if (employeeRepository.existsByNationalId(dto.getNationalId())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un employé avec le CIN '" + dto.getNationalId() + "' existe déjà.",
                 ENTITY_NAME,
                 "nationalIdExists"
@@ -79,7 +79,7 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
 
         // 3. Vérifier email professionnel unique
         if (dto.getProfessionalEmail() != null && employeeRepository.existsByProfessionalEmail(dto.getProfessionalEmail())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un employé avec l'email '" + dto.getProfessionalEmail() + "' existe déjà.",
                 ENTITY_NAME,
                 "emailExists"
@@ -108,11 +108,11 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
 
         Employee existing = employeeRepository
             .findById(dto.getId())
-            .orElseThrow(() -> new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new BusinessException("Employé introuvable.", ENTITY_NAME, "idnotfound"));
 
         // Vérifier unicité matricule si changé
         if (!existing.getMatricule().equals(dto.getMatricule()) && employeeRepository.existsByMatricule(dto.getMatricule())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un employé avec le matricule '" + dto.getMatricule() + "' existe déjà.",
                 ENTITY_NAME,
                 "matriculeExists"
@@ -121,7 +121,7 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
 
         // Vérifier unicité CIN si changé
         if (!existing.getNationalId().equals(dto.getNationalId()) && employeeRepository.existsByNationalId(dto.getNationalId())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Un employé avec le CIN '" + dto.getNationalId() + "' existe déjà.",
                 ENTITY_NAME,
                 "nationalIdExists"

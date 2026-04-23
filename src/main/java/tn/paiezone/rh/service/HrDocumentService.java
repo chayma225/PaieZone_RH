@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.HrDocument;
 import tn.paiezone.rh.repository.HrDocumentRepository;
 import tn.paiezone.rh.service.dto.HrDocumentDTO;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.service.mapper.HrDocumentMapper;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -50,7 +50,7 @@ public class HrDocumentService {
 
         // Valider le type MIME
         if (dto.getMimeType() != null && !ALLOWED_MIME_TYPES.contains(dto.getMimeType())) {
-            throw new BadRequestAlertException(
+            throw new BusinessException(
                 "Type de fichier non autorisé : '" + dto.getMimeType() + "'. Types acceptés : PDF, JPEG, PNG, DOC, DOCX.",
                 ENTITY_NAME,
                 "invalidMimeType"
@@ -59,7 +59,7 @@ public class HrDocumentService {
 
         // Valider la taille
         if (dto.getFileSize() != null && dto.getFileSize() > MAX_FILE_SIZE) {
-            throw new BadRequestAlertException("La taille du fichier dépasse la limite autorisée de 10 MB.", ENTITY_NAME, "fileTooLarge");
+            throw new BusinessException("La taille du fichier dépasse la limite autorisée de 10 MB.", ENTITY_NAME, "fileTooLarge");
         }
 
         dto.setUploadedAt(Instant.now());
