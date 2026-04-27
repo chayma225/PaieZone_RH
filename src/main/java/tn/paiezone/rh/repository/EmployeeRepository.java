@@ -16,4 +16,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
     long countByCompanyIdAndActiveTrue(Long companyId);
     long countByDepartmentId(Long departmentId);
     long countByPositionId(Long positionId);
+    long countByActiveTrue();
 }

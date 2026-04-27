@@ -1,82 +1,496 @@
-<div class="row">
-  <div class="col-md-3">
-    <span class="hipster img-fluid rounded"></span>
+<!-- ============================================================
+     PaieZoneRH — Dashboard Home Page
+     Visible UNIQUEMENT après authentification, adapté par rôle
+     ============================================================ -->
+
+<!-- ======= PAGE NON-CONNECTÉ ======= -->
+@if (account() === null) {
+  <div class="landing-page">
+    <div class="landing-bg">
+      <div class="bg-orb orb-1"></div>
+      <div class="bg-orb orb-2"></div>
+      <div class="bg-orb orb-3"></div>
+    </div>
+    <div class="landing-content">
+      <div class="landing-logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">PaieZone<span class="logo-accent">RH</span></span>
+      </div>
+      <h1 class="landing-title">La paie tunisienne,<br /><em>réinventée.</em></h1>
+      <p class="landing-sub">
+        Gestion RH, paie conforme CNSS/IRPP, congés et déclarations<br />
+        — tout en un, pour les entreprises tunisiennes modernes.
+      </p>
+      <div class="landing-actions">
+        <a routerLink="/login" class="btn-primary-glow">
+          <span>Se connecter</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+      <div class="landing-features">
+        <div class="feature-pill">🇹🇳 CNSS 2026</div>
+        <div class="feature-pill">📊 IRPP conforme</div>
+        <div class="feature-pill">🤖 Chatbot IA</div>
+        <div class="feature-pill">☁️ Multi-tenant</div>
+      </div>
+    </div>
   </div>
+}
 
-  <div class="col-md-9">
-    <h1 class="display-4"><span pzTranslate="home.title">Bienvenue, Java Hipster !</span> (Paie Zone RH)</h1>
-
-    <p class="lead" pzTranslate="home.subtitle">Ceci est votre page d&apos;accueil</p>
-
-    <div>
-      @if (account() !== null) {
-        <div class="alert alert-success">
-          @if (account(); as accountRef) {
-            <span id="home-logged-message" pzTranslate="home.logged.message" [translateValues]="{ username: accountRef.login }"
-              >Vous êtes connecté en tant que &quot;{{ accountRef.login }}&quot;.</span
-            >
-          }
+<!-- ======= DASHBOARD CONNECTÉ ======= -->
+@if (account() !== null) {
+  <div class="dashboard-wrapper">
+    <!-- HEADER BANDE SUPÉRIEURE -->
+    <div class="dash-topbar">
+      <div class="topbar-left">
+        <div class="topbar-greeting">
+          <span class="greeting-text">{{ greeting }},</span>
+          <span class="greeting-name">{{ firstName }}</span>
         </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span pzTranslate="global.messages.info.authenticated.prefix">Si vous voulez vous </span>
-          <a class="alert-link" (click)="login()" pzTranslate="global.messages.info.authenticated.link">connecter</a
-          ><span pzTranslate="global.messages.info.authenticated.suffix"
-            >, vous pouvez utiliser les comptes par défaut : <br />
-            - Administrateur (nom d&apos;utilisateur=&quot;admin&quot; et mot de passe =&quot;admin&quot;) <br />
-            - Utilisateur (nom d&apos;utilisateur=&quot;user&quot; et mot de passe =&quot;user&quot;).</span
-          >
+        <div class="role-badge role-{{ account()?.authorities?.[0]?.toLowerCase()?.replace('role_', '') }}">
+          {{ roleIcon }} {{ roleLabel }}
         </div>
-
-        <div class="alert alert-warning">
-          <span pzTranslate="global.messages.info.register.noaccount">Vous n&apos;avez pas encore de compte ?</span>&nbsp;
-          <a class="alert-link" routerLink="/account/register" pzTranslate="global.messages.info.register.link">Créer un compte</a>
+      </div>
+      <div class="topbar-right">
+        <div class="clock-widget">
+          <div class="clock-time">{{ currentTime() }}</div>
+          <div class="clock-date">{{ currentDate() }}</div>
         </div>
-      }
+      </div>
     </div>
 
-    <p pzTranslate="home.question">Si vous avez des questions à propos de JHipster :</p>
+    <!-- LOADING STATE -->
+    @if (loading()) {
+      <div class="loading-overlay">
+        <div class="loading-pulse">
+          <div class="pulse-ring"></div>
+          <div class="pulse-ring delay-1"></div>
+          <div class="pulse-ring delay-2"></div>
+        </div>
+        <p class="loading-text">Chargement du tableau de bord...</p>
+      </div>
+    }
 
-    <ul>
-      <li>
-        <a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer" pzTranslate="home.link.homepage"
-          >Page d&apos;accueil de JHipster</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://stackoverflow.com/tags/jhipster/info"
-          target="_blank"
-          rel="noopener noreferrer"
-          pzTranslate="home.link.stackoverflow"
-          >JHipster sur Stack Overflow</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/jhipster/generator-jhipster/issues?state=open"
-          target="_blank"
-          rel="noopener noreferrer"
-          pzTranslate="home.link.bugtracker"
-          >JHipster bug tracker</a
-        >
-      </li>
-      <li>
-        <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" pzTranslate="home.link.chat"
-          >JHipster public chat room</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer" pzTranslate="home.link.follow"
-          >Suivez &#64;jhipster sur Twitter</a
-        >
-      </li>
-    </ul>
+    @if (!loading() && stats()) {
+      <!-- ======= SUPER_ADMIN DASHBOARD ======= -->
+      @if (isSuperAdmin) {
+        <div class="role-section superadmin-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="title-accent">⚡</span> Vue Globale Plateforme</h2>
+            <span class="section-subtitle">Contrôle total de l'infrastructure SaaS</span>
+          </div>
 
-    <p>
-      <span pzTranslate="home.like">Si vous aimez JHipster, donnez-nous une étoile sur</span>
-      <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer" pzTranslate="home.github">GitHub</a
-      >!
-    </p>
+          <div class="stats-grid stats-4">
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">🏢</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.totalCompanies }}</div>
+                <div class="stat-label">Entreprises actives</div>
+              </div>
+              <div class="stat-trend trend-up">+2 ce mois</div>
+            </div>
+            <div class="stat-card stat-emerald">
+              <div class="stat-icon">💳</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.activeSubscriptions }}</div>
+                <div class="stat-label">Abonnements actifs</div>
+              </div>
+              <div class="stat-trend trend-up">+1 ce mois</div>
+            </div>
+            <div class="stat-card stat-amber">
+              <div class="stat-icon">👥</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.totalEmployees }}</div>
+                <div class="stat-label">Employés total</div>
+              </div>
+              <div class="stat-trend trend-neutral">Tous tenants</div>
+            </div>
+            <div class="stat-card stat-rose">
+              <div class="stat-icon">🔍</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.auditLogsToday }}</div>
+                <div class="stat-label">Logs audit aujourd'hui</div>
+              </div>
+              <div class="stat-trend trend-neutral">En temps réel</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions SUPER_ADMIN -->
+          <div class="quick-actions">
+            <h3 class="qa-title">Actions rapides</h3>
+            <div class="qa-grid">
+              <a routerLink="/company" class="qa-card">
+                <span class="qa-icon">🏢</span>
+                <span class="qa-label">Gérer les entreprises</span>
+              </a>
+              <a routerLink="/company-subscription" class="qa-card">
+                <span class="qa-icon">💳</span>
+                <span class="qa-label">Abonnements</span>
+              </a>
+              <a routerLink="/user-profile" class="qa-card">
+                <span class="qa-icon">👤</span>
+                <span class="qa-label">Profils utilisateurs</span>
+              </a>
+              <a routerLink="/audit-log" class="qa-card">
+                <span class="qa-icon">📋</span>
+                <span class="qa-label">Journal d'audit</span>
+              </a>
+              <a routerLink="/regulatory-param" class="qa-card">
+                <span class="qa-icon">⚖️</span>
+                <span class="qa-label">Paramètres IRPP/CNSS</span>
+              </a>
+              <a routerLink="/tax-bracket" class="qa-card">
+                <span class="qa-icon">📊</span>
+                <span class="qa-label">Tranches fiscales</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ======= ADMIN DASHBOARD ======= -->
+      @if (isAdmin && !isSuperAdmin) {
+        <div class="role-section admin-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="title-accent">🛡️</span> Tableau de bord Administration</h2>
+            <span class="section-subtitle">Gestion complète de votre entreprise</span>
+          </div>
+
+          <div class="stats-grid stats-4">
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">👥</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.totalEmployees }}</div>
+                <div class="stat-label">Total employés</div>
+              </div>
+              <div class="stat-trend trend-up">{{ stats()!.activeEmployees }} actifs</div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">🏢</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.departments }}</div>
+                <div class="stat-label">Départements</div>
+              </div>
+              <div class="stat-trend trend-neutral">{{ stats()!.positions }} postes</div>
+            </div>
+            <div class="stat-card stat-amber">
+              <div class="stat-icon">📋</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.activeContracts }}</div>
+                <div class="stat-label">Contrats actifs</div>
+              </div>
+              <div class="stat-trend trend-danger">{{ stats()!.expiringContracts }} expirent bientôt</div>
+            </div>
+            <div class="stat-card stat-rose">
+              <div class="stat-icon">🔍</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.auditLogsToday }}</div>
+                <div class="stat-label">Activités aujourd'hui</div>
+              </div>
+              <div class="stat-trend trend-neutral">Audit log</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions ADMIN -->
+          <div class="quick-actions">
+            <h3 class="qa-title">Actions rapides</h3>
+            <div class="qa-grid">
+              <a routerLink="/employee" class="qa-card">
+                <span class="qa-icon">👥</span>
+                <span class="qa-label">Employés</span>
+              </a>
+              <a routerLink="/department" class="qa-card">
+                <span class="qa-icon">🏢</span>
+                <span class="qa-label">Départements</span>
+              </a>
+              <a routerLink="/job-position" class="qa-card">
+                <span class="qa-icon">💼</span>
+                <span class="qa-label">Postes</span>
+              </a>
+              <a routerLink="/user-profile" class="qa-card">
+                <span class="qa-icon">👤</span>
+                <span class="qa-label">Utilisateurs</span>
+              </a>
+              <a routerLink="/contract" class="qa-card">
+                <span class="qa-icon">📋</span>
+                <span class="qa-label">Contrats</span>
+              </a>
+              <a routerLink="/audit-log" class="qa-card">
+                <span class="qa-icon">🔍</span>
+                <span class="qa-label">Audit</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ======= RH_COMPTABLE DASHBOARD ======= -->
+      @if (isRhComptable && !isAdmin && !isSuperAdmin) {
+        <div class="role-section rh-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="title-accent">📊</span> Tableau de bord RH & Paie</h2>
+            <span class="section-subtitle">Paie, congés et déclarations — tout sous contrôle</span>
+          </div>
+
+          <div class="stats-grid stats-4">
+            <div class="stat-card stat-emerald">
+              <div class="stat-icon">💰</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.payrollValidated }}</div>
+                <div class="stat-label">Bulletins validés</div>
+              </div>
+              <div class="stat-trend trend-warning">{{ stats()!.payrollDrafts }} en brouillon</div>
+            </div>
+            <div class="stat-card stat-amber">
+              <div class="stat-icon">🌴</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.pendingLeaves }}</div>
+                <div class="stat-label">Congés en attente</div>
+              </div>
+              <div class="stat-trend trend-success">{{ stats()!.approvedLeaves }} approuvés</div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">💸</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.pendingAdvances }}</div>
+                <div class="stat-label">Avances en attente</div>
+              </div>
+              <div class="stat-trend trend-warning">À traiter</div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon">🎁</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.bonusThisMonth }}</div>
+                <div class="stat-label">Primes ce mois</div>
+              </div>
+              <div class="stat-trend trend-success">Configurées</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions RH -->
+          <div class="quick-actions">
+            <h3 class="qa-title">Actions rapides</h3>
+            <div class="qa-grid">
+              <a routerLink="/payroll-period" class="qa-card qa-highlight">
+                <span class="qa-icon">💰</span>
+                <span class="qa-label">Période de paie</span>
+              </a>
+              <a routerLink="/pay-slip" class="qa-card">
+                <span class="qa-icon">🧾</span>
+                <span class="qa-label">Bulletins de paie</span>
+              </a>
+              <a routerLink="/leave-request" class="qa-card">
+                <span class="qa-icon">🌴</span>
+                <span class="qa-label">Demandes de congé</span>
+              </a>
+              <a routerLink="/advance" class="qa-card">
+                <span class="qa-icon">💸</span>
+                <span class="qa-label">Avances / Acomptes</span>
+              </a>
+              <a routerLink="/bonus" class="qa-card">
+                <span class="qa-icon">🎁</span>
+                <span class="qa-label">Primes</span>
+              </a>
+              <a routerLink="/official-document" class="qa-card">
+                <span class="qa-icon">📄</span>
+                <span class="qa-label">Déclarations</span>
+              </a>
+              <a routerLink="/accounting-entry" class="qa-card">
+                <span class="qa-icon">📒</span>
+                <span class="qa-label">Écritures comptables</span>
+              </a>
+              <a routerLink="/time-entry" class="qa-card">
+                <span class="qa-icon">⏱️</span>
+                <span class="qa-label">Pointage</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ======= MANAGER DASHBOARD ======= -->
+      @if (isManager && !isRhComptable && !isAdmin && !isSuperAdmin) {
+        <div class="role-section manager-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="title-accent">🎯</span> Tableau de bord Manager</h2>
+            <span class="section-subtitle">Suivez votre équipe et gérez les demandes</span>
+          </div>
+
+          <div class="stats-grid stats-3">
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">👥</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.activeEmployees }}</div>
+                <div class="stat-label">Employés dans mon équipe</div>
+              </div>
+              <div class="stat-trend trend-neutral">Actifs</div>
+            </div>
+            <div class="stat-card stat-amber">
+              <div class="stat-icon">🌴</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.pendingLeaves }}</div>
+                <div class="stat-label">Congés à valider</div>
+              </div>
+              <div class="stat-trend trend-warning">En attente</div>
+            </div>
+            <div class="stat-card stat-teal">
+              <div class="stat-icon">⏱️</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.activeContracts }}</div>
+                <div class="stat-label">Contrats actifs</div>
+              </div>
+              <div class="stat-trend trend-neutral">Mon équipe</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions MANAGER -->
+          <div class="quick-actions">
+            <h3 class="qa-title">Actions rapides</h3>
+            <div class="qa-grid">
+              <a routerLink="/employee" class="qa-card">
+                <span class="qa-icon">👥</span>
+                <span class="qa-label">Mon équipe</span>
+              </a>
+              <a routerLink="/leave-request" class="qa-card qa-highlight">
+                <span class="qa-icon">🌴</span>
+                <span class="qa-label">Valider congés</span>
+              </a>
+              <a routerLink="/time-entry" class="qa-card">
+                <span class="qa-icon">⏱️</span>
+                <span class="qa-label">Pointage équipe</span>
+              </a>
+              <a routerLink="/contract" class="qa-card">
+                <span class="qa-icon">📋</span>
+                <span class="qa-label">Contrats</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ======= EMPLOYE DASHBOARD ======= -->
+      @if (isEmploye && !isManager && !isRhComptable && !isAdmin && !isSuperAdmin) {
+        <div class="role-section employe-section">
+          <div class="section-header">
+            <h2 class="section-title"><span class="title-accent">👤</span> Mon Espace Personnel</h2>
+            <span class="section-subtitle">Consultez vos bulletins, congés et informations</span>
+          </div>
+
+          <div class="stats-grid stats-3">
+            <div class="stat-card stat-emerald">
+              <div class="stat-icon">🌴</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.approvedLeaves }}</div>
+                <div class="stat-label">Jours de congé restants</div>
+              </div>
+              <div class="stat-trend trend-success">Disponibles</div>
+            </div>
+            <div class="stat-card stat-amber">
+              <div class="stat-icon">⏳</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.pendingLeaves }}</div>
+                <div class="stat-label">Demandes en cours</div>
+              </div>
+              <div class="stat-trend trend-warning">En attente</div>
+            </div>
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">🧾</div>
+              <div class="stat-body">
+                <div class="stat-value">{{ stats()!.payrollValidated }}</div>
+                <div class="stat-label">Bulletins disponibles</div>
+              </div>
+              <div class="stat-trend trend-neutral">Ce mois</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions EMPLOYE -->
+          <div class="quick-actions">
+            <h3 class="qa-title">Mes accès rapides</h3>
+            <div class="qa-grid">
+              <a routerLink="/pay-slip" class="qa-card">
+                <span class="qa-icon">🧾</span>
+                <span class="qa-label">Mes bulletins de paie</span>
+              </a>
+              <a routerLink="/leave-request" class="qa-card qa-highlight">
+                <span class="qa-icon">🌴</span>
+                <span class="qa-label">Demander un congé</span>
+              </a>
+              <a routerLink="/leave-balance" class="qa-card">
+                <span class="qa-icon">📅</span>
+                <span class="qa-label">Solde de congés</span>
+              </a>
+              <a routerLink="/hr-document" class="qa-card">
+                <span class="qa-icon">📄</span>
+                <span class="qa-label">Mes documents</span>
+              </a>
+              <a routerLink="/official-document" class="qa-card">
+                <span class="qa-icon">📜</span>
+                <span class="qa-label">Attestations</span>
+              </a>
+              <a routerLink="/time-entry" class="qa-card">
+                <span class="qa-icon">⏱️</span>
+                <span class="qa-label">Mon pointage</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ======= SECTION COMMUNE : Activité récente + Chatbot ======= -->
+      <div class="bottom-section">
+        <!-- Activité récente (masqué pour EMPLOYE simple) -->
+        @if (!isEmploye || isManager || isAdmin || isSuperAdmin || isRhComptable) {
+          <div class="activity-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Activité récente</h3>
+              @if (isAdmin || isSuperAdmin) {
+                <a routerLink="/audit-log" class="panel-link">Voir tout →</a>
+              }
+            </div>
+            <div class="activity-list">
+              @for (item of recentActivity(); track $index) {
+                <div class="activity-item {{ getSeverityClass(item.severity) }}">
+                  <span class="activity-icon">{{ getActivityIcon(item.type) }}</span>
+                  <div class="activity-content">
+                    <span class="activity-message">{{ item.message }}</span>
+                    <span class="activity-time">{{ item.timestamp }}</span>
+                  </div>
+                </div>
+              }
+              @if (recentActivity().length === 0) {
+                <div class="activity-empty">Aucune activité récente</div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Chatbot IA -->
+        <div class="chatbot-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">🤖 Assistant RH IA</h3>
+          </div>
+          <div class="chatbot-body">
+            <div class="chatbot-avatar">
+              <div class="avatar-circle">🤖</div>
+              <div class="avatar-pulse"></div>
+            </div>
+            <p class="chatbot-msg">
+              Bonjour {{ firstName }} ! Je suis votre assistant RH. Posez-moi vos questions sur les congés, bulletins ou procédures.
+            </p>
+            <a routerLink="/chat" class="btn-chatbot">
+              <span>Démarrer une conversation</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- fin bottom-section -->
+    }
+    <!-- fin !loading() -->
   </div>
-</div>
+  <!-- fin dashboard-wrapper -->
+}

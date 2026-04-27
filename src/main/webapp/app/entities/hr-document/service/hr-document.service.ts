@@ -18,9 +18,7 @@ type RestOf<T extends IHrDocument | NewHrDocument> = Omit<T, 'uploadedAt' | 'exp
 };
 
 export type RestHrDocument = RestOf<IHrDocument>;
-
 export type NewRestHrDocument = RestOf<NewHrDocument>;
-
 export type PartialUpdateRestHrDocument = RestOf<PartialUpdateHrDocument>;
 
 @Injectable()
@@ -35,13 +33,11 @@ export class HrDocumentsService {
     }
     return { url: this.resourceUrl, params };
   });
-  /**
-   * This signal holds the list of hrDocument that have been fetched. It is updated when the hrDocumentsResource emits a new value.
-   * In case of error while fetching the hrDocuments, the signal is set to an empty array.
-   */
+
   readonly hrDocuments = computed(() =>
     (this.hrDocumentsResource.hasValue() ? this.hrDocumentsResource.value() : []).map(item => this.convertValueFromServer(item)),
   );
+
   protected readonly applicationConfigService = inject(ApplicationConfigService);
   protected readonly resourceUrl = this.applicationConfigService.getEndpointFor('api/hr-documents');
 
@@ -52,6 +48,16 @@ export class HrDocumentsService {
       expiryDate: restHrDocument.expiryDate ? dayjs(restHrDocument.expiryDate) : undefined,
     };
   }
+
+  // Ajout de la méthode ici pour qu'elle soit accessible par la classe enfant
+  protected convertDateFromClient<T extends IHrDocument | NewHrDocument | PartialUpdateHrDocument>(hrDocument: T): RestOf<T> {
+    return {
+      ...hrDocument,
+      uploadedAt: hrDocument.uploadedAt?.toJSON() ?? null,
+      // Correction ici : on s'assure que expiryDate est un objet dayjs avant d'appeler .format()
+      expiryDate: hrDocument.expiryDate && dayjs(hrDocument.expiryDate).isValid() ? dayjs(hrDocument.expiryDate).format(DATE_FORMAT) : null,
+    };
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -59,19 +65,19 @@ export class HrDocumentService extends HrDocumentsService {
   protected readonly http = inject(HttpClient);
 
   create(hrDocument: NewHrDocument): Observable<IHrDocument> {
-    const copy = this.convertValueFromClient(hrDocument);
+    const copy = this.convertDateFromClient(hrDocument); // Changé en convertDateFromClient
     return this.http.post<RestHrDocument>(this.resourceUrl, copy).pipe(map(res => this.convertResponseFromServer(res)));
   }
 
   update(hrDocument: IHrDocument): Observable<IHrDocument> {
-    const copy = this.convertValueFromClient(hrDocument);
+    const copy = this.convertDateFromClient(hrDocument); // Changé en convertDateFromClient
     return this.http
       .put<RestHrDocument>(`${this.resourceUrl}/${encodeURIComponent(this.getHrDocumentIdentifier(hrDocument))}`, copy)
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
   partialUpdate(hrDocument: PartialUpdateHrDocument): Observable<IHrDocument> {
-    const copy = this.convertValueFromClient(hrDocument);
+    const copy = this.convertDateFromClient(hrDocument); // Changé en convertDateFromClient
     return this.http
       .patch<RestHrDocument>(`${this.resourceUrl}/${encodeURIComponent(this.getHrDocumentIdentifier(hrDocument))}`, copy)
       .pipe(map(res => this.convertResponseFromServer(res)));
@@ -100,34 +106,6 @@ export class HrDocumentService extends HrDocumentsService {
 
   compareHrDocument(o1: Pick<IHrDocument, 'id'> | null, o2: Pick<IHrDocument, 'id'> | null): boolean {
     return o1 && o2 ? this.getHrDocumentIdentifier(o1) === this.getHrDocumentIdentifier(o2) : o1 === o2;
-  }
-
-  addHrDocumentToCollectionIfMissing<Type extends Pick<IHrDocument, 'id'>>(
-    hrDocumentCollection: Type[],
-    ...hrDocumentsToCheck: (Type | null | undefined)[]
-  ): Type[] {
-    const hrDocuments: Type[] = hrDocumentsToCheck.filter(isPresent);
-    if (hrDocuments.length > 0) {
-      const hrDocumentCollectionIdentifiers = hrDocumentCollection.map(hrDocumentItem => this.getHrDocumentIdentifier(hrDocumentItem));
-      const hrDocumentsToAdd = hrDocuments.filter(hrDocumentItem => {
-        const hrDocumentIdentifier = this.getHrDocumentIdentifier(hrDocumentItem);
-        if (hrDocumentCollectionIdentifiers.includes(hrDocumentIdentifier)) {
-          return false;
-        }
-        hrDocumentCollectionIdentifiers.push(hrDocumentIdentifier);
-        return true;
-      });
-      return [...hrDocumentsToAdd, ...hrDocumentCollection];
-    }
-    return hrDocumentCollection;
-  }
-
-  protected convertValueFromClient<T extends IHrDocument | NewHrDocument | PartialUpdateHrDocument>(hrDocument: T): RestOf<T> {
-    return {
-      ...hrDocument,
-      uploadedAt: hrDocument.uploadedAt?.toJSON() ?? null,
-      expiryDate: hrDocument.expiryDate?.format(DATE_FORMAT) ?? null,
-    };
   }
 
   protected convertResponseFromServer(res: RestHrDocument): IHrDocument {

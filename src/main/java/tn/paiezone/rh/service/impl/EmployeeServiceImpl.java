@@ -218,42 +218,44 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
     // ── Enregistrer historique des modifications ──────────────────────────────
     private void recordHistory(Employee existing, EmployeeDTO dto) {
         String changedBy = SecurityUtils.getCurrentUserLogin().orElse("system");
+        Long empId = existing.getId();
 
-        checkAndRecord(existing.getId(), "firstName", existing.getFirstName(), dto.getFirstName(), changedBy);
-        checkAndRecord(existing.getId(), "lastName", existing.getLastName(), dto.getLastName(), changedBy);
+        // On surveille TOUT maintenant
+        checkAndRecord(empId, "firstName", existing.getFirstName(), dto.getFirstName(), changedBy);
+        checkAndRecord(empId, "lastName", existing.getLastName(), dto.getLastName(), changedBy);
+        checkAndRecord(empId, "matricule", existing.getMatricule(), dto.getMatricule(), changedBy);
+        checkAndRecord(empId, "address", existing.getAddress(), dto.getAddress(), changedBy);
+        checkAndRecord(empId, "phoneNumber", existing.getPhoneNumber(), dto.getPhoneNumber(), changedBy);
         checkAndRecord(
-            existing.getId(),
-            "department",
-            existing.getDepartment() != null ? existing.getDepartment().getId().toString() : null,
-            dto.getDepartment() != null ? dto.getDepartment().getId().toString() : null,
+            empId,
+            "maritalStatus",
+            existing.getMaritalStatus() != null ? existing.getMaritalStatus().toString() : null,
+            dto.getMaritalStatus() != null ? dto.getMaritalStatus().toString() : null,
             changedBy
         );
         checkAndRecord(
-            existing.getId(),
-            "position",
-            existing.getPosition() != null ? existing.getPosition().getId().toString() : null,
-            dto.getPosition() != null ? dto.getPosition().getId().toString() : null,
-            changedBy
-        );
-        checkAndRecord(existing.getId(), "active", String.valueOf(existing.getActive()), String.valueOf(dto.getActive()), changedBy);
-        checkAndRecord(
-            existing.getId(),
+            empId,
             "category",
             existing.getCategory() != null ? existing.getCategory().toString() : null,
             dto.getCategory() != null ? dto.getCategory().toString() : null,
             changedBy
         );
+        checkAndRecord(empId, "active", String.valueOf(existing.getActive()), String.valueOf(dto.getActive()), changedBy);
+
+        // Relations
+        String oldDept = (existing.getDepartment() != null) ? existing.getDepartment().getId().toString() : null;
+        String newDept = (dto.getDepartment() != null) ? dto.getDepartment().getId().toString() : null;
+        checkAndRecord(empId, "department", oldDept, newDept, changedBy);
     }
 
     private void checkAndRecord(Long employeeId, String field, String oldVal, String newVal, String changedBy) {
         if (!java.util.Objects.equals(oldVal, newVal)) {
             EmployeeHistory history = new EmployeeHistory();
             history.setFieldName(field);
-            history.setOldValue(oldVal);
-            history.setNewValue(newVal);
+            history.setOldValue(oldVal != null && !oldVal.isBlank() ? oldVal : "vide");
+            history.setNewValue(newVal != null && !newVal.isBlank() ? newVal : "vide");
             history.setChangedAt(Instant.now());
             history.setChangedBy(changedBy);
-            history.setReason("Modification via interface");
 
             Employee emp = new Employee();
             emp.setId(employeeId);

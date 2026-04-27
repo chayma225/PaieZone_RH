@@ -37,6 +37,15 @@ import {
   faUsers,
   faUsersCog,
   faWrench,
+  faFileAlt,
+  faInfoCircle,
+  faHistory, // ✅ AJOUTÉ : Pour l'historique
+  faChevronLeft, // ✅ AJOUTÉ : Pour la pagination
+  faChevronRight, // ✅ AJOUTÉ : Pour la pagination
+  faFilter, // ✅ AJOUTÉ : Pour l'icône de filtre
+  faBuilding, // ✅ AJOUTÉ
+  faBriefcase, // ✅ AJOUTÉ
+  faArrowRight,
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -79,5 +88,14 @@ export const fontAwesomeIcons = [
   faUsers,
   faUsersCog,
   faWrench,
+  faFileAlt,
+  faInfoCircle,
+  faHistory, // ✅ AJOUTÉ
+  faChevronLeft, // ✅ AJOUTÉ
+  faChevronRight, // ✅ AJOUTÉ
+  faFilter, // ✅ AJOUTÉ
+  faBuilding, // ✅ AJOUTÉ
+  faBriefcase, // ✅ AJOUTÉ
+  faArrowRight,
   // jhipster-needle-add-icon-import
 ];

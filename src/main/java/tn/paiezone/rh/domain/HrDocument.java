@@ -9,6 +9,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType;
 import tn.paiezone.rh.domain.enumeration.DocumentType;
 
 /**
@@ -44,15 +46,15 @@ public class HrDocument implements Serializable {
     private String description;
 
     @Lob
+    @JdbcType(VarbinaryJdbcType.class)
     @Column(name = "file_data")
     private byte[] fileData;
 
     @Column(name = "file_data_content_type")
     private String fileDataContentType;
 
-    @NotNull
     @Size(max = 500)
-    @Column(name = "file_url", length = 500, nullable = false)
+    @Column(name = "file_url", length = 500, nullable = true)
     private String fileUrl;
 
     @Column(name = "file_size")
@@ -257,6 +259,13 @@ public class HrDocument implements Serializable {
     public int hashCode() {
         // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.uploadedAt == null) {
+            this.uploadedAt = Instant.now();
+        }
     }
 
     // prettier-ignore

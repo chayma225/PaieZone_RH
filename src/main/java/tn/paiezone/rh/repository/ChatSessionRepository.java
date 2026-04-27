@@ -9,4 +9,7 @@ import tn.paiezone.rh.domain.ChatSession;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ChatSessionRepository extends JpaRepository<ChatSession, Long> {}
+public interface ChatSessionRepository extends JpaRepository<ChatSession, Long> {
+    @Query("SELECT COUNT(c) FROM ChatSession c WHERE c.status = :status")
+    long countByStatus(String status);
+}

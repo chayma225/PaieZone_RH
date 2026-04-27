@@ -8,7 +8,7 @@ import EmployeeHistoryResolve from './route/employee-history-routing-resolve.ser
 const employeeHistoryRoute: Routes = [
   {
     path: '',
-    loadComponent: () => import('./list/employee-history').then(m => m.EmployeeHistory),
+    loadComponent: () => import('./list/employee-history').then(m => m.EmployeeHistoryComponent),
     data: {
       defaultSort: `id,${ASC}`,
     },

@@ -9,4 +9,6 @@ import tn.paiezone.rh.domain.LeaveRequest;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long>, JpaSpecificationExecutor<LeaveRequest> {}
+public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long>, JpaSpecificationExecutor<LeaveRequest> {
+    long countByStatus(String status);
+}

@@ -25,7 +25,6 @@ public class HrDocumentDTO implements Serializable {
     @Size(max = 500)
     private String description;
 
-    @NotNull
     @Size(max = 500)
     private String fileUrl;
 
@@ -34,7 +33,6 @@ public class HrDocumentDTO implements Serializable {
     @Size(max = 100)
     private String mimeType;
 
-    @NotNull
     private Instant uploadedAt;
 
     private LocalDate expiryDate;

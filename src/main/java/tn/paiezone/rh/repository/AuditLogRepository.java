@@ -1,5 +1,7 @@
 package tn.paiezone.rh.repository;
 
+import java.time.Instant;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.AuditLog;
@@ -9,4 +11,9 @@ import tn.paiezone.rh.domain.AuditLog;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AuditLogRepository extends JpaRepository<AuditLog, Long>, JpaSpecificationExecutor<AuditLog> {}
+public interface AuditLogRepository extends JpaRepository<AuditLog, Long>, JpaSpecificationExecutor<AuditLog> {
+    List<AuditLog> findTop5ByOrderByOccurredAtDesc();
+
+    @Query("SELECT COUNT(a) FROM AuditLog a WHERE a.occurredAt >= :since")
+    long countSince(Instant since);
+}

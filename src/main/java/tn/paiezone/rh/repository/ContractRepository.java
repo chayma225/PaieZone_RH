@@ -21,4 +21,8 @@ public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSp
     List<Contract> findByEmployeeIdAndStatus(Long employeeId, ContractStatus status);
 
     long countByEmployeeIdAndStatus(Long employeeId, ContractStatus status);
+    long countByStatus(String status);
+
+    @Query("SELECT COUNT(c) FROM Contract c WHERE c.status = 'ACTIVE' AND c.endDate <= :date")
+    long countExpiringWithin30Days();
 }

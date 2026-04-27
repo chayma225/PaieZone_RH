@@ -80,17 +80,15 @@ public class SecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/api/2fa/**")
                     .authenticated()
-                    .requestMatchers("/api/authenticate")
-                    .permitAll()
                     .requestMatchers("/api/verify-2fa")
                     .permitAll()
                     .requestMatchers("/api/2fa/check")
                     .permitAll()
-                    // ── SUPER ADMIN uniquement ────────────────────────────
+                    // ── GESTION ENTREPRISES (Correction : ADMIN + SUPER_ADMIN) ──
                     .requestMatchers("/api/companies/**")
-                    .hasAuthority(AuthoritiesConstants.SUPER_ADMIN)
+                    .hasAnyAuthority(AuthoritiesConstants.SUPER_ADMIN, AuthoritiesConstants.ADMIN)
                     .requestMatchers("/api/company-subscriptions/**")
-                    .hasAuthority(AuthoritiesConstants.SUPER_ADMIN)
+                    .hasAnyAuthority(AuthoritiesConstants.SUPER_ADMIN, AuthoritiesConstants.ADMIN)
                     // ── ADMIN + SUPER ADMIN ───────────────────────────────
                     .requestMatchers("/api/user-profiles/**")
                     .hasAnyAuthority(AuthoritiesConstants.SUPER_ADMIN, AuthoritiesConstants.ADMIN)
@@ -120,6 +118,8 @@ public class SecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/management/**")
                     .hasAuthority(AuthoritiesConstants.ADMIN)
+                    .requestMatchers("/api/dashboard/**")
+                    .authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(exceptions ->

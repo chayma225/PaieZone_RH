@@ -1,145 +1,180 @@
-<div>
-  <h2 id="page-heading" data-cy="EmployeeHistoryHeading">
-    <span pzTranslate="paieZoneRhApp.employeeHistory.home.title">EmployeeHistories</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
-        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
-        <span pzTranslate="paieZoneRhApp.employeeHistory.home.refreshListLabel">Actualiser la liste</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-employee-history"
-        [routerLink]="['/employee-history/new']"
-      >
-        <fa-icon icon="plus" />
-        <span pzTranslate="paieZoneRhApp.employeeHistory.home.createLabel">Créer un nouveau Employee History</span>
-      </button>
+<div class="container-fluid py-4">
+  <div class="d-flex align-items-center mb-4">
+    <div class="bg-primary text-white rounded-circle p-3 me-3 shadow-sm">
+      <fa-icon icon="history" size="lg" />
     </div>
-  </h2>
+    <div>
+      <h2 class="mb-0 fw-bold text-dark">Historique des modifications</h2>
+      <p class="text-muted mb-0">Suivez en temps réel les changements effectués sur les dossiers employés</p>
+    </div>
+  </div>
 
-  <pz-alert-error />
+  <pz-alert-error></pz-alert-error>
+  <pz-alert></pz-alert>
 
-  <pz-alert />
+  <div class="card mb-4 border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-bold text-uppercase small text-muted"> <fa-icon icon="filter" class="me-2" />Filtres de recherche </span>
+        <button class="btn btn-sm btn-outline-danger rounded-pill px-3" (click)="resetFilters()">
+          <fa-icon icon="sync" class="me-1" /> Réinitialiser
+        </button>
+      </div>
+    </div>
+    <div class="card-body bg-light-subtle">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label class="form-label small fw-bold">Prénom</label>
+          <input
+            type="text"
+            class="form-control form-control-sm shadow-none"
+            [(ngModel)]="filters.firstName"
+            (ngModelChange)="applyFilters()"
+            placeholder="Chercher..."
+          />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small fw-bold">Nom</label>
+          <input
+            type="text"
+            class="form-control form-control-sm shadow-none"
+            [(ngModel)]="filters.lastName"
+            (ngModelChange)="applyFilters()"
+            placeholder="Chercher..."
+          />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small fw-bold">Département</label>
+          <select class="form-select form-select-sm shadow-none" [(ngModel)]="filters.departmentId" (ngModelChange)="applyFilters()">
+            <option [ngValue]="null">-- Tous --</option>
+            @for (dept of departments(); track dept.id) {
+              <option [ngValue]="dept.id">{{ dept.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small fw-bold">Poste</label>
+          <select class="form-select form-select-sm shadow-none" [(ngModel)]="filters.positionId" (ngModelChange)="applyFilters()">
+            <option [ngValue]="null">-- Tous --</option>
+            @for (pos of positions(); track pos.id) {
+              <option [ngValue]="pos.id">{{ pos.title }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small fw-bold">Champ modifié</label>
+          <select class="form-select form-select-sm shadow-none" [(ngModel)]="filters.fieldName" (ngModelChange)="applyFilters()">
+            <option [ngValue]="null">-- Tous --</option>
+            <option value="firstName">Prénom</option>
+            <option value="lastName">Nom</option>
+            <option value="matricule">Matricule</option>
+            <option value="department">Département</option>
+            <option value="position">Poste</option>
+            <option value="active">Statut actif</option>
+            <option value="address">Adresse</option>
+            <option value="maritalStatus">État civil</option>
+            <option value="category">Catégorie</option>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end justify-content-end">
+          <div class="badge bg-primary-subtle text-primary border border-primary-subtle p-2">{{ totalItems() }} résultat(s)</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  @if (employeeHistories().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span pzTranslate="paieZoneRhApp.employeeHistory.home.notFound">Aucun Employee History trouvé</span>
+  @if (histories().length === 0) {
+    <div class="text-center py-5 bg-white rounded shadow-sm">
+      <fa-icon icon="info-circle" size="3x" class="text-muted mb-3" />
+      <h4 class="text-muted">Aucune modification enregistrée</h4>
+      <p class="text-muted px-5">Modifiez les filtres pour ajuster votre recherche.</p>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" pzSortBy="id">
-              <div class="d-flex">
-                <span pzTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="fieldName">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.employeeHistory.fieldName">Field Name</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="oldValue">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.employeeHistory.oldValue">Old Value</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="newValue">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.employeeHistory.newValue">New Value</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="changedAt">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.employeeHistory.changedAt">Changed At</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="changedBy">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.employeeHistory.changedBy">Changed By</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="reason">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.employeeHistory.reason">Reason</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="employee.id">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.employeeHistory.employee">Employee</span>
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col"></th>
+    <div class="table-responsive shadow-sm rounded-3 border bg-white">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-dark text-white">
+          <tr>
+            <th class="ps-3 py-3">Employé</th>
+            <th>Matricule</th>
+            <th>Organisation</th>
+            <th>Modification</th>
+            <th class="text-center">Valeurs (Ancienne → Nouvelle)</th>
+            <th>Date & Auteur</th>
           </tr>
         </thead>
         <tbody>
-          @for (employeeHistory of employeeHistories(); track trackId(employeeHistory)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/employee-history', employeeHistory.id, 'view']">{{ employeeHistory.id }}</a>
-              </td>
-              <td>{{ employeeHistory.fieldName }}</td>
-              <td>{{ employeeHistory.oldValue }}</td>
-              <td>{{ employeeHistory.newValue }}</td>
-              <td>{{ employeeHistory.changedAt | formatMediumDatetime }}</td>
-              <td>{{ employeeHistory.changedBy }}</td>
-              <td>{{ employeeHistory.reason }}</td>
-              <td>
-                @if (employeeHistory.employee) {
-                  <div>
-                    <a [routerLink]="['/employee', employeeHistory.employee.id, 'view']">{{ employeeHistory.employee.id }}</a>
+          @for (history of histories(); track history.id) {
+            <tr>
+              <td class="ps-3">
+                <div class="d-flex align-items-center">
+                  <div
+                    class="avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold me-2"
+                    style="width: 35px; height: 35px"
+                  >
+                    {{ history.employee?.firstName?.charAt(0) }}{{ history.employee?.lastName?.charAt(0) }}
                   </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a
-                    [routerLink]="['/employee-history', employeeHistory.id, 'view']"
-                    class="btn btn-info btn-sm"
-                    data-cy="entityDetailsButton"
-                  >
-                    <fa-icon icon="eye" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
-                  </a>
-
-                  <a
-                    [routerLink]="['/employee-history', employeeHistory.id, 'edit']"
-                    class="btn btn-primary btn-sm"
-                    data-cy="entityEditButton"
-                  >
-                    <fa-icon icon="pencil-alt" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(employeeHistory)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
-                  </button>
+                  <span class="fw-bold text-dark">{{ history.employee?.firstName }} {{ history.employee?.lastName }}</span>
                 </div>
+              </td>
+
+              <td>
+                <code class="fw-bold text-primary bg-light px-2 py-1 rounded border">
+                  {{ history.employee?.matricule || 'N/A' }}
+                </code>
+              </td>
+
+              <td>
+                <div class="small text-dark">
+                  <fa-icon icon="building" class="me-1 text-muted small" /> {{ history.employee?.department?.name || '—' }}
+                </div>
+                <div class="small text-muted italic">
+                  <fa-icon icon="briefcase" class="me-1 small" /> {{ history.employee?.position?.title || '—' }}
+                </div>
+              </td>
+
+              <td>
+                <span class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-3">
+                  {{ getFieldLabel(history.fieldName) }}
+                </span>
+              </td>
+
+              <td class="text-center">
+                <div class="d-flex align-items-center justify-content-center">
+                  <span class="text-danger text-decoration-line-through bg-danger-subtle px-2 py-1 rounded small">
+                    {{ formatValue(history.fieldName, history.oldValue) }}
+                  </span>
+
+                  <fa-icon icon="arrow-right" class="mx-2 text-muted small" />
+
+                  <span class="text-success fw-bold bg-success-subtle px-2 py-1 rounded small">
+                    {{ formatValue(history.fieldName, history.newValue) }}
+                  </span>
+                </div>
+              </td>
+
+              <td>
+                <div class="small fw-bold text-dark">
+                  <fa-icon icon="calendar-alt" class="me-1 text-muted" /> {{ history.changedAt?.toDate() | date: 'dd/MM/yyyy HH:mm' }}
+                </div>
+                <div class="small text-muted"><fa-icon icon="user" class="me-1" /> {{ history.changedBy }}</div>
               </td>
             </tr>
           }
         </tbody>
       </table>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+      <ngb-pagination
+        [collectionSize]="totalItems()"
+        [page]="page()"
+        [pageSize]="itemsPerPage()"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+        class="shadow-sm"
+      />
     </div>
   }
 </div>

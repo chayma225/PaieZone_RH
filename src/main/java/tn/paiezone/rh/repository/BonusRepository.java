@@ -9,4 +9,7 @@ import tn.paiezone.rh.domain.Bonus;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface BonusRepository extends JpaRepository<Bonus, Long>, JpaSpecificationExecutor<Bonus> {}
+public interface BonusRepository extends JpaRepository<Bonus, Long>, JpaSpecificationExecutor<Bonus> {
+    @Query("SELECT COUNT(b) FROM Bonus b WHERE b.month = :month AND b.year = :year")
+    long countByMonthAndYear(int month, int year);
+}

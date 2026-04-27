@@ -25,6 +25,13 @@ spring:
       auto-commit: false
   liquibase:
     contexts: dev
+  jpa:
+    properties:
+      hibernate:
+        # Force Hibernate à traiter les @Lob comme du binaire direct (bytea)
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false
   mail:
     host: mail47.lwspanel.com
     port: 587

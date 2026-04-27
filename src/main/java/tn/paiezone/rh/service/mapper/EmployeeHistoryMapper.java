@@ -11,11 +11,16 @@ import tn.paiezone.rh.service.dto.EmployeeHistoryDTO;
  */
 @Mapper(componentModel = "spring")
 public interface EmployeeHistoryMapper extends EntityMapper<EmployeeHistoryDTO, EmployeeHistory> {
-    @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
+    @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeFullDetails")
     EmployeeHistoryDTO toDto(EmployeeHistory s);
 
-    @Named("employeeId")
-    @BeanMapping(ignoreByDefault = true)
+    @Named("employeeFullDetails")
+    @BeanMapping(ignoreByDefault = false) // On n'ignore plus rien
     @Mapping(target = "id", source = "id")
-    EmployeeDTO toDtoEmployeeId(Employee employee);
+    @Mapping(target = "firstName", source = "firstName")
+    @Mapping(target = "lastName", source = "lastName")
+    @Mapping(target = "matricule", source = "matricule")
+    @Mapping(target = "department", source = "department") // Pour les badges dans le tableau
+    @Mapping(target = "position", source = "position") // Pour les badges dans le tableau
+    EmployeeDTO toDtoEmployeeFull(Employee employee);
 }
