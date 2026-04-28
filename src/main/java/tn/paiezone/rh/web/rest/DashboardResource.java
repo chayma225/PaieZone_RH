@@ -1,6 +1,7 @@
 package tn.paiezone.rh.web.rest;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import org.slf4j.Logger;
@@ -34,6 +35,8 @@ public class DashboardResource {
     private final ChatSessionRepository chatSessionRepository;
     private final CompanyRepository companyRepository;
     private final CompanySubscriptionRepository companySubscriptionRepository;
+    // Calcule la date limite (27 Avril + 30 jours = 27 Mai)
+    LocalDate limite = LocalDate.now().plusDays(30);
 
     public DashboardResource(
         EmployeeRepository employeeRepository,
@@ -82,7 +85,7 @@ public class DashboardResource {
         stats.put("departments", departmentRepository.count());
         stats.put("positions", jobPositionRepository.count());
         stats.put("activeContracts", contractRepository.countByStatus("ACTIVE"));
-        stats.put("expiringContracts", contractRepository.countExpiringWithin30Days());
+        stats.put("expiringContracts", contractRepository.countExpiringWithin30Days(limite));
         stats.put("chatSessions", chatSessionRepository.countByStatus("ACTIVE"));
 
         // --- Congés ---

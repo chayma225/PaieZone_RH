@@ -1,9 +1,3 @@
-<!-- ============================================================
-     PaieZoneRH — Dashboard Home Page
-     Visible UNIQUEMENT après authentification, adapté par rôle
-     ============================================================ -->
-
-<!-- ======= PAGE NON-CONNECTÉ ======= -->
 @if (account() === null) {
   <div class="landing-page">
     <div class="landing-bg">
@@ -39,10 +33,8 @@
   </div>
 }
 
-<!-- ======= DASHBOARD CONNECTÉ ======= -->
 @if (account() !== null) {
   <div class="dashboard-wrapper">
-    <!-- HEADER BANDE SUPÉRIEURE -->
     <div class="dash-topbar">
       <div class="topbar-left">
         <div class="topbar-greeting">
@@ -61,7 +53,6 @@
       </div>
     </div>
 
-    <!-- LOADING STATE -->
     @if (loading()) {
       <div class="loading-overlay">
         <div class="loading-pulse">
@@ -74,7 +65,6 @@
     }
 
     @if (!loading() && stats()) {
-      <!-- ======= SUPER_ADMIN DASHBOARD ======= -->
       @if (isSuperAdmin) {
         <div class="role-section superadmin-section">
           <div class="section-header">
@@ -117,46 +107,49 @@
             </div>
           </div>
 
-          <!-- Quick Actions SUPER_ADMIN -->
           <div class="quick-actions">
             <h3 class="qa-title">Actions rapides</h3>
             <div class="qa-grid">
-              <a routerLink="/company" class="qa-card">
-                <span class="qa-icon">🏢</span>
-                <span class="qa-label">Gérer les entreprises</span>
-              </a>
-              <a routerLink="/company-subscription" class="qa-card">
-                <span class="qa-icon">💳</span>
-                <span class="qa-label">Abonnements</span>
-              </a>
-              <a routerLink="/user-profile" class="qa-card">
-                <span class="qa-icon">👤</span>
-                <span class="qa-label">Profils utilisateurs</span>
-              </a>
-              <a routerLink="/audit-log" class="qa-card">
-                <span class="qa-icon">📋</span>
-                <span class="qa-label">Journal d'audit</span>
-              </a>
-              <a routerLink="/regulatory-param" class="qa-card">
-                <span class="qa-icon">⚖️</span>
-                <span class="qa-label">Paramètres IRPP/CNSS</span>
-              </a>
-              <a routerLink="/tax-bracket" class="qa-card">
-                <span class="qa-icon">📊</span>
-                <span class="qa-label">Tranches fiscales</span>
-              </a>
+              <a routerLink="/company" class="qa-card"
+                ><span class="qa-icon">🏢</span><span class="qa-label">Gérer les entreprises</span></a
+              >
+              <a routerLink="/company-subscription" class="qa-card"
+                ><span class="qa-icon">💳</span><span class="qa-label">Abonnements</span></a
+              >
+              <a routerLink="/user-profile" class="qa-card"
+                ><span class="qa-icon">👤</span><span class="qa-label">Profils utilisateurs</span></a
+              >
+              <a routerLink="/audit-log" class="qa-card"><span class="qa-icon">📋</span><span class="qa-label">Journal d'audit</span></a>
+              <a routerLink="/regulatory-param" class="qa-card"
+                ><span class="qa-icon">⚖️</span><span class="qa-label">Paramètres IRPP/CNSS</span></a
+              >
+              <a routerLink="/tax-bracket" class="qa-card"
+                ><span class="qa-icon">📊</span><span class="qa-label">Tranches fiscales</span></a
+              >
             </div>
           </div>
         </div>
       }
 
-      <!-- ======= ADMIN DASHBOARD ======= -->
       @if (isAdmin && !isSuperAdmin) {
         <div class="role-section admin-section">
           <div class="section-header">
             <h2 class="section-title"><span class="title-accent">🛡️</span> Tableau de bord Administration</h2>
             <span class="section-subtitle">Gestion complète de votre entreprise</span>
           </div>
+
+          @if (stats()!.expiringContracts > 0) {
+            <div class="alert-banner-warning">
+              <div class="alert-icon">⚠️</div>
+              <div class="alert-content">
+                <span class="alert-title">Contrats à renouveler</span>
+                <p class="alert-text">
+                  Attention, <strong>{{ stats()!.expiringContracts }}</strong> contrat(s) arrivent à échéance prochainement.
+                </p>
+              </div>
+              <a routerLink="/contract" class="btn-alert">Gérer les contrats</a>
+            </div>
+          }
 
           <div class="stats-grid stats-4">
             <div class="stat-card stat-blue">
@@ -193,46 +186,39 @@
             </div>
           </div>
 
-          <!-- Quick Actions ADMIN -->
           <div class="quick-actions">
             <h3 class="qa-title">Actions rapides</h3>
             <div class="qa-grid">
-              <a routerLink="/employee" class="qa-card">
-                <span class="qa-icon">👥</span>
-                <span class="qa-label">Employés</span>
-              </a>
-              <a routerLink="/department" class="qa-card">
-                <span class="qa-icon">🏢</span>
-                <span class="qa-label">Départements</span>
-              </a>
-              <a routerLink="/job-position" class="qa-card">
-                <span class="qa-icon">💼</span>
-                <span class="qa-label">Postes</span>
-              </a>
-              <a routerLink="/user-profile" class="qa-card">
-                <span class="qa-icon">👤</span>
-                <span class="qa-label">Utilisateurs</span>
-              </a>
-              <a routerLink="/contract" class="qa-card">
-                <span class="qa-icon">📋</span>
-                <span class="qa-label">Contrats</span>
-              </a>
-              <a routerLink="/audit-log" class="qa-card">
-                <span class="qa-icon">🔍</span>
-                <span class="qa-label">Audit</span>
-              </a>
+              <a routerLink="/employee" class="qa-card"><span class="qa-icon">👥</span><span class="qa-label">Employés</span></a>
+              <a routerLink="/department" class="qa-card"><span class="qa-icon">🏢</span><span class="qa-label">Départements</span></a>
+              <a routerLink="/job-position" class="qa-card"><span class="qa-icon">💼</span><span class="qa-label">Postes</span></a>
+              <a routerLink="/user-profile" class="qa-card"><span class="qa-icon">👤</span><span class="qa-label">Utilisateurs</span></a>
+              <a routerLink="/contract" class="qa-card"><span class="qa-icon">📋</span><span class="qa-label">Contrats</span></a>
+              <a routerLink="/audit-log" class="qa-card"><span class="qa-icon">🔍</span><span class="qa-label">Audit</span></a>
             </div>
           </div>
         </div>
       }
 
-      <!-- ======= RH_COMPTABLE DASHBOARD ======= -->
       @if (isRhComptable && !isAdmin && !isSuperAdmin) {
         <div class="role-section rh-section">
           <div class="section-header">
             <h2 class="section-title"><span class="title-accent">📊</span> Tableau de bord RH & Paie</h2>
             <span class="section-subtitle">Paie, congés et déclarations — tout sous contrôle</span>
           </div>
+
+          @if (stats()!.expiringContracts > 0) {
+            <div class="alert-banner-warning">
+              <div class="alert-icon">📅</div>
+              <div class="alert-content">
+                <span class="alert-title">Alertes contrats</span>
+                <p class="alert-text">
+                  Il y a <strong>{{ stats()!.expiringContracts }}</strong> fin(s) de contrat à traiter pour la paie.
+                </p>
+              </div>
+              <a routerLink="/contract" class="btn-alert">Voir les détails</a>
+            </div>
+          }
 
           <div class="stats-grid stats-4">
             <div class="stat-card stat-emerald">
@@ -269,48 +255,30 @@
             </div>
           </div>
 
-          <!-- Quick Actions RH -->
           <div class="quick-actions">
             <h3 class="qa-title">Actions rapides</h3>
             <div class="qa-grid">
-              <a routerLink="/payroll-period" class="qa-card qa-highlight">
-                <span class="qa-icon">💰</span>
-                <span class="qa-label">Période de paie</span>
-              </a>
-              <a routerLink="/pay-slip" class="qa-card">
-                <span class="qa-icon">🧾</span>
-                <span class="qa-label">Bulletins de paie</span>
-              </a>
-              <a routerLink="/leave-request" class="qa-card">
-                <span class="qa-icon">🌴</span>
-                <span class="qa-label">Demandes de congé</span>
-              </a>
-              <a routerLink="/advance" class="qa-card">
-                <span class="qa-icon">💸</span>
-                <span class="qa-label">Avances / Acomptes</span>
-              </a>
-              <a routerLink="/bonus" class="qa-card">
-                <span class="qa-icon">🎁</span>
-                <span class="qa-label">Primes</span>
-              </a>
-              <a routerLink="/official-document" class="qa-card">
-                <span class="qa-icon">📄</span>
-                <span class="qa-label">Déclarations</span>
-              </a>
-              <a routerLink="/accounting-entry" class="qa-card">
-                <span class="qa-icon">📒</span>
-                <span class="qa-label">Écritures comptables</span>
-              </a>
-              <a routerLink="/time-entry" class="qa-card">
-                <span class="qa-icon">⏱️</span>
-                <span class="qa-label">Pointage</span>
-              </a>
+              <a routerLink="/payroll-period" class="qa-card qa-highlight"
+                ><span class="qa-icon">💰</span><span class="qa-label">Période de paie</span></a
+              >
+              <a routerLink="/pay-slip" class="qa-card"><span class="qa-icon">🧾</span><span class="qa-label">Bulletins de paie</span></a>
+              <a routerLink="/leave-request" class="qa-card"
+                ><span class="qa-icon">🌴</span><span class="qa-label">Demandes de congé</span></a
+              >
+              <a routerLink="/advance" class="qa-card"><span class="qa-icon">💸</span><span class="qa-label">Avances / Acomptes</span></a>
+              <a routerLink="/bonus" class="qa-card"><span class="qa-icon">🎁</span><span class="qa-label">Primes</span></a>
+              <a routerLink="/official-document" class="qa-card"
+                ><span class="qa-icon">📄</span><span class="qa-label">Déclarations</span></a
+              >
+              <a routerLink="/accounting-entry" class="qa-card"
+                ><span class="qa-icon">📒</span><span class="qa-label">Écritures comptables</span></a
+              >
+              <a routerLink="/time-entry" class="qa-card"><span class="qa-icon">⏱️</span><span class="qa-label">Pointage</span></a>
             </div>
           </div>
         </div>
       }
 
-      <!-- ======= MANAGER DASHBOARD ======= -->
       @if (isManager && !isRhComptable && !isAdmin && !isSuperAdmin) {
         <div class="role-section manager-section">
           <div class="section-header">
@@ -345,32 +313,20 @@
             </div>
           </div>
 
-          <!-- Quick Actions MANAGER -->
           <div class="quick-actions">
             <h3 class="qa-title">Actions rapides</h3>
             <div class="qa-grid">
-              <a routerLink="/employee" class="qa-card">
-                <span class="qa-icon">👥</span>
-                <span class="qa-label">Mon équipe</span>
-              </a>
-              <a routerLink="/leave-request" class="qa-card qa-highlight">
-                <span class="qa-icon">🌴</span>
-                <span class="qa-label">Valider congés</span>
-              </a>
-              <a routerLink="/time-entry" class="qa-card">
-                <span class="qa-icon">⏱️</span>
-                <span class="qa-label">Pointage équipe</span>
-              </a>
-              <a routerLink="/contract" class="qa-card">
-                <span class="qa-icon">📋</span>
-                <span class="qa-label">Contrats</span>
-              </a>
+              <a routerLink="/employee" class="qa-card"><span class="qa-icon">👥</span><span class="qa-label">Mon équipe</span></a>
+              <a routerLink="/leave-request" class="qa-card qa-highlight"
+                ><span class="qa-icon">🌴</span><span class="qa-label">Valider congés</span></a
+              >
+              <a routerLink="/time-entry" class="qa-card"><span class="qa-icon">⏱️</span><span class="qa-label">Pointage équipe</span></a>
+              <a routerLink="/contract" class="qa-card"><span class="qa-icon">📋</span><span class="qa-label">Contrats</span></a>
             </div>
           </div>
         </div>
       }
 
-      <!-- ======= EMPLOYE DASHBOARD ======= -->
       @if (isEmploye && !isManager && !isRhComptable && !isAdmin && !isSuperAdmin) {
         <div class="role-section employe-section">
           <div class="section-header">
@@ -405,42 +361,29 @@
             </div>
           </div>
 
-          <!-- Quick Actions EMPLOYE -->
           <div class="quick-actions">
             <h3 class="qa-title">Mes accès rapides</h3>
             <div class="qa-grid">
-              <a routerLink="/pay-slip" class="qa-card">
-                <span class="qa-icon">🧾</span>
-                <span class="qa-label">Mes bulletins de paie</span>
-              </a>
-              <a routerLink="/leave-request" class="qa-card qa-highlight">
-                <span class="qa-icon">🌴</span>
-                <span class="qa-label">Demander un congé</span>
-              </a>
-              <a routerLink="/leave-balance" class="qa-card">
-                <span class="qa-icon">📅</span>
-                <span class="qa-label">Solde de congés</span>
-              </a>
-              <a routerLink="/hr-document" class="qa-card">
-                <span class="qa-icon">📄</span>
-                <span class="qa-label">Mes documents</span>
-              </a>
-              <a routerLink="/official-document" class="qa-card">
-                <span class="qa-icon">📜</span>
-                <span class="qa-label">Attestations</span>
-              </a>
-              <a routerLink="/time-entry" class="qa-card">
-                <span class="qa-icon">⏱️</span>
-                <span class="qa-label">Mon pointage</span>
-              </a>
+              <a routerLink="/pay-slip" class="qa-card"
+                ><span class="qa-icon">🧾</span><span class="qa-label">Mes bulletins de paie</span></a
+              >
+              <a routerLink="/leave-request" class="qa-card qa-highlight"
+                ><span class="qa-icon">🌴</span><span class="qa-label">Demander un congé</span></a
+              >
+              <a routerLink="/leave-balance" class="qa-card"
+                ><span class="qa-icon">📅</span><span class="qa-label">Solde de congés</span></a
+              >
+              <a routerLink="/hr-document" class="qa-card"><span class="qa-icon">📄</span><span class="qa-label">Mes documents</span></a>
+              <a routerLink="/official-document" class="qa-card"
+                ><span class="qa-icon">📜</span><span class="qa-label">Attestations</span></a
+              >
+              <a routerLink="/time-entry" class="qa-card"><span class="qa-icon">⏱️</span><span class="qa-label">Mon pointage</span></a>
             </div>
           </div>
         </div>
       }
 
-      <!-- ======= SECTION COMMUNE : Activité récente + Chatbot ======= -->
       <div class="bottom-section">
-        <!-- Activité récente (masqué pour EMPLOYE simple) -->
         @if (!isEmploye || isManager || isAdmin || isSuperAdmin || isRhComptable) {
           <div class="activity-panel">
             <div class="panel-header">
@@ -466,7 +409,6 @@
           </div>
         }
 
-        <!-- Chatbot IA -->
         <div class="chatbot-panel">
           <div class="panel-header">
             <h3 class="panel-title">🤖 Assistant RH IA</h3>
@@ -476,21 +418,11 @@
               <div class="avatar-circle">🤖</div>
               <div class="avatar-pulse"></div>
             </div>
-            <p class="chatbot-msg">
-              Bonjour {{ firstName }} ! Je suis votre assistant RH. Posez-moi vos questions sur les congés, bulletins ou procédures.
-            </p>
-            <a routerLink="/chat" class="btn-chatbot">
-              <span>Démarrer une conversation</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </a>
+            <p class="chatbot-msg">Bonjour {{ firstName }} ! Je suis votre assistant RH. Posez-moi vos questions.</p>
+            <a routerLink="/chat" class="btn-chatbot"><span>Démarrer une conversation</span></a>
           </div>
         </div>
       </div>
-      <!-- fin bottom-section -->
     }
-    <!-- fin !loading() -->
   </div>
-  <!-- fin dashboard-wrapper -->
 }

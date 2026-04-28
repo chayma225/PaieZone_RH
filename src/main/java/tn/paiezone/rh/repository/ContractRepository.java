@@ -3,6 +3,7 @@ package tn.paiezone.rh.repository;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.Contract;
 import tn.paiezone.rh.domain.enumeration.ContractStatus;
@@ -24,5 +25,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSp
     long countByStatus(String status);
 
     @Query("SELECT COUNT(c) FROM Contract c WHERE c.status = 'ACTIVE' AND c.endDate <= :date")
-    long countExpiringWithin30Days();
+    long countExpiringWithin30Days(@Param("date") LocalDate date);
 }

@@ -874,3 +874,75 @@
     font-size: 1.3rem;
   }
 }
+// ============================================================
+// ALERTE CONTRAT (YELLOW PREMIUM)
+// ============================================================
+.alert-banner-warning {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-left: 4px solid var(--amber);
+  padding: 1.2rem 1.5rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  animation: alertSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  .alert-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 8px var(--amber));
+  }
+
+  .alert-content {
+    flex: 1;
+    .alert-title {
+      display: block;
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--amber);
+      font-size: 1.05rem;
+      margin-bottom: 0.2rem;
+    }
+    .alert-text {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      strong {
+        color: var(--text-primary);
+      }
+    }
+  }
+
+  .btn-alert {
+    background: var(--amber);
+    color: #0d0f14; // Couleur foncée pour le texte sur fond jaune
+    padding: 0.6rem 1.2rem;
+    border-radius: 100px;
+    text-decoration: none !important;
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: var(--font-display);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+
+    &:hover {
+      background: #ffb300;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+      color: #0d0f14;
+    }
+  }
+}
+
+@keyframes alertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
