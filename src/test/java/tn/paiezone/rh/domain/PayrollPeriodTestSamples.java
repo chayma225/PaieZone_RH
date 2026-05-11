@@ -11,14 +11,23 @@ public class PayrollPeriodTestSamples {
     private static final AtomicInteger intCount = new AtomicInteger(random.nextInt() + (2 * Short.MAX_VALUE));
 
     public static PayrollPeriod getPayrollPeriodSample1() {
-        return new PayrollPeriod().id(1L).month(1).year(1);
+        return new PayrollPeriod()
+            .id(1L)
+            .month(1)
+            .year(2026);
     }
 
     public static PayrollPeriod getPayrollPeriodSample2() {
-        return new PayrollPeriod().id(2L).month(2).year(2);
+        return new PayrollPeriod()
+            .id(2L)
+            .month(2)
+            .year(2026);
     }
 
     public static PayrollPeriod getPayrollPeriodRandomSampleGenerator() {
-        return new PayrollPeriod().id(longCount.incrementAndGet()).month(intCount.incrementAndGet()).year(intCount.incrementAndGet());
+        return new PayrollPeriod()
+            .id(longCount.incrementAndGet())
+            .month((random.nextInt(12) + 1))
+            .year(2024 + random.nextInt(5));
     }
 }

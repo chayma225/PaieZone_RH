@@ -13,15 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 import tn.paiezone.rh.repository.PaySlipRepository;
+import tn.paiezone.rh.repository.PayrollPeriodRepository;
 import tn.paiezone.rh.service.PaySlipQueryService;
 import tn.paiezone.rh.service.PaySlipService;
+import tn.paiezone.rh.service.PaySlipPdfService;
 import tn.paiezone.rh.service.criteria.PaySlipCriteria;
 import tn.paiezone.rh.service.dto.PaySlipDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
@@ -41,23 +45,27 @@ public class PaySlipResource {
     private String applicationName;
 
     private final PaySlipService paySlipService;
-
     private final PaySlipRepository paySlipRepository;
-
     private final PaySlipQueryService paySlipQueryService;
+    private final PaySlipPdfService paySlipPdfService;
+    private final PayrollPeriodRepository payrollPeriodRepository;
 
-    public PaySlipResource(PaySlipService paySlipService, PaySlipRepository paySlipRepository, PaySlipQueryService paySlipQueryService) {
+    public PaySlipResource(
+        PaySlipService paySlipService,
+        PaySlipRepository paySlipRepository,
+        PaySlipQueryService paySlipQueryService,
+        PaySlipPdfService paySlipPdfService,
+        PayrollPeriodRepository payrollPeriodRepository
+    ) {
         this.paySlipService = paySlipService;
         this.paySlipRepository = paySlipRepository;
         this.paySlipQueryService = paySlipQueryService;
+        this.paySlipPdfService = paySlipPdfService;
+        this.payrollPeriodRepository = payrollPeriodRepository;
     }
 
     /**
      * {@code POST  /pay-slips} : Create a new paySlip.
-     *
-     * @param paySlipDTO the paySlipDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new paySlipDTO, or with status {@code 400 (Bad Request)} if the paySlip has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
     public ResponseEntity<PaySlipDTO> createPaySlip(@Valid @RequestBody PaySlipDTO paySlipDTO) throws URISyntaxException {
@@ -73,13 +81,6 @@ public class PaySlipResource {
 
     /**
      * {@code PUT  /pay-slips/:id} : Updates an existing paySlip.
-     *
-     * @param id the id of the paySlipDTO to save.
-     * @param paySlipDTO the paySlipDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated paySlipDTO,
-     * or with status {@code 400 (Bad Request)} if the paySlipDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the paySlipDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
     public ResponseEntity<PaySlipDTO> updatePaySlip(
@@ -87,17 +88,12 @@ public class PaySlipResource {
         @Valid @RequestBody PaySlipDTO paySlipDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update PaySlip : {}, {}", id, paySlipDTO);
-        if (paySlipDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, paySlipDTO.getId())) {
+        if (paySlipDTO.getId() == null || !Objects.equals(id, paySlipDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!paySlipRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
-
         paySlipDTO = paySlipService.update(paySlipDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, paySlipDTO.getId().toString()))
@@ -105,47 +101,7 @@ public class PaySlipResource {
     }
 
     /**
-     * {@code PATCH  /pay-slips/:id} : Partial updates given fields of an existing paySlip, field will ignore if it is null
-     *
-     * @param id the id of the paySlipDTO to save.
-     * @param paySlipDTO the paySlipDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated paySlipDTO,
-     * or with status {@code 400 (Bad Request)} if the paySlipDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the paySlipDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the paySlipDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<PaySlipDTO> partialUpdatePaySlip(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody PaySlipDTO paySlipDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to partial update PaySlip partially : {}, {}", id, paySlipDTO);
-        if (paySlipDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, paySlipDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!paySlipRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        Optional<PaySlipDTO> result = paySlipService.partialUpdate(paySlipDTO);
-
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, paySlipDTO.getId().toString())
-        );
-    }
-
-    /**
      * {@code GET  /pay-slips} : get all the Pay Slips.
-     *
-     * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Pay Slips in body.
      */
     @GetMapping("")
     public ResponseEntity<List<PaySlipDTO>> getAllPaySlips(
@@ -153,29 +109,13 @@ public class PaySlipResource {
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get PaySlips by criteria: {}", criteria);
-
         Page<PaySlipDTO> page = paySlipQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
-     * {@code GET  /pay-slips/count} : count all the paySlips.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
-    @GetMapping("/count")
-    public ResponseEntity<Long> countPaySlips(PaySlipCriteria criteria) {
-        LOG.debug("REST request to count PaySlips by criteria: {}", criteria);
-        return ResponseEntity.ok().body(paySlipQueryService.countByCriteria(criteria));
-    }
-
-    /**
      * {@code GET  /pay-slips/:id} : get the "id" paySlip.
-     *
-     * @param id the id of the paySlipDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the paySlipDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
     public ResponseEntity<PaySlipDTO> getPaySlip(@PathVariable("id") Long id) {
@@ -186,9 +126,6 @@ public class PaySlipResource {
 
     /**
      * {@code DELETE  /pay-slips/:id} : delete the "id" paySlip.
-     *
-     * @param id the id of the paySlipDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePaySlip(@PathVariable("id") Long id) {
@@ -197,5 +134,51 @@ public class PaySlipResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /** * GET /api/pay-slips/{id}/pdf : Télécharger un bulletin individuel
+     */
+    @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE','ROLE_ADMIN') or @paySlipSecurity.isOwner(#id, authentication)")
+    public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
+        LOG.debug("REST request to download PDF for PaySlip : {}", id);
+
+        byte[] pdf = paySlipPdfService.generatePdf(id);
+
+        return paySlipRepository.findById(id)
+            .map(ps -> {
+                String filename = String.format("bulletin_%s_%02d_%d.pdf",
+                    ps.getEmployee().getMatricule(), ps.getMonth(), ps.getYear());
+
+                return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .contentLength(pdf.length)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdf);
+            })
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+    }
+
+    /** * GET /api/pay-slips/bulk-pdf/{periodId} : Téléchargement groupé par période
+     */
+    @GetMapping(value = "/bulk-pdf/{periodId}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE','ROLE_ADMIN')")
+    public ResponseEntity<byte[]> downloadBulkPdf(@PathVariable Long periodId) {
+        LOG.debug("REST request to download bulk PDF for Period : {}", periodId);
+
+        byte[] pdf = paySlipPdfService.generateBulkPdf(periodId);
+
+        return payrollPeriodRepository.findById(periodId)
+            .map(period -> {
+                String filename = String.format("bulletins_%02d_%d.pdf",
+                    period.getMonth(), period.getYear());
+
+                return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .contentLength(pdf.length)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdf);
+            })
+            .orElseThrow(() -> new BadRequestAlertException("Period not found", "payrollPeriod", "idnotfound"));
     }
 }

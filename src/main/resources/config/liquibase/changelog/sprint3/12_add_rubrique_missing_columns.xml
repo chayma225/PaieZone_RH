@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-add-rubrique-missing-columns" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="rubrique"/>
+      <not>
+        <columnExists tableName="rubrique" columnName="cnss_salary"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="rubrique">
+      <column name="label_ar"      type="varchar(150)"/>
+      <column name="formula"       type="varchar(500)"/>
+      <column name="cnss_salary"   type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+      <column name="cnss_employer" type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

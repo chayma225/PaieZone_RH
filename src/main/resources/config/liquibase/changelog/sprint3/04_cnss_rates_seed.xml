@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-cnss-rates-seed-v2" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="cnss_rate"/>
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM cnss_rate</sqlCheck>
+    </preConditions>
+
+    <insert tableName="cnss_rate">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="year" valueNumeric="2024"/>
+      <column name="salary_ceiling" valueNumeric="2700.000"/>
+      <column name="employee_rate" valueNumeric="0.0918"/>
+      <column name="employer_rate" valueNumeric="0.1657"/>
+      <column name="cavis_employee" valueNumeric="0.0100"/>
+      <column name="cavis_employer" valueNumeric="0.0100"/>
+      <column name="smig" valueNumeric="450.000"/>
+      <column name="effective_from" valueDate="2024-01-01"/>
+    </insert>
+
+    <insert tableName="cnss_rate">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="year" valueNumeric="2025"/>
+      <column name="salary_ceiling" valueNumeric="2862.000"/>
+      <column name="employee_rate" valueNumeric="0.0918"/>
+      <column name="employer_rate" valueNumeric="0.1657"/>
+      <column name="cavis_employee" valueNumeric="0.0100"/>
+      <column name="cavis_employer" valueNumeric="0.0100"/>
+      <column name="smig" valueNumeric="477.000"/>
+      <column name="effective_from" valueDate="2025-01-01"/>
+    </insert>
+
+    <insert tableName="cnss_rate">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="salary_ceiling" valueNumeric="3000.000"/>
+      <column name="employee_rate" valueNumeric="0.0918"/>
+      <column name="employer_rate" valueNumeric="0.1657"/>
+      <column name="cavis_employee" valueNumeric="0.0100"/>
+      <column name="cavis_employer" valueNumeric="0.0100"/>
+      <column name="smig" valueNumeric="500.000"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

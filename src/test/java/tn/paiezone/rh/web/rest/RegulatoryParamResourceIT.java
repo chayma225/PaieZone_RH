@@ -1,20 +1,7 @@
 package tn.paiezone.rh.web.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static tn.paiezone.rh.domain.RegulatoryParamAsserts.*;
-import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
-import static tn.paiezone.rh.web.rest.TestUtil.sameNumber;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +16,20 @@ import tn.paiezone.rh.domain.RegulatoryParam;
 import tn.paiezone.rh.repository.RegulatoryParamRepository;
 import tn.paiezone.rh.service.dto.RegulatoryParamDTO;
 import tn.paiezone.rh.service.mapper.RegulatoryParamMapper;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static tn.paiezone.rh.domain.RegulatoryParamAsserts.*;
+import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
+import static tn.paiezone.rh.web.rest.TestUtil.sameNumber;
 
 /**
  * Integration tests for the {@link RegulatoryParamResource} REST controller.
@@ -98,7 +99,7 @@ class RegulatoryParamResourceIT {
             .paramKey(DEFAULT_PARAM_KEY)
             .paramLabel(DEFAULT_PARAM_LABEL)
             .numericValue(DEFAULT_NUMERIC_VALUE)
-            .textValue(DEFAULT_TEXT_VALUE)
+            .stringValue(DEFAULT_TEXT_VALUE)
             .effectiveFrom(DEFAULT_EFFECTIVE_FROM)
             .effectiveTo(DEFAULT_EFFECTIVE_TO)
             .legalReference(DEFAULT_LEGAL_REFERENCE)
@@ -116,7 +117,7 @@ class RegulatoryParamResourceIT {
             .paramKey(UPDATED_PARAM_KEY)
             .paramLabel(UPDATED_PARAM_LABEL)
             .numericValue(UPDATED_NUMERIC_VALUE)
-            .textValue(UPDATED_TEXT_VALUE)
+            .stringValue(UPDATED_TEXT_VALUE)
             .effectiveFrom(UPDATED_EFFECTIVE_FROM)
             .effectiveTo(UPDATED_EFFECTIVE_TO)
             .legalReference(UPDATED_LEGAL_REFERENCE)
@@ -261,7 +262,7 @@ class RegulatoryParamResourceIT {
             .andExpect(jsonPath("$.[*].paramKey").value(hasItem(DEFAULT_PARAM_KEY)))
             .andExpect(jsonPath("$.[*].paramLabel").value(hasItem(DEFAULT_PARAM_LABEL)))
             .andExpect(jsonPath("$.[*].numericValue").value(hasItem(sameNumber(DEFAULT_NUMERIC_VALUE))))
-            .andExpect(jsonPath("$.[*].textValue").value(hasItem(DEFAULT_TEXT_VALUE)))
+            .andExpect(jsonPath("$.[*].stringValue").value(hasItem(DEFAULT_TEXT_VALUE)))
             .andExpect(jsonPath("$.[*].effectiveFrom").value(hasItem(DEFAULT_EFFECTIVE_FROM.toString())))
             .andExpect(jsonPath("$.[*].effectiveTo").value(hasItem(DEFAULT_EFFECTIVE_TO.toString())))
             .andExpect(jsonPath("$.[*].legalReference").value(hasItem(DEFAULT_LEGAL_REFERENCE)))
@@ -283,7 +284,7 @@ class RegulatoryParamResourceIT {
             .andExpect(jsonPath("$.paramKey").value(DEFAULT_PARAM_KEY))
             .andExpect(jsonPath("$.paramLabel").value(DEFAULT_PARAM_LABEL))
             .andExpect(jsonPath("$.numericValue").value(sameNumber(DEFAULT_NUMERIC_VALUE)))
-            .andExpect(jsonPath("$.textValue").value(DEFAULT_TEXT_VALUE))
+            .andExpect(jsonPath("$.stringValue").value(DEFAULT_TEXT_VALUE))
             .andExpect(jsonPath("$.effectiveFrom").value(DEFAULT_EFFECTIVE_FROM.toString()))
             .andExpect(jsonPath("$.effectiveTo").value(DEFAULT_EFFECTIVE_TO.toString()))
             .andExpect(jsonPath("$.legalReference").value(DEFAULT_LEGAL_REFERENCE))
@@ -313,7 +314,7 @@ class RegulatoryParamResourceIT {
             .paramKey(UPDATED_PARAM_KEY)
             .paramLabel(UPDATED_PARAM_LABEL)
             .numericValue(UPDATED_NUMERIC_VALUE)
-            .textValue(UPDATED_TEXT_VALUE)
+            .stringValue(UPDATED_TEXT_VALUE)
             .effectiveFrom(UPDATED_EFFECTIVE_FROM)
             .effectiveTo(UPDATED_EFFECTIVE_TO)
             .legalReference(UPDATED_LEGAL_REFERENCE)
@@ -446,7 +447,7 @@ class RegulatoryParamResourceIT {
             .paramKey(UPDATED_PARAM_KEY)
             .paramLabel(UPDATED_PARAM_LABEL)
             .numericValue(UPDATED_NUMERIC_VALUE)
-            .textValue(UPDATED_TEXT_VALUE)
+            .stringValue(UPDATED_TEXT_VALUE)
             .effectiveFrom(UPDATED_EFFECTIVE_FROM)
             .effectiveTo(UPDATED_EFFECTIVE_TO)
             .legalReference(UPDATED_LEGAL_REFERENCE)

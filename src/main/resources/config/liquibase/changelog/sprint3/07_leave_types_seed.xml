@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-leave-types-tunisia-full-v2" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="ANNUAL"/>
+      <column name="label"           value="Congé Annuel Payé"/>
+      <column name="max_days_per_year" valueNumeric="18"/>
+      <column name="carry_over_days" valueNumeric="6"/>
+      <column name="paid"            valueBoolean="true"/>
+      <column name="requires_medical" valueBoolean="false"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="SICK"/>
+      <column name="label"           value="Congé Maladie"/>
+      <column name="max_days_per_year" valueNumeric="365"/>
+      <column name="carry_over_days" valueNumeric="0"/>
+      <column name="paid"            valueBoolean="true"/>
+      <column name="requires_medical" valueBoolean="true"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="MATERNITY"/>
+      <column name="label"           value="Congé Maternité (98 jours)"/>
+      <column name="max_days_per_year" valueNumeric="98"/>
+      <column name="carry_over_days" valueNumeric="0"/>
+      <column name="paid"            valueBoolean="true"/>
+      <column name="requires_medical" valueBoolean="true"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="PATERNITY"/>
+      <column name="label"           value="Congé Paternité (7 jours)"/>
+      <column name="max_days_per_year" valueNumeric="7"/>
+      <column name="carry_over_days" valueNumeric="0"/>
+      <column name="paid"            valueBoolean="true"/>
+      <column name="requires_medical" valueBoolean="false"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="MARRIAGE"/>
+      <column name="label"           value="Congé Mariage"/>
+      <column name="max_days_per_year" valueNumeric="3"/>
+      <column name="carry_over_days" valueNumeric="0"/>
+      <column name="paid"            valueBoolean="true"/>
+      <column name="requires_medical" valueBoolean="false"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="BEREAVEMENT"/>
+      <column name="label"           value="Congé Décès (Proche)"/>
+      <column name="max_days_per_year" valueNumeric="3"/>
+      <column name="carry_over_days" valueNumeric="0"/>
+      <column name="paid"            valueBoolean="true"/>
+      <column name="requires_medical" valueBoolean="false"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="UNPAID"/>
+      <column name="label"           value="Congé sans solde"/>
+      <column name="max_days_per_year" valueNumeric="90"/>
+      <column name="carry_over_days" valueNumeric="0"/>
+      <column name="paid"            valueBoolean="false"/>
+      <column name="requires_medical" valueBoolean="false"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="leave_type">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="company_id"      valueNumeric="1"/>
+      <column name="name"            value="EXCEPTIONAL"/>
+      <column name="label"           value="Congé Exceptionnel"/>
+      <column name="max_days_per_year" valueNumeric="2"/>
+      <column name="carry_over_days" valueNumeric="0"/>
+      <column name="paid"            valueBoolean="true"/>
+      <column name="requires_medical" valueBoolean="false"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

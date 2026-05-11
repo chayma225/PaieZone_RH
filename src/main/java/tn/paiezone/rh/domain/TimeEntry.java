@@ -2,20 +2,21 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tn.paiezone.rh.domain.enumeration.TimeEntrySource;
+import tn.paiezone.rh.domain.enumeration.TimeEntryStatus;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import tn.paiezone.rh.domain.enumeration.TimeEntrySource;
-import tn.paiezone.rh.domain.enumeration.TimeEntryStatus;
 
-/**
- * A TimeEntry.
- */
 @Entity
 @Table(name = "time_entry")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -24,6 +25,9 @@ public class TimeEntry implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    // Ajout du logger pour éviter l'erreur "cannot find symbol: variable log"
+    private static final Logger log = LoggerFactory.getLogger(TimeEntry.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
@@ -71,234 +75,133 @@ public class TimeEntry implements Serializable {
     @Column(name = "validated_at")
     private Instant validatedAt;
 
+    @Size(max = 500)
+    @Column(name = "notes", length = 500)
+    private String notes;
+
+    @Column(name = "created_by", nullable = false, length = 50)
+    private String createdBy;
+
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private Instant createdDate;
+
+    @Column(name = "last_modified_by", length = 50)
+    private String lastModifiedBy;
+
+    @Column(name = "last_modified_date")
+    private Instant lastModifiedDate;
+
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = { "company", "department", "position", "manager", "userProfile" }, allowSetters = true)
     private Employee employee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "company" }, allowSetters = true)
-    private UserProfile validatedByUser;
+    // --- GETTERS & SETTERS ---
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    public Long getId() { return this.id; }
+    public void setId(Long id) { this.id = id; }
+    public TimeEntry id(Long id) { this.id = id; return this; }
 
-    public Long getId() {
-        return this.id;
+    public LocalDate getEntryDate() { return this.entryDate; }
+    public void setEntryDate(LocalDate entryDate) { this.entryDate = entryDate; }
+    public TimeEntry entryDate(LocalDate entryDate) { this.entryDate = entryDate; return this; }
+
+    public Instant getCheckIn() { return this.checkIn; }
+    public void setCheckIn(Instant checkIn) { this.checkIn = checkIn; }
+    public TimeEntry checkIn(Instant checkIn) { this.checkIn = checkIn; return this; }
+
+    public Instant getCheckOut() { return this.checkOut; }
+    public void setCheckOut(Instant checkOut) { this.checkOut = checkOut; }
+    public TimeEntry checkOut(Instant checkOut) { this.checkOut = checkOut; return this; }
+
+    public BigDecimal getWorkedHours() { return this.workedHours; }
+    public void setWorkedHours(BigDecimal workedHours) { this.workedHours = workedHours; }
+    public TimeEntry workedHours(BigDecimal workedHours) { this.workedHours = workedHours; return this; }
+
+    public BigDecimal getOvertimeHours() { return this.overtimeHours; }
+    public void setOvertimeHours(BigDecimal overtimeHours) { this.overtimeHours = overtimeHours; }
+    public TimeEntry overtimeHours(BigDecimal overtimeHours) { this.overtimeHours = overtimeHours; return this; }
+
+    public Integer getLateMinutes() { return this.lateMinutes; }
+    public void setLateMinutes(Integer lateMinutes) { this.lateMinutes = lateMinutes; }
+    public TimeEntry lateMinutes(Integer lateMinutes) { this.lateMinutes = lateMinutes; return this; }
+
+    public TimeEntrySource getSource() { return this.source; }
+    public void setSource(TimeEntrySource source) { this.source = source; }
+    public TimeEntry source(TimeEntrySource source) { this.source = source; return this; }
+
+    public TimeEntryStatus getStatus() { return this.status; }
+    public void setStatus(TimeEntryStatus status) { this.status = status; }
+    public TimeEntry status(TimeEntryStatus status) { this.status = status; return this; }
+
+    public String getAnomalyNote() { return this.anomalyNote; }
+    public void setAnomalyNote(String anomalyNote) { this.anomalyNote = anomalyNote; }
+    public TimeEntry anomalyNote(String anomalyNote) { this.anomalyNote = anomalyNote; return this; }
+
+    public String getValidatedBy() { return this.validatedBy; }
+    public void setValidatedBy(String validatedBy) { this.validatedBy = validatedBy; }
+    public TimeEntry validatedBy(String validatedBy) { this.validatedBy = validatedBy; return this; }
+
+    public Instant getValidatedAt() { return this.validatedAt; }
+    public void setValidatedAt(Instant validatedAt) { this.validatedAt = validatedAt; }
+    public TimeEntry validatedAt(Instant validatedAt) { this.validatedAt = validatedAt; return this; }
+
+    public String getNotes() { return this.notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+    public TimeEntry notes(String notes) { this.notes = notes; return this; }
+
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    public Instant getCreatedDate() { return createdDate; }
+    public void setCreatedDate(Instant createdDate) { this.createdDate = createdDate; }
+
+    public String getLastModifiedBy() { return lastModifiedBy; }
+    public void setLastModifiedBy(String lastModifiedBy) { this.lastModifiedBy = lastModifiedBy; }
+
+    public Instant getLastModifiedDate() { return lastModifiedDate; }
+    public void setLastModifiedDate(Instant lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
+
+    public Employee getEmployee() { return this.employee; }
+    public void setEmployee(Employee employee) { this.employee = employee; }
+    public TimeEntry employee(Employee employee) { this.employee = employee; return this; }
+
+    // --- COMPATIBILITÉ (DEPRECATED) ---
+
+    @Deprecated
+    public void setValidatedByUser(Object userProfile) {
+        if (userProfile != null) {
+            log.warn("setValidatedByUser ignoré - le champ est désormais une String (validated_by)");
+        }
     }
 
-    public TimeEntry id(Long id) {
-        this.setId(id);
+    @Deprecated
+    public TimeEntry validatedByUser(Object userProfile) {
         return this;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDate getEntryDate() {
-        return this.entryDate;
-    }
-
-    public TimeEntry entryDate(LocalDate entryDate) {
-        this.setEntryDate(entryDate);
-        return this;
-    }
-
-    public void setEntryDate(LocalDate entryDate) {
-        this.entryDate = entryDate;
-    }
-
-    public Instant getCheckIn() {
-        return this.checkIn;
-    }
-
-    public TimeEntry checkIn(Instant checkIn) {
-        this.setCheckIn(checkIn);
-        return this;
-    }
-
-    public void setCheckIn(Instant checkIn) {
-        this.checkIn = checkIn;
-    }
-
-    public Instant getCheckOut() {
-        return this.checkOut;
-    }
-
-    public TimeEntry checkOut(Instant checkOut) {
-        this.setCheckOut(checkOut);
-        return this;
-    }
-
-    public void setCheckOut(Instant checkOut) {
-        this.checkOut = checkOut;
-    }
-
-    public BigDecimal getWorkedHours() {
-        return this.workedHours;
-    }
-
-    public TimeEntry workedHours(BigDecimal workedHours) {
-        this.setWorkedHours(workedHours);
-        return this;
-    }
-
-    public void setWorkedHours(BigDecimal workedHours) {
-        this.workedHours = workedHours;
-    }
-
-    public BigDecimal getOvertimeHours() {
-        return this.overtimeHours;
-    }
-
-    public TimeEntry overtimeHours(BigDecimal overtimeHours) {
-        this.setOvertimeHours(overtimeHours);
-        return this;
-    }
-
-    public void setOvertimeHours(BigDecimal overtimeHours) {
-        this.overtimeHours = overtimeHours;
-    }
-
-    public Integer getLateMinutes() {
-        return this.lateMinutes;
-    }
-
-    public TimeEntry lateMinutes(Integer lateMinutes) {
-        this.setLateMinutes(lateMinutes);
-        return this;
-    }
-
-    public void setLateMinutes(Integer lateMinutes) {
-        this.lateMinutes = lateMinutes;
-    }
-
-    public TimeEntrySource getSource() {
-        return this.source;
-    }
-
-    public TimeEntry source(TimeEntrySource source) {
-        this.setSource(source);
-        return this;
-    }
-
-    public void setSource(TimeEntrySource source) {
-        this.source = source;
-    }
-
-    public TimeEntryStatus getStatus() {
-        return this.status;
-    }
-
-    public TimeEntry status(TimeEntryStatus status) {
-        this.setStatus(status);
-        return this;
-    }
-
-    public void setStatus(TimeEntryStatus status) {
-        this.status = status;
-    }
-
-    public String getAnomalyNote() {
-        return this.anomalyNote;
-    }
-
-    public TimeEntry anomalyNote(String anomalyNote) {
-        this.setAnomalyNote(anomalyNote);
-        return this;
-    }
-
-    public void setAnomalyNote(String anomalyNote) {
-        this.anomalyNote = anomalyNote;
-    }
-
-    public String getValidatedBy() {
-        return this.validatedBy;
-    }
-
-    public TimeEntry validatedBy(String validatedBy) {
-        this.setValidatedBy(validatedBy);
-        return this;
-    }
-
-    public void setValidatedBy(String validatedBy) {
-        this.validatedBy = validatedBy;
-    }
-
-    public Instant getValidatedAt() {
-        return this.validatedAt;
-    }
-
-    public TimeEntry validatedAt(Instant validatedAt) {
-        this.setValidatedAt(validatedAt);
-        return this;
-    }
-
-    public void setValidatedAt(Instant validatedAt) {
-        this.validatedAt = validatedAt;
-    }
-
-    public Employee getEmployee() {
-        return this.employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public TimeEntry employee(Employee employee) {
-        this.setEmployee(employee);
-        return this;
-    }
-
-    public UserProfile getValidatedByUser() {
-        return this.validatedByUser;
-    }
-
-    public void setValidatedByUser(UserProfile userProfile) {
-        this.validatedByUser = userProfile;
-    }
-
-    public TimeEntry validatedByUser(UserProfile userProfile) {
-        this.setValidatedByUser(userProfile);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // --- STANDARDS ---
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof TimeEntry)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof TimeEntry)) return false;
         return getId() != null && getId().equals(((TimeEntry) o).getId());
     }
 
     @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
+    public int hashCode() { return getClass().hashCode(); }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "TimeEntry{" +
             "id=" + getId() +
             ", entryDate='" + getEntryDate() + "'" +
-            ", checkIn='" + getCheckIn() + "'" +
-            ", checkOut='" + getCheckOut() + "'" +
-            ", workedHours=" + getWorkedHours() +
-            ", overtimeHours=" + getOvertimeHours() +
-            ", lateMinutes=" + getLateMinutes() +
-            ", source='" + getSource() + "'" +
             ", status='" + getStatus() + "'" +
-            ", anomalyNote='" + getAnomalyNote() + "'" +
             ", validatedBy='" + getValidatedBy() + "'" +
-            ", validatedAt='" + getValidatedAt() + "'" +
             "}";
     }
+
+    @Deprecated
+    public Object getValidatedByUser() { return null; }
 }

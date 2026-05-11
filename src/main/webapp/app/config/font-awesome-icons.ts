@@ -37,7 +37,22 @@ import {
   faUsers,
   faUsersCog,
   faWrench,
-  // jhipster-needle-add-icon-import
+  // --- AJOUTS POUR PAIEZONE_RH ---
+  faExclamationTriangle,
+  faCalculator,
+  faInfoCircle,
+  faEdit,
+  faCalendarCheck,
+  faFileMedical,
+  faRedo,
+  faCalendarDay,
+  faDollarSign,
+  faHandHoldingUsd,
+  faBuilding,      // <--- AJOUTER CECI pour l'entreprise
+  faCheckCircle,   // <--- AJOUTER CECI pour les statuts valides
+  faTimesCircle,   // <--- AJOUTER CECI pour les statuts invalides
+  faMinus,
+  faSpinner,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -65,6 +80,7 @@ export const fontAwesomeIcons = [
   faSearch,
   faSignOutAlt,
   faSignInAlt,
+  faSpinner,
   faSort,
   faSortDown,
   faSortUp,
@@ -79,5 +95,19 @@ export const fontAwesomeIcons = [
   faUsers,
   faUsersCog,
   faWrench,
-  // jhipster-needle-add-icon-import
+  // --- AJOUTS POUR PAIEZONE_RH ---
+  faExclamationTriangle,
+  faCalculator,
+  faInfoCircle,
+  faEdit,
+  faCalendarCheck,
+  faFileMedical,
+  faRedo,
+  faCalendarDay,
+  faDollarSign,
+  faHandHoldingUsd,
+  faBuilding,
+  faCheckCircle,
+  faTimesCircle,
+  faMinus
 ];

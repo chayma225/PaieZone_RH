@@ -2,17 +2,22 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.io.Serial;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+
 /**
- * A Advance.
+ * Une avance sur salaire demandée par un employé.
  */
 @Entity
 @Table(name = "advance")
@@ -37,6 +42,10 @@ public class Advance implements Serializable {
     @Column(name = "amount", precision = 21, scale = 2, nullable = false)
     private BigDecimal amount;
 
+    @Size(max = 500)
+    @Column(name = "reason", length = 500)
+    private String reason;
+
     @Min(value = 1)
     @Max(value = 12)
     @Column(name = "deduction_month")
@@ -54,9 +63,24 @@ public class Advance implements Serializable {
     @Column(name = "approved_by", length = 100)
     private String approvedBy;
 
+    @Column(name = "approved_at")
+    private Instant approvedAt;
+
     @Size(max = 500)
     @Column(name = "notes", length = 500)
     private String notes;
+
+    @Column(name = "created_by", nullable = false, length = 50)
+    private String createdBy;
+
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private Instant createdDate;
+
+    @Column(name = "last_modified_by", length = 50)
+    private String lastModifiedBy;
+
+    @Column(name = "last_modified_date")
+    private Instant lastModifiedDate;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -67,186 +91,96 @@ public class Advance implements Serializable {
     @JsonIgnoreProperties(value = { "employee", "payrollPeriod", "contract" }, allowSetters = true)
     private PaySlip paySlip;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "company" }, allowSetters = true)
-    private UserProfile approvedByUser;
+    // ── Getters / Setters Standard ──────────────────────────────────
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    public Long getId() { return this.id; }
+    public void setId(Long id) { this.id = id; }
+    public Advance id(Long id) { this.id = id; return this; }
 
-    public Long getId() {
-        return this.id;
-    }
+    public LocalDate getRequestDate() { return this.requestDate; }
+    public void setRequestDate(LocalDate requestDate) { this.requestDate = requestDate; }
+    public Advance requestDate(LocalDate requestDate) { this.requestDate = requestDate; return this; }
 
-    public Advance id(Long id) {
-        this.setId(id);
-        return this;
-    }
+    public BigDecimal getAmount() { return this.amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public Advance amount(BigDecimal amount) { this.amount = amount; return this; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getReason() { return this.reason; }
+    public void setReason(String reason) { this.reason = reason; }
+    public Advance reason(String reason) { this.reason = reason; return this; }
 
-    public LocalDate getRequestDate() {
-        return this.requestDate;
-    }
+    public Integer getDeductionMonth() { return this.deductionMonth; }
+    public void setDeductionMonth(Integer deductionMonth) { this.deductionMonth = deductionMonth; }
+    public Advance deductionMonth(Integer deductionMonth) { this.deductionMonth = deductionMonth; return this; }
 
-    public Advance requestDate(LocalDate requestDate) {
-        this.setRequestDate(requestDate);
-        return this;
-    }
+    public Integer getDeductionYear() { return this.deductionYear; }
+    public void setDeductionYear(Integer deductionYear) { this.deductionYear = deductionYear; }
+    public Advance deductionYear(Integer deductionYear) { this.deductionYear = deductionYear; return this; }
 
-    public void setRequestDate(LocalDate requestDate) {
-        this.requestDate = requestDate;
-    }
+    public AdvanceStatus getStatus() { return this.status; }
+    public void setStatus(AdvanceStatus status) { this.status = status; }
+    public Advance status(AdvanceStatus status) { this.status = status; return this; }
 
-    public BigDecimal getAmount() {
-        return this.amount;
-    }
+    public String getApprovedBy() { return this.approvedBy; }
+    public void setApprovedBy(String approvedBy) { this.approvedBy = approvedBy; }
+    public Advance approvedBy(String approvedBy) { this.approvedBy = approvedBy; return this; }
 
-    public Advance amount(BigDecimal amount) {
-        this.setAmount(amount);
-        return this;
-    }
+    public Instant getApprovedAt() { return this.approvedAt; }
+    public void setApprovedAt(Instant approvedAt) { this.approvedAt = approvedAt; }
+    public Advance approvedAt(Instant approvedAt) { this.approvedAt = approvedAt; return this; }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+    public String getNotes() { return this.notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+    public Advance notes(String notes) { this.notes = notes; return this; }
 
-    public Integer getDeductionMonth() {
-        return this.deductionMonth;
-    }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 
-    public Advance deductionMonth(Integer deductionMonth) {
-        this.setDeductionMonth(deductionMonth);
-        return this;
-    }
+    public Instant getCreatedDate() { return createdDate; }
+    public void setCreatedDate(Instant createdDate) { this.createdDate = createdDate; }
 
-    public void setDeductionMonth(Integer deductionMonth) {
-        this.deductionMonth = deductionMonth;
-    }
+    public String getLastModifiedBy() { return lastModifiedBy; }
+    public void setLastModifiedBy(String lastModifiedBy) { this.lastModifiedBy = lastModifiedBy; }
 
-    public Integer getDeductionYear() {
-        return this.deductionYear;
-    }
+    public Instant getLastModifiedDate() { return lastModifiedDate; }
+    public void setLastModifiedDate(Instant lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
 
-    public Advance deductionYear(Integer deductionYear) {
-        this.setDeductionYear(deductionYear);
-        return this;
-    }
+    public Employee getEmployee() { return this.employee; }
+    public void setEmployee(Employee employee) { this.employee = employee; }
+    public Advance employee(Employee employee) { this.employee = employee; return this; }
 
-    public void setDeductionYear(Integer deductionYear) {
-        this.deductionYear = deductionYear;
-    }
+    public PaySlip getPaySlip() { return this.paySlip; }
+    public void setPaySlip(PaySlip paySlip) { this.paySlip = paySlip; }
+    public Advance paySlip(PaySlip paySlip) { this.paySlip = paySlip; return this; }
 
-    public AdvanceStatus getStatus() {
-        return this.status;
-    }
-
-    public Advance status(AdvanceStatus status) {
-        this.setStatus(status);
-        return this;
-    }
-
-    public void setStatus(AdvanceStatus status) {
-        this.status = status;
-    }
-
-    public String getApprovedBy() {
-        return this.approvedBy;
-    }
-
-    public Advance approvedBy(String approvedBy) {
-        this.setApprovedBy(approvedBy);
-        return this;
-    }
-
-    public void setApprovedBy(String approvedBy) {
-        this.approvedBy = approvedBy;
-    }
-
-    public String getNotes() {
-        return this.notes;
-    }
-
-    public Advance notes(String notes) {
-        this.setNotes(notes);
-        return this;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Employee getEmployee() {
-        return this.employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Advance employee(Employee employee) {
-        this.setEmployee(employee);
-        return this;
-    }
-
-    public PaySlip getPaySlip() {
-        return this.paySlip;
-    }
-
-    public void setPaySlip(PaySlip paySlip) {
-        this.paySlip = paySlip;
-    }
-
-    public Advance paySlip(PaySlip paySlip) {
-        this.setPaySlip(paySlip);
-        return this;
-    }
-
-    public UserProfile getApprovedByUser() {
-        return this.approvedByUser;
-    }
-
-    public void setApprovedByUser(UserProfile userProfile) {
-        this.approvedByUser = userProfile;
-    }
-
-    public Advance approvedByUser(UserProfile userProfile) {
-        this.setApprovedByUser(userProfile);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // ── Overrides ──────────────────────────────────────────────────
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Advance)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Advance)) return false;
         return getId() != null && getId().equals(((Advance) o).getId());
     }
 
     @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
+    public int hashCode() { return getClass().hashCode(); }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "Advance{" +
             "id=" + getId() +
             ", requestDate='" + getRequestDate() + "'" +
             ", amount=" + getAmount() +
-            ", deductionMonth=" + getDeductionMonth() +
-            ", deductionYear=" + getDeductionYear() +
             ", status='" + getStatus() + "'" +
             ", approvedBy='" + getApprovedBy() + "'" +
-            ", notes='" + getNotes() + "'" +
             "}";
     }
+    @Deprecated
+    public Object getApprovedByUser() { return null; }
+
+    @Deprecated
+    public void setApprovedByUser(Object userProfile) { }
+
+    @Deprecated
+    public Advance approvedByUser(Object userProfile) { return this; }
 }

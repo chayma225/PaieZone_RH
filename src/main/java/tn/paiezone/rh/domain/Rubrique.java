@@ -2,18 +2,18 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.io.Serial;
-import java.io.Serializable;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import tn.paiezone.rh.domain.enumeration.RubriqueBase;
 import tn.paiezone.rh.domain.enumeration.RubriqueType;
 
-/**
- * A Rubrique.
- */
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
+
 @Entity
 @Table(name = "rubrique")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -31,7 +31,8 @@ public class Rubrique implements Serializable {
 
     @NotNull
     @Size(max = 20)
-    @Column(name = "code", length = 20, nullable = false, unique = true)
+    // ✅ unique retiré ici — la contrainte DDL est sur (code, company_id)
+    @Column(name = "code", length = 20, nullable = false)
     private String code;
 
     @NotNull
@@ -39,6 +40,7 @@ public class Rubrique implements Serializable {
     @Column(name = "label", length = 150, nullable = false)
     private String label;
 
+    // ✅ Présent dans l'entité JHipster — colonne ajoutée par 12_add_rubrique_missing_columns.xml
     @Size(max = 150)
     @Column(name = "label_ar", length = 150)
     private String labelAr;
@@ -59,6 +61,7 @@ public class Rubrique implements Serializable {
     @Column(name = "fixed_amount", precision = 21, scale = 2)
     private BigDecimal fixedAmount;
 
+    // ✅ Colonne ajoutée par 12_add_rubrique_missing_columns.xml
     @Size(max = 500)
     @Column(name = "formula", length = 500)
     private String formula;
@@ -67,10 +70,14 @@ public class Rubrique implements Serializable {
     @Column(name = "taxable", nullable = false)
     private Boolean taxable;
 
+    // ✅ Colonne ajoutée par 12_add_rubrique_missing_columns.xml
+    // Indique si la rubrique est soumise au CNSS salarié
     @NotNull
     @Column(name = "cnss_salary", nullable = false)
     private Boolean cnssSalary;
 
+    // ✅ Colonne ajoutée par 12_add_rubrique_missing_columns.xml
+    // Indique si la rubrique entre dans la base de calcul CNSS patronal
     @NotNull
     @Column(name = "cnss_employer", nullable = false)
     private Boolean cnssEmployer;
@@ -83,6 +90,22 @@ public class Rubrique implements Serializable {
     @Column(name = "active", nullable = false)
     private Boolean active;
 
+    // ✅ Ajouté — présent dans votre DDL (created_by varchar(50))
+    @Column(name = "created_by", nullable = false, length = 50)
+    private String createdBy;
+
+    // ✅ Ajouté — présent dans votre DDL
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private Instant createdDate;
+
+    // ✅ Ajouté — présent dans votre DDL
+    @Column(name = "last_modified_by", length = 50)
+    private String lastModifiedBy;
+
+    // ✅ Ajouté — présent dans votre DDL
+    @Column(name = "last_modified_date")
+    private Instant lastModifiedDate;
+
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = { "companySubscription" }, allowSetters = true)
@@ -90,233 +113,123 @@ public class Rubrique implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
-        return this.id;
-    }
+    // ── Getters & Setters ────────────────────────────────────────────
 
-    public Rubrique id(Long id) {
-        this.setId(id);
-        return this;
-    }
+    public Long getId() { return id; }
+    public Rubrique id(Long id) { this.id = id; return this; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getCode() { return code; }
+    public Rubrique code(String code) { this.code = code; return this; }
+    public void setCode(String code) { this.code = code; }
 
-    public String getCode() {
-        return this.code;
-    }
+    public String getLabel() { return label; }
+    public Rubrique label(String label) { this.label = label; return this; }
+    public void setLabel(String label) { this.label = label; }
 
-    public Rubrique code(String code) {
-        this.setCode(code);
-        return this;
-    }
+    public String getLabelAr() { return labelAr; }
+    public Rubrique labelAr(String labelAr) { this.labelAr = labelAr; return this; }
+    public void setLabelAr(String labelAr) { this.labelAr = labelAr; }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getLabel() {
-        return this.label;
-    }
-
-    public Rubrique label(String label) {
-        this.setLabel(label);
-        return this;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getLabelAr() {
-        return this.labelAr;
-    }
-
-    public Rubrique labelAr(String labelAr) {
-        this.setLabelAr(labelAr);
-        return this;
-    }
-
-    public void setLabelAr(String labelAr) {
-        this.labelAr = labelAr;
-    }
-
-    public RubriqueType getRubriqueType() {
-        return this.rubriqueType;
-    }
-
+    public RubriqueType getRubriqueType() { return rubriqueType; }
     public Rubrique rubriqueType(RubriqueType rubriqueType) {
-        this.setRubriqueType(rubriqueType);
-        return this;
+        this.rubriqueType = rubriqueType; return this;
     }
+    public void setRubriqueType(RubriqueType rubriqueType) { this.rubriqueType = rubriqueType; }
 
-    public void setRubriqueType(RubriqueType rubriqueType) {
-        this.rubriqueType = rubriqueType;
-    }
+    public RubriqueBase getBase() { return base; }
+    public Rubrique base(RubriqueBase base) { this.base = base; return this; }
+    public void setBase(RubriqueBase base) { this.base = base; }
 
-    public RubriqueBase getBase() {
-        return this.base;
-    }
+    public BigDecimal getRate() { return rate; }
+    public Rubrique rate(BigDecimal rate) { this.rate = rate; return this; }
+    public void setRate(BigDecimal rate) { this.rate = rate; }
 
-    public Rubrique base(RubriqueBase base) {
-        this.setBase(base);
-        return this;
-    }
-
-    public void setBase(RubriqueBase base) {
-        this.base = base;
-    }
-
-    public BigDecimal getRate() {
-        return this.rate;
-    }
-
-    public Rubrique rate(BigDecimal rate) {
-        this.setRate(rate);
-        return this;
-    }
-
-    public void setRate(BigDecimal rate) {
-        this.rate = rate;
-    }
-
-    public BigDecimal getFixedAmount() {
-        return this.fixedAmount;
-    }
-
+    public BigDecimal getFixedAmount() { return fixedAmount; }
     public Rubrique fixedAmount(BigDecimal fixedAmount) {
-        this.setFixedAmount(fixedAmount);
-        return this;
+        this.fixedAmount = fixedAmount; return this;
     }
+    public void setFixedAmount(BigDecimal fixedAmount) { this.fixedAmount = fixedAmount; }
 
-    public void setFixedAmount(BigDecimal fixedAmount) {
-        this.fixedAmount = fixedAmount;
-    }
+    public String getFormula() { return formula; }
+    public Rubrique formula(String formula) { this.formula = formula; return this; }
+    public void setFormula(String formula) { this.formula = formula; }
 
-    public String getFormula() {
-        return this.formula;
-    }
+    public Boolean getTaxable() { return taxable; }
+    public Rubrique taxable(Boolean taxable) { this.taxable = taxable; return this; }
+    public void setTaxable(Boolean taxable) { this.taxable = taxable; }
 
-    public Rubrique formula(String formula) {
-        this.setFormula(formula);
-        return this;
-    }
+    public Boolean getCnssSalary() { return cnssSalary; }
+    public Rubrique cnssSalary(Boolean cnssSalary) { this.cnssSalary = cnssSalary; return this; }
+    public void setCnssSalary(Boolean cnssSalary) { this.cnssSalary = cnssSalary; }
 
-    public void setFormula(String formula) {
-        this.formula = formula;
-    }
-
-    public Boolean getTaxable() {
-        return this.taxable;
-    }
-
-    public Rubrique taxable(Boolean taxable) {
-        this.setTaxable(taxable);
-        return this;
-    }
-
-    public void setTaxable(Boolean taxable) {
-        this.taxable = taxable;
-    }
-
-    public Boolean getCnssSalary() {
-        return this.cnssSalary;
-    }
-
-    public Rubrique cnssSalary(Boolean cnssSalary) {
-        this.setCnssSalary(cnssSalary);
-        return this;
-    }
-
-    public void setCnssSalary(Boolean cnssSalary) {
-        this.cnssSalary = cnssSalary;
-    }
-
-    public Boolean getCnssEmployer() {
-        return this.cnssEmployer;
-    }
-
+    public Boolean getCnssEmployer() { return cnssEmployer; }
     public Rubrique cnssEmployer(Boolean cnssEmployer) {
-        this.setCnssEmployer(cnssEmployer);
-        return this;
+        this.cnssEmployer = cnssEmployer; return this;
+    }
+    public void setCnssEmployer(Boolean cnssEmployer) { this.cnssEmployer = cnssEmployer; }
+
+    public Integer getSortOrder() { return sortOrder; }
+    public Rubrique sortOrder(Integer sortOrder) { this.sortOrder = sortOrder; return this; }
+    public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
+
+    public Boolean getActive() { return active; }
+    public Rubrique active(Boolean active) { this.active = active; return this; }
+    public void setActive(Boolean active) { this.active = active; }
+
+    // ✅ Nouveaux getters/setters pour les champs audit
+    public String getCreatedBy() { return createdBy; }
+    public Rubrique createdBy(String createdBy) { this.createdBy = createdBy; return this; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    public Instant getCreatedDate() { return createdDate; }
+    public Rubrique createdDate(Instant createdDate) {
+        this.createdDate = createdDate; return this;
+    }
+    public void setCreatedDate(Instant createdDate) { this.createdDate = createdDate; }
+
+    public String getLastModifiedBy() { return lastModifiedBy; }
+    public Rubrique lastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy; return this;
+    }
+    public void setLastModifiedBy(String lastModifiedBy) { this.lastModifiedBy = lastModifiedBy; }
+
+    public Instant getLastModifiedDate() { return lastModifiedDate; }
+    public Rubrique lastModifiedDate(Instant lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate; return this;
+    }
+    public void setLastModifiedDate(Instant lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
-    public void setCnssEmployer(Boolean cnssEmployer) {
-        this.cnssEmployer = cnssEmployer;
-    }
-
-    public Integer getSortOrder() {
-        return this.sortOrder;
-    }
-
-    public Rubrique sortOrder(Integer sortOrder) {
-        this.setSortOrder(sortOrder);
-        return this;
-    }
-
-    public void setSortOrder(Integer sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    public Boolean getActive() {
-        return this.active;
-    }
-
-    public Rubrique active(Boolean active) {
-        this.setActive(active);
-        return this;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public Company getCompany() {
-        return this.company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public Rubrique company(Company company) {
-        this.setCompany(company);
-        return this;
-    }
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) { this.company = company; }
+    public Rubrique company(Company company) { this.company = company; return this; }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Rubrique)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Rubrique)) return false;
         return getId() != null && getId().equals(((Rubrique) o).getId());
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "Rubrique{" +
             "id=" + getId() +
             ", code='" + getCode() + "'" +
             ", label='" + getLabel() + "'" +
-            ", labelAr='" + getLabelAr() + "'" +
             ", rubriqueType='" + getRubriqueType() + "'" +
             ", base='" + getBase() + "'" +
             ", rate=" + getRate() +
             ", fixedAmount=" + getFixedAmount() +
-            ", formula='" + getFormula() + "'" +
             ", taxable='" + getTaxable() + "'" +
             ", cnssSalary='" + getCnssSalary() + "'" +
             ", cnssEmployer='" + getCnssEmployer() + "'" +

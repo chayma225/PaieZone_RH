@@ -162,6 +162,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -349,7 +350,32 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+      <!-- JasperReports 6.21 -->
+      <dependency>
+        <groupId>net.sf.jasperreports</groupId>
+        <artifactId>jasperreports</artifactId>
+        <version>6.21.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
+      <!-- POI pour le livre de paie Excel -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>5.2.5</version>
+      </dependency>
+
+      <!-- Flying Saucer pour les attestations HTML→PDF -->
+      <dependency>
+        <groupId>org.xhtmlrenderer</groupId>
+        <artifactId>flying-saucer-pdf</artifactId>
+        <version>9.3.1</version>
+      </dependency>
     </dependencies>
 
     <build>
@@ -453,6 +479,7 @@
                 <artifactId>nohttp-checkstyle</artifactId>
                 <version>${nohttp-checkstyle.version}</version>
               </dependency>
+
             </dependencies>
             <configuration>
               <configLocation>checkstyle.xml</configLocation>

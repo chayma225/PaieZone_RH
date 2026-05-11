@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-create-leave-type" author="dev">
+
+    <validCheckSum>ANY</validCheckSum>
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="leave_type"/></not>
+    </preConditions>
+    <createTable tableName="leave_type">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="company_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="varchar(30)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="label" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="max_days_per_year" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="carry_over_days" type="integer" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="paid" type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+      <column name="requires_medical" type="boolean" defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+      <column name="active" type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="sprint3-create-public-holiday" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="public_holiday"/></not>
+    </preConditions>
+    <createTable tableName="public_holiday">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name_ar" type="varchar(255)"/>
+      <column name="holiday_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="year" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="is_recurring" type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+      <column name="active" type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <createIndex tableName="public_holiday" indexName="idx_public_holiday_year_date">
+      <column name="year"/>
+      <column name="holiday_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="sprint3-create-leave-balance" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="leave_balance"/></not>
+    </preConditions>
+    <createTable tableName="leave_balance">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="employee_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="leave_type_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="year" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="entitled" type="decimal(8,2)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="taken" type="decimal(8,2)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="pending" type="decimal(8,2)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="carry_over" type="decimal(8,2)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="remaining" type="decimal(8,2)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_updated_at" type="timestamp"/>
+    </createTable>
+    <addForeignKeyConstraint
+      baseTableName="leave_balance"  baseColumnNames="employee_id"
+      referencedTableName="employee" referencedColumnNames="id"
+      constraintName="fk_leave_balance_employee"/>
+    <addForeignKeyConstraint
+      baseTableName="leave_balance"  baseColumnNames="leave_type_id"
+      referencedTableName="leave_type" referencedColumnNames="id"
+      constraintName="fk_leave_balance_type"/>
+    <addUniqueConstraint
+      tableName="leave_balance"
+      columnNames="employee_id, leave_type_id, year"
+      constraintName="ux_leave_balance_emp_type_year"/>
+  </changeSet>
+
+  <changeSet id="sprint3-create-leave-request" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="leave_request"/></not>
+    </preConditions>
+    <createTable tableName="leave_request">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="employee_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="leave_type_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="start_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="number_of_days" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="reason" type="varchar(500)"/>
+      <column name="status" type="varchar(20)" defaultValue="PENDING">
+        <constraints nullable="false"/>
+      </column>
+      <column name="requested_at" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="processed_at" type="timestamp"/>
+      <column name="approved_by_id" type="bigint"/>
+      <column name="manager_comment" type="varchar(500)"/>
+      <column name="medical_cert_url" type="varchar(500)"/>
+    </createTable>
+    <addForeignKeyConstraint
+      baseTableName="leave_request"  baseColumnNames="employee_id"
+      referencedTableName="employee" referencedColumnNames="id"
+      constraintName="fk_leave_request_employee"/>
+    <addForeignKeyConstraint
+      baseTableName="leave_request"  baseColumnNames="leave_type_id"
+      referencedTableName="leave_type" referencedColumnNames="id"
+      constraintName="fk_leave_request_type"/>
+  </changeSet>
+
+</databaseChangeLog>

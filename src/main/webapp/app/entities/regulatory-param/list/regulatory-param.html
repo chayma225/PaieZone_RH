@@ -1,142 +1,64 @@
-<div>
-  <h2 id="page-heading" data-cy="RegulatoryParamHeading">
-    <span pzTranslate="paieZoneRhApp.regulatoryParam.home.title">RegulatoryParams</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
-        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
-        <span pzTranslate="paieZoneRhApp.regulatoryParam.home.refreshListLabel">Actualiser la liste</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-regulatory-param"
-        [routerLink]="['/regulatory-param/new']"
-      >
-        <fa-icon icon="plus" />
-        <span pzTranslate="paieZoneRhApp.regulatoryParam.home.createLabel">Créer un nouveau Regulatory Param</span>
-      </button>
+<div class="rp-page">
+  <div class="rp-header">
+    <div class="rp-header__left">
+      <div class="rp-header__icon">⚙</div>
+      <div>
+        <h1 class="rp-header__title">Paramètres Réglementaires</h1>
+        <p class="rp-header__subtitle">Taux et montants légaux — tout changement prend effet à la date choisie</p>
+      </div>
     </div>
-  </h2>
+    <a class="btn-primary" routerLink="new">+ Nouveau paramètre</a>
+  </div>
 
-  <pz-alert-error />
-
-  <pz-alert />
-
-  @if (regulatoryParams().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span pzTranslate="paieZoneRhApp.regulatoryParam.home.notFound">Aucun Regulatory Param trouvé</span>
+  <div class="rp-toolbar">
+    <div class="rp-search">
+      <span class="rp-search__icon">🔍</span>
+      <input class="rp-search__input" type="text" placeholder="Rechercher par libellé ou code technique..." [(ngModel)]="filterKey" (input)="filteredParams">
+      @if (filterKey) {
+        <button class="rp-search__clear" (click)="filterKey = ''">✕</button>
+      }
     </div>
-  } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
+
+    <div class="rp-filters">
+      <button class="rp-filter-btn" [class.rp-filter-btn--active]="!filterCategory" (click)="filterCategory = ''">Toutes</button>
+      <!-- Ajoute tes catégories dynamiquement via *ngFor dans le TS si besoin -->
+    </div>
+  </div>
+
+  @if (filteredParams.length > 0) {
+    <div class="rp-table-wrapper">
+      <table class="rp-table">
         <thead>
-          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" pzSortBy="id">
-              <div class="d-flex">
-                <span pzTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="paramKey">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.paramKey">Param Key</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="paramLabel">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.paramLabel">Param Label</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="numericValue">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.numericValue">Numeric Value</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="textValue">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.textValue">Text Value</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="effectiveFrom">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.effectiveFrom">Effective From</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="effectiveTo">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.effectiveTo">Effective To</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="legalReference">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.legalReference">Legal Reference</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="active">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.regulatoryParam.active">Active</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
+        <tr>
+          <th style="width:36%">Paramètre</th>
+          <th style="width:16%">Catégorie</th>
+          <th style="width:14%" class="rp-table__th--right">Valeur</th>
+          <th style="width:13%">Date d'effet</th>
+          <th style="width:13%">Référence légale</th>
+          <th style="width:5%">Statut</th>
+          <th style="width:9%" class="rp-table__th--center">Actions</th>
+        </tr>
         </thead>
         <tbody>
-          @for (regulatoryParam of regulatoryParams(); track trackId(regulatoryParam)) {
-            <tr data-cy="entityTable">
+          @for (p of filteredParams; track p.id) {
+            <tr [class.rp-table__row--inactive]="!p.active">
+              <td>{{ p.paramLabel }}</td>
               <td>
-                <a [routerLink]="['/regulatory-param', regulatoryParam.id, 'view']">{{ regulatoryParam.id }}</a>
+                <span class="rp-badge" [style.background]="categoryColors[p.category||''] + '18'" [style.color]="categoryColors[p.category||'']">
+                  {{ categoryLabels[p.category||''] }}
+                </span>
               </td>
-              <td>{{ regulatoryParam.paramKey }}</td>
-              <td>{{ regulatoryParam.paramLabel }}</td>
-              <td>{{ regulatoryParam.numericValue }}</td>
-              <td>{{ regulatoryParam.textValue }}</td>
-              <td>{{ regulatoryParam.effectiveFrom | formatMediumDate }}</td>
-              <td>{{ regulatoryParam.effectiveTo | formatMediumDate }}</td>
-              <td>{{ regulatoryParam.legalReference }}</td>
-              <td>{{ regulatoryParam.active }}</td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a
-                    [routerLink]="['/regulatory-param', regulatoryParam.id, 'view']"
-                    class="btn btn-info btn-sm"
-                    data-cy="entityDetailsButton"
-                  >
-                    <fa-icon icon="eye" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
-                  </a>
-
-                  <a
-                    [routerLink]="['/regulatory-param', regulatoryParam.id, 'edit']"
-                    class="btn btn-primary btn-sm"
-                    data-cy="entityEditButton"
-                  >
-                    <fa-icon icon="pencil-alt" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(regulatoryParam)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
-                  </button>
+              <td class="rp-table__th--right">{{ formatValue(p) }}</td>
+              <td>{{ p.effectiveFrom | formatMediumDate }}</td>
+              <td>{{ p.legalReference || '—' }}</td>
+              <td class="rp-table__td--center">
+                <span class="rp-status" [class.rp-status--active]="p.active">{{ p.active ? 'Actif' : 'Inactif' }}</span>
+              </td>
+              <td class="rp-table__td--center">
+                <div class="rp-actions">
+                  <a class="rp-action-btn rp-action-btn--view" [routerLink]="[p.id, 'view']">Voir</a>
+                  <a class="rp-action-btn rp-action-btn--edit" [routerLink]="[p.id, 'edit']">Modifier</a>
+                  <button class="rp-action-btn rp-action-btn--delete" (click)="delete(p)">Suppr.</button>
                 </div>
               </td>
             </tr>
@@ -144,5 +66,105 @@
         </tbody>
       </table>
     </div>
+    <div class="rp-total">{{ filteredParams.length }} paramètre(s) affiché(s)</div>
+  } @else {
+    <div class="rp-empty">
+      <p>Aucun paramètre trouvé.</p>
+    </div>
   }
 </div>
+<style>
+  :host {
+    --primary: #1d4ed8; --primary-lt: #eff6ff;
+    --success: #059669; --danger: #dc2626;
+    --gray-50: #f8fafc; --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0; --gray-400: #94a3b8;
+    --gray-600: #475569; --gray-700: #334155; --gray-900: #0f172a;
+    --radius: 10px; --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .rp-page { padding: 28px 32px; max-width: 1300px; margin: 0 auto;
+    font-family: 'Segoe UI', system-ui, sans-serif; color: var(--gray-900); }
+  .rp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .rp-header__left { display: flex; align-items: center; gap: 14px; }
+  .rp-header__icon { font-size: 30px; }
+  .rp-header__title { font-size: 21px; font-weight: 700; margin: 0 0 2px; }
+  .rp-header__subtitle { font-size: 13px; color: var(--gray-600); margin: 0; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 6px;
+    background: var(--primary); color: #fff; border: none; border-radius: var(--radius);
+    padding: 9px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
+    text-decoration: none; transition: background .15s; }
+  .btn-primary:hover { background: #1e40af; color: #fff; }
+  .btn-ghost { background: transparent; color: var(--gray-600);
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+    padding: 9px 18px; font-size: 14px; cursor: pointer; transition: all .15s; }
+  .btn-ghost:hover { border-color: var(--gray-400); }
+  .rp-toolbar { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .rp-search { position: relative; }
+  .rp-search__icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 15px; pointer-events: none; }
+  .rp-search__input { width: 100%; padding: 10px 36px 10px 38px;
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 14px; outline: none; box-sizing: border-box; }
+  .rp-search__input:focus { border-color: var(--primary); }
+  .rp-search__clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--gray-400); cursor: pointer; }
+  .rp-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rp-filter-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 13px;
+    border-radius: 20px; border: 1.5px solid var(--gray-200); background: white;
+    font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; transition: all .15s; }
+  .rp-filter-btn:hover { border-color: var(--gray-400); }
+  .rp-filter-btn--active { background: var(--cat-color, var(--primary));
+    border-color: var(--cat-color, var(--primary)); color: white; }
+  .rp-filter-btn__count { background: rgba(0,0,0,.12); border-radius: 10px;
+    padding: 0 6px; font-size: 11px; }
+  .rp-filter-btn--active .rp-filter-btn__count { background: rgba(255,255,255,.25); }
+  .rp-table-wrapper { background: white; border-radius: 12px;
+    border: 1.5px solid var(--gray-200); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .rp-table { width: 100%; border-collapse: collapse; }
+  .rp-table__th { padding: 12px 16px; font-size: 11px; font-weight: 600;
+    color: var(--gray-600); text-transform: uppercase; letter-spacing: .05em;
+    background: var(--gray-50); border-bottom: 1.5px solid var(--gray-200); white-space: nowrap; }
+  .rp-table__th--right { text-align: right; }
+  .rp-table__th--center { text-align: center; }
+  .rp-table__row { border-bottom: 1px solid var(--gray-100); transition: background .1s; }
+  .rp-table__row:last-child { border-bottom: none; }
+  .rp-table__row:hover { background: var(--gray-50); }
+  .rp-table__row--inactive { opacity: .55; }
+  .rp-table__td { padding: 13px 16px; font-size: 14px; vertical-align: middle; }
+  .rp-table__td--right { text-align: right; }
+  .rp-table__td--center { text-align: center; }
+  .rp-param-cell { display: flex; flex-direction: column; gap: 3px; }
+  .rp-param-cell__label { font-weight: 500; }
+  .rp-param-cell__code { font-size: 11px; font-family: monospace;
+    background: var(--gray-100); color: var(--gray-600);
+    padding: 1px 7px; border-radius: 4px; width: fit-content; }
+  .rp-badge { display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1px solid; white-space: nowrap; }
+  .rp-value-cell { display: flex; align-items: baseline; justify-content: flex-end; gap: 3px; }
+  .rp-value-cell__number { font-weight: 700; font-size: 15px; }
+  .rp-value-cell__unit { font-size: 12px; color: var(--gray-600); }
+  .rp-date { font-size: 13px; color: var(--gray-600); }
+  .rp-ref { font-size: 12px; color: var(--gray-600); font-style: italic;
+    display: block; max-width: 130px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap; }
+  .rp-status { font-size: 11px; font-weight: 700; padding: 3px 8px;
+    border-radius: 10px; background: #fef2f2; color: var(--danger); }
+  .rp-status--active { background: #f0fdf4; color: var(--success); }
+  .rp-actions { display: flex; gap: 4px; justify-content: center; }
+  .rp-action-btn { height: 28px; padding: 0 10px; border: none; border-radius: 7px;
+    cursor: pointer; font-size: 11px; font-weight: 600; display: inline-flex;
+    align-items: center; justify-content: center;
+    text-decoration: none; transition: all .15s; }
+  .rp-action-btn--view   { background: #f0fdf4; color: var(--success); }
+  .rp-action-btn--view:hover   { background: #dcfce7; }
+  .rp-action-btn--edit   { background: #eff6ff; color: var(--primary); }
+  .rp-action-btn--edit:hover   { background: var(--primary); color: white; }
+  .rp-action-btn--delete { background: #fef2f2; color: var(--danger); }
+  .rp-action-btn--delete:hover { background: var(--danger); color: white; }
+  .rp-empty { text-align: center; padding: 48px 24px; color: var(--gray-600); }
+  .rp-empty__icon { font-size: 40px; margin-bottom: 12px; }
+  .rp-empty__text { font-size: 15px; margin-bottom: 16px; }
+  .rp-total { text-align: right; padding: 10px 4px;
+    font-size: 12px; color: var(--gray-600); }
+</style>

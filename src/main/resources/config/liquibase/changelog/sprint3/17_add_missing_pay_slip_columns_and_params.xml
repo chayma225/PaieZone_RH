@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- ============================================================
+       PHASE 1 — Colonnes manquantes dans pay_slip
+       ============================================================ -->
+
+  <changeSet id="phase1-payslip-css" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="pay_slip" columnName="css_amount"/></not>
+    </preConditions>
+    <comment>CSS — Contribution Sociale de Solidarité (0.5%)</comment>
+    <addColumn tableName="pay_slip">
+      <column name="css_amount" type="decimal(15,3)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="phase1-payslip-tfp" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="pay_slip" columnName="tfp_amount"/></not>
+    </preConditions>
+    <comment>TFP — Taxe Formation Professionnelle patronale (1%)</comment>
+    <addColumn tableName="pay_slip">
+      <column name="tfp_amount" type="decimal(15,3)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="phase1-payslip-unpaid-leave-deduction" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="pay_slip" columnName="unpaid_leave_deduction"/></not>
+    </preConditions>
+    <comment>Montant déduit pour congés non payés</comment>
+    <addColumn tableName="pay_slip">
+      <column name="unpaid_leave_deduction" type="decimal(15,3)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="phase1-payslip-overtime-amount" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="pay_slip" columnName="overtime_amount"/></not>
+    </preConditions>
+    <comment>Montant total des heures supplémentaires calculé</comment>
+    <addColumn tableName="pay_slip">
+      <column name="overtime_amount" type="decimal(15,3)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <!-- ============================================================
+       PHASE 1 — Nouveaux paramètres réglementaires
+       Tous les taux sont pilotables par le Super Admin
+       ============================================================ -->
+
+  <changeSet id="phase1-param-cnss-salarial" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'CNSS_TAUX_SALARIAL' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>CNSS Taux Salarié 9.18% — pilotable Super Admin</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="CNSS_TAUX_SALARIAL"/>
+      <column name="param_label"     value="Taux CNSS salarié (9.18%)"/>
+      <column name="numeric_value"   valueNumeric="0.0918"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="legal_reference" value="Art. 48 Code du Travail Tunisien"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-cnss-patronal" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'CNSS_TAUX_PATRONAL' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>CNSS Taux Patronal 16.57% — pilotable Super Admin</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="CNSS_TAUX_PATRONAL"/>
+      <column name="param_label"     value="Taux CNSS patronal (16.57%)"/>
+      <column name="numeric_value"   valueNumeric="0.1657"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="legal_reference" value="Art. 48 Code du Travail Tunisien"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-cnss-plafond" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'CNSS_PLAFOND_MENSUEL' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>Plafond mensuel CNSS 3000 DT 2026</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="CNSS_PLAFOND_MENSUEL"/>
+      <column name="param_label"     value="Plafond mensuel CNSS (DT)"/>
+      <column name="numeric_value"   valueNumeric="3000.0000"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="effective_from"  valueDate="2026-01-01"/>
+      <column name="legal_reference" value="Loi de Finances 2026"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-cavis" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'CAVIS_TAUX_SALARIE' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>CAVIS Taux Salarié 1%</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="CAVIS_TAUX_SALARIE"/>
+      <column name="param_label"     value="Taux CAVIS salarié (1%)"/>
+      <column name="numeric_value"   valueNumeric="0.0100"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-css" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'CSS_TAUX' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>CSS — Contribution Sociale de Solidarité 0.5%</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="CSS_TAUX"/>
+      <column name="param_label"     value="Contribution Sociale de Solidarité (0.5%)"/>
+      <column name="numeric_value"   valueNumeric="0.0050"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-tfp" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'TFP_TAUX' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>TFP — Taxe Formation Professionnelle patronale 1%</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="TFP_TAUX"/>
+      <column name="param_label"     value="Taxe Formation Professionnelle patronale (1%)"/>
+      <column name="numeric_value"   valueNumeric="0.0100"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-hs25" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'TAUX_HS_25' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>Coefficient HS jour ×1.25</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="TAUX_HS_25"/>
+      <column name="param_label"     value="Coefficient heures supplémentaires jour (×1.25)"/>
+      <column name="numeric_value"   valueNumeric="1.2500"/>
+      <column name="category"        value="WORK_TIME"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="legal_reference" value="Art. 89 Code du Travail Tunisien"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-hs50" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'TAUX_HS_50' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>Coefficient HS nuit/férié ×1.50</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="TAUX_HS_50"/>
+      <column name="param_label"     value="Coefficient heures supplémentaires nuit/férié (×1.50)"/>
+      <column name="numeric_value"   valueNumeric="1.5000"/>
+      <column name="category"        value="WORK_TIME"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="legal_reference" value="Art. 89 Code du Travail Tunisien"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="phase1-param-heures-base" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param
+        WHERE param_key = 'HEURES_MENSUELLES_BASE' AND active = true
+      </sqlCheck>
+    </preConditions>
+    <comment>Heures mensuelles de référence 173.33h</comment>
+    <insert tableName="regulatory_param">
+      <column name="param_key"       value="HEURES_MENSUELLES_BASE"/>
+      <column name="param_label"     value="Heures mensuelles de référence (173.33h)"/>
+      <column name="numeric_value"   valueNumeric="173.3300"/>
+      <column name="category"        value="WORK_TIME"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

@@ -1,147 +1,61 @@
-import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
-
-import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
-import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
-import { ICompany } from 'app/entities/company/company.model';
-import { CompanyService } from 'app/entities/company/service/company.service';
-import { UserProfileService } from 'app/entities/user-profile/service/user-profile.service';
-import { IUserProfile } from 'app/entities/user-profile/user-profile.model';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { TranslateDirective } from 'app/shared/language';
-
-import { IPayrollPeriod } from '../payroll-period.model';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { NgIf, NgFor } from '@angular/common';
+import { finalize } from 'rxjs';
+import { IPayrollPeriod, MONTH_LABELS } from '../payroll-period.model';
 import { PayrollPeriodService } from '../service/payroll-period.service';
 
-import { PayrollPeriodFormGroup, PayrollPeriodFormService } from './payroll-period-form.service';
-import { AlertErrorModel } from 'app/shared/alert/alert-error.model';
-import { PayrollStatus } from 'app/entities/enumerations/payroll-status.model';
-
 @Component({
-  selector: 'pz-payroll-period-update',
+  selector: 'jhi-payroll-period-update',
+  standalone: true,
+  imports: [NgIf, NgFor, RouterModule, ReactiveFormsModule],
   templateUrl: './payroll-period-update.html',
-  imports: [TranslateDirective, TranslateModule, FontAwesomeModule, AlertError, ReactiveFormsModule],
 })
 export class PayrollPeriodUpdate implements OnInit {
-  readonly isSaving = signal(false);
-  payrollPeriod: IPayrollPeriod | null = null;
-  payrollStatusValues = Object.keys(PayrollStatus);
 
-  companiesSharedCollection = signal<ICompany[]>([]);
-  userProfilesSharedCollection = signal<IUserProfile[]>([]);
+  private fb     = inject(FormBuilder);
+  private route  = inject(ActivatedRoute);
+  private router = inject(Router);
+  private svc    = inject(PayrollPeriodService);
 
-  protected dataUtils = inject(DataUtils);
-  protected eventManager = inject(EventManager);
-  protected payrollPeriodService = inject(PayrollPeriodService);
-  protected payrollPeriodFormService = inject(PayrollPeriodFormService);
-  protected companyService = inject(CompanyService);
-  protected userProfileService = inject(UserProfileService);
-  protected activatedRoute = inject(ActivatedRoute);
+  isEdit = false;
+  saving = false;
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  editForm: PayrollPeriodFormGroup = this.payrollPeriodFormService.createPayrollPeriodFormGroup();
+  months = Object.entries(MONTH_LABELS).map(([v, l]) => ({ v: +v, l }));
+  years  = Array.from({ length: 6 }, (_, i) => new Date().getFullYear() + 2 - i);
 
-  compareCompany = (o1: ICompany | null, o2: ICompany | null): boolean => this.companyService.compareCompany(o1, o2);
-
-  compareUserProfile = (o1: IUserProfile | null, o2: IUserProfile | null): boolean => this.userProfileService.compareUserProfile(o1, o2);
+  form = this.fb.group({
+    id:     [null as number | null],
+    month:  [null as number | null, [Validators.required, Validators.min(1), Validators.max(12)]],
+    year:   [null as number | null, [Validators.required]],
+    status: ['DRAFT', Validators.required],
+    companyId: [null as number | null],
+  });
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ payrollPeriod }) => {
-      this.payrollPeriod = payrollPeriod;
-      if (payrollPeriod) {
-        this.updateForm(payrollPeriod);
-      }
-
-      this.loadRelationshipsOptions();
-    });
-  }
-
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    this.dataUtils.openFile(base64String, contentType);
-  }
-
-  setFileData(event: Event, field: string, isImage: boolean): void {
-    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
-      error: (err: FileLoadError) =>
-        this.eventManager.broadcast(new EventWithContent<AlertErrorModel>('paieZoneRhApp.error', { ...err, key: `error.file.${err.key}` })),
-    });
-  }
-
-  previousState(): void {
-    globalThis.history.back();
-  }
-
-  save(): void {
-    this.isSaving.set(true);
-    const payrollPeriod = this.payrollPeriodFormService.getPayrollPeriod(this.editForm);
-    if (payrollPeriod.id === null) {
-      this.subscribeToSaveResponse(this.payrollPeriodService.create(payrollPeriod));
-    } else {
-      this.subscribeToSaveResponse(this.payrollPeriodService.update(payrollPeriod));
+    const data = this.route.snapshot.data['payrollPeriod'] as IPayrollPeriod | null;
+    if (data?.id) {
+      this.isEdit = true;
+      this.form.patchValue(data as any);
     }
   }
 
-  protected subscribeToSaveResponse(result: Observable<IPayrollPeriod | null>): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
-      next: () => this.onSaveSuccess(),
-      error: () => this.onSaveError(),
+  invalid(f: string): boolean {
+    const c = this.form.get(f);
+    return !!(c?.invalid && (c.dirty || c.touched));
+  }
+  getMonthLabel(m: number): string {
+    return MONTH_LABELS[m] ?? String(m);
+  }
+  save(): void {
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    this.saving = true;
+    const val = this.form.value as IPayrollPeriod;
+    const req$ = this.isEdit ? this.svc.update(val) : this.svc.create(val);
+    req$.pipe(finalize(() => (this.saving = false))).subscribe({
+      next: () => this.router.navigate(['/payroll-periods']),
+      error: err => alert(err?.error?.detail ?? 'Erreur lors de la sauvegarde.'),
     });
-  }
-
-  protected onSaveSuccess(): void {
-    this.previousState();
-  }
-
-  protected onSaveError(): void {
-    // Api for inheritance.
-  }
-
-  protected onSaveFinalize(): void {
-    this.isSaving.set(false);
-  }
-
-  protected updateForm(payrollPeriod: IPayrollPeriod): void {
-    this.payrollPeriod = payrollPeriod;
-    this.payrollPeriodFormService.resetForm(this.editForm, payrollPeriod);
-
-    this.companiesSharedCollection.update(companies =>
-      this.companyService.addCompanyToCollectionIfMissing<ICompany>(companies, payrollPeriod.company),
-    );
-    this.userProfilesSharedCollection.update(userProfiles =>
-      this.userProfileService.addUserProfileToCollectionIfMissing<IUserProfile>(userProfiles, payrollPeriod.createdBy),
-    );
-  }
-
-  protected loadRelationshipsOptions(): void {
-    this.companyService
-      .query()
-      .pipe(map((res: HttpResponse<ICompany[]>) => res.body ?? []))
-      .pipe(
-        map((companies: ICompany[]) =>
-          this.companyService.addCompanyToCollectionIfMissing<ICompany>(companies, this.payrollPeriod?.company),
-        ),
-      )
-      .subscribe((companies: ICompany[]) => this.companiesSharedCollection.set(companies));
-
-    this.userProfileService
-      .query()
-      .pipe(map((res: HttpResponse<IUserProfile[]>) => res.body ?? []))
-      .pipe(
-        map((userProfiles: IUserProfile[]) =>
-          this.userProfileService.addUserProfileToCollectionIfMissing<IUserProfile>(userProfiles, this.payrollPeriod?.createdBy),
-        ),
-      )
-      .subscribe((userProfiles: IUserProfile[]) => this.userProfilesSharedCollection.set(userProfiles));
   }
 }

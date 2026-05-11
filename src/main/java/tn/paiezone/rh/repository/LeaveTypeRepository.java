@@ -1,12 +1,15 @@
 package tn.paiezone.rh.repository;
 
-import org.springframework.data.jpa.repository.*;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import tn.paiezone.rh.domain.LeaveType;
+import tn.paiezone.rh.domain.enumeration.LeaveTypeName;
 
-/**
- * Spring Data JPA repository for the LeaveType entity.
- */
-@SuppressWarnings("unused")
-@Repository
-public interface LeaveTypeRepository extends JpaRepository<LeaveType, Long> {}
+import java.util.List;
+import java.util.Optional;
+
+public interface LeaveTypeRepository extends JpaRepository<LeaveType, Long> {
+
+    Optional<LeaveType> findByName(LeaveTypeName name);
+
+    List<LeaveType> findByActiveTrueOrderByNameAsc();
+}

@@ -1,18 +1,26 @@
-import { IEmployee } from 'app/entities/employee/employee.model';
-import { BonusType } from 'app/entities/enumerations/bonus-type.model';
-import { IPaySlip } from 'app/entities/pay-slip/pay-slip.model';
-
+// src/main/webapp/app/entities/bonus/bonus.model.ts
 export interface IBonus {
   id: number;
-  bonusType?: keyof typeof BonusType | null;
+  bonusType?: string | null;
   label?: string | null;
   amount?: number | null;
   taxable?: boolean | null;
   month?: number | null;
   year?: number | null;
   notes?: string | null;
-  employee?: Pick<IEmployee, 'id'> | null;
-  paySlip?: Pick<IPaySlip, 'id'> | null;
+  employeeId?: number | null;
+  paySlipId?: number | null;
 }
-
 export type NewBonus = Omit<IBonus, 'id'> & { id: null };
+
+export const BONUS_TYPES = [
+  'PERFORMANCE',
+  'ANCIENNETE',
+  'TRANSPORT',
+  'REPAS',
+  'LOGEMENT',
+  'EXCEPTIONNELLE',
+  'AUTRE'
+] as const;
+
+export type BonusTypeValue = typeof BONUS_TYPES[number];

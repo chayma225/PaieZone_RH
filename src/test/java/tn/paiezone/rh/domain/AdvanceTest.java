@@ -1,13 +1,12 @@
 package tn.paiezone.rh.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static tn.paiezone.rh.domain.AdvanceTestSamples.*;
-import static tn.paiezone.rh.domain.EmployeeTestSamples.*;
-import static tn.paiezone.rh.domain.PaySlipTestSamples.*;
-import static tn.paiezone.rh.domain.UserProfileTestSamples.*;
-
 import org.junit.jupiter.api.Test;
 import tn.paiezone.rh.web.rest.TestUtil;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static tn.paiezone.rh.domain.AdvanceTestSamples.*;
+import static tn.paiezone.rh.domain.EmployeeTestSamples.getEmployeeRandomSampleGenerator;
+import static tn.paiezone.rh.domain.PaySlipTestSamples.getPaySlipRandomSampleGenerator;
 
 class AdvanceTest {
 
@@ -50,14 +49,11 @@ class AdvanceTest {
     }
 
     @Test
-    void approvedByUserTest() {
+    void approvedByTest() {
         Advance advance = getAdvanceRandomSampleGenerator();
-        UserProfile userProfileBack = getUserProfileRandomSampleGenerator();
-
-        advance.setApprovedByUser(userProfileBack);
-        assertThat(advance.getApprovedByUser()).isEqualTo(userProfileBack);
-
-        advance.approvedByUser(null);
-        assertThat(advance.getApprovedByUser()).isNull();
+        advance.setApprovedBy("manager1");
+        assertThat(advance.getApprovedBy()).isEqualTo("manager1");
+        advance.setApprovedBy(null);
+        assertThat(advance.getApprovedBy()).isNull();
     }
 }

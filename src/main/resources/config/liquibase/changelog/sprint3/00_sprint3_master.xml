@@ -5,13 +5,40 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-  <include file="config/liquibase/changelog/sprint3/01_payroll_params.xml"
+  <!-- Création des tables -->
+  <include file="config/liquibase/changelog/sprint3/01_create_payroll_tables.xml"
            relativeToChangelogFile="false"/>
-  <include file="config/liquibase/changelog/sprint3/02_tax_brackets_2026.xml"
+  <include file="config/liquibase/changelog/sprint3/02_create_leave_tables.xml"
            relativeToChangelogFile="false"/>
-  <include file="config/liquibase/changelog/sprint3/03_leave_types.xml"
-           relativeToChangelogFile="false"/>
-  <include file="config/liquibase/changelog/sprint3/04_public_holidays_2026.xml"
+  <include file="config/liquibase/changelog/sprint3/03_create_timeentry_table.xml"
            relativeToChangelogFile="false"/>
 
+  <!-- Seed données réglementaires -->
+  <include file="config/liquibase/changelog/sprint3/04_cnss_rates_seed.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/05_tax_brackets_seed.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/10_fix_regulatory_param_category.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/06_regulatory_params_seed.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/07_leave_types_seed.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/08_public_holidays_seed.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/09_added_column_PaySlip_advanceDeduction.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/11_add_payroll_period_columns.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/12_add_rubrique_missing_columns.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/13_fix_payroll_period_missing_fields.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/14_fix_rubrique_audit_columns.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/15_fix_payslip_audit_columns.xml" relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/16_fix_regulatory_param_missing_cols.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/17_add_missing_pay_slip_columns_and_params.xml"
+           relativeToChangelogFile="false"/>
 </databaseChangeLog>

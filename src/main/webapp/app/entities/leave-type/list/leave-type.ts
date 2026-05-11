@@ -1,4 +1,5 @@
 import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, ParamMap, Router, RouterLink } from '@angular/router';
 
@@ -19,7 +20,9 @@ import { LeaveTypeService } from '../service/leave-type.service';
 @Component({
   selector: 'pz-leave-type',
   templateUrl: './leave-type.html',
+  standalone: true,
   imports: [
+    CommonModule,
     RouterLink,
     FormsModule,
     FontAwesomeModule,
@@ -39,7 +42,6 @@ export class LeaveType implements OnInit {
 
   readonly router = inject(Router);
   protected readonly leaveTypeService = inject(LeaveTypeService);
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   readonly isLoading = this.leaveTypeService.leaveTypesResource.isLoading;
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
@@ -47,8 +49,24 @@ export class LeaveType implements OnInit {
 
   constructor() {
     effect(() => {
-      this.leaveTypes.set(this.fillComponentAttributesFromResponseBody([...this.leaveTypeService.leaveTypes()]));
-    });
+      const data = this.leaveTypeService.leaveTypes() ?? [];
+      this.leaveTypes.set(this.fillComponentAttributesFromResponseBody([...data]));
+    }, { allowSignalWrites: true });
+  }
+
+
+  getBadgeStyle(name: string): { color: string, bg: string, border: string } {
+    const styles: Record<string, { color: string, bg: string, border: string }> = {
+      ANNUAL: { color: '#1d4ed8', bg: '#eff6ff', border: '#dbeafe' },      // Bleu
+      SICK: { color: '#dc2626', bg: '#fef2f2', border: '#fee2e2' },        // Rouge
+      MATERNITY: { color: '#7c3aed', bg: '#f5f3ff', border: '#ede9fe' },   // Violet
+      PATERNITY: { color: '#2563eb', bg: '#eff6ff', border: '#dbeafe' },   // Bleu clair
+      UNPAID: { color: '#d97706', bg: '#fffbeb', border: '#fef3c7' },      // Orange
+      MARRIAGE: { color: '#db2777', bg: '#fdf2f8', border: '#fce7f3' },    // Rose
+      BEREAVEMENT: { color: '#4b5563', bg: '#f9fafb', border: '#f3f4f6' }, // Gris
+      EXCEPTIONAL: { color: '#059669', bg: '#f0fdf4', border: '#dcfce7' }, // Vert
+    };
+    return styles[name] || { color: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
   }
 
   trackId = (item: ILeaveType): number => this.leaveTypeService.getLeaveTypeIdentifier(item);
@@ -57,11 +75,7 @@ export class LeaveType implements OnInit {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        tap(() => {
-          if (this.leaveTypes().length === 0) {
-            this.load();
-          }
-        }),
+        tap(() => this.load()),
       )
       .subscribe();
   }
@@ -69,7 +83,6 @@ export class LeaveType implements OnInit {
   delete(leaveType: ILeaveType): void {
     const modalRef = this.modalService.open(LeaveTypeDeleteDialog, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.leaveType = leaveType;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),

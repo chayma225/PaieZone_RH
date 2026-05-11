@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- ══════════════════════════════════════════════════════════
+       pay_slip — colonnes manquantes dans le DDL original
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-add-pay-slip-missing-cols" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="employer_cavis"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="employer_cavis"       type="decimal(21,2)"/>
+      <column name="paid_leave_days"       type="integer"/>
+      <column name="unpaid_days"           type="integer"/>
+      <column name="sent_to_employee_at"   type="timestamp"/>
+      <column name="bank_transfer_ref"     type="varchar(100)"/>
+      <column name="created_by"            type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_date"          type="timestamp"
+              defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_by"      type="varchar(50)"/>
+      <column name="last_modified_date"    type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       pay_slip_line — FK vers rubrique manquante
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-add-pay-slip-line-rubrique-fk" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip_line"/>
+      <not><columnExists tableName="pay_slip_line" columnName="rubrique_id"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip_line">
+      <column name="rubrique_id" type="bigint"/>
+    </addColumn>
+    <addForeignKeyConstraint
+      baseTableName="pay_slip_line" baseColumnNames="rubrique_id"
+      referencedTableName="rubrique" referencedColumnNames="id"
+      constraintName="fk_pay_slip_line_rubrique"/>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       bonus — bonus_type + champs audit manquants
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-add-bonus-missing-cols" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="bonus"/>
+      <not><columnExists tableName="bonus" columnName="bonus_type"/></not>
+    </preConditions>
+    <addColumn tableName="bonus">
+      <column name="bonus_type" type="varchar(30)"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       advance — pay_slip_id + champs manquants
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-add-advance-pay-slip-fk" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="pay_slip_id"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="pay_slip_id"  type="bigint"/>
+      <column name="approved_at"  type="timestamp"/>
+    </addColumn>
+    <addForeignKeyConstraint
+      baseTableName="advance" baseColumnNames="pay_slip_id"
+      referencedTableName="pay_slip" referencedColumnNames="id"
+      constraintName="fk_advance_pay_slip"/>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       time_entry — source + late_minutes manquants
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-add-time-entry-missing-cols" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="time_entry"/>
+      <not><columnExists tableName="time_entry" columnName="source"/></not>
+    </preConditions>
+    <addColumn tableName="time_entry">
+      <column name="source"       type="varchar(20)" defaultValue="MANUAL">
+        <constraints nullable="false"/>
+      </column>
+      <column name="late_minutes" type="integer"/>
+      <column name="notes"        type="varchar(500)"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

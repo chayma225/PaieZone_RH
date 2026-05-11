@@ -81,6 +81,6 @@ public class TimeEntryAsserts {
         assertThat(actual)
             .as("Verify TimeEntry relationships")
             .satisfies(a -> assertThat(a.getEmployee()).as("check employee").isEqualTo(expected.getEmployee()))
-            .satisfies(a -> assertThat(a.getValidatedByUser()).as("check validatedByUser").isEqualTo(expected.getValidatedByUser()));
+            .satisfies(a -> assertThat(a.getValidatedBy()).as("check validatedByUser").isEqualTo(expected.getValidatedBy()));
     }
 }

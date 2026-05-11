@@ -1,153 +1,119 @@
-<div>
-  <h2 id="page-heading" data-cy="LeaveTypeHeading">
-    <span pzTranslate="paieZoneRhApp.leaveType.home.title">LeaveTypes</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
-        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
-        <span pzTranslate="paieZoneRhApp.leaveType.home.refreshListLabel">Actualiser la liste</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-leave-type"
-        [routerLink]="['/leave-type/new']"
-      >
-        <fa-icon icon="plus" />
-        <span pzTranslate="paieZoneRhApp.leaveType.home.createLabel">Créer un nouveau Leave Type</span>
-      </button>
+<div class="rp-page">
+  <div class="rp-header">
+    <div class="rp-header__left">
+      <div class="rp-header__icon text-primary">
+        <fa-icon icon="calendar-check"></fa-icon>
+      </div>
+      <div>
+        <h1 class="rp-header__title" pzTranslate="paieZoneRhApp.leaveType.home.title">Types de Congés</h1>
+        <p class="rp-header__subtitle">
+          Configuration des quotas, reports et règles de rémunération par type d'absence.
+        </p>
+      </div>
     </div>
-  </h2>
+    <div class="d-flex gap-2">
+      <button class="btn-ghost" (click)="load()" [disabled]="isLoading()">
+        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined"></fa-icon>
+        <span class="ms-1">Actualiser</span>
+      </button>
+      <a class="btn-primary" [routerLink]="['/leave-type/new']">
+        <span>+</span> Nouveau Type
+      </a>
+    </div>
+  </div>
 
-  <pz-alert-error />
-
-  <pz-alert />
+  <pz-alert-error></pz-alert-error>
+  <pz-alert></pz-alert>
 
   @if (leaveTypes().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span pzTranslate="paieZoneRhApp.leaveType.home.notFound">Aucun Leave Type trouvé</span>
+    <div class="rp-empty text-center py-5">
+      <div class="rp-empty__icon text-muted">📅</div>
+      <p class="rp-empty__text" pzTranslate="paieZoneRhApp.leaveType.home.notFound">
+        Aucun type de congé configuré pour le moment.
+      </p>
+      <a class="btn-primary" [routerLink]="['/leave-type/new']">Créer le premier type</a>
     </div>
   } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
+    <div class="rp-table-wrapper border shadow-sm rounded-3 overflow-hidden bg-white">
+      <table class="rp-table w-100 border-collapse" pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
         <thead>
-          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" pzSortBy="id">
-              <div class="d-flex">
-                <span pzTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="name">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.name">Name</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="label">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.label">Label</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="maxDaysPerYear">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.maxDaysPerYear">Max Days Per Year</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="carryOverDays">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.carryOverDays">Carry Over Days</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="paid">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.paid">Paid</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="requiresMedical">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.requiresMedical">Requires Medical</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="active">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.active">Active</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="company.id">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.leaveType.company">Company</span>
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
+        <tr>
+          <th class="rp-table__th text-start py-3 px-4" pzSortBy="id" style="width: 8%">ID <fa-icon icon="sort" class="ms-1 small text-muted"></fa-icon></th>
+          <th class="rp-table__th text-start py-3 px-3" pzSortBy="name" style="width: 15%">Code <fa-icon icon="sort" class="ms-1 small text-muted"></fa-icon></th>
+          <th class="rp-table__th text-start py-3 px-3" pzSortBy="label" style="width: 25%">Libellé <fa-icon icon="sort" class="ms-1 small text-muted"></fa-icon></th>
+          <th class="rp-table__th text-center py-3 px-3" pzSortBy="maxDaysPerYear" style="width: 12%">Quota/An <fa-icon icon="sort" class="ms-1 small text-muted"></fa-icon></th>
+          <th class="rp-table__th text-center py-3 px-3" style="width: 10%">Rémunéré</th>
+          <th class="rp-table__th text-center py-3 px-3" style="width: 10%">Statut</th>
+          <th class="rp-table__th text-start py-3 px-3" style="width: 10%">Entreprise</th>
+          <th class="rp-table__th text-center py-3 px-4" style="width: 10%">Actions</th>
+        </tr>
         </thead>
         <tbody>
           @for (leaveType of leaveTypes(); track trackId(leaveType)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/leave-type', leaveType.id, 'view']">{{ leaveType.id }}</a>
+            <tr class="rp-table__row border-bottom" [class.rp-table__row--inactive]="!leaveType.active">
+              <td class="rp-table__td px-4">
+                <span class="rp-param-cell__code text-muted">#{{ leaveType.id }}</span>
               </td>
-              <td [pzTranslate]="'paieZoneRhApp.LeaveTypeName.' + (leaveType.name ?? 'null')">
-                {{
-                  {
-                    null: '',
-                    ANNUAL: 'ANNUAL',
-                    SICK: 'SICK',
-                    MATERNITY: 'MATERNITY',
-                    PATERNITY: 'PATERNITY',
-                    UNPAID: 'UNPAID',
-                    MARRIAGE: 'MARRIAGE',
-                    BEREAVEMENT: 'BEREAVEMENT',
-                    EXCEPTIONAL: 'EXCEPTIONAL',
-                  }[leaveType.name ?? 'null']
-                }}
+
+              <td class="rp-table__td px-3">
+                <span class="rp-badge"
+                      [ngStyle]="{
+                    'color': getBadgeStyle(leaveType.name!).color,
+                    'background-color': getBadgeStyle(leaveType.name!).bg,
+                    'border-color': getBadgeStyle(leaveType.name!).border
+                  }">
+                  {{
+                    {
+                      ANNUAL: 'Annuel',
+                      SICK: 'Maladie',
+                      MATERNITY: 'Maternité',
+                      PATERNITY: 'Paternité',
+                      UNPAID: 'Sans Solde',
+                      MARRIAGE: 'Mariage',
+                      BEREAVEMENT: 'Deuil',
+                      EXCEPTIONAL: 'Exceptionnel'
+                    }[leaveType.name!] || leaveType.name
+                  }}
+                </span>
               </td>
-              <td>{{ leaveType.label }}</td>
-              <td>{{ leaveType.maxDaysPerYear }}</td>
-              <td>{{ leaveType.carryOverDays }}</td>
-              <td>{{ leaveType.paid }}</td>
-              <td>{{ leaveType.requiresMedical }}</td>
-              <td>{{ leaveType.active }}</td>
-              <td>
+
+              <td class="rp-table__td px-3 fw-semibold">
+                {{ leaveType.label }}
+              </td>
+
+              <td class="rp-table__td px-3 text-center">
+                <div class="rp-value-cell d-flex justify-content-center align-items-baseline gap-1">
+                  <span class="rp-value-cell__number text-primary fw-bold fs-5">{{ leaveType.maxDaysPerYear }}</span>
+                  <span class="rp-value-cell__unit text-muted small">j</span>
+                </div>
+              </td>
+
+              <td class="rp-table__td px-3 text-center">
+                <span class="rp-status" [class.rp-status--active]="leaveType.paid">
+                   {{ leaveType.paid ? 'Payé' : 'Non payé' }}
+                </span>
+              </td>
+
+              <td class="rp-table__td px-3 text-center">
+                <span class="rp-status" [class.rp-status--active]="leaveType.active">
+                  {{ leaveType.active ? 'Actif' : 'Inactif' }}
+                </span>
+              </td>
+
+              <td class="rp-table__td px-3">
                 @if (leaveType.company) {
-                  <div>
-                    <a [routerLink]="['/company', leaveType.company.id, 'view']">{{ leaveType.company.id }}</a>
+                  <div class="d-flex align-items-center gap-1 small text-muted">
+                    <fa-icon icon="building"></fa-icon>
+                    <span>{{ leaveType.company.id }}</span>
                   </div>
                 }
               </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/leave-type', leaveType.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
-                  </a>
 
-                  <a [routerLink]="['/leave-type', leaveType.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(leaveType)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
-                  </button>
+              <td class="rp-table__td px-4 text-center">
+                <div class="rp-actions d-flex gap-1 justify-content-center">
+                  <a class="rp-action-btn rp-action-btn--view" [routerLink]="['/leave-type', leaveType.id, 'view']" title="Voir">Voir</a>
+                  <a class="rp-action-btn rp-action-btn--edit" [routerLink]="['/leave-type', leaveType.id, 'edit']" title="Modifier">Modifier</a>
+                  <button class="rp-action-btn rp-action-btn--delete" (click)="delete(leaveType)" title="Supprimer">Suppr.</button>
                 </div>
               </td>
             </tr>
@@ -155,5 +121,74 @@
         </tbody>
       </table>
     </div>
+
+    <div class="rp-total mt-3 text-end text-muted small">
+      {{ leaveTypes().length }} type(s) de congé affiché(s)
+    </div>
   }
 </div>
+
+<style>
+  :host {
+    --primary: #1d4ed8; --primary-lt: #eff6ff;
+    --success: #059669; --danger: #dc2626;
+    --gray-50: #f8fafc; --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0; --gray-400: #94a3b8;
+    --gray-600: #475569; --gray-700: #334155; --gray-900: #0f172a;
+    --radius: 10px; --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .rp-page { padding: 28px 32px; max-width: 1300px; margin: 0 auto;
+    font-family: 'Segoe UI', system-ui, sans-serif; color: var(--gray-900); }
+  .rp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .rp-header__left { display: flex; align-items: center; gap: 14px; }
+  .rp-header__icon { font-size: 30px; }
+  .rp-header__title { font-size: 21px; font-weight: 700; margin: 0 0 2px; }
+  .rp-header__subtitle { font-size: 13px; color: var(--gray-600); margin: 0; }
+
+  .btn-primary { display: inline-flex; align-items: center; gap: 6px;
+    background: var(--primary); color: #fff; border: none; border-radius: var(--radius);
+    padding: 9px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
+    text-decoration: none; transition: background .15s; }
+  .btn-primary:hover { background: #1e40af; color: #fff; }
+
+  .btn-ghost { background: transparent; color: var(--gray-600);
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+    padding: 9px 18px; font-size: 14px; cursor: pointer; transition: all .15s; }
+  .btn-ghost:hover { border-color: var(--gray-400); }
+
+  .rp-table-wrapper { background: white; border-radius: 12px;
+    border: 1.5px solid var(--gray-200); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .rp-table { width: 100%; border-collapse: collapse; }
+  .rp-table__th { padding: 12px 16px; font-size: 11px; font-weight: 600;
+    color: var(--gray-600); text-transform: uppercase; letter-spacing: .05em;
+    background: var(--gray-50); border-bottom: 1.5px solid var(--gray-200); white-space: nowrap; }
+  .rp-table__row { border-bottom: 1px solid var(--gray-100); transition: background .1s; }
+  .rp-table__row:hover { background: var(--gray-50); }
+  .rp-table__row--inactive { opacity: .55; }
+  .rp-table__td { padding: 13px 16px; font-size: 14px; vertical-align: middle; }
+
+  .rp-param-cell__code { font-size: 11px; font-family: monospace;
+    background: var(--gray-100); color: var(--gray-600);
+    padding: 1px 7px; border-radius: 4px; width: fit-content; }
+
+  .rp-badge { display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1px solid; white-space: nowrap; }
+
+  .rp-value-cell__number { font-weight: 700; font-size: 16px; }
+  .rp-value-cell__unit { font-size: 12px; color: var(--gray-600); }
+
+  .rp-status { font-size: 11px; font-weight: 700; padding: 3px 8px;
+    border-radius: 10px; background: #fef2f2; color: var(--danger); }
+  .rp-status--active { background: #f0fdf4; color: var(--success); }
+
+  .rp-actions { display: flex; gap: 4px; justify-content: center; }
+  .rp-action-btn { height: 28px; padding: 0 10px; border: none; border-radius: 7px;
+    cursor: pointer; font-size: 11px; font-weight: 600; display: inline-flex;
+    align-items: center; justify-content: center;
+    text-decoration: none; transition: all .15s; }
+  .rp-action-btn--view   { background: #f0fdf4; color: var(--success); }
+  .rp-action-btn--edit   { background: #eff6ff; color: var(--primary); }
+  .rp-action-btn--delete { background: #fef2f2; color: var(--danger); }
+  .rp-action-btn:hover { filter: brightness(0.95); }
+</style>

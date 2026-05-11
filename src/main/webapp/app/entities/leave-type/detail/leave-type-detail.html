@@ -1,78 +1,148 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (leaveType(); as leaveTypeRef) {
-      <div>
-        <h2 data-cy="leaveTypeDetailsHeading"><span pzTranslate="paieZoneRhApp.leaveType.detail.title">Leave Type</span></h2>
-
-        <hr />
-
-        <pz-alert-error />
-
-        <pz-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span pzTranslate="global.field.id">ID</span></dt>
-          <dd>
-            <span>{{ leaveTypeRef.id }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.name">Name</span></dt>
-          <dd>
-            <span [pzTranslate]="'paieZoneRhApp.LeaveTypeName.' + (leaveTypeRef.name ?? 'null')">{{
-              {
-                null: '',
-                ANNUAL: 'ANNUAL',
-                SICK: 'SICK',
-                MATERNITY: 'MATERNITY',
-                PATERNITY: 'PATERNITY',
-                UNPAID: 'UNPAID',
-                MARRIAGE: 'MARRIAGE',
-                BEREAVEMENT: 'BEREAVEMENT',
-                EXCEPTIONAL: 'EXCEPTIONAL',
-              }[leaveTypeRef.name ?? 'null']
-            }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.label">Label</span></dt>
-          <dd>
-            <span>{{ leaveTypeRef.label }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.maxDaysPerYear">Max Days Per Year</span></dt>
-          <dd>
-            <span>{{ leaveTypeRef.maxDaysPerYear }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.carryOverDays">Carry Over Days</span></dt>
-          <dd>
-            <span>{{ leaveTypeRef.carryOverDays }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.paid">Paid</span></dt>
-          <dd>
-            <span>{{ leaveTypeRef.paid }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.requiresMedical">Requires Medical</span></dt>
-          <dd>
-            <span>{{ leaveTypeRef.requiresMedical }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.active">Active</span></dt>
-          <dd>
-            <span>{{ leaveTypeRef.active }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.leaveType.company">Company</span></dt>
-          <dd>
-            @if (leaveType()!.company) {
-              <div>
-                <a [routerLink]="['/company', leaveType()!.company?.id, 'view']">{{ leaveTypeRef.company?.id }}</a>
-              </div>
-            }
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
+<div class="rp-page">
+  @if (leaveType(); as leaveTypeRef) {
+    <div class="rp-header mb-4">
+      <div class="rp-header__left">
+        <button (click)="previousState()" class="btn-ghost me-3" title="Retour">
+          <fa-icon icon="arrow-left"></fa-icon>
         </button>
-
-        <button type="button" [routerLink]="['/leave-type', leaveTypeRef.id, 'edit']" class="btn btn-primary">
-          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        <div>
+          <div class="d-flex align-items-center gap-2">
+            <h1 class="rp-header__title">Détails du Type de Congé</h1>
+            <span class="rp-status" [class.rp-status--active]="leaveTypeRef.active">
+              {{ leaveTypeRef.active ? 'Actif' : 'Inactif' }}
+            </span>
+          </div>
+          <p class="rp-header__subtitle">ID système : #{{ leaveTypeRef.id }}</p>
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <button [routerLink]="['/leave-type', leaveTypeRef.id, 'edit']" class="btn-primary">
+          <fa-icon icon="pencil-alt" class="me-1"></fa-icon>
+          <span>Modifier la configuration</span>
         </button>
       </div>
-    }
-  </div>
+    </div>
+
+    <pz-alert-error></pz-alert-error>
+    <pz-alert></pz-alert>
+
+    <div class="row g-4">
+      <div class="col-md-7">
+        <div class="rp-table-wrapper p-4 bg-white shadow-sm border rounded-3">
+          <h3 class="fs-6 fw-bold text-uppercase text-muted mb-4 border-bottom pb-2">Identification & Libellé</h3>
+
+          <div class="mb-4">
+            <label class="small text-muted d-block mb-1">Type de congé (Code)</label>
+            <span class="rp-badge px-3 py-2 fs-6"
+                  [ngStyle]="{
+                    'color': getBadgeStyle(leaveTypeRef.name!).color,
+                    'background-color': getBadgeStyle(leaveTypeRef.name!).bg,
+                    'border-color': getBadgeStyle(leaveTypeRef.name!).border
+                  }">
+              {{
+                {
+                  ANNUAL: 'Annuel',
+                  SICK: 'Maladie',
+                  MATERNITY: 'Maternité',
+                  PATERNITY: 'Paternité',
+                  UNPAID: 'Sans Solde',
+                  MARRIAGE: 'Mariage',
+                  BEREAVEMENT: 'Deuil',
+                  EXCEPTIONAL: 'Exceptionnel'
+                }[leaveTypeRef.name!] || leaveTypeRef.name
+              }}
+            </span>
+          </div>
+
+          <div class="mb-0">
+            <label class="small text-muted d-block mb-1">Libellé complet</label>
+            <p class="fw-bold fs-5 mb-0 text-dark">{{ leaveTypeRef.label }}</p>
+          </div>
+        </div>
+
+        <div class="rp-table-wrapper p-4 bg-white shadow-sm border rounded-3 mt-4">
+          <h3 class="fs-6 fw-bold text-uppercase text-muted mb-4 border-bottom pb-2">Règles Métier</h3>
+
+          <div class="row text-center">
+            <div class="col-6 border-end">
+              <label class="small text-muted d-block mb-2">Rémunération</label>
+              <div class="d-flex justify-content-center">
+                 <span class="rp-status" [class.rp-status--active]="leaveTypeRef.paid">
+                    <fa-icon [icon]="leaveTypeRef.paid ? 'check-circle' : 'times-circle'" class="me-1"></fa-icon>
+                   {{ leaveTypeRef.paid ? 'Congé Payé' : 'Sans Solde' }}
+                 </span>
+              </div>
+            </div>
+            <div class="col-6">
+              <label class="small text-muted d-block mb-2">Justificatif Médical</label>
+              <div class="d-flex justify-content-center">
+                 <span class="rp-status" [class.rp-status--active]="leaveTypeRef.requiresMedical">
+                    <fa-icon [icon]="leaveTypeRef.requiresMedical ? 'file-medical' : 'minus'" class="me-1"></fa-icon>
+                   {{ leaveTypeRef.requiresMedical ? 'Obligatoire' : 'Non requis' }}
+                 </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="rp-table-wrapper p-4 bg-white shadow-sm border rounded-3 h-100">
+          <h3 class="fs-6 fw-bold text-uppercase text-muted mb-4 border-bottom pb-2">Quotas & Validité</h3>
+
+          <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+            <div>
+              <label class="small text-muted d-block">Quota Annuel</label>
+              <span class="fs-3 fw-bold text-primary">{{ leaveTypeRef.maxDaysPerYear }}</span> <span class="text-muted">jours</span>
+            </div>
+            <fa-icon icon="calendar-day" class="fs-1 text-primary-lt"></fa-icon>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-4 p-3 border rounded">
+            <div>
+              <label class="small text-muted d-block">Report Maximum</label>
+              <span class="fs-4 fw-bold text-dark">{{ leaveTypeRef.carryOverDays }}</span> <span class="text-muted">jours</span>
+            </div>
+            <fa-icon icon="redo" class="fs-2 text-muted opacity-25"></fa-icon>
+          </div>
+
+          <div class="mt-auto pt-4 border-top">
+            <label class="small text-muted d-block mb-2">Entreprise rattachée</label>
+            @if (leaveTypeRef.company) {
+              <div class="d-flex align-items-center p-2 border rounded bg-white">
+                <fa-icon icon="building" class="text-primary me-2 ms-1"></fa-icon>
+                <a [routerLink]="['/company', leaveTypeRef.company.id, 'view']" class="fw-bold text-decoration-none">
+                  Compagnie #{{ leaveTypeRef.company.id }}
+                </a>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>
+
+<style>
+  /* Importation des variables et styles de base identiques à la liste */
+  :host {
+    --primary: #1d4ed8; --primary-lt: #eff6ff;
+    --success: #059669; --danger: #dc2626;
+    --gray-50: #f8fafc; --gray-200: #e2e8f0;
+    --gray-600: #475569; --gray-900: #0f172a;
+    --radius: 12px;
+  }
+  .rp-page { padding: 28px 32px; max-width: 1100px; margin: 0 auto; font-family: 'Segoe UI', sans-serif; }
+  .rp-header { display: flex; align-items: center; justify-content: space-between; }
+  .rp-header__title { font-size: 22px; font-weight: 700; margin: 0; }
+  .rp-header__subtitle { font-size: 13px; color: var(--gray-600); margin: 0; }
+
+  .btn-primary { background: var(--primary); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .btn-ghost { background: white; border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 8px 12px; color: var(--gray-600); cursor: pointer; }
+
+  .rp-badge { display: inline-flex; border: 1px solid; border-radius: 20px; font-weight: 600; }
+  .rp-status { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #fef2f2; color: var(--danger); }
+  .rp-status--active { background: #f0fdf4; color: var(--success); }
+
+  .text-primary-lt { color: #dbeafe; }
+</style>

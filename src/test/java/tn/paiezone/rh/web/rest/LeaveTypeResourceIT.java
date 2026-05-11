@@ -1,16 +1,7 @@
 package tn.paiezone.rh.web.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static tn.paiezone.rh.domain.LeaveTypeAsserts.*;
-import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +19,16 @@ import tn.paiezone.rh.repository.LeaveTypeRepository;
 import tn.paiezone.rh.service.dto.LeaveTypeDTO;
 import tn.paiezone.rh.service.mapper.LeaveTypeMapper;
 
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static tn.paiezone.rh.domain.LeaveTypeAsserts.*;
+import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
+
 /**
  * Integration tests for the {@link LeaveTypeResource} REST controller.
  */
@@ -36,8 +37,8 @@ import tn.paiezone.rh.service.mapper.LeaveTypeMapper;
 @WithMockUser
 class LeaveTypeResourceIT {
 
-    private static final LeaveTypeName DEFAULT_NAME = LeaveTypeName.ANNUAL;
-    private static final LeaveTypeName UPDATED_NAME = LeaveTypeName.SICK;
+    private static final LeaveTypeName DEFAULT_NAME = LeaveTypeName.ANNUEL;
+    private static final LeaveTypeName UPDATED_NAME = LeaveTypeName.MALADIE;
 
     private static final String DEFAULT_LABEL = "AAAAAAAAAA";
     private static final String UPDATED_LABEL = "BBBBBBBBBB";

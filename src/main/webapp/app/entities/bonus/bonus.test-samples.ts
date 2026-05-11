@@ -1,44 +1,60 @@
 import { IBonus, NewBonus } from './bonus.model';
 
+/**
+ * ✅ Données minimales obligatoires
+ * Adaptation du type : 'SENIORITY' -> 'ANCIENNETE'
+ */
 export const sampleWithRequiredData: IBonus = {
   id: 25835,
-  bonusType: 'SENIORITY',
-  label: 'de par',
-  amount: 26422.1,
+  bonusType: 'ANCIENNETE',
+  label: 'Prime d’ancienneté',
+  amount: 150.00,
   taxable: true,
-  month: 1,
-  year: 15807,
+  month: 5,
+  year: 2026,
 };
 
+/**
+ * ✅ Données partielles
+ */
 export const sampleWithPartialData: IBonus = {
   id: 16346,
   bonusType: 'TRANSPORT',
-  label: 'souple',
-  amount: 19630.41,
-  taxable: true,
-  month: 1,
-  year: 12118,
+  label: 'Indemnité transport',
+  amount: 60.00,
+  taxable: false,
+  month: 5,
+  year: 2026,
 };
 
+/**
+ * ✅ Données complètes
+ */
 export const sampleWithFullData: IBonus = {
   id: 9385,
-  bonusType: 'OTHER',
-  label: 'alors que considérable taper',
-  amount: 2846.09,
+  bonusType: 'EXCEPTIONNELLE',
+  label: 'Prime de rendement exceptionnelle',
+  amount: 500.00,
   taxable: true,
-  month: 1,
-  year: 1615,
-  notes: 'ensuite commis de cuisine glouglou',
+  month: 5,
+  year: 2026,
+  notes: 'Prime accordée pour le succès du projet PFE',
+  employeeId: 1,
+  paySlipId: 102
 };
 
+/**
+ * ✅ Nouveau bonus (sans ID)
+ * Adaptation du type : 'MEAL' -> 'REPAS'
+ */
 export const sampleWithNewData: NewBonus = {
-  bonusType: 'MEAL',
-  label: 'collègue défier décider',
-  amount: 29047.36,
-  taxable: true,
-  month: 10,
-  year: 7463,
   id: null,
+  bonusType: 'REPAS',
+  label: 'Tickets Repas',
+  amount: 120.00,
+  taxable: false,
+  month: 6,
+  year: 2026,
 };
 
 Object.freeze(sampleWithNewData);

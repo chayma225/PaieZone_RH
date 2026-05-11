@@ -7,6 +7,12 @@ import tn.paiezone.rh.service.dto.LeaveRequestDTO;
  * Service Interface for managing {@link tn.paiezone.rh.domain.LeaveRequest}.
  */
 public interface LeaveRequestService {
+    LeaveRequestDTO submit(LeaveRequestDTO dto);
+
+    LeaveRequestDTO approve(Long id, Long approvedById);
+
+    LeaveRequestDTO reject(Long id, String comment);
+
     /**
      * Save a leaveRequest.
      *

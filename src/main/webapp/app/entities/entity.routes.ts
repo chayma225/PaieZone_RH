@@ -161,6 +161,26 @@ const routes: Routes = [
     data: { pageTitle: 'userManagement.home.title' },
     loadChildren: () => import('./admin/user-management/user-management.routes'),
   },
+  {
+    path: 'payroll-period',
+    loadChildren: () => import('./payroll-period/payroll-period.routes'),
+  },
+  {
+    path: 'pay-slip',
+    loadChildren: () => import('./pay-slip/pay-slip.routes'),
+  },
+  {
+    path: 'bonus',
+    loadChildren: () => import('./bonus/bonus.routes'),
+  },
+  {
+    path: 'advance',
+    loadChildren: () => import('./advance/advance.routes'),
+  },
+  {
+    path: 'regulatory-param',
+    loadChildren: () => import('./regulatory-param/regulatory-param.routes'),
+  },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];
 

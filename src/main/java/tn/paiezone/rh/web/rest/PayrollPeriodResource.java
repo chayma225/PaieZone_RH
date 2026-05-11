@@ -1,180 +1,139 @@
 package tn.paiezone.rh.web.rest;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import tn.paiezone.rh.repository.PayrollPeriodRepository;
 import tn.paiezone.rh.service.PayrollPeriodService;
+import tn.paiezone.rh.service.dto.BulkCalculationResultDTO;
 import tn.paiezone.rh.service.dto.PayrollPeriodDTO;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
-/**
- * REST controller for managing {@link tn.paiezone.rh.domain.PayrollPeriod}.
- */
+import java.net.URI;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/payroll-periods")
+@RequiredArgsConstructor
+@Slf4j
 public class PayrollPeriodResource {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PayrollPeriodResource.class);
 
     private static final String ENTITY_NAME = "payrollPeriod";
 
-    @Value("${jhipster.clientApp.name:paieZoneRH}")
+    @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final PayrollPeriodService payrollPeriodService;
+    private final PayrollPeriodService periodService;
 
-    private final PayrollPeriodRepository payrollPeriodRepository;
+    // ── CRUD ──────────────────────────────────────────────────────
 
-    public PayrollPeriodResource(PayrollPeriodService payrollPeriodService, PayrollPeriodRepository payrollPeriodRepository) {
-        this.payrollPeriodService = payrollPeriodService;
-        this.payrollPeriodRepository = payrollPeriodRepository;
-    }
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    public ResponseEntity<PayrollPeriodDTO> createPeriod(
+        @Valid @RequestBody PayrollPeriodDTO dto) {
+        log.debug("REST POST /payroll-periods");
 
-    /**
-     * {@code POST  /payroll-periods} : Create a new payrollPeriod.
-     *
-     * @param payrollPeriodDTO the payrollPeriodDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new payrollPeriodDTO, or with status {@code 400 (Bad Request)} if the payrollPeriod has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PostMapping("")
-    public ResponseEntity<PayrollPeriodDTO> createPayrollPeriod(@Valid @RequestBody PayrollPeriodDTO payrollPeriodDTO)
-        throws URISyntaxException {
-        LOG.debug("REST request to save PayrollPeriod : {}", payrollPeriodDTO);
-        if (payrollPeriodDTO.getId() != null) {
-            throw new BadRequestAlertException("A new payrollPeriod cannot already have an ID", ENTITY_NAME, "idexists");
+        if (dto.getId() != null) {
+            return ResponseEntity.badRequest()
+                .headers(HeaderUtil.createFailureAlert(
+                    applicationName, true, ENTITY_NAME,
+                    "idexists", "Un nouvel objet ne peut avoir d'ID"))
+                .build();
         }
-        payrollPeriodDTO = payrollPeriodService.save(payrollPeriodDTO);
-        return ResponseEntity.created(new URI("/api/payroll-periods/" + payrollPeriodDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, payrollPeriodDTO.getId().toString()))
-            .body(payrollPeriodDTO);
+
+        PayrollPeriodDTO result = periodService.save(dto);
+        return ResponseEntity
+            .created(URI.create("/api/payroll-periods/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(
+                applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
-    /**
-     * {@code PUT  /payroll-periods/:id} : Updates an existing payrollPeriod.
-     *
-     * @param id the id of the payrollPeriodDTO to save.
-     * @param payrollPeriodDTO the payrollPeriodDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated payrollPeriodDTO,
-     * or with status {@code 400 (Bad Request)} if the payrollPeriodDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the payrollPeriodDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<PayrollPeriodDTO> updatePayrollPeriod(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody PayrollPeriodDTO payrollPeriodDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to update PayrollPeriod : {}, {}", id, payrollPeriodDTO);
-        if (payrollPeriodDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, payrollPeriodDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!payrollPeriodRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        payrollPeriodDTO = payrollPeriodService.update(payrollPeriodDTO);
+    @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    public ResponseEntity<PayrollPeriodDTO> updatePeriod(
+        @PathVariable Long id,
+        @Valid @RequestBody PayrollPeriodDTO dto) {
+        log.debug("REST PUT /payroll-periods/{}", id);
+        dto.setId(id);
+        PayrollPeriodDTO result = periodService.update(dto);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, payrollPeriodDTO.getId().toString()))
-            .body(payrollPeriodDTO);
+            .headers(HeaderUtil.createEntityUpdateAlert(
+                applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
-    /**
-     * {@code PATCH  /payroll-periods/:id} : Partial updates given fields of an existing payrollPeriod, field will ignore if it is null
-     *
-     * @param id the id of the payrollPeriodDTO to save.
-     * @param payrollPeriodDTO the payrollPeriodDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated payrollPeriodDTO,
-     * or with status {@code 400 (Bad Request)} if the payrollPeriodDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the payrollPeriodDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the payrollPeriodDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<PayrollPeriodDTO> partialUpdatePayrollPeriod(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody PayrollPeriodDTO payrollPeriodDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to partial update PayrollPeriod partially : {}, {}", id, payrollPeriodDTO);
-        if (payrollPeriodDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, payrollPeriodDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!payrollPeriodRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        Optional<PayrollPeriodDTO> result = payrollPeriodService.partialUpdate(payrollPeriodDTO);
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    public ResponseEntity<PayrollPeriodDTO> partialUpdatePeriod(
+        @PathVariable Long id,
+        @RequestBody PayrollPeriodDTO dto) {
+        dto.setId(id);
         return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, payrollPeriodDTO.getId().toString())
+            periodService.partialUpdate(dto),
+            HeaderUtil.createEntityUpdateAlert(
+                applicationName, true, ENTITY_NAME, id.toString())
         );
     }
 
-    /**
-     * {@code GET  /payroll-periods} : get all the Payroll Periods.
-     *
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Payroll Periods in body.
-     */
-    @GetMapping("")
-    public ResponseEntity<List<PayrollPeriodDTO>> getAllPayrollPeriods(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of PayrollPeriods");
-        Page<PayrollPeriodDTO> page = payrollPeriodService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+    @GetMapping
+    public ResponseEntity<List<PayrollPeriodDTO>> getAllPeriods(Pageable pageable) {
+        log.debug("REST GET /payroll-periods");
+        Page<PayrollPeriodDTO> page = periodService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+            ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /payroll-periods/:id} : get the "id" payrollPeriod.
-     *
-     * @param id the id of the payrollPeriodDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the payrollPeriodDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/{id}")
-    public ResponseEntity<PayrollPeriodDTO> getPayrollPeriod(@PathVariable("id") Long id) {
-        LOG.debug("REST request to get PayrollPeriod : {}", id);
-        Optional<PayrollPeriodDTO> payrollPeriodDTO = payrollPeriodService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(payrollPeriodDTO);
+    public ResponseEntity<PayrollPeriodDTO> getPeriod(@PathVariable Long id) {
+        log.debug("REST GET /payroll-periods/{}", id);
+        return ResponseUtil.wrapOrNotFound(periodService.findOne(id));
     }
 
-    /**
-     * {@code DELETE  /payroll-periods/:id} : delete the "id" payrollPeriod.
-     *
-     * @param id the id of the payrollPeriodDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePayrollPeriod(@PathVariable("id") Long id) {
-        LOG.debug("REST request to delete PayrollPeriod : {}", id);
-        payrollPeriodService.delete(id);
+    @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    public ResponseEntity<Void> deletePeriod(@PathVariable Long id) {
+        log.debug("REST DELETE /payroll-periods/{}", id);
+        periodService.delete(id);
         return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .headers(HeaderUtil.createEntityDeletionAlert(
+                applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    // ── ACTIONS MÉTIER ────────────────────────────────────────────
+
+    @PostMapping("/{id}/calculate-all")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    public ResponseEntity<BulkCalculationResultDTO> calculateAll(@PathVariable Long id) {
+        log.debug("REST POST /payroll-periods/{}/calculate-all", id);
+        BulkCalculationResultDTO result = periodService.triggerCalculation(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{id}/validate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    public ResponseEntity<Void> validatePeriod(@PathVariable Long id) {
+        log.debug("REST POST /payroll-periods/{}/validate", id);
+        periodService.validatePeriod(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/lock")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    public ResponseEntity<Void> lockPeriod(@PathVariable Long id) {
+        log.debug("REST POST /payroll-periods/{}/lock", id);
+        periodService.lockPeriod(id);
+        return ResponseEntity.ok().build();
     }
 }

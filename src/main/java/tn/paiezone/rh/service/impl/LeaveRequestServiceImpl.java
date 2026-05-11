@@ -1,75 +1,193 @@
 package tn.paiezone.rh.service.impl;
 
-import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tn.paiezone.rh.domain.LeaveBalance;
 import tn.paiezone.rh.domain.LeaveRequest;
+import tn.paiezone.rh.domain.PublicHoliday;
+import tn.paiezone.rh.domain.enumeration.LeaveStatus;
+import tn.paiezone.rh.repository.LeaveBalanceRepository;
 import tn.paiezone.rh.repository.LeaveRequestRepository;
+import tn.paiezone.rh.repository.PublicHolidayRepository;
 import tn.paiezone.rh.service.LeaveRequestService;
 import tn.paiezone.rh.service.dto.LeaveRequestDTO;
 import tn.paiezone.rh.service.mapper.LeaveRequestMapper;
 
-/**
- * Service Implementation for managing {@link tn.paiezone.rh.domain.LeaveRequest}.
- */
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
+@Slf4j
 public class LeaveRequestServiceImpl implements LeaveRequestService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LeaveRequestServiceImpl.class);
-
     private final LeaveRequestRepository leaveRequestRepository;
-
+    private final LeaveBalanceRepository leaveBalanceRepository;
     private final LeaveRequestMapper leaveRequestMapper;
+    private final PublicHolidayRepository publicHolidayRepository;
 
-    public LeaveRequestServiceImpl(LeaveRequestRepository leaveRequestRepository, LeaveRequestMapper leaveRequestMapper) {
-        this.leaveRequestRepository = leaveRequestRepository;
-        this.leaveRequestMapper = leaveRequestMapper;
+    @Override
+    public LeaveRequestDTO submit(LeaveRequestDTO dto) {
+        // Vérification des dates
+        if (dto.getStartDate() == null || dto.getEndDate() == null) {
+            throw new IllegalArgumentException("Les dates de début et de fin sont obligatoires");
+        }
+
+        int year = dto.getStartDate().getYear();
+
+        // 1. Vérifier le solde
+        // Note: Ajustez les getters selon votre DTO (ex: getEmployee().getId() ou getEmployeeId())
+        LeaveBalance balance = leaveBalanceRepository
+            .findByEmployeeIdAndLeaveTypeIdAndYear(
+                dto.getEmployee().getId(), dto.getLeaveType().getId(), year)
+            .orElseThrow(() -> new IllegalStateException(
+                "Aucun solde trouvé pour ce type de congé en " + year));
+
+        int workingDays = countWorkingDays(dto.getStartDate(), dto.getEndDate(), year);
+
+        if (workingDays <= 0) {
+            throw new IllegalStateException("La demande ne contient aucun jour ouvrable.");
+        }
+
+        if (balance.getRemaining().compareTo(BigDecimal.valueOf(workingDays)) < 0) {
+            throw new IllegalStateException(
+                "Solde insuffisant : " + balance.getRemaining() +
+                    " j disponibles, " + workingDays + " j demandés");
+        }
+
+        // 2. Bloquer les jours (pending)
+        balance.setPending(balance.getPending().add(BigDecimal.valueOf(workingDays)));
+        balance.setRemaining(balance.getRemaining().subtract(BigDecimal.valueOf(workingDays)));
+        leaveBalanceRepository.save(balance);
+
+        // 3. Sauvegarder la demande
+        LeaveRequest leaveRequest = leaveRequestMapper.toEntity(dto);
+        leaveRequest.setNumberOfDays(workingDays);
+        leaveRequest.setStatus(LeaveStatus.PENDING);
+        leaveRequest.setRequestedAt(Instant.now());
+
+        LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
+        log.info("📋 Congé demandé : emp#{} {} → {} ({} j)",
+            dto.getEmployee().getId(), dto.getStartDate(), dto.getEndDate(), workingDays);
+
+        return leaveRequestMapper.toDto(saved);
+    }
+
+    @Override
+    public LeaveRequestDTO approve(Long id, Long approvedById) {
+        LeaveRequest lr = getOrThrow(id);
+        assertStatus(lr, LeaveStatus.PENDING);
+
+        LeaveBalance balance = getBalance(lr);
+
+        // Passage de pending (réservé) à taken (consommé)
+        BigDecimal days = BigDecimal.valueOf(lr.getNumberOfDays());
+        balance.setPending(balance.getPending().subtract(days));
+        balance.setTaken(balance.getTaken().add(days));
+        leaveBalanceRepository.save(balance);
+
+        lr.setStatus(LeaveStatus.APPROVED);
+        lr.setProcessedAt(Instant.now());
+        // Optionnel: lr.setProcessedBy(employeeRepository.getReferenceById(approvedById));
+
+        log.info("✅ Congé #{} approuvé", id);
+        return leaveRequestMapper.toDto(leaveRequestRepository.save(lr));
+    }
+
+    @Override
+    public LeaveRequestDTO reject(Long id, String comment) {
+        LeaveRequest lr = getOrThrow(id);
+        assertStatus(lr, LeaveStatus.PENDING);
+
+        LeaveBalance balance = getBalance(lr);
+
+        // Restituer les jours : on enlève du pending et on remet dans le remaining
+        BigDecimal days = BigDecimal.valueOf(lr.getNumberOfDays());
+        balance.setPending(balance.getPending().subtract(days));
+        balance.setRemaining(balance.getRemaining().add(days));
+        leaveBalanceRepository.save(balance);
+
+        lr.setStatus(LeaveStatus.REJECTED);
+        lr.setProcessedAt(Instant.now());
+        lr.setManagerComment(comment);
+
+        log.info("❌ Congé #{} rejeté : {}", id, comment);
+        return leaveRequestMapper.toDto(leaveRequestRepository.save(lr));
+    }
+
+    public int countWorkingDays(LocalDate from, LocalDate to, int year) {
+        List<LocalDate> holidays = publicHolidayRepository
+            .findByYear(year).stream()
+            .map(PublicHoliday::getHolidayDate)
+            .toList();
+
+        int count = 0;
+        LocalDate current = from;
+        while (!current.isAfter(to)) {
+            DayOfWeek dow = current.getDayOfWeek();
+            // Logique standard : Samedi et Dimanche sont non-ouvrables
+            if (dow != DayOfWeek.SATURDAY &&
+                dow != DayOfWeek.SUNDAY  &&
+                !holidays.contains(current)) {
+                count++;
+            }
+            current = current.plusDays(1);
+        }
+        return count;
+    }
+
+    private LeaveRequest getOrThrow(Long id) {
+        return leaveRequestRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Congé introuvable : " + id));
+    }
+
+    private LeaveBalance getBalance(LeaveRequest lr) {
+        return leaveBalanceRepository
+            .findByEmployeeIdAndLeaveTypeIdAndYear(
+                lr.getEmployee().getId(),
+                lr.getLeaveType().getId(),
+                lr.getStartDate().getYear())
+            .orElseThrow(() -> new IllegalStateException("Solde introuvable"));
+    }
+
+    private void assertStatus(LeaveRequest lr, LeaveStatus expected) {
+        if (lr.getStatus() != expected) {
+            throw new IllegalStateException(
+                "Statut incorrect. Attendu : " + expected + ", Actuel : " + lr.getStatus());
+        }
     }
 
     @Override
     public LeaveRequestDTO save(LeaveRequestDTO leaveRequestDTO) {
-        LOG.debug("Request to save LeaveRequest : {}", leaveRequestDTO);
-        LeaveRequest leaveRequest = leaveRequestMapper.toEntity(leaveRequestDTO);
-        leaveRequest = leaveRequestRepository.save(leaveRequest);
-        return leaveRequestMapper.toDto(leaveRequest);
+        return null;
     }
 
     @Override
     public LeaveRequestDTO update(LeaveRequestDTO leaveRequestDTO) {
-        LOG.debug("Request to update LeaveRequest : {}", leaveRequestDTO);
-        LeaveRequest leaveRequest = leaveRequestMapper.toEntity(leaveRequestDTO);
-        leaveRequest = leaveRequestRepository.save(leaveRequest);
-        return leaveRequestMapper.toDto(leaveRequest);
+        return null;
     }
 
     @Override
     public Optional<LeaveRequestDTO> partialUpdate(LeaveRequestDTO leaveRequestDTO) {
-        LOG.debug("Request to partially update LeaveRequest : {}", leaveRequestDTO);
-
-        return leaveRequestRepository
-            .findById(leaveRequestDTO.getId())
-            .map(existingLeaveRequest -> {
-                leaveRequestMapper.partialUpdate(existingLeaveRequest, leaveRequestDTO);
-
-                return existingLeaveRequest;
-            })
-            .map(leaveRequestRepository::save)
-            .map(leaveRequestMapper::toDto);
+        return Optional.empty();
     }
 
+    // Ajout des méthodes CRUD manquantes pour l'interface
     @Override
-    @Transactional(readOnly = true)
     public Optional<LeaveRequestDTO> findOne(Long id) {
-        LOG.debug("Request to get LeaveRequest : {}", id);
         return leaveRequestRepository.findById(id).map(leaveRequestMapper::toDto);
     }
 
     @Override
     public void delete(Long id) {
-        LOG.debug("Request to delete LeaveRequest : {}", id);
         leaveRequestRepository.deleteById(id);
     }
 }

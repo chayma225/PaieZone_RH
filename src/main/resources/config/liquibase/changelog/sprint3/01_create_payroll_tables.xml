@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!--
+      CORRECTION POSTGRESQL :
+      autoIncrement="true" seul ne suffit pas pour PostgreSQL.
+      On utilise des séquences explicites comme le fait JHipster.
+      Chaque table a sa propre séquence nommée <table>_seq.
+      La colonne id utilise defaultValueSequenceNext="<table>_seq".
+  -->
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : cnss_rate
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-cnss-rate" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="cnss_rate"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="cnss_rate_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="cnss_rate">
+      <column name="id" type="bigint" defaultValueSequenceNext="cnss_rate_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="year" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="salary_ceiling" type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="employee_rate" type="decimal(6,4)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="employer_rate" type="decimal(6,4)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="cavis_employee" type="decimal(6,4)"/>
+      <column name="cavis_employer" type="decimal(6,4)"/>
+      <column name="smig"           type="decimal(15,3)"/>
+      <column name="effective_from" type="date">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addUniqueConstraint tableName="cnss_rate"
+                         columnNames="year"
+                         constraintName="ux_cnss_rate_year"/>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : tax_bracket
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-tax-bracket" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="tax_bracket"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="tax_bracket_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="tax_bracket">
+      <column name="id" type="bigint" defaultValueSequenceNext="tax_bracket_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="year"            type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="min_income"      type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="max_income"      type="decimal(15,3)"/>
+      <column name="rate"            type="decimal(6,4)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="fixed_deduction" type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sort_order"      type="integer">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="tax_bracket" indexName="idx_tax_bracket_year">
+      <column name="year"/>
+      <column name="sort_order"/>
+    </createIndex>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : regulatory_param
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-regulatory-param" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="regulatory_param"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="regulatory_param_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="regulatory_param">
+      <column name="id" type="bigint" defaultValueSequenceNext="regulatory_param_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="param_key"       type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="param_label"     type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="numeric_value"   type="decimal(15,4)"/>
+      <column name="string_value"    type="varchar(500)"/>
+      <column name="effective_from"  type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="legal_reference" type="varchar(255)"/>
+      <column name="active"          type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="regulatory_param"
+                 indexName="idx_reg_param_key_date">
+      <column name="param_key"/>
+      <column name="effective_from"/>
+      <column name="active"/>
+    </createIndex>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : payroll_period
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-payroll-period" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="payroll_period"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="payroll_period_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="payroll_period">
+      <column name="id" type="bigint" defaultValueSequenceNext="payroll_period_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="company_id"  type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="month"       type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="year"        type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status"      type="varchar(20)" defaultValue="DRAFT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="calculated_at"      type="timestamp"/>
+      <column name="locked_at"          type="timestamp"/>
+      <column name="closed_by"          type="varchar(100)"/>
+      <column name="notes"              type="varchar(1000)"/>
+      <column name="created_by"         type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_date"       type="timestamp"
+              defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_by"   type="varchar(50)"/>
+      <column name="last_modified_date" type="timestamp"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="payroll_period" baseColumnNames="company_id"
+      referencedTableName="company"  referencedColumnNames="id"
+      constraintName="fk_payroll_period_company"/>
+
+    <addUniqueConstraint
+      tableName="payroll_period"
+      columnNames="company_id, month, year"
+      constraintName="ux_payroll_period_company_month_year"/>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : rubrique
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-rubrique" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="rubrique"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="rubrique_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="rubrique">
+      <column name="id" type="bigint" defaultValueSequenceNext="rubrique_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="company_id"    type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="code"          type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="label"         type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rubrique_type" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="base"          type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="fixed_amount"  type="decimal(15,3)"/>
+      <column name="rate"          type="decimal(8,4)"/>
+      <column name="taxable"       type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sort_order"    type="integer" defaultValueNumeric="100">
+        <constraints nullable="false"/>
+      </column>
+      <column name="active"        type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_by"         type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_date"       type="timestamp"
+              defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_by"   type="varchar(50)"/>
+      <column name="last_modified_date" type="timestamp"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="rubrique"      baseColumnNames="company_id"
+      referencedTableName="company" referencedColumnNames="id"
+      constraintName="fk_rubrique_company"/>
+
+    <addUniqueConstraint
+      tableName="rubrique"
+      columnNames="code, company_id"
+      constraintName="ux_rubrique_code_company"/>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : pay_slip
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-pay-slip" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="pay_slip"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="pay_slip_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="pay_slip">
+      <column name="id" type="bigint" defaultValueSequenceNext="pay_slip_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="employee_id"         type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="payroll_period_id"   type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="contract_id"         type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="month"               type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="year"                type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="worked_days"         type="integer"/>
+      <column name="overtime_hours"      type="decimal(8,2)"  defaultValueNumeric="0"/>
+      <column name="base_salary"         type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="total_gains"         type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="gross_salary"        type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="cnss_salary_amount"  type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="cavis_amount"        type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="taxable_income"      type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="irpp_amount"         type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="bonus_total"         type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="advance_deduction"   type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="total_deductions"    type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="net_salary"          type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="employer_cnss"       type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="total_employer_cost" type="decimal(15,3)" defaultValueNumeric="0"/>
+      <column name="status"              type="varchar(20)"   defaultValue="CALCULATED">
+        <constraints nullable="false"/>
+      </column>
+      <column name="pdf_url"             type="varchar(500)"/>
+      <column name="generated_at"        type="timestamp"/>
+      <column name="created_by"          type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_date"        type="timestamp"
+              defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_by"    type="varchar(50)"/>
+      <column name="last_modified_date"  type="timestamp"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="pay_slip"       baseColumnNames="employee_id"
+      referencedTableName="employee" referencedColumnNames="id"
+      constraintName="fk_pay_slip_employee"/>
+    <addForeignKeyConstraint
+      baseTableName="pay_slip"            baseColumnNames="payroll_period_id"
+      referencedTableName="payroll_period" referencedColumnNames="id"
+      constraintName="fk_pay_slip_period"/>
+    <addForeignKeyConstraint
+      baseTableName="pay_slip"      baseColumnNames="contract_id"
+      referencedTableName="contract" referencedColumnNames="id"
+      constraintName="fk_pay_slip_contract"/>
+
+    <addUniqueConstraint
+      tableName="pay_slip"
+      columnNames="employee_id, payroll_period_id"
+      constraintName="ux_pay_slip_employee_period"/>
+
+    <createIndex tableName="pay_slip" indexName="idx_pay_slip_period">
+      <column name="payroll_period_id"/>
+    </createIndex>
+    <createIndex tableName="pay_slip"
+                 indexName="idx_pay_slip_employee_year_month">
+      <column name="employee_id"/>
+      <column name="year"/>
+      <column name="month"/>
+    </createIndex>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : pay_slip_line
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-pay-slip-line" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="pay_slip_line"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="pay_slip_line_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="pay_slip_line">
+      <column name="id" type="bigint" defaultValueSequenceNext="pay_slip_line_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="pay_slip_id"    type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sort_order"     type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rubrique_code"  type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rubrique_label" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rubrique_type"  type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="base"           type="decimal(15,3)"/>
+      <column name="rate"           type="decimal(8,4)"/>
+      <column name="amount"         type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="taxable"        type="boolean" defaultValueBoolean="true"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="pay_slip_line"  baseColumnNames="pay_slip_id"
+      referencedTableName="pay_slip" referencedColumnNames="id"
+      constraintName="fk_pay_slip_line_slip"
+      onDelete="CASCADE"/>
+
+    <createIndex tableName="pay_slip_line"
+                 indexName="idx_pay_slip_line_slip">
+      <column name="pay_slip_id"/>
+      <column name="sort_order"/>
+    </createIndex>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : bonus
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-bonus" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="bonus"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="bonus_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="bonus">
+      <column name="id" type="bigint" defaultValueSequenceNext="bonus_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="employee_id"  type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="pay_slip_id"  type="bigint"/>
+      <column name="label"        type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="amount"       type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="month"        type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="year"         type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="taxable"      type="boolean" defaultValueBoolean="true"/>
+      <column name="notes"        type="varchar(500)"/>
+      <column name="created_by"   type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_date" type="timestamp"
+              defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_by"   type="varchar(50)"/>
+      <column name="last_modified_date" type="timestamp"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="bonus"          baseColumnNames="employee_id"
+      referencedTableName="employee" referencedColumnNames="id"
+      constraintName="fk_bonus_employee"/>
+    <addForeignKeyConstraint
+      baseTableName="bonus"         baseColumnNames="pay_slip_id"
+      referencedTableName="pay_slip" referencedColumnNames="id"
+      constraintName="fk_bonus_pay_slip"/>
+
+    <createIndex tableName="bonus"
+                 indexName="idx_bonus_employee_month_year">
+      <column name="employee_id"/>
+      <column name="month"/>
+      <column name="year"/>
+    </createIndex>
+  </changeSet>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE : advance
+  ════════════════════════════════════════════════════════════════ -->
+  <changeSet id="sprint3-create-advance" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><tableExists tableName="advance"/></not>
+    </preConditions>
+
+    <createSequence sequenceName="advance_seq"
+                    startValue="1" incrementBy="1"/>
+
+    <createTable tableName="advance">
+      <column name="id" type="bigint" defaultValueSequenceNext="advance_seq">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="employee_id"      type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="amount"           type="decimal(15,3)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="reason"           type="varchar(500)"/>
+      <column name="status"           type="varchar(20)" defaultValue="REQUESTED">
+        <constraints nullable="false"/>
+      </column>
+      <column name="request_date"     type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="approved_by"      type="varchar(100)"/>
+      <column name="approved_at"      type="timestamp"/>
+      <column name="deduction_month"  type="integer"/>
+      <column name="deduction_year"   type="integer"/>
+      <column name="notes"            type="varchar(500)"/>
+      <column name="created_by"       type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_date"     type="timestamp"
+              defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_by"   type="varchar(50)"/>
+      <column name="last_modified_date" type="timestamp"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="advance"        baseColumnNames="employee_id"
+      referencedTableName="employee" referencedColumnNames="id"
+      constraintName="fk_advance_employee"/>
+
+    <createIndex tableName="advance"
+                 indexName="idx_advance_employee_status">
+      <column name="employee_id"/>
+      <column name="status"/>
+    </createIndex>
+    <createIndex tableName="advance"
+                 indexName="idx_advance_deduction">
+      <column name="employee_id"/>
+      <column name="deduction_month"/>
+      <column name="deduction_year"/>
+      <column name="status"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>

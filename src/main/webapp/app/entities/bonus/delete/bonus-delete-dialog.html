@@ -1,24 +1,8 @@
-@if (bonus) {
-  <form name="deleteForm" (ngSubmit)="confirmDelete(bonus.id!)">
-    <div class="modal-header">
-      <h4 class="modal-title" data-cy="bonusDeleteDialogHeading" pzTranslate="entity.delete.title">Confirmation de suppression</h4>
-    </div>
-
-    <div class="modal-body">
-      <pz-alert-error />
-      <p id="pz-delete-bonus-heading" pzTranslate="paieZoneRhApp.bonus.delete.question" [translateValues]="{ id: bonus.id }">
-        Êtes-vous certain de vouloir supprimer le Bonus {{ bonus.id }} ?
-      </p>
-    </div>
-
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
-        <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-      </button>
-
-      <button id="pz-confirm-delete-bonus" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
-        <fa-icon icon="times" />&nbsp;<span pzTranslate="entity.action.delete">Supprimer</span>
-      </button>
-    </div>
-  </form>
-}
+<form (ngSubmit)="confirmDelete(bonus!.id)">
+  <div class="modal-header"><h4>Supprimer la prime</h4><button type="button" class="btn-close" (click)="cancel()"></button></div>
+  <div class="modal-body">Supprimer la prime <strong>{{ bonus?.label }}</strong> ({{ bonus?.amount | number:'1.3-3' }} DT) ?</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cancel()">Annuler</button>
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+  </div>
+</form>

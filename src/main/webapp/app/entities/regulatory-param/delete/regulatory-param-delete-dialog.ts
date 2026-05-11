@@ -1,29 +1,24 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal';
-import { TranslateModule } from '@ngx-translate/core';
-
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import SharedModule from 'app/shared/shared.module';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { TranslateDirective } from 'app/shared/language';
 import { IRegulatoryParam } from '../regulatory-param.model';
 import { RegulatoryParamService } from '../service/regulatory-param.service';
+import TranslateDirective from "../../../shared/language/translate.directive";
 
 @Component({
+  standalone: true,
   templateUrl: './regulatory-param-delete-dialog.html',
-  imports: [TranslateDirective, TranslateModule, FormsModule, FontAwesomeModule, AlertError],
+  imports: [SharedModule, FormsModule, TranslateDirective],
 })
 export class RegulatoryParamDeleteDialog {
   regulatoryParam?: IRegulatoryParam;
 
-  protected readonly regulatoryParamService = inject(RegulatoryParamService);
-  protected readonly activeModal = inject(NgbActiveModal);
+  protected regulatoryParamService = inject(RegulatoryParamService);
+  protected activeModal            = inject(NgbActiveModal);
 
-  cancel(): void {
-    this.activeModal.dismiss();
-  }
+  cancel(): void { this.activeModal.dismiss(); }
 
   confirmDelete(id: number): void {
     this.regulatoryParamService.delete(id).subscribe(() => {

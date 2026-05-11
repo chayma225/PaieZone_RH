@@ -1,45 +1,51 @@
-import dayjs from 'dayjs/esm';
 
 import { IRegulatoryParam, NewRegulatoryParam } from './regulatory-param.model';
 
 export const sampleWithRequiredData: IRegulatoryParam = {
-  id: 28647,
-  paramKey: 'responsable géométrique',
-  paramLabel: 'inciter',
-  effectiveFrom: dayjs('2026-04-07'),
-  active: false,
+  id: 1,
+  paramKey: 'FRAIS_PRO_TAUX',
+  paramLabel: 'Taux frais professionnels',
+  effectiveFrom: null,
+  active: true,
 };
 
 export const sampleWithPartialData: IRegulatoryParam = {
-  id: 4046,
-  paramKey: 'groin groin afin que',
-  paramLabel: 'empêcher',
-  effectiveFrom: dayjs('2026-04-07'),
-  legalReference: 'expliquer chez',
-  active: false,
+  id: 2,
+  paramKey: 'DEDUCTION_CHEF_FAMILLE',
+  paramLabel: 'Déduction chef de famille',
+  category: 'FAMILLE',
+  numericValue: 300.0,
+  effectiveFrom: null,
+  active: true,
 };
 
 export const sampleWithFullData: IRegulatoryParam = {
-  id: 17062,
-  paramKey: 'oh ici',
-  paramLabel: 'lorsque à demi en bas de',
-  numericValue: 18499.56,
-  textValue: 'autrement au-dehors broum',
-  effectiveFrom: dayjs('2026-04-08'),
-  effectiveTo: dayjs('2026-04-07'),
-  legalReference: 'comparer trop',
-  active: false,
+  id: 3,
+  paramKey: 'FRAIS_PRO_PLAFOND',
+  paramLabel: 'Plafond frais professionnels annuel (DT)',
+  category: 'FISCAL',
+  numericValue: 2000.0,
+  stringValue: null,
+  effectiveFrom: null,
+  effectiveTo: null,
+  legalReference: 'Art. 26 CIRPP',
+  description: 'Plafond annuel de déduction des frais professionnels',
+  active: true,
+  updatedAt: null,
+  updatedBy: 'admin',
 };
 
 export const sampleWithNewData: NewRegulatoryParam = {
-  paramKey: 'après-demain à la faveur de',
-  paramLabel: 'charger',
-  effectiveFrom: dayjs('2026-04-08'),
-  active: false,
   id: null,
+  paramKey: 'NOUVEAU_PARAM',
+  paramLabel: 'Nouveau paramètre test',
+  category: 'FISCAL',
+  numericValue: 0.15,
+  effectiveFrom: null,
+  active: true,
 };
 
-Object.freeze(sampleWithNewData);
-Object.freeze(sampleWithRequiredData);
-Object.freeze(sampleWithPartialData);
-Object.freeze(sampleWithFullData);
+export function getRegulatoryParamIdentifier(regulatoryParam: Pick<IRegulatoryParam, 'id'>): number {
+  return regulatoryParam.id;
+}
+

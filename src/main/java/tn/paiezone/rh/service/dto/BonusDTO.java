@@ -1,20 +1,19 @@
 package tn.paiezone.rh.service.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import tn.paiezone.rh.domain.enumeration.BonusType;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
-import tn.paiezone.rh.domain.enumeration.BonusType;
 
-/**
- * A DTO for the {@link tn.paiezone.rh.domain.Bonus} entity.
- */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class BonusDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
     private BonusType bonusType;
 
     @NotNull
@@ -27,9 +26,7 @@ public class BonusDTO implements Serializable {
     @NotNull
     private Boolean taxable;
 
-    @NotNull
-    @Min(value = 1)
-    @Max(value = 12)
+    @NotNull @Min(1) @Max(12)
     private Integer month;
 
     @NotNull
@@ -38,126 +35,55 @@ public class BonusDTO implements Serializable {
     @Size(max = 500)
     private String notes;
 
-    @NotNull
-    private EmployeeDTO employee;
+    // ✅ Relations IDs (style JHipster)
+    private Long employeeId;
+    private Long paySlipId;
 
-    private PaySlipDTO paySlip;
+    // ── Getters / Setters ──────────────────────────────────────────
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public BonusType getBonusType() { return bonusType; }
+    public void setBonusType(BonusType bonusType) { this.bonusType = bonusType; }
 
-    public BonusType getBonusType() {
-        return bonusType;
-    }
+    public String getLabel() { return label; }
+    public void setLabel(String label) { this.label = label; }
 
-    public void setBonusType(BonusType bonusType) {
-        this.bonusType = bonusType;
-    }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 
-    public String getLabel() {
-        return label;
-    }
+    public Boolean getTaxable() { return taxable; }
+    public void setTaxable(Boolean taxable) { this.taxable = taxable; }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+    public Integer getMonth() { return month; }
+    public void setMonth(Integer month) { this.month = month; }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
-    public Boolean getTaxable() {
-        return taxable;
-    }
+    public Long getEmployeeId() { return employeeId; }
+    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
 
-    public void setTaxable(Boolean taxable) {
-        this.taxable = taxable;
-    }
-
-    public Integer getMonth() {
-        return month;
-    }
-
-    public void setMonth(Integer month) {
-        this.month = month;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public EmployeeDTO getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(EmployeeDTO employee) {
-        this.employee = employee;
-    }
-
-    public PaySlipDTO getPaySlip() {
-        return paySlip;
-    }
-
-    public void setPaySlip(PaySlipDTO paySlip) {
-        this.paySlip = paySlip;
-    }
+    public Long getPaySlipId() { return paySlipId; }
+    public void setPaySlipId(Long paySlipId) { this.paySlipId = paySlipId; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof BonusDTO)) {
-            return false;
-        }
-
-        BonusDTO bonusDTO = (BonusDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, bonusDTO.id);
+        if (this == o) return true;
+        if (!(o instanceof BonusDTO)) return false;
+        return Objects.equals(id, ((BonusDTO) o).id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
+    public int hashCode() { return Objects.hash(id); }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "BonusDTO{" +
-            "id=" + getId() +
-            ", bonusType='" + getBonusType() + "'" +
-            ", label='" + getLabel() + "'" +
-            ", amount=" + getAmount() +
-            ", taxable='" + getTaxable() + "'" +
-            ", month=" + getMonth() +
-            ", year=" + getYear() +
-            ", notes='" + getNotes() + "'" +
-            ", employee=" + getEmployee() +
-            ", paySlip=" + getPaySlip() +
-            "}";
+        return "BonusDTO{id=" + id + ", label='" + label + "', amount=" + amount +
+            ", month=" + month + ", year=" + year + "}";
     }
 }

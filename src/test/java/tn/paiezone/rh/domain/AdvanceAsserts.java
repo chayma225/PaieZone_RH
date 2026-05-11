@@ -70,6 +70,6 @@ public class AdvanceAsserts {
             .as("Verify Advance relationships")
             .satisfies(a -> assertThat(a.getEmployee()).as("check employee").isEqualTo(expected.getEmployee()))
             .satisfies(a -> assertThat(a.getPaySlip()).as("check paySlip").isEqualTo(expected.getPaySlip()))
-            .satisfies(a -> assertThat(a.getApprovedByUser()).as("check approvedByUser").isEqualTo(expected.getApprovedByUser()));
+            .satisfies(a -> assertThat(a.getApprovedBy()).as("check approvedByUser").isEqualTo(expected.getApprovedBy()));
     }
 }

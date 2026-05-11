@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-public-holidays-seed-v2" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+
+    <sql>
+      TRUNCATE TABLE public_holiday RESTART IDENTITY CASCADE;
+    </sql>
+
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Jour de l'An"/>
+      <column name="name_ar"      value="رأس السنة الميلادية"/>
+      <column name="holiday_date" valueDate="2024-01-01"/>
+      <column name="year"         valueNumeric="2024"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Fête de l'Indépendance"/>
+      <column name="name_ar"      value="عيد الاستقلال"/>
+      <column name="holiday_date" valueDate="2025-03-20"/>
+      <column name="year"         valueNumeric="2025"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Jour de l'An"/>
+      <column name="name_ar"      value="رأس السنة الميلادية"/>
+      <column name="holiday_date" valueDate="2026-01-01"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Fête de la Révolution"/>
+      <column name="name_ar"      value="ذكرى الثورة"/>
+      <column name="holiday_date" valueDate="2026-01-14"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Fête de l'Indépendance / Aïd el-Fitr"/>
+      <column name="name_ar"      value="عيد الاستقلال / عيد الفطر"/>
+      <column name="holiday_date" valueDate="2026-03-20"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="false"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Aïd el-Fitr Jour 2"/>
+      <column name="name_ar"      value="عيد الفطر - اليوم الثاني"/>
+      <column name="holiday_date" valueDate="2026-03-21"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="false"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Fête du Travail"/>
+      <column name="name_ar"      value="عيد الشغل"/>
+      <column name="holiday_date" valueDate="2026-05-01"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Aïd el-Adha Jour 1"/>
+      <column name="name_ar"      value="عيد الأضحى - اليوم الأول"/>
+      <column name="holiday_date" valueDate="2026-05-27"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="false"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Aïd el-Adha Jour 2"/>
+      <column name="name_ar"      value="عيد الأضحى - اليوم الثاني"/>
+      <column name="holiday_date" valueDate="2026-05-28"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="false"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Fête de la République"/>
+      <column name="name_ar"      value="عيد الجمهورية"/>
+      <column name="holiday_date" valueDate="2026-07-25"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Fête de la Femme"/>
+      <column name="name_ar"      value="يوم المرأة"/>
+      <column name="holiday_date" valueDate="2026-08-13"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Mouled (Naissance du Prophète)"/>
+      <column name="name_ar"      value="المولد النبوي الشريف"/>
+      <column name="holiday_date" valueDate="2026-08-25"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="false"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+    <insert tableName="public_holiday">
+      <column name="id"           valueComputed="nextval('sequence_generator')"/>
+      <column name="name"         value="Fête de l'Évacuation"/>
+      <column name="name_ar"      value="عيد الجلاء"/>
+      <column name="holiday_date" valueDate="2026-10-15"/>
+      <column name="year"         valueNumeric="2026"/>
+      <column name="is_recurring" valueBoolean="true"/>
+      <column name="active"       valueBoolean="true"/>
+    </insert>
+  </changeSet>
+</databaseChangeLog>

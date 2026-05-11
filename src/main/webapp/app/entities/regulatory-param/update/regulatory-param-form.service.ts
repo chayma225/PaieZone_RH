@@ -1,70 +1,51 @@
+
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-
+import dayjs from 'dayjs/esm';
 import { IRegulatoryParam, NewRegulatoryParam } from '../regulatory-param.model';
 
-/**
- * A partial Type with required key is used as form input.
- */
-type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>> & { id: T['id'] };
-
-/**
- * Type for createFormGroup and resetForm argument.
- * It accepts IRegulatoryParam for edit and NewRegulatoryParamFormGroupInput for create.
- */
-type RegulatoryParamFormGroupInput = IRegulatoryParam | PartialWithRequiredKeyOf<NewRegulatoryParam>;
-
-type RegulatoryParamFormDefaults = Pick<NewRegulatoryParam, 'id' | 'active'>;
-
 type RegulatoryParamFormGroupContent = {
-  id: FormControl<IRegulatoryParam['id'] | NewRegulatoryParam['id']>;
-  paramKey: FormControl<IRegulatoryParam['paramKey']>;
-  paramLabel: FormControl<IRegulatoryParam['paramLabel']>;
-  numericValue: FormControl<IRegulatoryParam['numericValue']>;
-  textValue: FormControl<IRegulatoryParam['textValue']>;
-  effectiveFrom: FormControl<IRegulatoryParam['effectiveFrom']>;
-  effectiveTo: FormControl<IRegulatoryParam['effectiveTo']>;
+  id:             FormControl<IRegulatoryParam['id'] | NewRegulatoryParam['id']>;
+  paramKey:       FormControl<IRegulatoryParam['paramKey']>;
+  paramLabel:     FormControl<IRegulatoryParam['paramLabel']>;
+  category:       FormControl<IRegulatoryParam['category']>;
+  numericValue:   FormControl<IRegulatoryParam['numericValue']>;
+  stringValue:    FormControl<IRegulatoryParam['stringValue']>;
+  effectiveFrom:  FormControl<IRegulatoryParam['effectiveFrom']>;
+  effectiveTo:    FormControl<IRegulatoryParam['effectiveTo']>;
   legalReference: FormControl<IRegulatoryParam['legalReference']>;
-  active: FormControl<IRegulatoryParam['active']>;
+  description:    FormControl<IRegulatoryParam['description']>;
+  active:         FormControl<IRegulatoryParam['active']>;
 };
 
 export type RegulatoryParamFormGroup = FormGroup<RegulatoryParamFormGroupContent>;
 
 @Injectable({ providedIn: 'root' })
 export class RegulatoryParamFormService {
-  createRegulatoryParamFormGroup(regulatoryParam?: RegulatoryParamFormGroupInput): RegulatoryParamFormGroup {
-    const regulatoryParamRawValue = {
-      ...this.getFormDefaults(),
-      ...(regulatoryParam ?? { id: null }),
-    };
+
+  createRegulatoryParamFormGroup(p: IRegulatoryParam | null = null): RegulatoryParamFormGroup {
+    const raw = { ...this.getFormDefaults(), ...p };
     return new FormGroup<RegulatoryParamFormGroupContent>({
       id: new FormControl(
-        { value: regulatoryParamRawValue.id, disabled: true },
-        {
-          nonNullable: true,
-          validators: [Validators.required],
-        },
+        { value: raw.id ?? null, disabled: true },
+        { nonNullable: true, validators: [Validators.required] },
       ),
-      paramKey: new FormControl(regulatoryParamRawValue.paramKey, {
-        validators: [Validators.required, Validators.maxLength(100)],
+      paramKey: new FormControl(raw.paramKey, {
+        validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
       }),
-      paramLabel: new FormControl(regulatoryParamRawValue.paramLabel, {
-        validators: [Validators.required, Validators.maxLength(200)],
+      paramLabel: new FormControl(raw.paramLabel, {
+        validators: [Validators.required, Validators.minLength(3), Validators.maxLength(200)],
       }),
-      numericValue: new FormControl(regulatoryParamRawValue.numericValue),
-      textValue: new FormControl(regulatoryParamRawValue.textValue, {
-        validators: [Validators.maxLength(500)],
+      category: new FormControl(raw.category, {
+        validators: [Validators.maxLength(50)],
       }),
-      effectiveFrom: new FormControl(regulatoryParamRawValue.effectiveFrom, {
-        validators: [Validators.required],
-      }),
-      effectiveTo: new FormControl(regulatoryParamRawValue.effectiveTo),
-      legalReference: new FormControl(regulatoryParamRawValue.legalReference, {
-        validators: [Validators.maxLength(200)],
-      }),
-      active: new FormControl(regulatoryParamRawValue.active, {
-        validators: [Validators.required],
-      }),
+      numericValue:   new FormControl(raw.numericValue),
+      stringValue:    new FormControl(raw.stringValue, { validators: [Validators.maxLength(500)] }),
+      effectiveFrom:  new FormControl(raw.effectiveFrom, { validators: [Validators.required] }),
+      effectiveTo:    new FormControl(raw.effectiveTo),
+      legalReference: new FormControl(raw.legalReference, { validators: [Validators.maxLength(200)] }),
+      description:    new FormControl(raw.description,    { validators: [Validators.maxLength(1000)] }),
+      active:         new FormControl(raw.active,         { validators: [Validators.required] }),
     });
   }
 
@@ -72,18 +53,15 @@ export class RegulatoryParamFormService {
     return form.getRawValue() as IRegulatoryParam | NewRegulatoryParam;
   }
 
-  resetForm(form: RegulatoryParamFormGroup, regulatoryParam: RegulatoryParamFormGroupInput): void {
-    const regulatoryParamRawValue = { ...this.getFormDefaults(), ...regulatoryParam };
-    form.reset({
-      ...regulatoryParamRawValue,
-      id: { value: regulatoryParamRawValue.id, disabled: true },
-    });
+  resetForm(form: RegulatoryParamFormGroup, p: IRegulatoryParam | null): void {
+    const raw = { ...this.getFormDefaults(), ...p };
+    form.reset({ ...raw, id: { value: raw.id, disabled: true } } as any);
   }
 
-  private getFormDefaults(): RegulatoryParamFormDefaults {
+  private getFormDefaults(): Partial<IRegulatoryParam> {
     return {
-      id: null,
-      active: false,
+      active:        true,
+      effectiveFrom: dayjs(),
     };
   }
 }

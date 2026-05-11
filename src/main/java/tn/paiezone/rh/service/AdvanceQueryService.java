@@ -83,9 +83,7 @@ public class AdvanceQueryService extends QueryService<Advance> {
                 buildStringSpecification(criteria.getNotes(), Advance_.notes),
                 buildSpecification(criteria.getEmployeeId(), root -> root.join(Advance_.employee, JoinType.LEFT).get(Employee_.id)),
                 buildSpecification(criteria.getPaySlipId(), root -> root.join(Advance_.paySlip, JoinType.LEFT).get(PaySlip_.id)),
-                buildSpecification(criteria.getApprovedByUserId(), root ->
-                    root.join(Advance_.approvedByUser, JoinType.LEFT).get(UserProfile_.id)
-                )
+                buildStringSpecification(criteria.getApprovedBy(), Advance_.approvedBy)
             );
         }
         return specification;

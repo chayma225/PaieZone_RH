@@ -671,4 +671,21 @@ public class Employee implements Serializable {
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
     }
+    @Size(max = 30)
+    @Column(name = "bank_rib", length = 30)
+    private String bankRib;
+
+    public String getBankRib() {
+        return this.bankRib;
+    }
+
+    public Employee bankRib(String bankRib) {
+        this.setBankRib(bankRib);
+        return this;
+    }
+
+    public void setBankRib(String bankRib) {
+        this.bankRib = bankRib;
+    }
+
 }

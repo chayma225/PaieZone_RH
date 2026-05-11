@@ -2,28 +2,23 @@ package tn.paiezone.rh.service.mapper;
 
 import org.mapstruct.*;
 import tn.paiezone.rh.domain.AccountingEntry;
-import tn.paiezone.rh.domain.Company;
-import tn.paiezone.rh.domain.PayrollPeriod;
 import tn.paiezone.rh.service.dto.AccountingEntryDTO;
-import tn.paiezone.rh.service.dto.CompanyDTO;
-import tn.paiezone.rh.service.dto.PayrollPeriodDTO;
 
-/**
- * Mapper for the entity {@link AccountingEntry} and its DTO {@link AccountingEntryDTO}.
- */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {
+    PayrollPeriodMapper.class,
+    CompanyMapper.class
+})
 public interface AccountingEntryMapper extends EntityMapper<AccountingEntryDTO, AccountingEntry> {
-    @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
-    @Mapping(target = "payrollPeriod", source = "payrollPeriod", qualifiedByName = "payrollPeriodId")
+
+    @Override
+    @Mapping(target = "payrollPeriod", source = "payrollPeriod")
     AccountingEntryDTO toDto(AccountingEntry s);
 
-    @Named("companyId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    CompanyDTO toDtoCompanyId(Company company);
+    @Override
+    @Mapping(target = "payrollPeriod", source = "payrollPeriod")
+    AccountingEntry toEntity(AccountingEntryDTO dto);
 
-    @Named("payrollPeriodId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    PayrollPeriodDTO toDtoPayrollPeriodId(PayrollPeriod payrollPeriod);
+    @Override
+    @Mapping(target = "payrollPeriod", source = "payrollPeriod")
+    void partialUpdate(@MappingTarget AccountingEntry entity, AccountingEntryDTO dto);
 }

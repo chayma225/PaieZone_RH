@@ -1,362 +1,190 @@
 package tn.paiezone.rh.service.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import tn.paiezone.rh.domain.enumeration.PayrollStatus;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
-import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 
-/**
- * A DTO for the {@link tn.paiezone.rh.domain.PaySlip} entity.
- */
-@Schema(description = "Bulletin de paie")
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class PaySlipDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
-    @Min(value = 1)
-    @Max(value = 12)
+    @NotNull @Min(1) @Max(12)
     private Integer month;
 
     @NotNull
     private Integer year;
 
-    @NotNull
-    private BigDecimal baseSalary;
-
-    @NotNull
-    private BigDecimal totalGains;
-
-    @NotNull
-    private BigDecimal totalDeductions;
-
-    @NotNull
-    private BigDecimal grossSalary;
-
-    @NotNull
-    private BigDecimal cnssSalaryAmount;
+    @NotNull private BigDecimal baseSalary;
+    @NotNull private BigDecimal totalGains;
+    @NotNull private BigDecimal totalDeductions;
+    @NotNull private BigDecimal grossSalary;
+    @NotNull private BigDecimal cnssSalaryAmount;
 
     private BigDecimal cavisAmount;
 
-    @NotNull
-    private BigDecimal taxableIncome;
+    /** NOUVEAU — CSS (Contribution Sociale de Solidarité 0,5%) */
+    private BigDecimal cssAmount;
 
-    @NotNull
-    private BigDecimal irppAmount;
-
-    @NotNull
-    private BigDecimal netSalary;
-
-    @NotNull
-    private BigDecimal employerCnss;
+    @NotNull private BigDecimal taxableIncome;
+    @NotNull private BigDecimal irppAmount;
+    @NotNull private BigDecimal netSalary;
+    @NotNull private BigDecimal employerCnss;
 
     private BigDecimal employerCavis;
 
-    @NotNull
-    private BigDecimal totalEmployerCost;
+    /** NOUVEAU — TFP charge patronale (1%) */
+    private BigDecimal tfpAmount;
+
+    @NotNull private BigDecimal totalEmployerCost;
+
+    private BigDecimal bonusTotal;
+    private BigDecimal advanceDeduction;
+
+    /** NOUVEAU — Montant déduit pour congés non payés */
+    private BigDecimal unpaidLeaveDeduction;
+
+    /** NOUVEAU — Montant total des heures supplémentaires */
+    private BigDecimal overtimeAmount;
 
     private Integer workedDays;
-
     private Integer paidLeaveDays;
-
     private Integer unpaidDays;
-
     private BigDecimal overtimeHours;
 
     @NotNull
     private PayrollStatus status;
 
-    @Size(max = 500)
-    private String pdfUrl;
-
+    @Size(max = 500) private String pdfUrl;
     private Instant generatedAt;
-
     private Instant sentToEmployeeAt;
+    @Size(max = 100) private String bankTransferRef;
 
-    @Size(max = 100)
-    private String bankTransferRef;
+    private Long employeeId;
+    private Long payrollPeriodId;
+    private Long contractId;
 
-    @NotNull
-    private EmployeeDTO employee;
+    // ── Getters / Setters ──────────────────────────────────────────
 
-    @NotNull
-    private PayrollPeriodDTO payrollPeriod;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    @NotNull
-    private ContractDTO contract;
+    public Integer getMonth() { return month; }
+    public void setMonth(Integer month) { this.month = month; }
 
-    public Long getId() {
-        return id;
-    }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public BigDecimal getBaseSalary() { return baseSalary; }
+    public void setBaseSalary(BigDecimal baseSalary) { this.baseSalary = baseSalary; }
 
-    public Integer getMonth() {
-        return month;
-    }
+    public BigDecimal getTotalGains() { return totalGains; }
+    public void setTotalGains(BigDecimal totalGains) { this.totalGains = totalGains; }
 
-    public void setMonth(Integer month) {
-        this.month = month;
-    }
+    public BigDecimal getTotalDeductions() { return totalDeductions; }
+    public void setTotalDeductions(BigDecimal totalDeductions) { this.totalDeductions = totalDeductions; }
 
-    public Integer getYear() {
-        return year;
-    }
+    public BigDecimal getGrossSalary() { return grossSalary; }
+    public void setGrossSalary(BigDecimal grossSalary) { this.grossSalary = grossSalary; }
 
-    public void setYear(Integer year) {
-        this.year = year;
-    }
+    public BigDecimal getCnssSalaryAmount() { return cnssSalaryAmount; }
+    public void setCnssSalaryAmount(BigDecimal cnssSalaryAmount) { this.cnssSalaryAmount = cnssSalaryAmount; }
 
-    public BigDecimal getBaseSalary() {
-        return baseSalary;
-    }
+    public BigDecimal getCavisAmount() { return cavisAmount; }
+    public void setCavisAmount(BigDecimal cavisAmount) { this.cavisAmount = cavisAmount; }
 
-    public void setBaseSalary(BigDecimal baseSalary) {
-        this.baseSalary = baseSalary;
-    }
+    public BigDecimal getCssAmount() { return cssAmount; }
+    public void setCssAmount(BigDecimal cssAmount) { this.cssAmount = cssAmount; }
 
-    public BigDecimal getTotalGains() {
-        return totalGains;
-    }
+    public BigDecimal getTaxableIncome() { return taxableIncome; }
+    public void setTaxableIncome(BigDecimal taxableIncome) { this.taxableIncome = taxableIncome; }
 
-    public void setTotalGains(BigDecimal totalGains) {
-        this.totalGains = totalGains;
-    }
+    public BigDecimal getIrppAmount() { return irppAmount; }
+    public void setIrppAmount(BigDecimal irppAmount) { this.irppAmount = irppAmount; }
 
-    public BigDecimal getTotalDeductions() {
-        return totalDeductions;
-    }
+    public BigDecimal getNetSalary() { return netSalary; }
+    public void setNetSalary(BigDecimal netSalary) { this.netSalary = netSalary; }
 
-    public void setTotalDeductions(BigDecimal totalDeductions) {
-        this.totalDeductions = totalDeductions;
-    }
+    public BigDecimal getEmployerCnss() { return employerCnss; }
+    public void setEmployerCnss(BigDecimal employerCnss) { this.employerCnss = employerCnss; }
 
-    public BigDecimal getGrossSalary() {
-        return grossSalary;
-    }
+    public BigDecimal getEmployerCavis() { return employerCavis; }
+    public void setEmployerCavis(BigDecimal employerCavis) { this.employerCavis = employerCavis; }
 
-    public void setGrossSalary(BigDecimal grossSalary) {
-        this.grossSalary = grossSalary;
-    }
+    public BigDecimal getTfpAmount() { return tfpAmount; }
+    public void setTfpAmount(BigDecimal tfpAmount) { this.tfpAmount = tfpAmount; }
 
-    public BigDecimal getCnssSalaryAmount() {
-        return cnssSalaryAmount;
-    }
+    public BigDecimal getTotalEmployerCost() { return totalEmployerCost; }
+    public void setTotalEmployerCost(BigDecimal totalEmployerCost) { this.totalEmployerCost = totalEmployerCost; }
 
-    public void setCnssSalaryAmount(BigDecimal cnssSalaryAmount) {
-        this.cnssSalaryAmount = cnssSalaryAmount;
-    }
+    public BigDecimal getBonusTotal() { return bonusTotal; }
+    public void setBonusTotal(BigDecimal bonusTotal) { this.bonusTotal = bonusTotal; }
 
-    public BigDecimal getCavisAmount() {
-        return cavisAmount;
-    }
+    public BigDecimal getAdvanceDeduction() { return advanceDeduction; }
+    public void setAdvanceDeduction(BigDecimal advanceDeduction) { this.advanceDeduction = advanceDeduction; }
 
-    public void setCavisAmount(BigDecimal cavisAmount) {
-        this.cavisAmount = cavisAmount;
-    }
+    public BigDecimal getUnpaidLeaveDeduction() { return unpaidLeaveDeduction; }
+    public void setUnpaidLeaveDeduction(BigDecimal unpaidLeaveDeduction) { this.unpaidLeaveDeduction = unpaidLeaveDeduction; }
 
-    public BigDecimal getTaxableIncome() {
-        return taxableIncome;
-    }
+    public BigDecimal getOvertimeAmount() { return overtimeAmount; }
+    public void setOvertimeAmount(BigDecimal overtimeAmount) { this.overtimeAmount = overtimeAmount; }
 
-    public void setTaxableIncome(BigDecimal taxableIncome) {
-        this.taxableIncome = taxableIncome;
-    }
+    public Integer getWorkedDays() { return workedDays; }
+    public void setWorkedDays(Integer workedDays) { this.workedDays = workedDays; }
 
-    public BigDecimal getIrppAmount() {
-        return irppAmount;
-    }
+    public Integer getPaidLeaveDays() { return paidLeaveDays; }
+    public void setPaidLeaveDays(Integer paidLeaveDays) { this.paidLeaveDays = paidLeaveDays; }
 
-    public void setIrppAmount(BigDecimal irppAmount) {
-        this.irppAmount = irppAmount;
-    }
+    public Integer getUnpaidDays() { return unpaidDays; }
+    public void setUnpaidDays(Integer unpaidDays) { this.unpaidDays = unpaidDays; }
 
-    public BigDecimal getNetSalary() {
-        return netSalary;
-    }
+    public BigDecimal getOvertimeHours() { return overtimeHours; }
+    public void setOvertimeHours(BigDecimal overtimeHours) { this.overtimeHours = overtimeHours; }
 
-    public void setNetSalary(BigDecimal netSalary) {
-        this.netSalary = netSalary;
-    }
+    public PayrollStatus getStatus() { return status; }
+    public void setStatus(PayrollStatus status) { this.status = status; }
 
-    public BigDecimal getEmployerCnss() {
-        return employerCnss;
-    }
+    public String getPdfUrl() { return pdfUrl; }
+    public void setPdfUrl(String pdfUrl) { this.pdfUrl = pdfUrl; }
 
-    public void setEmployerCnss(BigDecimal employerCnss) {
-        this.employerCnss = employerCnss;
-    }
+    public Instant getGeneratedAt() { return generatedAt; }
+    public void setGeneratedAt(Instant generatedAt) { this.generatedAt = generatedAt; }
 
-    public BigDecimal getEmployerCavis() {
-        return employerCavis;
-    }
+    public Instant getSentToEmployeeAt() { return sentToEmployeeAt; }
+    public void setSentToEmployeeAt(Instant sentToEmployeeAt) { this.sentToEmployeeAt = sentToEmployeeAt; }
 
-    public void setEmployerCavis(BigDecimal employerCavis) {
-        this.employerCavis = employerCavis;
-    }
+    public String getBankTransferRef() { return bankTransferRef; }
+    public void setBankTransferRef(String bankTransferRef) { this.bankTransferRef = bankTransferRef; }
 
-    public BigDecimal getTotalEmployerCost() {
-        return totalEmployerCost;
-    }
+    public Long getEmployeeId() { return employeeId; }
+    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
 
-    public void setTotalEmployerCost(BigDecimal totalEmployerCost) {
-        this.totalEmployerCost = totalEmployerCost;
-    }
+    public Long getPayrollPeriodId() { return payrollPeriodId; }
+    public void setPayrollPeriodId(Long payrollPeriodId) { this.payrollPeriodId = payrollPeriodId; }
 
-    public Integer getWorkedDays() {
-        return workedDays;
-    }
-
-    public void setWorkedDays(Integer workedDays) {
-        this.workedDays = workedDays;
-    }
-
-    public Integer getPaidLeaveDays() {
-        return paidLeaveDays;
-    }
-
-    public void setPaidLeaveDays(Integer paidLeaveDays) {
-        this.paidLeaveDays = paidLeaveDays;
-    }
-
-    public Integer getUnpaidDays() {
-        return unpaidDays;
-    }
-
-    public void setUnpaidDays(Integer unpaidDays) {
-        this.unpaidDays = unpaidDays;
-    }
-
-    public BigDecimal getOvertimeHours() {
-        return overtimeHours;
-    }
-
-    public void setOvertimeHours(BigDecimal overtimeHours) {
-        this.overtimeHours = overtimeHours;
-    }
-
-    public PayrollStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PayrollStatus status) {
-        this.status = status;
-    }
-
-    public String getPdfUrl() {
-        return pdfUrl;
-    }
-
-    public void setPdfUrl(String pdfUrl) {
-        this.pdfUrl = pdfUrl;
-    }
-
-    public Instant getGeneratedAt() {
-        return generatedAt;
-    }
-
-    public void setGeneratedAt(Instant generatedAt) {
-        this.generatedAt = generatedAt;
-    }
-
-    public Instant getSentToEmployeeAt() {
-        return sentToEmployeeAt;
-    }
-
-    public void setSentToEmployeeAt(Instant sentToEmployeeAt) {
-        this.sentToEmployeeAt = sentToEmployeeAt;
-    }
-
-    public String getBankTransferRef() {
-        return bankTransferRef;
-    }
-
-    public void setBankTransferRef(String bankTransferRef) {
-        this.bankTransferRef = bankTransferRef;
-    }
-
-    public EmployeeDTO getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(EmployeeDTO employee) {
-        this.employee = employee;
-    }
-
-    public PayrollPeriodDTO getPayrollPeriod() {
-        return payrollPeriod;
-    }
-
-    public void setPayrollPeriod(PayrollPeriodDTO payrollPeriod) {
-        this.payrollPeriod = payrollPeriod;
-    }
-
-    public ContractDTO getContract() {
-        return contract;
-    }
-
-    public void setContract(ContractDTO contract) {
-        this.contract = contract;
-    }
+    public Long getContractId() { return contractId; }
+    public void setContractId(Long contractId) { this.contractId = contractId; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PaySlipDTO)) {
-            return false;
-        }
-
-        PaySlipDTO paySlipDTO = (PaySlipDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, paySlipDTO.id);
+        if (this == o) return true;
+        if (!(o instanceof PaySlipDTO)) return false;
+        return Objects.equals(id, ((PaySlipDTO) o).id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
+    public int hashCode() { return Objects.hash(id); }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "PaySlipDTO{" +
-            "id=" + getId() +
-            ", month=" + getMonth() +
-            ", year=" + getYear() +
-            ", baseSalary=" + getBaseSalary() +
-            ", totalGains=" + getTotalGains() +
-            ", totalDeductions=" + getTotalDeductions() +
-            ", grossSalary=" + getGrossSalary() +
-            ", cnssSalaryAmount=" + getCnssSalaryAmount() +
-            ", cavisAmount=" + getCavisAmount() +
-            ", taxableIncome=" + getTaxableIncome() +
-            ", irppAmount=" + getIrppAmount() +
-            ", netSalary=" + getNetSalary() +
-            ", employerCnss=" + getEmployerCnss() +
-            ", employerCavis=" + getEmployerCavis() +
-            ", totalEmployerCost=" + getTotalEmployerCost() +
-            ", workedDays=" + getWorkedDays() +
-            ", paidLeaveDays=" + getPaidLeaveDays() +
-            ", unpaidDays=" + getUnpaidDays() +
-            ", overtimeHours=" + getOvertimeHours() +
-            ", status='" + getStatus() + "'" +
-            ", pdfUrl='" + getPdfUrl() + "'" +
-            ", generatedAt='" + getGeneratedAt() + "'" +
-            ", sentToEmployeeAt='" + getSentToEmployeeAt() + "'" +
-            ", bankTransferRef='" + getBankTransferRef() + "'" +
-            ", employee=" + getEmployee() +
-            ", payrollPeriod=" + getPayrollPeriod() +
-            ", contract=" + getContract() +
-            "}";
+        return "PaySlipDTO{id=" + id + ", month=" + month + ", year=" + year +
+            ", netSalary=" + netSalary + ", cssAmount=" + cssAmount +
+            ", tfpAmount=" + tfpAmount + ", status=" + status + "}";
     }
 }

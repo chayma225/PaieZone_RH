@@ -1,22 +1,7 @@
 package tn.paiezone.rh.web.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static tn.paiezone.rh.domain.TimeEntryAsserts.*;
-import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
-import static tn.paiezone.rh.web.rest.TestUtil.sameNumber;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +20,22 @@ import tn.paiezone.rh.domain.enumeration.TimeEntryStatus;
 import tn.paiezone.rh.repository.TimeEntryRepository;
 import tn.paiezone.rh.service.dto.TimeEntryDTO;
 import tn.paiezone.rh.service.mapper.TimeEntryMapper;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static tn.paiezone.rh.domain.TimeEntryAsserts.*;
+import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
+import static tn.paiezone.rh.web.rest.TestUtil.sameNumber;
 
 /**
  * Integration tests for the {@link TimeEntryResource} REST controller.
@@ -953,7 +954,7 @@ class TimeEntryResourceIT {
         }
         em.persist(validatedByUser);
         em.flush();
-        timeEntry.setValidatedByUser(validatedByUser);
+        timeEntry.setValidatedBy("admin");
         timeEntryRepository.saveAndFlush(timeEntry);
         Long validatedByUserId = validatedByUser.getId();
         // Get all the timeEntryList where validatedByUser equals to validatedByUserId

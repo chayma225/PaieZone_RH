@@ -1,120 +1,61 @@
+// src/main/webapp/app/entities/bonus/update/bonus-update.component.ts
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
-
-import { IEmployee } from 'app/entities/employee/employee.model';
-import { EmployeeService } from 'app/entities/employee/service/employee.service';
-import { BonusType } from 'app/entities/enumerations/bonus-type.model';
-import { IPaySlip } from 'app/entities/pay-slip/pay-slip.model';
-import { PaySlipService } from 'app/entities/pay-slip/service/pay-slip.service';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { TranslateDirective } from 'app/shared/language';
-import { IBonus } from '../bonus.model';
+import { Observable, finalize } from 'rxjs';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IBonus, BONUS_TYPES } from '../bonus.model';
 import { BonusService } from '../service/bonus.service';
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import SharedModule from 'app/shared/shared.module';
+import { AlertError } from 'app/shared/alert/alert-error';
 
-import { BonusFormGroup, BonusFormService } from './bonus-form.service';
 
 @Component({
-  selector: 'pz-bonus-update',
+  standalone: true,
+  selector: 'jhi-bonus-update',
   templateUrl: './bonus-update.html',
-  imports: [TranslateDirective, TranslateModule, FontAwesomeModule, AlertError, ReactiveFormsModule],
+  imports: [SharedModule, AlertError, ReactiveFormsModule,ReactiveFormsModule, FaIconComponent],
 })
 export class BonusUpdate implements OnInit {
-  readonly isSaving = signal(false);
+  isSaving = false;
   bonus: IBonus | null = null;
-  bonusTypeValues = Object.keys(BonusType);
+  bonusTypes = BONUS_TYPES;
+  months = Array.from({length:12},(_,i)=>i+1);
+  years = Array.from({length:6},(_,i)=>2023+i);
+  monthLabels = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
-  employeesSharedCollection = signal<IEmployee[]>([]);
-  paySlipsSharedCollection = signal<IPaySlip[]>([]);
+  protected service = inject(BonusService);
+  protected route   = inject(ActivatedRoute);
+  protected fb      = inject(FormBuilder);
 
-  protected bonusService = inject(BonusService);
-  protected bonusFormService = inject(BonusFormService);
-  protected employeeService = inject(EmployeeService);
-  protected paySlipService = inject(PaySlipService);
-  protected activatedRoute = inject(ActivatedRoute);
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  editForm: BonusFormGroup = this.bonusFormService.createBonusFormGroup();
-
-  compareEmployee = (o1: IEmployee | null, o2: IEmployee | null): boolean => this.employeeService.compareEmployee(o1, o2);
-
-  comparePaySlip = (o1: IPaySlip | null, o2: IPaySlip | null): boolean => this.paySlipService.comparePaySlip(o1, o2);
+  editForm = this.fb.group({
+    id:         [null as number|null],
+    bonusType:  ['PERFORMANCE'],
+    label:      ['', [Validators.required, Validators.maxLength(150)]],
+    amount:     [null as number|null, [Validators.required, Validators.min(0)]],
+    taxable:    [true, Validators.required],
+    month:      [new Date().getMonth()+1, [Validators.required, Validators.min(1), Validators.max(12)]],
+    year:       [new Date().getFullYear(), Validators.required],
+    notes:      [''],
+    employeeId: [null as number|null, Validators.required],
+  });
 
   ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ bonus }) => {
-      this.bonus = bonus;
-      if (bonus) {
-        this.updateForm(bonus);
-      }
-
-      this.loadRelationshipsOptions();
+    this.route.data.subscribe(({ bonus }) => {
+      if (bonus) { this.bonus = bonus; this.editForm.patchValue(bonus); }
     });
   }
 
-  previousState(): void {
-    globalThis.history.back();
-  }
+  previousState(): void { window.history.back(); }
 
   save(): void {
-    this.isSaving.set(true);
-    const bonus = this.bonusFormService.getBonus(this.editForm);
-    if (bonus.id === null) {
-      this.subscribeToSaveResponse(this.bonusService.create(bonus));
-    } else {
-      this.subscribeToSaveResponse(this.bonusService.update(bonus));
-    }
-  }
-
-  protected subscribeToSaveResponse(result: Observable<IBonus | null>): void {
-    result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
-      next: () => this.onSaveSuccess(),
-      error: () => this.onSaveError(),
-    });
-  }
-
-  protected onSaveSuccess(): void {
-    this.previousState();
-  }
-
-  protected onSaveError(): void {
-    // Api for inheritance.
-  }
-
-  protected onSaveFinalize(): void {
-    this.isSaving.set(false);
-  }
-
-  protected updateForm(bonus: IBonus): void {
-    this.bonus = bonus;
-    this.bonusFormService.resetForm(this.editForm, bonus);
-
-    this.employeesSharedCollection.update(employees =>
-      this.employeeService.addEmployeeToCollectionIfMissing<IEmployee>(employees, bonus.employee),
-    );
-    this.paySlipsSharedCollection.update(paySlips =>
-      this.paySlipService.addPaySlipToCollectionIfMissing<IPaySlip>(paySlips, bonus.paySlip),
-    );
-  }
-
-  protected loadRelationshipsOptions(): void {
-    this.employeeService
-      .query()
-      .pipe(map((res: HttpResponse<IEmployee[]>) => res.body ?? []))
-      .pipe(
-        map((employees: IEmployee[]) => this.employeeService.addEmployeeToCollectionIfMissing<IEmployee>(employees, this.bonus?.employee)),
-      )
-      .subscribe((employees: IEmployee[]) => this.employeesSharedCollection.set(employees));
-
-    this.paySlipService
-      .query()
-      .pipe(map((res: HttpResponse<IPaySlip[]>) => res.body ?? []))
-      .pipe(map((paySlips: IPaySlip[]) => this.paySlipService.addPaySlipToCollectionIfMissing<IPaySlip>(paySlips, this.bonus?.paySlip)))
-      .subscribe((paySlips: IPaySlip[]) => this.paySlipsSharedCollection.set(paySlips));
+    this.isSaving = true;
+    const val = this.editForm.getRawValue();
+    const obs: Observable<HttpResponse<IBonus>> = val.id
+      ? this.service.update(val as IBonus)
+      : this.service.create(val as any);
+    obs.pipe(finalize(() => { this.isSaving = false; }))
+      .subscribe({ next: () => this.previousState() });
   }
 }

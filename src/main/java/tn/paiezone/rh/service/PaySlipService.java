@@ -1,12 +1,16 @@
 package tn.paiezone.rh.service;
 
-import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import tn.paiezone.rh.service.dto.PaySlipDTO;
+
+import java.util.Optional;
 
 /**
  * Service Interface for managing {@link tn.paiezone.rh.domain.PaySlip}.
  */
 public interface PaySlipService {
+
     /**
      * Save a paySlip.
      *
@@ -32,6 +36,14 @@ public interface PaySlipService {
     Optional<PaySlipDTO> partialUpdate(PaySlipDTO paySlipDTO);
 
     /**
+     * Get all the paySlips.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<PaySlipDTO> findAll(Pageable pageable);
+
+    /**
      * Get the "id" paySlip.
      *
      * @param id the id of the entity.
@@ -45,4 +57,14 @@ public interface PaySlipService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    /**
+     * Recalcule un bulletin de paie existant (Phase 1)
+     */
+    PaySlipDTO recalculate(Long paySlipId);
+
+    /**
+     * Calcule le bulletin d'un employé pour une période donnée
+     */
+    PaySlipDTO calculateOne(Long periodId, Long employeeId);
 }

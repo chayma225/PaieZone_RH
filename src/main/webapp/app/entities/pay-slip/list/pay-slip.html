@@ -1,326 +1,64 @@
 <div>
-  <h2 id="page-heading" data-cy="PaySlipHeading">
-    <span pzTranslate="paieZoneRhApp.paySlip.home.title">PaySlips</span>
-
+  <h2>
+    Bulletins de paie
     <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading()">
-        <fa-icon icon="sync" [animation]="isLoading() ? 'spin' : undefined" />
-        <span pzTranslate="paieZoneRhApp.paySlip.home.refreshListLabel">Actualiser la liste</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-pay-slip"
-        [routerLink]="['/pay-slip/new']"
-      >
-        <fa-icon icon="plus" />
-        <span pzTranslate="paieZoneRhApp.paySlip.home.createLabel">Créer un nouveau Pay Slip</span>
+      <button class="btn btn-primary btn-sm" (click)="refresh()" [disabled]="isLoading">
+        <fa-icon icon="sync" [class.fa-spin]="isLoading"></fa-icon>&nbsp;
+        {{ isLoading ? 'Chargement...' : 'Rafraîchir' }}
       </button>
     </div>
   </h2>
 
-  <pz-alert-error />
+  <pz-alert-error></pz-alert-error>
 
-  <pz-alert />
-
-  <pz-filter [filters]="filters" />
-
-  @if (paySlips().length === 0) {
-    <div class="alert alert-warning" id="no-result">
-      <span pzTranslate="paieZoneRhApp.paySlip.home.notFound">Aucun Pay Slip trouvé</span>
+  <!-- Filtres -->
+  <div class="row mb-3 g-2">
+    <div class="col-md-3">
+      <input type="number" class="form-control" placeholder="ID Période"
+             [(ngModel)]="filterPeriodId" (ngModelChange)="load()" />
     </div>
-  } @else {
-    <div class="table-responsive table-entities" id="entities">
-      <table class="table table-striped" aria-describedby="page-heading">
-        <thead>
-          <tr pzSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
-            <th scope="col" pzSortBy="id">
-              <div class="d-flex">
-                <span pzTranslate="global.field.id">ID</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="month">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.month">Month</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="year">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.year">Year</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="baseSalary">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.baseSalary">Base Salary</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="totalGains">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.totalGains">Total Gains</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="totalDeductions">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.totalDeductions">Total Deductions</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="grossSalary">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.grossSalary">Gross Salary</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="cnssSalaryAmount">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.cnssSalaryAmount">Cnss Salary Amount</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="cavisAmount">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.cavisAmount">Cavis Amount</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="taxableIncome">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.taxableIncome">Taxable Income</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="irppAmount">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.irppAmount">Irpp Amount</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="netSalary">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.netSalary">Net Salary</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="employerCnss">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.employerCnss">Employer Cnss</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="employerCavis">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.employerCavis">Employer Cavis</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="totalEmployerCost">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.totalEmployerCost">Total Employer Cost</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="workedDays">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.workedDays">Worked Days</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="paidLeaveDays">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.paidLeaveDays">Paid Leave Days</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="unpaidDays">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.unpaidDays">Unpaid Days</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="overtimeHours">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.overtimeHours">Overtime Hours</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="status">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.status">Status</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="pdfUrl">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.pdfUrl">Pdf Url</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="generatedAt">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.generatedAt">Generated At</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="sentToEmployeeAt">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.sentToEmployeeAt">Sent To Employee At</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="bankTransferRef">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.bankTransferRef">Bank Transfer Ref</span>
-
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="employee.id">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.employee">Employee</span>
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="payrollPeriod.id">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.payrollPeriod">Payroll Period</span>
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col" pzSortBy="contract.id">
-              <div class="d-flex">
-                <span pzTranslate="paieZoneRhApp.paySlip.contract">Contract</span>
-                <fa-icon class="p-1" icon="sort" />
-              </div>
-            </th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (paySlip of paySlips(); track trackId(paySlip)) {
-            <tr data-cy="entityTable">
-              <td>
-                <a [routerLink]="['/pay-slip', paySlip.id, 'view']">{{ paySlip.id }}</a>
-              </td>
-              <td>{{ paySlip.month }}</td>
-              <td>{{ paySlip.year }}</td>
-              <td>{{ paySlip.baseSalary }}</td>
-              <td>{{ paySlip.totalGains }}</td>
-              <td>{{ paySlip.totalDeductions }}</td>
-              <td>{{ paySlip.grossSalary }}</td>
-              <td>{{ paySlip.cnssSalaryAmount }}</td>
-              <td>{{ paySlip.cavisAmount }}</td>
-              <td>{{ paySlip.taxableIncome }}</td>
-              <td>{{ paySlip.irppAmount }}</td>
-              <td>{{ paySlip.netSalary }}</td>
-              <td>{{ paySlip.employerCnss }}</td>
-              <td>{{ paySlip.employerCavis }}</td>
-              <td>{{ paySlip.totalEmployerCost }}</td>
-              <td>{{ paySlip.workedDays }}</td>
-              <td>{{ paySlip.paidLeaveDays }}</td>
-              <td>{{ paySlip.unpaidDays }}</td>
-              <td>{{ paySlip.overtimeHours }}</td>
-              <td [pzTranslate]="'paieZoneRhApp.PayrollStatus.' + (paySlip.status ?? 'null')">
-                {{
-                  { null: '', DRAFT: 'DRAFT', CALCULATED: 'CALCULATED', VALIDATED: 'VALIDATED', LOCKED: 'LOCKED', EXPORTED: 'EXPORTED' }[
-                    paySlip.status ?? 'null'
-                  ]
-                }}
-              </td>
-              <td>{{ paySlip.pdfUrl }}</td>
-              <td>{{ paySlip.generatedAt | formatMediumDatetime }}</td>
-              <td>{{ paySlip.sentToEmployeeAt | formatMediumDatetime }}</td>
-              <td>{{ paySlip.bankTransferRef }}</td>
-              <td>
-                @if (paySlip.employee) {
-                  <div>
-                    <a [routerLink]="['/employee', paySlip.employee.id, 'view']">{{ paySlip.employee.id }}</a>
-                  </div>
-                }
-              </td>
-              <td>
-                @if (paySlip.payrollPeriod) {
-                  <div>
-                    <a [routerLink]="['/payroll-period', paySlip.payrollPeriod.id, 'view']">{{ paySlip.payrollPeriod.id }}</a>
-                  </div>
-                }
-              </td>
-              <td>
-                @if (paySlip.contract) {
-                  <div>
-                    <a [routerLink]="['/contract', paySlip.contract.id, 'view']">{{ paySlip.contract.id }}</a>
-                  </div>
-                }
-              </td>
-              <td class="text-end">
-                <div class="btn-group">
-                  <a [routerLink]="['/pay-slip', paySlip.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                    <fa-icon icon="eye" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.view">Voir</span>
-                  </a>
-
-                  <a [routerLink]="['/pay-slip', paySlip.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                    <fa-icon icon="pencil-alt" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.edit">Editer</span>
-                  </a>
-
-                  <button type="submit" (click)="delete(paySlip)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                    <fa-icon icon="times" />
-                    <span class="d-none d-md-inline" pzTranslate="entity.action.delete">Supprimer</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="col-md-3">
+      <input type="number" class="form-control" placeholder="ID Employé"
+             [(ngModel)]="filterEmployeeId" (ngModelChange)="load()" />
     </div>
-  }
-  @if (paySlips().length > 0) {
-    <div>
-      <div class="d-flex justify-content-center">
-        <pz-item-count [params]="{ page: page(), totalItems: totalItems(), itemsPerPage: itemsPerPage() }" />
-      </div>
+  </div>
 
-      <div class="d-flex justify-content-center">
-        <ngb-pagination
-          [collectionSize]="totalItems()"
-          [page]="page()"
-          [pageSize]="itemsPerPage()"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="navigateToPage($event)"
-        />
-      </div>
+  <!-- Tableau -->
+  <div class="table-responsive" *ngIf="paySlips.length > 0; else noResult">
+    <table class="table table-sm table-striped">
+      <thead class="table-dark">
+      <tr>
+        <th>Période</th>
+        <th>Employé</th>
+        <th class="text-end">Base</th>
+        <th class="text-end">Brut</th>
+        <th class="text-end">Net</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let ps of paySlips; trackBy: trackId">
+        <td><strong>{{ months[ps.month!] }} {{ ps.year }}</strong></td>
+        <td>{{ ps.employeeId }}</td>
+        <td class="text-end">{{ ps.baseSalary | number:'1.3-3' }}</td>
+        <td class="text-end">{{ ps.grossSalary | number:'1.3-3' }}</td>
+        <td class="text-end fw-bold text-success">{{ ps.netSalary | number:'1.3-3' }}</td>
+        <td><span class="badge" [ngClass]="statusClass(ps.status)">{{ ps.status }}</span></td>
+        <td>
+          <a [routerLink]="['./', ps.id, 'view']" class="btn btn-info btn-sm">
+            <fa-icon icon="eye"></fa-icon>
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #noResult>
+    <div class="alert alert-info">
+      Aucun bulletin trouvé.<br>
+      <small>Créez une période puis calculez les bulletins.</small>
     </div>
-  }
+  </ng-template>
 </div>

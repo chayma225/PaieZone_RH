@@ -1,24 +1,10 @@
-@if (advance) {
-  <form name="deleteForm" (ngSubmit)="confirmDelete(advance.id!)">
-    <div class="modal-header">
-      <h4 class="modal-title" data-cy="advanceDeleteDialogHeading" pzTranslate="entity.delete.title">Confirmation de suppression</h4>
-    </div>
-
-    <div class="modal-body">
-      <pz-alert-error />
-      <p id="pz-delete-advance-heading" pzTranslate="paieZoneRhApp.advance.delete.question" [translateValues]="{ id: advance.id }">
-        Êtes-vous certain de vouloir supprimer le Advance {{ advance.id }} ?
-      </p>
-    </div>
-
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
-        <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-      </button>
-
-      <button id="pz-confirm-delete-advance" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
-        <fa-icon icon="times" />&nbsp;<span pzTranslate="entity.action.delete">Supprimer</span>
-      </button>
-    </div>
-  </form>
-}
+<form (ngSubmit)="confirmDelete(advance!.id)">
+  <div class="modal-header"><h4>Supprimer l'avance</h4><button type="button" class="btn-close" (click)="cancel()"></button></div>
+  <div class="modal-body">
+    Supprimer l'avance de <strong>{{ advance?.amount | number:'1.3-3' }} DT</strong> pour l'employé #{{ advance?.employeeId }} ?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cancel()">Annuler</button>
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+  </div>
+</form>

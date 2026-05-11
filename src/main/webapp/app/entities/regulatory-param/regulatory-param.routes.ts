@@ -1,42 +1,32 @@
 import { Routes } from '@angular/router';
 
-import { ASC } from 'app/config/navigation.constants';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-
-import RegulatoryParamResolve from './route/regulatory-param-routing-resolve.service';
+// ✅ Import par défaut (correct)
+import regulatoryParamResolve from './route/regulatory-param-routing-resolve.service';
 
 const regulatoryParamRoute: Routes = [
   {
     path: '',
-    loadComponent: () => import('./list/regulatory-param').then(m => m.RegulatoryParam),
-    data: {
-      defaultSort: `id,${ASC}`,
-    },
-    canActivate: [UserRouteAccessService],
+    loadComponent: () =>
+      import('./list/regulatory-param').then(m => m.RegulatoryParam),
+    data: { defaultSort: 'paramKey,asc' },
   },
   {
     path: ':id/view',
-    loadComponent: () => import('./detail/regulatory-param-detail').then(m => m.RegulatoryParamDetail),
-    resolve: {
-      regulatoryParam: RegulatoryParamResolve,
-    },
-    canActivate: [UserRouteAccessService],
+    loadComponent: () =>
+      import('./detail/regulatory-param-detail').then(m => m.RegulatoryParamDetail),
+    resolve: { regulatoryParam: regulatoryParamResolve },   // ← OK
   },
   {
     path: 'new',
-    loadComponent: () => import('./update/regulatory-param-update').then(m => m.RegulatoryParamUpdate),
-    resolve: {
-      regulatoryParam: RegulatoryParamResolve,
-    },
-    canActivate: [UserRouteAccessService],
+    loadComponent: () =>
+      import('./update/regulatory-param-update').then(m => m.RegulatoryParamUpdate),
+    resolve: { regulatoryParam: regulatoryParamResolve },
   },
   {
     path: ':id/edit',
-    loadComponent: () => import('./update/regulatory-param-update').then(m => m.RegulatoryParamUpdate),
-    resolve: {
-      regulatoryParam: RegulatoryParamResolve,
-    },
-    canActivate: [UserRouteAccessService],
+    loadComponent: () =>
+      import('./update/regulatory-param-update').then(m => m.RegulatoryParamUpdate),
+    resolve: { regulatoryParam: regulatoryParamResolve },
   },
 ];
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-add-payroll-period-missing-cols" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="payroll_period"/>
+      <not>
+        <columnExists tableName="payroll_period" columnName="validated_at"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="payroll_period">
+      <column name="validated_at" type="timestamp"/>
+    </addColumn>
+
+    <addColumn tableName="payroll_period">
+      <column name="closed_by" type="varchar(100)"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>
