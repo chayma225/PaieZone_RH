@@ -1,215 +1,145 @@
 package tn.paiezone.rh.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.io.Serial;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-/**
- * Paramètres réglementaires (partagés, versionnés)
- */
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "regulatory_param")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class RegulatoryParam implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "regulatory_param_seq")
+    @SequenceGenerator(name = "regulatory_param_seq", sequenceName = "regulatory_param_seq", allocationSize = 1)
     private Long id;
 
-    @NotNull
-    @Size(max = 100)
-    @Column(name = "param_key", length = 100, nullable = false)
+    @Column(name = "param_key", nullable = false, length = 100)
     private String paramKey;
 
-    @NotNull
-    @Size(max = 200)
-    @Column(name = "param_label", length = 200, nullable = false)
+    @Column(name = "param_label", nullable = false, length = 255)
     private String paramLabel;
 
-    @Column(name = "numeric_value", precision = 21, scale = 2)
+    @Column(name = "numeric_value", precision = 15, scale = 4)
     private BigDecimal numericValue;
 
-    @Size(max = 500)
-    @Column(name = "text_value", length = 500)
-    private String textValue;
+    /** Colonne DDL : string_value */
+    @Column(name = "string_value", length = 500)
+    private String stringValue;
 
-    @NotNull
     @Column(name = "effective_from", nullable = false)
     private LocalDate effectiveFrom;
 
     @Column(name = "effective_to")
     private LocalDate effectiveTo;
 
-    @Size(max = 200)
-    @Column(name = "legal_reference", length = 200)
+    @Column(name = "legal_reference", length = 255)
     private String legalReference;
 
-    @NotNull
+    @Column(name = "description", length = 1000)
+    private String description;
+
     @Column(name = "active", nullable = false)
-    private Boolean active;
+    private Boolean active = true;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    @Column(name = "category", length = 50)
+    private String category;
 
-    public Long getId() {
-        return this.id;
-    }
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
-    public RegulatoryParam id(Long id) {
-        this.setId(id);
-        return this;
-    }
+    @Column(name = "updated_by", length = 100)
+    private String updatedBy;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public RegulatoryParam() {}
 
-    public String getParamKey() {
-        return this.paramKey;
-    }
+    @PreUpdate
+    protected void onUpdate() { this.updatedAt = Instant.now(); }
 
-    public RegulatoryParam paramKey(String paramKey) {
-        this.setParamKey(paramKey);
-        return this;
-    }
+    // ── Fluent methods ─────────────────────────────────────────────
 
-    public void setParamKey(String paramKey) {
-        this.paramKey = paramKey;
-    }
+    public RegulatoryParam id(Long id) { this.id = id; return this; }
+    public RegulatoryParam paramKey(String paramKey) { this.paramKey = paramKey; return this; }
+    public RegulatoryParam paramLabel(String paramLabel) { this.paramLabel = paramLabel; return this; }
+    public RegulatoryParam numericValue(BigDecimal numericValue) { this.numericValue = numericValue; return this; }
+    public RegulatoryParam stringValue(String stringValue) { this.stringValue = stringValue; return this; }
+    public RegulatoryParam effectiveFrom(LocalDate effectiveFrom) { this.effectiveFrom = effectiveFrom; return this; }
+    public RegulatoryParam effectiveTo(LocalDate effectiveTo) { this.effectiveTo = effectiveTo; return this; }
+    public RegulatoryParam legalReference(String legalReference) { this.legalReference = legalReference; return this; }
+    public RegulatoryParam active(Boolean active) { this.active = active; return this; }
+    public RegulatoryParam category(String category) { this.category = category; return this; }
+    public RegulatoryParam description(String description) { this.description = description; return this; }
 
-    public String getParamLabel() {
-        return this.paramLabel;
-    }
+    // ── Alias de compatibilité : textValue ↔ stringValue ──────────
+    // Les tests JHipster générés utilisent "textValue" — ces alias évitent
+    // de modifier les 4 fichiers de test concernés.
 
-    public RegulatoryParam paramLabel(String paramLabel) {
-        this.setParamLabel(paramLabel);
-        return this;
-    }
+    public String getTextValue() { return this.stringValue; }
+    public void setTextValue(String textValue) { this.stringValue = textValue; }
+    public RegulatoryParam textValue(String textValue) { this.stringValue = textValue; return this; }
 
-    public void setParamLabel(String paramLabel) {
-        this.paramLabel = paramLabel;
-    }
+    // ── Getters / Setters ──────────────────────────────────────────
 
-    public BigDecimal getNumericValue() {
-        return this.numericValue;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public RegulatoryParam numericValue(BigDecimal numericValue) {
-        this.setNumericValue(numericValue);
-        return this;
-    }
+    public String getParamKey() { return paramKey; }
+    public void setParamKey(String paramKey) { this.paramKey = paramKey; }
 
-    public void setNumericValue(BigDecimal numericValue) {
-        this.numericValue = numericValue;
-    }
+    public String getParamLabel() { return paramLabel; }
+    public void setParamLabel(String paramLabel) { this.paramLabel = paramLabel; }
 
-    public String getTextValue() {
-        return this.textValue;
-    }
+    public BigDecimal getNumericValue() { return numericValue; }
+    public void setNumericValue(BigDecimal numericValue) { this.numericValue = numericValue; }
 
-    public RegulatoryParam textValue(String textValue) {
-        this.setTextValue(textValue);
-        return this;
-    }
+    public String getStringValue() { return stringValue; }
+    public void setStringValue(String stringValue) { this.stringValue = stringValue; }
 
-    public void setTextValue(String textValue) {
-        this.textValue = textValue;
-    }
+    public LocalDate getEffectiveFrom() { return effectiveFrom; }
+    public void setEffectiveFrom(LocalDate effectiveFrom) { this.effectiveFrom = effectiveFrom; }
 
-    public LocalDate getEffectiveFrom() {
-        return this.effectiveFrom;
-    }
+    public LocalDate getEffectiveTo() { return effectiveTo; }
+    public void setEffectiveTo(LocalDate effectiveTo) { this.effectiveTo = effectiveTo; }
 
-    public RegulatoryParam effectiveFrom(LocalDate effectiveFrom) {
-        this.setEffectiveFrom(effectiveFrom);
-        return this;
-    }
+    public String getLegalReference() { return legalReference; }
+    public void setLegalReference(String legalReference) { this.legalReference = legalReference; }
 
-    public void setEffectiveFrom(LocalDate effectiveFrom) {
-        this.effectiveFrom = effectiveFrom;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public LocalDate getEffectiveTo() {
-        return this.effectiveTo;
-    }
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
-    public RegulatoryParam effectiveTo(LocalDate effectiveTo) {
-        this.setEffectiveTo(effectiveTo);
-        return this;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public void setEffectiveTo(LocalDate effectiveTo) {
-        this.effectiveTo = effectiveTo;
-    }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 
-    public String getLegalReference() {
-        return this.legalReference;
-    }
-
-    public RegulatoryParam legalReference(String legalReference) {
-        this.setLegalReference(legalReference);
-        return this;
-    }
-
-    public void setLegalReference(String legalReference) {
-        this.legalReference = legalReference;
-    }
-
-    public Boolean getActive() {
-        return this.active;
-    }
-
-    public RegulatoryParam active(Boolean active) {
-        this.setActive(active);
-        return this;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    public String getUpdatedBy() { return updatedBy; }
+    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof RegulatoryParam)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((RegulatoryParam) o).getId());
+        if (this == o) return true;
+        if (!(o instanceof RegulatoryParam)) return false;
+        return id != null && id.equals(((RegulatoryParam) o).id);
     }
 
     @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
+    public int hashCode() { return getClass().hashCode(); }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "RegulatoryParam{" +
-            "id=" + getId() +
-            ", paramKey='" + getParamKey() + "'" +
-            ", paramLabel='" + getParamLabel() + "'" +
-            ", numericValue=" + getNumericValue() +
-            ", textValue='" + getTextValue() + "'" +
-            ", effectiveFrom='" + getEffectiveFrom() + "'" +
-            ", effectiveTo='" + getEffectiveTo() + "'" +
-            ", legalReference='" + getLegalReference() + "'" +
-            ", active='" + getActive() + "'" +
-            "}";
+        return "RegulatoryParam{id=" + id + ", paramKey='" + paramKey + "', numericValue=" + numericValue + "}";
     }
 }

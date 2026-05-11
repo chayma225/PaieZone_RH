@@ -1,193 +1,105 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="pz-payroll-period-heading"
-        data-cy="PayrollPeriodCreateUpdateHeading"
-        pzTranslate="paieZoneRhApp.payrollPeriod.home.createOrEditLabel"
-      >
-        Créer ou éditer un Payroll Period
-      </h2>
+<div class="container py-4" style="max-width:640px">
 
-      <div>
-        <pz-alert-error />
+  <div class="d-flex align-items-center mb-4">
+    <a routerLink="/payroll-periods" class="btn btn-outline-secondary btn-sm me-3">
+      <i class="fas fa-arrow-left me-1"></i>Retour
+    </a>
+    <h3 class="fw-bold mb-0">
+      {{ isEdit ? 'Modifier la période' : 'Nouvelle période de paie' }}
+    </h3>
+  </div>
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+  <div class="card shadow-sm">
+    <div class="card-header bg-transparent fw-semibold">
+      <i class="fas fa-calendar-plus me-2 text-primary"></i>
+      Informations de la période
+    </div>
+    <div class="card-body p-4">
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="row g-4">
+
+          <!-- Mois -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">
+              <i class="fas fa-calendar me-1 text-muted"></i>
+              Mois <span class="text-danger">*</span>
+            </label>
+            <select class="form-select" formControlName="month"
+                    [class.is-invalid]="invalid('month')">
+              <option [ngValue]="null" disabled>-- Sélectionner le mois --</option>
+              <option *ngFor="let m of months" [value]="m.v">{{ m.l }}</option>
+            </select>
+            <div class="invalid-feedback">Le mois est requis.</div>
           </div>
-        }
 
-        @let monthRef = editForm.get('month')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_month" pzTranslate="paieZoneRhApp.payrollPeriod.month">Month</label>
-          <input type="number" class="form-control" name="month" id="field_month" data-cy="month" formControlName="month" />
-          @if (monthRef.invalid && (monthRef.dirty || monthRef.touched)) {
-            <div>
-              @if (editForm.get('month')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('month')?.errors?.min) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
-                  >Ce champ doit être supérieur à 1.</small
-                >
-              }
-              @if (editForm.get('month')?.errors?.max) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.max" [translateValues]="{ max: '12' }"
-                  >Ce champ doit être inférieur à 12.</small
-                >
-              }
-              <small class="form-text text-danger" [hidden]="!editForm.get('month')?.errors?.number" pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
+          <!-- Année -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">
+              <i class="fas fa-calendar-alt me-1 text-muted"></i>
+              Année <span class="text-danger">*</span>
+            </label>
+            <select class="form-select" formControlName="year"
+                    [class.is-invalid]="invalid('year')">
+              <option [ngValue]="null" disabled>-- Sélectionner l'année --</option>
+              <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+            </select>
+            <div class="invalid-feedback">L'année est requise.</div>
+          </div>
+
+          <!-- Statut -->
+          <div class="col-12">
+            <label class="form-label fw-semibold">
+              <i class="fas fa-flag me-1 text-muted"></i>
+              Statut initial
+            </label>
+            <select class="form-select" formControlName="status">
+              <option value="DRAFT">📝 Brouillon (recommandé)</option>
+              <option value="CALCULATED" [disabled]="!isEdit">🧮 Calculé</option>
+              <option value="VALIDATED"  [disabled]="!isEdit">✅ Validé</option>
+              <option value="LOCKED"     [disabled]="!isEdit">🔒 Clôturé</option>
+            </select>
+          </div>
+
+          <!-- Résumé période sélectionnée -->
+          <div class="col-12" *ngIf="form.get('month')?.value && form.get('year')?.value">
+            <div class="alert alert-success mb-0 d-flex align-items-center gap-2">
+              <i class="fas fa-check-circle fs-5"></i>
+              <div>
+                Période sélectionnée :
+                <!-- Correction ici : ajout de ?? 0 pour éviter l'erreur TS -->
+                <strong>
+                  {{ getMonthLabel(form.get('month')?.value ?? 0) }} {{ form.get('year')?.value }}
+                </strong>
+              </div>
             </div>
-          }
-        </div>
+          </div>
 
-        @let yearRef = editForm.get('year')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_year" pzTranslate="paieZoneRhApp.payrollPeriod.year">Year</label>
-          <input type="number" class="form-control" name="year" id="field_year" data-cy="year" formControlName="year" />
-          @if (yearRef.invalid && (yearRef.dirty || yearRef.touched)) {
-            <div>
-              @if (editForm.get('year')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              <small class="form-text text-danger" [hidden]="!editForm.get('year')?.errors?.number" pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
+          <!-- Info -->
+          <div class="col-12">
+            <div class="alert alert-info small mb-0">
+              <i class="fas fa-info-circle me-1"></i>
+              Créez en <strong>Brouillon</strong> puis lancez le calcul
+              depuis le bouton <i class="fas fa-calculator"></i> dans la liste.
             </div>
-          }
-        </div>
-
-        @let statusRef = editForm.get('status')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_status" pzTranslate="paieZoneRhApp.payrollPeriod.status">Status</label>
-          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
-            <option [ngValue]="null">{{ 'paieZoneRhApp.PayrollStatus.null' | translate }}</option>
-            @for (payrollStatus of payrollStatusValues; track $index) {
-              <option [value]="payrollStatus">{{ 'paieZoneRhApp.PayrollStatus.' + payrollStatus | translate }}</option>
-            }
-          </select>
-          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
-            <div>
-              @if (editForm.get('status')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_calculatedAt" pzTranslate="paieZoneRhApp.payrollPeriod.calculatedAt">Calculated At</label>
-          <div class="d-flex">
-            <input
-              id="field_calculatedAt"
-              data-cy="calculatedAt"
-              type="datetime-local"
-              class="form-control"
-              name="calculatedAt"
-              formControlName="calculatedAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
           </div>
+
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_validatedAt" pzTranslate="paieZoneRhApp.payrollPeriod.validatedAt">Validated At</label>
-          <div class="d-flex">
-            <input
-              id="field_validatedAt"
-              data-cy="validatedAt"
-              type="datetime-local"
-              class="form-control"
-              name="validatedAt"
-              formControlName="validatedAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
+        <hr class="my-4">
+
+        <div class="d-flex justify-content-end gap-2">
+          <a routerLink="/payroll-periods" class="btn btn-outline-secondary">
+            <i class="fas fa-times me-1"></i>Annuler
+          </a>
+          <button type="submit" class="btn btn-primary"
+                  [disabled]="form.invalid || saving">
+            <span *ngIf="saving" class="spinner-border spinner-border-sm me-1"></span>
+            <i *ngIf="!saving" class="fas fa-save me-1"></i>
+            {{ isEdit ? 'Mettre à jour' : 'Créer la période' }}
+          </button>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_lockedAt" pzTranslate="paieZoneRhApp.payrollPeriod.lockedAt">Locked At</label>
-          <div class="d-flex">
-            <input
-              id="field_lockedAt"
-              data-cy="lockedAt"
-              type="datetime-local"
-              class="form-control"
-              name="lockedAt"
-              formControlName="lockedAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_notes" pzTranslate="paieZoneRhApp.payrollPeriod.notes">Notes</label>
-          <textarea class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes"></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.payrollPeriod.company">Company</label>
-          <select
-            class="form-control"
-            id="field_company"
-            data-cy="company"
-            name="company"
-            formControlName="company"
-            [compareWith]="compareCompany"
-          >
-            @if (!editForm.get('company')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
-            @for (companyOption of companiesSharedCollection(); track $index) {
-              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
-            }
-          </select>
-        </div>
-        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
-          <div>
-            @if (editForm.get(['company'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
-
-        <div class="mb-3">
-          <label class="form-label" for="field_createdBy" pzTranslate="paieZoneRhApp.payrollPeriod.createdBy">Created By</label>
-          <select
-            class="form-control"
-            id="field_createdBy"
-            data-cy="createdBy"
-            name="createdBy"
-            formControlName="createdBy"
-            [compareWith]="compareUserProfile"
-          >
-            <option [ngValue]="null"></option>
-            @for (userProfileOption of userProfilesSharedCollection(); track $index) {
-              <option [ngValue]="userProfileOption">{{ userProfileOption.id }}</option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving()"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>

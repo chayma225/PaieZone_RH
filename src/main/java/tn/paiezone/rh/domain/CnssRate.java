@@ -2,13 +2,16 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Taux CNSS
@@ -16,44 +19,47 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "cnss_rate")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
+@SuppressWarnings("common-java:DuplicatedBlocks")@Getter
+@Setter
+@NoArgsConstructor
+
 public class CnssRate implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cnssRateSeq")
+    @SequenceGenerator(name = "cnssRateSeq", sequenceName = "cnss_rate_seq", allocationSize = 1)
     private Long id;
 
-    @NotNull
     @Column(name = "year", nullable = false)
     private Integer year;
 
-    @Column(name = "salary_ceiling", precision = 21, scale = 2)
+    // Plafond mensuel CNSS (ex: 2700 DT en 2024)
+    @Column(name = "salary_ceiling", nullable = false, precision = 15, scale = 3)
     private BigDecimal salaryCeiling;
 
-    @NotNull
-    @Column(name = "employee_rate", precision = 21, scale = 2, nullable = false)
+    // 9,18% = 0.0918
+    @Column(name = "employee_rate", nullable = false, precision = 6, scale = 4)
     private BigDecimal employeeRate;
 
-    @NotNull
-    @Column(name = "employer_rate", precision = 21, scale = 2, nullable = false)
+    // 16,57% = 0.1657
+    @Column(name = "employer_rate", nullable = false, precision = 6, scale = 4)
     private BigDecimal employerRate;
 
-    @Column(name = "cavis_employee", precision = 21, scale = 2)
+    // CAVIS salarié 1% = 0.0100
+    @Column(name = "cavis_employee", precision = 6, scale = 4)
     private BigDecimal cavisEmployee;
 
-    @Column(name = "cavis_employer", precision = 21, scale = 2)
+    // CAVIS patronal 1% = 0.0100
+    @Column(name = "cavis_employer", precision = 6, scale = 4)
     private BigDecimal cavisEmployer;
 
-    @NotNull
-    @Column(name = "smig", precision = 21, scale = 2, nullable = false)
+    // SMIG mensuel (ex: 450 DT en 2024)
+    @Column(name = "smig", precision = 15, scale = 3)
     private BigDecimal smig;
 
-    @NotNull
     @Column(name = "effective_from", nullable = false)
     private LocalDate effectiveFrom;
 

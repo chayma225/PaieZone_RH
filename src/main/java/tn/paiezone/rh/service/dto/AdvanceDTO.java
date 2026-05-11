@@ -1,16 +1,17 @@
 package tn.paiezone.rh.service.dto;
 
-import jakarta.validation.constraints.*;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 
-/**
- * A DTO for the {@link tn.paiezone.rh.domain.Advance} entity.
- */
-@SuppressWarnings("common-java:DuplicatedBlocks")
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Objects;
+
 public class AdvanceDTO implements Serializable {
 
     private Long id;
@@ -21,8 +22,9 @@ public class AdvanceDTO implements Serializable {
     @NotNull
     private BigDecimal amount;
 
-    @Min(value = 1)
-    @Max(value = 12)
+    private String reason;
+
+    @Min(1) @Max(12)
     private Integer deductionMonth;
 
     private Integer deductionYear;
@@ -33,140 +35,64 @@ public class AdvanceDTO implements Serializable {
     @Size(max = 100)
     private String approvedBy;
 
+    private Instant approvedAt;
+
     @Size(max = 500)
     private String notes;
 
-    @NotNull
-    private EmployeeDTO employee;
+    // ✅ Relations IDs (style JHipster)
+    private Long employeeId;
+    private Long paySlipId;
 
-    private PaySlipDTO paySlip;
+    // ── Getters / Setters ──────────────────────────────────────────
 
-    private UserProfileDTO approvedByUser;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public LocalDate getRequestDate() { return requestDate; }
+    public void setRequestDate(LocalDate requestDate) { this.requestDate = requestDate; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 
-    public LocalDate getRequestDate() {
-        return requestDate;
-    }
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
 
-    public void setRequestDate(LocalDate requestDate) {
-        this.requestDate = requestDate;
-    }
+    public Integer getDeductionMonth() { return deductionMonth; }
+    public void setDeductionMonth(Integer deductionMonth) { this.deductionMonth = deductionMonth; }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+    public Integer getDeductionYear() { return deductionYear; }
+    public void setDeductionYear(Integer deductionYear) { this.deductionYear = deductionYear; }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+    public AdvanceStatus getStatus() { return status; }
+    public void setStatus(AdvanceStatus status) { this.status = status; }
 
-    public Integer getDeductionMonth() {
-        return deductionMonth;
-    }
+    public String getApprovedBy() { return approvedBy; }
+    public void setApprovedBy(String approvedBy) { this.approvedBy = approvedBy; }
 
-    public void setDeductionMonth(Integer deductionMonth) {
-        this.deductionMonth = deductionMonth;
-    }
+    public Instant getApprovedAt() { return approvedAt; }
+    public void setApprovedAt(Instant approvedAt) { this.approvedAt = approvedAt; }
 
-    public Integer getDeductionYear() {
-        return deductionYear;
-    }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
-    public void setDeductionYear(Integer deductionYear) {
-        this.deductionYear = deductionYear;
-    }
+    public Long getEmployeeId() { return employeeId; }
+    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
 
-    public AdvanceStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AdvanceStatus status) {
-        this.status = status;
-    }
-
-    public String getApprovedBy() {
-        return approvedBy;
-    }
-
-    public void setApprovedBy(String approvedBy) {
-        this.approvedBy = approvedBy;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public EmployeeDTO getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(EmployeeDTO employee) {
-        this.employee = employee;
-    }
-
-    public PaySlipDTO getPaySlip() {
-        return paySlip;
-    }
-
-    public void setPaySlip(PaySlipDTO paySlip) {
-        this.paySlip = paySlip;
-    }
-
-    public UserProfileDTO getApprovedByUser() {
-        return approvedByUser;
-    }
-
-    public void setApprovedByUser(UserProfileDTO approvedByUser) {
-        this.approvedByUser = approvedByUser;
-    }
+    public Long getPaySlipId() { return paySlipId; }
+    public void setPaySlipId(Long paySlipId) { this.paySlipId = paySlipId; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AdvanceDTO)) {
-            return false;
-        }
-
-        AdvanceDTO advanceDTO = (AdvanceDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, advanceDTO.id);
+        if (this == o) return true;
+        if (!(o instanceof AdvanceDTO)) return false;
+        return Objects.equals(id, ((AdvanceDTO) o).id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
-
-    // prettier-ignore
+    public int hashCode() { return Objects.hash(id); }
     @Override
     public String toString() {
-        return "AdvanceDTO{" +
-            "id=" + getId() +
-            ", requestDate='" + getRequestDate() + "'" +
-            ", amount=" + getAmount() +
-            ", deductionMonth=" + getDeductionMonth() +
-            ", deductionYear=" + getDeductionYear() +
-            ", status='" + getStatus() + "'" +
-            ", approvedBy='" + getApprovedBy() + "'" +
-            ", notes='" + getNotes() + "'" +
-            ", employee=" + getEmployee() +
-            ", paySlip=" + getPaySlip() +
-            ", approvedByUser=" + getApprovedByUser() +
-            "}";
+        return "AdvanceDTO{id=" + id + ", amount=" + amount + ", status=" + status + "}";
     }
 }

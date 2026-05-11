@@ -1,19 +1,38 @@
 package tn.paiezone.rh.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.PayrollPeriod;
 import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 
-/**
- * Spring Data JPA repository for the PayrollPeriod entity.
- */
-@SuppressWarnings("unused")
+import java.util.Optional;
+
 @Repository
 public interface PayrollPeriodRepository extends JpaRepository<PayrollPeriod, Long> {
-    long countByStatus(PayrollStatus status);
 
-    // ou avec String :
-    @Query("SELECT COUNT(p) FROM PayrollPeriod p WHERE p.status = :status")
-    long countByStatus(String status);
+    /** Toutes les périodes d'une société — triées par année/mois DESC */
+    @Query("SELECT p FROM PayrollPeriod p WHERE p.company.id = :companyId " +
+        "ORDER BY p.year DESC, p.month DESC")
+    Page<PayrollPeriod> findByCompanyId(
+        @Param("companyId") Long companyId,
+        Pageable pageable
+    );
+
+    /** Vérifie si une période existe déjà (contrainte unicité) */
+    boolean existsByCompanyIdAndMonthAndYear(Long companyId, Integer month, Integer year);
+
+    /** Compte les bulletins non calculés d'une période (utilisé pour lockPeriod) */
+    @Query("SELECT COUNT(ps) FROM PaySlip ps " +
+        "WHERE ps.payrollPeriod.id = :periodId AND ps.status <> :status")
+    long countByPayrollPeriodIdAndStatusNot(
+        @Param("periodId") Long periodId,
+        @Param("status") PayrollStatus status
+    );
+
+    Optional<PayrollPeriod> findByCompanyIdAndMonthAndYear(
+        Long companyId, Integer month, Integer year
+    );
 }

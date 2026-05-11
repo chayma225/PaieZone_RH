@@ -1,28 +1,32 @@
-@if (payrollPeriod) {
-  <form name="deleteForm" (ngSubmit)="confirmDelete(payrollPeriod.id!)">
-    <div class="modal-header">
-      <h4 class="modal-title" data-cy="payrollPeriodDeleteDialogHeading" pzTranslate="entity.delete.title">Confirmation de suppression</h4>
-    </div>
+<div class="modal-header border-0">
+  <h5 class="modal-title text-danger fw-bold">
+    <i class="fas fa-exclamation-triangle me-2"></i>Confirmer la suppression
+  </h5>
+  <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+</div>
 
-    <div class="modal-body">
-      <pz-alert-error />
-      <p
-        id="pz-delete-payrollPeriod-heading"
-        pzTranslate="paieZoneRhApp.payrollPeriod.delete.question"
-        [translateValues]="{ id: payrollPeriod.id }"
-      >
-        Êtes-vous certain de vouloir supprimer le Payroll Period {{ payrollPeriod.id }} ?
-      </p>
-    </div>
+<div class="modal-body">
+  <p>
+    Êtes-vous sûr de vouloir supprimer la période
+    <strong>
+      {{ getMonthLabel(payrollPeriod.month!) }} {{ payrollPeriod.year }}
+    </strong> ?
+  </p>
+  <div class="alert alert-warning mb-0">
+    <i class="fas fa-info-circle me-2"></i>
+    Cette action est irréversible. Tous les bulletins associés seront supprimés.
+  </div>
+</div>
 
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
-        <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-      </button>
-
-      <button id="pz-confirm-delete-payrollPeriod" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
-        <fa-icon icon="times" />&nbsp;<span pzTranslate="entity.action.delete">Supprimer</span>
-      </button>
-    </div>
-  </form>
-}
+<div class="modal-footer border-0">
+  <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">
+    <i class="fas fa-times me-1"></i>Annuler
+  </button>
+  <button type="button" class="btn btn-danger"
+          (click)="onConfirm()" [disabled]="isDeleting">
+    <span *ngIf="isDeleting"
+          class="spinner-border spinner-border-sm me-1"></span>
+    <i *ngIf="!isDeleting" class="fas fa-trash me-1"></i>
+    Supprimer
+  </button>
+</div>

@@ -1,29 +1,28 @@
 package tn.paiezone.rh.service.mapper;
 
 import org.mapstruct.*;
-import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.PayrollPeriod;
-import tn.paiezone.rh.domain.UserProfile;
-import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.service.dto.PayrollPeriodDTO;
-import tn.paiezone.rh.service.dto.UserProfileDTO;
 
-/**
- * Mapper for the entity {@link PayrollPeriod} and its DTO {@link PayrollPeriodDTO}.
- */
 @Mapper(componentModel = "spring")
 public interface PayrollPeriodMapper extends EntityMapper<PayrollPeriodDTO, PayrollPeriod> {
-    @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
-    @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "userProfileId")
-    PayrollPeriodDTO toDto(PayrollPeriod s);
 
-    @Named("companyId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    CompanyDTO toDtoCompanyId(Company company);
+    @Mapping(source = "company.id",   target = "companyId")
+    @Mapping(source = "company.name", target = "companyName")
+    PayrollPeriodDTO toDto(PayrollPeriod p);
 
-    @Named("userProfileId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    UserProfileDTO toDtoUserProfileId(UserProfile userProfile);
+    @Mapping(target = "company",          ignore = true)
+    @Mapping(target = "createdBy",        ignore = true)
+    @Mapping(target = "createdDate",      ignore = true)
+    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    PayrollPeriod toEntity(PayrollPeriodDTO dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "company",          ignore = true)
+    @Mapping(target = "createdBy",        ignore = true)
+    @Mapping(target = "createdDate",      ignore = true)
+    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    void partialUpdate(@MappingTarget PayrollPeriod entity, PayrollPeriodDTO dto);
 }

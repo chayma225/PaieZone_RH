@@ -1,153 +1,133 @@
-import { HttpHeaders } from '@angular/common/http';
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { NgIf, NgFor, NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Data, ParamMap, Router, RouterLink } from '@angular/router';
+import { NgbPaginationModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { finalize } from 'rxjs';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap/modal';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap/pagination';
-import { TranslateModule } from '@ngx-translate/core';
-import { Subscription, combineLatest, filter, tap } from 'rxjs';
-
-import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
-import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
-import { DataUtils } from 'app/core/util/data-util.service';
-import { Alert } from 'app/shared/alert/alert';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { FormatMediumDatetimePipe } from 'app/shared/date';
-import { TranslateDirective } from 'app/shared/language';
-import { ItemCount } from 'app/shared/pagination';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { PayrollPeriodDeleteDialog } from '../delete/payroll-period-delete-dialog';
-import { IPayrollPeriod } from '../payroll-period.model';
-import { PayrollPeriodService } from '../service/payroll-period.service';
+import {
+  IPayrollPeriod,
+  PayrollStatus,
+  MONTH_LABELS,
+  STATUS_CONFIG,
+} from '../payroll-period.model';
+import {
+  PayrollPeriodService,
+  BulkCalculationResult,
+} from '../service/payroll-period.service';
 
 @Component({
-  selector: 'pz-payroll-period',
-  templateUrl: './payroll-period.html',
+  selector: 'jhi-payroll-period',
+  standalone: true,
   imports: [
-    RouterLink,
-    FormsModule,
-    FontAwesomeModule,
-    AlertError,
-    Alert,
-    SortDirective,
-    SortByDirective,
-    TranslateDirective,
-    TranslateModule,
-    FormatMediumDatetimePipe,
-    NgbPagination,
-    ItemCount,
+    NgIf, NgFor, NgClass, DatePipe,
+    RouterModule, FormsModule,
+    NgbPaginationModule, NgbTooltipModule,
   ],
+  templateUrl: './payroll-period.html',
 })
 export class PayrollPeriod implements OnInit {
-  subscription: Subscription | null = null;
-  readonly payrollPeriods = signal<IPayrollPeriod[]>([]);
 
-  sortState = sortStateSignal({});
+  private svc = inject(PayrollPeriodService);
 
-  readonly itemsPerPage = signal(ITEMS_PER_PAGE);
-  readonly totalItems = signal(0);
-  readonly page = signal(1);
+  periods     = signal<IPayrollPeriod[]>([]);
+  loading     = signal(false);
+  calculating = signal<number | null>(null);
+  calcResult  = signal<BulkCalculationResult | null>(null);
+  totalItems  = signal(0);
+  page        = 1;
+  pageSize    = 15;
+  filterYear:   number | null = null;
+  filterStatus: string | null = null;
+  years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
-  readonly router = inject(Router);
-  protected readonly payrollPeriodService = inject(PayrollPeriodService);
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  readonly isLoading = this.payrollPeriodService.payrollPeriodsResource.isLoading;
-  protected readonly activatedRoute = inject(ActivatedRoute);
-  protected readonly sortService = inject(SortService);
-  protected dataUtils = inject(DataUtils);
-  protected modalService = inject(NgbModal);
-
-  constructor() {
-    effect(() => {
-      const headers = this.payrollPeriodService.payrollPeriodsResource.headers();
-      if (headers) {
-        this.fillComponentAttributesFromResponseHeader(headers);
-      }
-    });
-    effect(() => {
-      this.payrollPeriods.set(this.fillComponentAttributesFromResponseBody([...this.payrollPeriodService.payrollPeriods()]));
-    });
-  }
-
-  trackId = (item: IPayrollPeriod): number => this.payrollPeriodService.getPayrollPeriodIdentifier(item);
-
-  ngOnInit(): void {
-    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
-      .pipe(
-        tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        tap(() => this.load()),
-      )
-      .subscribe();
-  }
-
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    return this.dataUtils.openFile(base64String, contentType);
-  }
-
-  delete(payrollPeriod: IPayrollPeriod): void {
-    const modalRef = this.modalService.open(PayrollPeriodDeleteDialog, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.payrollPeriod = payrollPeriod;
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed
-      .pipe(
-        filter(reason => reason === ITEM_DELETED_EVENT),
-        tap(() => this.load()),
-      )
-      .subscribe();
-  }
+  ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.queryBackend();
-  }
-
-  navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(this.page(), event);
-  }
-
-  navigateToPage(page: number): void {
-    this.handleNavigation(page, this.sortState());
-  }
-
-  protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
-    const page = params.get(PAGE_HEADER);
-    this.page.set(+(page ?? 1));
-    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
-  }
-
-  protected fillComponentAttributesFromResponseBody(data: IPayrollPeriod[]): IPayrollPeriod[] {
-    return data;
-  }
-
-  protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
-    this.totalItems.set(Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER)));
-  }
-
-  protected queryBackend(): void {
-    const pageToLoad: number = this.page();
-    const queryObject: any = {
-      page: pageToLoad - 1,
-      size: this.itemsPerPage(),
-      sort: this.sortService.buildSortParam(this.sortState()),
+    this.loading.set(true);
+    const req: any = {
+      page: this.page - 1,
+      size: this.pageSize,
+      sort: 'year,desc',
     };
-    this.payrollPeriodService.payrollPeriodsParams.set(queryObject);
+    if (this.filterYear)   req['year.equals']   = this.filterYear;
+    if (this.filterStatus) req['status.equals'] = this.filterStatus;
+
+    this.svc.query(req)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: res => {
+          this.periods.set(res.body ?? []);
+          this.totalItems.set(+(res.headers.get('X-Total-Count') ?? 0));
+        },
+        error: err => console.error('Erreur chargement', err),
+      });
   }
 
-  protected handleNavigation(page: number, sortState: SortState): void {
-    const queryParamsObj = {
-      page,
-      size: this.itemsPerPage(),
-      sort: this.sortService.buildSortParam(sortState),
-    };
+  onCalculate(p: IPayrollPeriod): void {
+    if (!confirm(`Calculer tous les bulletins de ${this.label(p.month!)} ${p.year} ?`)) return;
+    this.calculating.set(p.id!);
+    this.svc.calculateAll(p.id!)
+      .pipe(finalize(() => this.calculating.set(null)))
+      .subscribe({
+        next: res => { this.calcResult.set(res.body); this.load(); },
+        error: err => alert(err?.error?.detail ?? 'Erreur calcul.'),
+      });
+  }
 
-    this.router.navigate(['./'], {
-      relativeTo: this.activatedRoute,
-      queryParams: queryParamsObj,
+  onValidate(p: IPayrollPeriod): void {
+    if (!confirm(`Valider ${this.label(p.month!)} ${p.year} ?`)) return;
+    this.svc.validatePeriod(p.id!).subscribe({
+      next: () => this.load(),
+      error: err => alert(err?.error?.detail ?? 'Erreur validation.'),
     });
   }
+
+  onLock(p: IPayrollPeriod): void {
+    if (!confirm(
+      `⚠️ Clôturer définitivement ${this.label(p.month!)} ${p.year} ?\nIRRÉVERSIBLE.`
+    )) return;
+    this.svc.lockPeriod(p.id!).subscribe({
+      next: () => this.load(),
+      error: err => alert(err?.error?.detail ?? 'Erreur clôture.'),
+    });
+  }
+
+  onDelete(p: IPayrollPeriod): void {
+    if (!confirm(`Supprimer la période ${this.label(p.month!)} ${p.year} ?`)) return;
+    this.svc.delete(p.id!).subscribe({
+      next: () => this.load(),
+      error: err => alert(err?.error?.detail ?? 'Erreur suppression.'),
+    });
+  }
+
+  reset(): void {
+    this.filterYear   = null;
+    this.filterStatus = null;
+    this.page         = 1;
+    this.load();
+  }
+
+  trackById = (_: number, p: IPayrollPeriod): number => p.id!;
+
+  label = (m: number): string => MONTH_LABELS[m] ?? String(m);
+
+  statusLabel = (s: string): string =>
+    STATUS_CONFIG[s as PayrollStatus]
+      ? STATUS_CONFIG[s as PayrollStatus].label
+      : s;
+
+  statusBadge = (s: string): string =>
+    STATUS_CONFIG[s as PayrollStatus]
+      ? STATUS_CONFIG[s as PayrollStatus].badge
+      : 'bg-secondary';
+
+  statusIcon = (s: string): string =>
+    STATUS_CONFIG[s as PayrollStatus]
+      ? STATUS_CONFIG[s as PayrollStatus].icon
+      : '';
+
+  iconBg = (s: string): string =>
+    ({ DRAFT: 'bg-secondary', CALCULATED: 'bg-info', VALIDATED: 'bg-warning', LOCKED: 'bg-success' })[s]
+    ?? 'bg-secondary';
 }

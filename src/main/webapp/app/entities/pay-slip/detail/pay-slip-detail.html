@@ -1,150 +1,80 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (paySlip(); as paySlipRef) {
-      <div>
-        <h2 data-cy="paySlipDetailsHeading"><span pzTranslate="paieZoneRhApp.paySlip.detail.title">Pay Slip</span></h2>
+<div class="row justify-content-center" *ngIf="paySlip">
+  <div class="col-md-10">
+    <div class="card shadow">
+      <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Bulletin de paie — Employé #{{ paySlip.employeeId }}</h4>
+        <span>{{ paySlip.month }}/{{ paySlip.year }}</span>
+      </div>
+      <div class="card-body">
 
-        <hr />
+        <!-- Résumé en chiffres -->
+        <div class="row text-center mb-4 g-3">
+          <div class="col-md-2">
+            <div class="border rounded p-2">
+              <div class="text-muted small">Salaire Base</div>
+              <div class="fw-bold">{{ paySlip.baseSalary | number:'1.3-3' }}</div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="border rounded p-2">
+              <div class="text-muted small">Brut</div>
+              <div class="fw-bold">{{ paySlip.grossSalary | number:'1.3-3' }}</div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="border rounded p-2 border-danger">
+              <div class="text-muted small">CNSS salarié</div>
+              <div class="fw-bold text-danger">{{ paySlip.cnssSalaryAmount | number:'1.3-3' }}</div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="border rounded p-2 border-danger">
+              <div class="text-muted small">IRPP</div>
+              <div class="fw-bold text-danger">{{ paySlip.irppAmount | number:'1.3-3' }}</div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="border rounded p-2 border-success bg-light">
+              <div class="text-muted small">NET À PAYER</div>
+              <div class="fw-bold text-success fs-5">{{ paySlip.netSalary | number:'1.3-3' }}</div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="border rounded p-2 border-warning">
+              <div class="text-muted small">Coût patronal</div>
+              <div class="fw-bold">{{ paySlip.totalEmployerCost | number:'1.3-3' }}</div>
+            </div>
+          </div>
+        </div>
 
-        <pz-alert-error />
-
-        <pz-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span pzTranslate="global.field.id">ID</span></dt>
-          <dd>
-            <span>{{ paySlipRef.id }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.month">Month</span></dt>
-          <dd>
-            <span>{{ paySlipRef.month }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.year">Year</span></dt>
-          <dd>
-            <span>{{ paySlipRef.year }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.baseSalary">Base Salary</span></dt>
-          <dd>
-            <span>{{ paySlipRef.baseSalary }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.totalGains">Total Gains</span></dt>
-          <dd>
-            <span>{{ paySlipRef.totalGains }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.totalDeductions">Total Deductions</span></dt>
-          <dd>
-            <span>{{ paySlipRef.totalDeductions }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.grossSalary">Gross Salary</span></dt>
-          <dd>
-            <span>{{ paySlipRef.grossSalary }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.cnssSalaryAmount">Cnss Salary Amount</span></dt>
-          <dd>
-            <span>{{ paySlipRef.cnssSalaryAmount }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.cavisAmount">Cavis Amount</span></dt>
-          <dd>
-            <span>{{ paySlipRef.cavisAmount }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.taxableIncome">Taxable Income</span></dt>
-          <dd>
-            <span>{{ paySlipRef.taxableIncome }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.irppAmount">Irpp Amount</span></dt>
-          <dd>
-            <span>{{ paySlipRef.irppAmount }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.netSalary">Net Salary</span></dt>
-          <dd>
-            <span>{{ paySlipRef.netSalary }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.employerCnss">Employer Cnss</span></dt>
-          <dd>
-            <span>{{ paySlipRef.employerCnss }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.employerCavis">Employer Cavis</span></dt>
-          <dd>
-            <span>{{ paySlipRef.employerCavis }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.totalEmployerCost">Total Employer Cost</span></dt>
-          <dd>
-            <span>{{ paySlipRef.totalEmployerCost }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.workedDays">Worked Days</span></dt>
-          <dd>
-            <span>{{ paySlipRef.workedDays }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.paidLeaveDays">Paid Leave Days</span></dt>
-          <dd>
-            <span>{{ paySlipRef.paidLeaveDays }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.unpaidDays">Unpaid Days</span></dt>
-          <dd>
-            <span>{{ paySlipRef.unpaidDays }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.overtimeHours">Overtime Hours</span></dt>
-          <dd>
-            <span>{{ paySlipRef.overtimeHours }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.status">Status</span></dt>
-          <dd>
-            <span [pzTranslate]="'paieZoneRhApp.PayrollStatus.' + (paySlipRef.status ?? 'null')">{{
-              { null: '', DRAFT: 'DRAFT', CALCULATED: 'CALCULATED', VALIDATED: 'VALIDATED', LOCKED: 'LOCKED', EXPORTED: 'EXPORTED' }[
-                paySlipRef.status ?? 'null'
-              ]
-            }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.pdfUrl">Pdf Url</span></dt>
-          <dd>
-            <span>{{ paySlipRef.pdfUrl }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.generatedAt">Generated At</span></dt>
-          <dd>
-            <span>{{ paySlipRef.generatedAt | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.sentToEmployeeAt">Sent To Employee At</span></dt>
-          <dd>
-            <span>{{ paySlipRef.sentToEmployeeAt | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.bankTransferRef">Bank Transfer Ref</span></dt>
-          <dd>
-            <span>{{ paySlipRef.bankTransferRef }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.employee">Employee</span></dt>
-          <dd>
-            @if (paySlip()!.employee) {
-              <div>
-                <a [routerLink]="['/employee', paySlip()!.employee?.id, 'view']">{{ paySlipRef.employee?.id }}</a>
-              </div>
-            }
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.payrollPeriod">Payroll Period</span></dt>
-          <dd>
-            @if (paySlip()!.payrollPeriod) {
-              <div>
-                <a [routerLink]="['/payroll-period', paySlip()!.payrollPeriod?.id, 'view']">{{ paySlipRef.payrollPeriod?.id }}</a>
-              </div>
-            }
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.paySlip.contract">Contract</span></dt>
-          <dd>
-            @if (paySlip()!.contract) {
-              <div>
-                <a [routerLink]="['/contract', paySlip()!.contract?.id, 'view']">{{ paySlipRef.contract?.id }}</a>
-              </div>
-            }
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
-        </button>
-
-        <button type="button" [routerLink]="['/pay-slip', paySlipRef.id, 'edit']" class="btn btn-primary">
-          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
+        <!-- Détail -->
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-muted border-bottom pb-1">Présence</h6>
+            <dl class="row small">
+              <dt class="col-6">Jours travaillés</dt><dd class="col-6">{{ paySlip.workedDays }}</dd>
+              <dt class="col-6">Congés payés</dt><dd class="col-6">{{ paySlip.paidLeaveDays }}</dd>
+              <dt class="col-6">Jours non payés</dt><dd class="col-6">{{ paySlip.unpaidDays }}</dd>
+              <dt class="col-6">Heures supp.</dt><dd class="col-6">{{ paySlip.overtimeHours }}</dd>
+            </dl>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-muted border-bottom pb-1">Cotisations & Impôts</h6>
+            <dl class="row small">
+              <dt class="col-7">Base imposable IRPP</dt><dd class="col-5 text-end">{{ paySlip.taxableIncome | number:'1.3-3' }}</dd>
+              <dt class="col-7">CNSS employeur</dt><dd class="col-5 text-end">{{ paySlip.employerCnss | number:'1.3-3' }}</dd>
+              <dt class="col-7">Primes</dt><dd class="col-5 text-end">{{ paySlip.bonusTotal | number:'1.3-3' }}</dd>
+              <dt class="col-7">Avances déduites</dt><dd class="col-5 text-end text-danger">{{ paySlip.advanceDeduction | number:'1.3-3' }}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer d-flex gap-2">
+        <button class="btn btn-secondary" (click)="previousState()"><fa-icon icon="arrow-left"></fa-icon> Retour</button>
+        <button class="btn btn-warning" (click)="recalculate()" [disabled]="isRecalculating">
+          <fa-icon icon="sync"></fa-icon> Recalculer
         </button>
       </div>
-    }
+    </div>
   </div>
 </div>

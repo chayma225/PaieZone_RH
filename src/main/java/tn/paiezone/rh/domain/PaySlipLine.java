@@ -2,17 +2,16 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.io.Serial;
-import java.io.Serializable;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import tn.paiezone.rh.domain.enumeration.RubriqueType;
 
-/**
- * Ligne de bulletin (détail rubrique par rubrique)
- */
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "pay_slip_line")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -66,175 +65,69 @@ public class PaySlipLine implements Serializable {
     @JsonIgnoreProperties(value = { "employee", "payrollPeriod", "contract" }, allowSetters = true)
     private PaySlip paySlip;
 
+    // ✅ FK vers rubrique — colonne rubrique_id ajoutée par 13_add_missing_entity_columns.xml
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "company" }, allowSetters = true)
     private Rubrique rubrique;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
-        return this.id;
-    }
+    public Long getId() { return this.id; }
+    public PaySlipLine id(Long id) { this.id = id; return this; }
+    public void setId(Long id) { this.id = id; }
 
-    public PaySlipLine id(Long id) {
-        this.setId(id);
-        return this;
-    }
+    public Integer getSortOrder() { return this.sortOrder; }
+    public PaySlipLine sortOrder(Integer sortOrder) { this.sortOrder = sortOrder; return this; }
+    public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getRubriqueCode() { return this.rubriqueCode; }
+    public PaySlipLine rubriqueCode(String rubriqueCode) { this.rubriqueCode = rubriqueCode; return this; }
+    public void setRubriqueCode(String rubriqueCode) { this.rubriqueCode = rubriqueCode; }
 
-    public Integer getSortOrder() {
-        return this.sortOrder;
-    }
+    public String getRubriqueLabel() { return this.rubriqueLabel; }
+    public PaySlipLine rubriqueLabel(String rubriqueLabel) { this.rubriqueLabel = rubriqueLabel; return this; }
+    public void setRubriqueLabel(String rubriqueLabel) { this.rubriqueLabel = rubriqueLabel; }
 
-    public PaySlipLine sortOrder(Integer sortOrder) {
-        this.setSortOrder(sortOrder);
-        return this;
-    }
+    public RubriqueType getRubriqueType() { return this.rubriqueType; }
+    public PaySlipLine rubriqueType(RubriqueType rubriqueType) { this.rubriqueType = rubriqueType; return this; }
+    public void setRubriqueType(RubriqueType rubriqueType) { this.rubriqueType = rubriqueType; }
 
-    public void setSortOrder(Integer sortOrder) {
-        this.sortOrder = sortOrder;
-    }
+    public BigDecimal getBase() { return this.base; }
+    public PaySlipLine base(BigDecimal base) { this.base = base; return this; }
+    public void setBase(BigDecimal base) { this.base = base; }
 
-    public String getRubriqueCode() {
-        return this.rubriqueCode;
-    }
+    public BigDecimal getRate() { return this.rate; }
+    public PaySlipLine rate(BigDecimal rate) { this.rate = rate; return this; }
+    public void setRate(BigDecimal rate) { this.rate = rate; }
 
-    public PaySlipLine rubriqueCode(String rubriqueCode) {
-        this.setRubriqueCode(rubriqueCode);
-        return this;
-    }
+    public BigDecimal getAmount() { return this.amount; }
+    public PaySlipLine amount(BigDecimal amount) { this.amount = amount; return this; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 
-    public void setRubriqueCode(String rubriqueCode) {
-        this.rubriqueCode = rubriqueCode;
-    }
+    public Boolean getTaxable() { return this.taxable; }
+    public PaySlipLine taxable(Boolean taxable) { this.taxable = taxable; return this; }
+    public void setTaxable(Boolean taxable) { this.taxable = taxable; }
 
-    public String getRubriqueLabel() {
-        return this.rubriqueLabel;
-    }
+    public PaySlip getPaySlip() { return this.paySlip; }
+    public void setPaySlip(PaySlip paySlip) { this.paySlip = paySlip; }
+    public PaySlipLine paySlip(PaySlip paySlip) { this.paySlip = paySlip; return this; }
 
-    public PaySlipLine rubriqueLabel(String rubriqueLabel) {
-        this.setRubriqueLabel(rubriqueLabel);
-        return this;
-    }
-
-    public void setRubriqueLabel(String rubriqueLabel) {
-        this.rubriqueLabel = rubriqueLabel;
-    }
-
-    public RubriqueType getRubriqueType() {
-        return this.rubriqueType;
-    }
-
-    public PaySlipLine rubriqueType(RubriqueType rubriqueType) {
-        this.setRubriqueType(rubriqueType);
-        return this;
-    }
-
-    public void setRubriqueType(RubriqueType rubriqueType) {
-        this.rubriqueType = rubriqueType;
-    }
-
-    public BigDecimal getBase() {
-        return this.base;
-    }
-
-    public PaySlipLine base(BigDecimal base) {
-        this.setBase(base);
-        return this;
-    }
-
-    public void setBase(BigDecimal base) {
-        this.base = base;
-    }
-
-    public BigDecimal getRate() {
-        return this.rate;
-    }
-
-    public PaySlipLine rate(BigDecimal rate) {
-        this.setRate(rate);
-        return this;
-    }
-
-    public void setRate(BigDecimal rate) {
-        this.rate = rate;
-    }
-
-    public BigDecimal getAmount() {
-        return this.amount;
-    }
-
-    public PaySlipLine amount(BigDecimal amount) {
-        this.setAmount(amount);
-        return this;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public Boolean getTaxable() {
-        return this.taxable;
-    }
-
-    public PaySlipLine taxable(Boolean taxable) {
-        this.setTaxable(taxable);
-        return this;
-    }
-
-    public void setTaxable(Boolean taxable) {
-        this.taxable = taxable;
-    }
-
-    public PaySlip getPaySlip() {
-        return this.paySlip;
-    }
-
-    public void setPaySlip(PaySlip paySlip) {
-        this.paySlip = paySlip;
-    }
-
-    public PaySlipLine paySlip(PaySlip paySlip) {
-        this.setPaySlip(paySlip);
-        return this;
-    }
-
-    public Rubrique getRubrique() {
-        return this.rubrique;
-    }
-
-    public void setRubrique(Rubrique rubrique) {
-        this.rubrique = rubrique;
-    }
-
-    public PaySlipLine rubrique(Rubrique rubrique) {
-        this.setRubrique(rubrique);
-        return this;
-    }
+    public Rubrique getRubrique() { return this.rubrique; }
+    public void setRubrique(Rubrique rubrique) { this.rubrique = rubrique; }
+    public PaySlipLine rubrique(Rubrique rubrique) { this.rubrique = rubrique; return this; }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PaySlipLine)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof PaySlipLine)) return false;
         return getId() != null && getId().equals(((PaySlipLine) o).getId());
     }
 
     @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
+    public int hashCode() { return getClass().hashCode(); }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "PaySlipLine{" +
@@ -250,3 +143,4 @@ public class PaySlipLine implements Serializable {
             "}";
     }
 }
+

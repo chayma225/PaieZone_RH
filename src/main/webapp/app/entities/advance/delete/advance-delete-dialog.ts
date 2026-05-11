@@ -1,33 +1,23 @@
+// src/main/webapp/app/entities/advance/delete/advance-delete-dialog.component.ts
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal';
-import { TranslateModule } from '@ngx-translate/core';
-
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { TranslateDirective } from 'app/shared/language';
 import { IAdvance } from '../advance.model';
 import { AdvanceService } from '../service/advance.service';
+import {FormsModule} from "@angular/forms";
+import {DecimalPipe} from "@angular/common";
 
-@Component({
-  templateUrl: './advance-delete-dialog.html',
-  imports: [TranslateDirective, TranslateModule, FormsModule, FontAwesomeModule, AlertError],
+@Component({ standalone: true, templateUrl: './advance-delete-dialog.html', imports: [
+    FormsModule,
+    DecimalPipe
+  ]
 })
 export class AdvanceDeleteDialog {
   advance?: IAdvance;
-
-  protected readonly advanceService = inject(AdvanceService);
-  protected readonly activeModal = inject(NgbActiveModal);
-
-  cancel(): void {
-    this.activeModal.dismiss();
-  }
-
+  protected service     = inject(AdvanceService);
+  protected activeModal = inject(NgbActiveModal);
+  cancel(): void { this.activeModal.dismiss(); }
   confirmDelete(id: number): void {
-    this.advanceService.delete(id).subscribe(() => {
-      this.activeModal.close(ITEM_DELETED_EVENT);
-    });
+    this.service.delete(id).subscribe(() => this.activeModal.close(ITEM_DELETED_EVENT));
   }
 }

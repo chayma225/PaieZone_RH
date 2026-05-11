@@ -2,28 +2,32 @@ package tn.paiezone.rh.service.mapper;
 
 import org.mapstruct.*;
 import tn.paiezone.rh.domain.Bonus;
-import tn.paiezone.rh.domain.Employee;
-import tn.paiezone.rh.domain.PaySlip;
 import tn.paiezone.rh.service.dto.BonusDTO;
-import tn.paiezone.rh.service.dto.EmployeeDTO;
-import tn.paiezone.rh.service.dto.PaySlipDTO;
 
-/**
- * Mapper for the entity {@link Bonus} and its DTO {@link BonusDTO}.
- */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {
+    EmployeeMapper.class,
+    PaySlipMapper.class      // fournit employeeFromId et paySlipFromId
+})
 public interface BonusMapper extends EntityMapper<BonusDTO, Bonus> {
-    @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
-    @Mapping(target = "paySlip", source = "paySlip", qualifiedByName = "paySlipId")
+
+    @Mapping(source = "employee.id", target = "employeeId")
+    @Mapping(source = "paySlip.id",  target = "paySlipId")
     BonusDTO toDto(Bonus s);
 
-    @Named("employeeId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    EmployeeDTO toDtoEmployeeId(Employee employee);
+    @Mapping(source = "employeeId", target = "employee")
+    @Mapping(source = "paySlipId",  target = "paySlip")
+    @Mapping(target = "createdBy",        ignore = true)
+    @Mapping(target = "createdDate",      ignore = true)
+    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    Bonus toEntity(BonusDTO dto);
 
-    @Named("paySlipId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    PaySlipDTO toDtoPaySlipId(PaySlip paySlip);
+    @Mapping(source = "employeeId", target = "employee")
+    @Mapping(source = "paySlipId",  target = "paySlip")
+    @Mapping(target = "createdBy",        ignore = true)
+    @Mapping(target = "createdDate",      ignore = true)
+    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    void partialUpdate(@MappingTarget Bonus entity, BonusDTO dto);
+    // Pas de helpers ici — EmployeeMapper et PaySlipMapper les fournissent
 }

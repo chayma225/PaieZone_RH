@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-14-rubrique-audit-fix" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="rubrique"/>
+      <!-- On vérifie si created_by manque avant de l'ajouter -->
+      <not><columnExists tableName="rubrique" columnName="created_by"/></not>
+    </preConditions>
+
+    <addColumn tableName="rubrique">
+      <column name="created_by" type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modified_by" type="varchar(50)"/>
+      <column name="last_modified_date" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

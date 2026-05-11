@@ -1,38 +1,26 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-
 import dayjs from 'dayjs/esm';
 
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { IPaySlip, NewPaySlip } from '../pay-slip.model';
 
-/**
- * A partial Type with required key is used as form input.
- */
 type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>> & { id: T['id'] };
 
-/**
- * Type for createFormGroup and resetForm argument.
- * It accepts IPaySlip for edit and NewPaySlipFormGroupInput for create.
- */
 type PaySlipFormGroupInput = IPaySlip | PartialWithRequiredKeyOf<NewPaySlip>;
 
-/**
- * Type that converts some properties for forms.
- */
 type FormValueOf<T extends IPaySlip | NewPaySlip> = Omit<T, 'generatedAt' | 'sentToEmployeeAt'> & {
   generatedAt?: string | null;
   sentToEmployeeAt?: string | null;
 };
 
 type PaySlipFormRawValue = FormValueOf<IPaySlip>;
-
 type NewPaySlipFormRawValue = FormValueOf<NewPaySlip>;
 
 type PaySlipFormDefaults = Pick<NewPaySlip, 'id' | 'generatedAt' | 'sentToEmployeeAt'>;
 
 type PaySlipFormGroupContent = {
-  id: FormControl<PaySlipFormRawValue['id'] | NewPaySlip['id']>;
+  id: FormControl<PaySlipFormRawValue['id']>;
   month: FormControl<PaySlipFormRawValue['month']>;
   year: FormControl<PaySlipFormRawValue['year']>;
   baseSalary: FormControl<PaySlipFormRawValue['baseSalary']>;
@@ -41,145 +29,111 @@ type PaySlipFormGroupContent = {
   grossSalary: FormControl<PaySlipFormRawValue['grossSalary']>;
   cnssSalaryAmount: FormControl<PaySlipFormRawValue['cnssSalaryAmount']>;
   cavisAmount: FormControl<PaySlipFormRawValue['cavisAmount']>;
+  cssAmount: FormControl<PaySlipFormRawValue['cssAmount']>;
   taxableIncome: FormControl<PaySlipFormRawValue['taxableIncome']>;
   irppAmount: FormControl<PaySlipFormRawValue['irppAmount']>;
   netSalary: FormControl<PaySlipFormRawValue['netSalary']>;
   employerCnss: FormControl<PaySlipFormRawValue['employerCnss']>;
   employerCavis: FormControl<PaySlipFormRawValue['employerCavis']>;
+  tfpAmount: FormControl<PaySlipFormRawValue['tfpAmount']>;
   totalEmployerCost: FormControl<PaySlipFormRawValue['totalEmployerCost']>;
+  bonusTotal: FormControl<PaySlipFormRawValue['bonusTotal']>;
+  advanceDeduction: FormControl<PaySlipFormRawValue['advanceDeduction']>;
+  unpaidLeaveDeduction: FormControl<PaySlipFormRawValue['unpaidLeaveDeduction']>;
+  overtimeAmount: FormControl<PaySlipFormRawValue['overtimeAmount']>;
   workedDays: FormControl<PaySlipFormRawValue['workedDays']>;
   paidLeaveDays: FormControl<PaySlipFormRawValue['paidLeaveDays']>;
   unpaidDays: FormControl<PaySlipFormRawValue['unpaidDays']>;
   overtimeHours: FormControl<PaySlipFormRawValue['overtimeHours']>;
   status: FormControl<PaySlipFormRawValue['status']>;
   pdfUrl: FormControl<PaySlipFormRawValue['pdfUrl']>;
-  generatedAt: FormControl<PaySlipFormRawValue['generatedAt']>;
-  sentToEmployeeAt: FormControl<PaySlipFormRawValue['sentToEmployeeAt']>;
+  generatedAt: FormControl<string | null>;
+  sentToEmployeeAt: FormControl<string | null>;
   bankTransferRef: FormControl<PaySlipFormRawValue['bankTransferRef']>;
-  employee: FormControl<PaySlipFormRawValue['employee']>;
-  payrollPeriod: FormControl<PaySlipFormRawValue['payrollPeriod']>;
-  contract: FormControl<PaySlipFormRawValue['contract']>;
+  employee: FormControl<any>;
+  payrollPeriod: FormControl<any>;
+  contract: FormControl<any>;
 };
 
 export type PaySlipFormGroup = FormGroup<PaySlipFormGroupContent>;
 
 @Injectable({ providedIn: 'root' })
 export class PaySlipFormService {
+
   createPaySlipFormGroup(paySlip?: PaySlipFormGroupInput): PaySlipFormGroup {
+    const defaults = this.getFormDefaults();
     const paySlipRawValue = this.convertPaySlipToPaySlipRawValue({
-      ...this.getFormDefaults(),
+      ...defaults,
       ...(paySlip ?? { id: null }),
     });
+
     return new FormGroup<PaySlipFormGroupContent>({
-      id: new FormControl(
-        { value: paySlipRawValue.id, disabled: true },
-        {
-          nonNullable: true,
-          validators: [Validators.required],
-        },
-      ),
-      month: new FormControl(paySlipRawValue.month, {
-        validators: [Validators.required, Validators.min(1), Validators.max(12)],
-      }),
-      year: new FormControl(paySlipRawValue.year, {
-        validators: [Validators.required],
-      }),
-      baseSalary: new FormControl(paySlipRawValue.baseSalary, {
-        validators: [Validators.required],
-      }),
-      totalGains: new FormControl(paySlipRawValue.totalGains, {
-        validators: [Validators.required],
-      }),
-      totalDeductions: new FormControl(paySlipRawValue.totalDeductions, {
-        validators: [Validators.required],
-      }),
-      grossSalary: new FormControl(paySlipRawValue.grossSalary, {
-        validators: [Validators.required],
-      }),
-      cnssSalaryAmount: new FormControl(paySlipRawValue.cnssSalaryAmount, {
-        validators: [Validators.required],
-      }),
+      id: new FormControl({ value: paySlipRawValue.id, disabled: true }, { nonNullable: true }),
+      month: new FormControl(paySlipRawValue.month, [Validators.required, Validators.min(1), Validators.max(12)]),
+      year: new FormControl(paySlipRawValue.year, [Validators.required]),
+      baseSalary: new FormControl(paySlipRawValue.baseSalary, [Validators.required]),
+      totalGains: new FormControl(paySlipRawValue.totalGains, [Validators.required]),
+      totalDeductions: new FormControl(paySlipRawValue.totalDeductions, [Validators.required]),
+      grossSalary: new FormControl(paySlipRawValue.grossSalary, [Validators.required]),
+      cnssSalaryAmount: new FormControl(paySlipRawValue.cnssSalaryAmount, [Validators.required]),
       cavisAmount: new FormControl(paySlipRawValue.cavisAmount),
-      taxableIncome: new FormControl(paySlipRawValue.taxableIncome, {
-        validators: [Validators.required],
-      }),
-      irppAmount: new FormControl(paySlipRawValue.irppAmount, {
-        validators: [Validators.required],
-      }),
-      netSalary: new FormControl(paySlipRawValue.netSalary, {
-        validators: [Validators.required],
-      }),
-      employerCnss: new FormControl(paySlipRawValue.employerCnss, {
-        validators: [Validators.required],
-      }),
+      cssAmount: new FormControl(paySlipRawValue.cssAmount),
+      taxableIncome: new FormControl(paySlipRawValue.taxableIncome, [Validators.required]),
+      irppAmount: new FormControl(paySlipRawValue.irppAmount, [Validators.required]),
+      netSalary: new FormControl(paySlipRawValue.netSalary, [Validators.required]),
+      employerCnss: new FormControl(paySlipRawValue.employerCnss, [Validators.required]),
       employerCavis: new FormControl(paySlipRawValue.employerCavis),
-      totalEmployerCost: new FormControl(paySlipRawValue.totalEmployerCost, {
-        validators: [Validators.required],
-      }),
+      tfpAmount: new FormControl(paySlipRawValue.tfpAmount),
+      totalEmployerCost: new FormControl(paySlipRawValue.totalEmployerCost, [Validators.required]),
+      bonusTotal: new FormControl(paySlipRawValue.bonusTotal),
+      advanceDeduction: new FormControl(paySlipRawValue.advanceDeduction),
+      unpaidLeaveDeduction: new FormControl(paySlipRawValue.unpaidLeaveDeduction),
+      overtimeAmount: new FormControl(paySlipRawValue.overtimeAmount),
       workedDays: new FormControl(paySlipRawValue.workedDays),
       paidLeaveDays: new FormControl(paySlipRawValue.paidLeaveDays),
       unpaidDays: new FormControl(paySlipRawValue.unpaidDays),
       overtimeHours: new FormControl(paySlipRawValue.overtimeHours),
-      status: new FormControl(paySlipRawValue.status, {
-        validators: [Validators.required],
-      }),
-      pdfUrl: new FormControl(paySlipRawValue.pdfUrl, {
-        validators: [Validators.maxLength(500)],
-      }),
+      status: new FormControl(paySlipRawValue.status, [Validators.required]),
+      pdfUrl: new FormControl(paySlipRawValue.pdfUrl, [Validators.maxLength(500)]),
       generatedAt: new FormControl(paySlipRawValue.generatedAt),
       sentToEmployeeAt: new FormControl(paySlipRawValue.sentToEmployeeAt),
-      bankTransferRef: new FormControl(paySlipRawValue.bankTransferRef, {
-        validators: [Validators.maxLength(100)],
-      }),
-      employee: new FormControl(paySlipRawValue.employee, {
-        validators: [Validators.required],
-      }),
-      payrollPeriod: new FormControl(paySlipRawValue.payrollPeriod, {
-        validators: [Validators.required],
-      }),
-      contract: new FormControl(paySlipRawValue.contract, {
-        validators: [Validators.required],
-      }),
+      bankTransferRef: new FormControl(paySlipRawValue.bankTransferRef, [Validators.maxLength(100)]),
+      employee: new FormControl(paySlipRawValue.employee, [Validators.required]),
+      payrollPeriod: new FormControl(paySlipRawValue.payrollPeriod, [Validators.required]),
+      contract: new FormControl(paySlipRawValue.contract, [Validators.required]),
     });
   }
 
   getPaySlip(form: PaySlipFormGroup): IPaySlip | NewPaySlip {
-    return this.convertPaySlipRawValueToPaySlip(form.getRawValue() as PaySlipFormRawValue | NewPaySlipFormRawValue);
+    return this.convertPaySlipRawValueToPaySlip(form.getRawValue() as any);
   }
 
   resetForm(form: PaySlipFormGroup, paySlip: PaySlipFormGroupInput): void {
     const paySlipRawValue = this.convertPaySlipToPaySlipRawValue({ ...this.getFormDefaults(), ...paySlip });
-    form.reset({
-      ...paySlipRawValue,
-      id: { value: paySlipRawValue.id, disabled: true },
-    });
+    form.reset(paySlipRawValue);
   }
 
   private getFormDefaults(): PaySlipFormDefaults {
-    const currentTime = dayjs();
-
     return {
       id: null,
-      generatedAt: currentTime,
-      sentToEmployeeAt: currentTime,
+      generatedAt: null,
+      sentToEmployeeAt: null,
     };
   }
 
-  private convertPaySlipRawValueToPaySlip(rawPaySlip: PaySlipFormRawValue | NewPaySlipFormRawValue): IPaySlip | NewPaySlip {
+  private convertPaySlipRawValueToPaySlip(raw: any): IPaySlip | NewPaySlip {
     return {
-      ...rawPaySlip,
-      generatedAt: dayjs(rawPaySlip.generatedAt, DATE_TIME_FORMAT),
-      sentToEmployeeAt: dayjs(rawPaySlip.sentToEmployeeAt, DATE_TIME_FORMAT),
+      ...raw,
+      generatedAt: raw.generatedAt ? dayjs(raw.generatedAt, DATE_TIME_FORMAT) : undefined,
+      sentToEmployeeAt: raw.sentToEmployeeAt ? dayjs(raw.sentToEmployeeAt, DATE_TIME_FORMAT) : undefined,
     };
   }
 
-  private convertPaySlipToPaySlipRawValue(
-    paySlip: IPaySlip | (Partial<NewPaySlip> & PaySlipFormDefaults),
-  ): PaySlipFormRawValue | PartialWithRequiredKeyOf<NewPaySlipFormRawValue> {
+  private convertPaySlipToPaySlipRawValue(paySlip: any): any {
     return {
       ...paySlip,
-      generatedAt: paySlip.generatedAt ? paySlip.generatedAt.format(DATE_TIME_FORMAT) : undefined,
-      sentToEmployeeAt: paySlip.sentToEmployeeAt ? paySlip.sentToEmployeeAt.format(DATE_TIME_FORMAT) : undefined,
+      generatedAt: paySlip.generatedAt ? dayjs(paySlip.generatedAt).format(DATE_TIME_FORMAT) : null,
+      sentToEmployeeAt: paySlip.sentToEmployeeAt ? dayjs(paySlip.sentToEmployeeAt).format(DATE_TIME_FORMAT) : null,
     };
   }
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-fix-regulatory-param-missing-cols" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="regulatory_param"/>
+      <not>
+        <columnExists tableName="regulatory_param" columnName="description"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="regulatory_param">
+      <column name="description" type="varchar(1000)"/>
+      <column name="updated_at"  type="timestamp"/>
+      <column name="updated_by"  type="varchar(100)"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

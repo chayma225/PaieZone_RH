@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-tax-brackets-seed-v2" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="tax_bracket"/>
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM tax_bracket
+      </sqlCheck>
+    </preConditions>
+
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2024"/>
+      <column name="min_income"      valueNumeric="0.000"/>
+      <column name="max_income"      valueNumeric="5000.000"/>
+      <column name="rate"            valueNumeric="0.0000"/>
+      <column name="fixed_deduction" valueNumeric="0.000"/>
+      <column name="sort_order"      valueNumeric="1"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2024"/>
+      <column name="min_income"      valueNumeric="5000.000"/>
+      <column name="max_income"      valueNumeric="20000.000"/>
+      <column name="rate"            valueNumeric="0.2600"/>
+      <column name="fixed_deduction" valueNumeric="1300.000"/>
+      <column name="sort_order"      valueNumeric="2"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2024"/>
+      <column name="min_income"      valueNumeric="20000.000"/>
+      <column name="max_income"      valueNumeric="30000.000"/>
+      <column name="rate"            valueNumeric="0.2800"/>
+      <column name="fixed_deduction" valueNumeric="1700.000"/>
+      <column name="sort_order"      valueNumeric="3"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2024"/>
+      <column name="min_income"      valueNumeric="30000.000"/>
+      <column name="max_income"      valueNumeric="50000.000"/>
+      <column name="rate"            valueNumeric="0.3200"/>
+      <column name="fixed_deduction" valueNumeric="2900.000"/>
+      <column name="sort_order"      valueNumeric="4"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2024"/>
+      <column name="min_income"      valueNumeric="50000.000"/>
+      <column name="rate"            valueNumeric="0.3500"/>
+      <column name="fixed_deduction" valueNumeric="4400.000"/>
+      <column name="sort_order"      valueNumeric="5"/>
+    </insert>
+
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2025"/>
+      <column name="min_income"      valueNumeric="0.000"/>
+      <column name="max_income"      valueNumeric="5000.000"/>
+      <column name="rate"            valueNumeric="0.0000"/>
+      <column name="fixed_deduction" valueNumeric="0.000"/>
+      <column name="sort_order"      valueNumeric="1"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2025"/>
+      <column name="min_income"      valueNumeric="5000.000"/>
+      <column name="max_income"      valueNumeric="20000.000"/>
+      <column name="rate"            valueNumeric="0.2600"/>
+      <column name="fixed_deduction" valueNumeric="1300.000"/>
+      <column name="sort_order"      valueNumeric="2"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2025"/>
+      <column name="min_income"      valueNumeric="20000.000"/>
+      <column name="max_income"      valueNumeric="30000.000"/>
+      <column name="rate"            valueNumeric="0.2800"/>
+      <column name="fixed_deduction" valueNumeric="1700.000"/>
+      <column name="sort_order"      valueNumeric="3"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2025"/>
+      <column name="min_income"      valueNumeric="30000.000"/>
+      <column name="max_income"      valueNumeric="50000.000"/>
+      <column name="rate"            valueNumeric="0.3200"/>
+      <column name="fixed_deduction" valueNumeric="2900.000"/>
+      <column name="sort_order"      valueNumeric="4"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2025"/>
+      <column name="min_income"      valueNumeric="50000.000"/>
+      <column name="rate"            valueNumeric="0.3500"/>
+      <column name="fixed_deduction" valueNumeric="4400.000"/>
+      <column name="sort_order"      valueNumeric="5"/>
+    </insert>
+
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="0.000"/>
+      <column name="max_income"      valueNumeric="5000.000"/>
+      <column name="rate"            valueNumeric="0.0000"/>
+      <column name="fixed_deduction" valueNumeric="0.000"/>
+      <column name="sort_order"      valueNumeric="1"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="5000.000"/>
+      <column name="max_income"      valueNumeric="10000.000"/>
+      <column name="rate"            valueNumeric="0.1500"/>
+      <column name="fixed_deduction" valueNumeric="750.000"/>
+      <column name="sort_order"      valueNumeric="2"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="10000.000"/>
+      <column name="max_income"      valueNumeric="20000.000"/>
+      <column name="rate"            valueNumeric="0.2500"/>
+      <column name="fixed_deduction" valueNumeric="1750.000"/>
+      <column name="sort_order"      valueNumeric="3"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="20000.000"/>
+      <column name="max_income"      valueNumeric="30000.000"/>
+      <column name="rate"            valueNumeric="0.3000"/>
+      <column name="fixed_deduction" valueNumeric="2750.000"/>
+      <column name="sort_order"      valueNumeric="4"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="30000.000"/>
+      <column name="max_income"      valueNumeric="50000.000"/>
+      <column name="rate"            valueNumeric="0.3300"/>
+      <column name="fixed_deduction" valueNumeric="3650.000"/>
+      <column name="sort_order"      valueNumeric="5"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="50000.000"/>
+      <column name="max_income"      valueNumeric="100000.000"/>
+      <column name="rate"            valueNumeric="0.3600"/>
+      <column name="fixed_deduction" valueNumeric="5150.000"/>
+      <column name="sort_order"      valueNumeric="6"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="100000.000"/>
+      <column name="max_income"      valueNumeric="200000.000"/>
+      <column name="rate"            valueNumeric="0.3800"/>
+      <column name="fixed_deduction" valueNumeric="7150.000"/>
+      <column name="sort_order"      valueNumeric="7"/>
+    </insert>
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="200000.000"/>
+      <column name="rate"            valueNumeric="0.4000"/>
+      <column name="fixed_deduction" valueNumeric="11150.000"/>
+      <column name="sort_order"      valueNumeric="8"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

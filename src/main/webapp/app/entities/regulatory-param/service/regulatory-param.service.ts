@@ -1,144 +1,135 @@
-import { HttpClient, HttpResponse, httpResource } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
 
-import dayjs from 'dayjs/esm';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-
+import dayjs from 'dayjs/esm';
 import { DATE_FORMAT } from 'app/config/input.constants';
+import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { isPresent } from 'app/core/util/operators';
-import { IRegulatoryParam, NewRegulatoryParam } from '../regulatory-param.model';
+import { IRegulatoryParam, NewRegulatoryParam, PartialUpdateRegulatoryParam } from '../regulatory-param.model';
 
-export type PartialUpdateRegulatoryParam = Partial<IRegulatoryParam> & Pick<IRegulatoryParam, 'id'>;
-
-type RestOf<T extends IRegulatoryParam | NewRegulatoryParam> = Omit<T, 'effectiveFrom' | 'effectiveTo'> & {
+type RestOf<T extends IRegulatoryParam | NewRegulatoryParam> = Omit<T, 'effectiveFrom' | 'effectiveTo' | 'updatedAt'> & {
   effectiveFrom?: string | null;
   effectiveTo?: string | null;
+  updatedAt?: string | null;
 };
 
-export type RestRegulatoryParam = RestOf<IRegulatoryParam>;
-
+export type RestRegulatoryParam    = RestOf<IRegulatoryParam>;
 export type NewRestRegulatoryParam = RestOf<NewRegulatoryParam>;
-
-export type PartialUpdateRestRegulatoryParam = RestOf<PartialUpdateRegulatoryParam>;
-
-@Injectable()
-export class RegulatoryParamsService {
-  readonly regulatoryParamsParams = signal<Record<string, string | number | boolean | readonly (string | number | boolean)[]> | undefined>(
-    undefined,
-  );
-  readonly regulatoryParamsResource = httpResource<RestRegulatoryParam[]>(() => {
-    const params = this.regulatoryParamsParams();
-    if (!params) {
-      return undefined;
-    }
-    return { url: this.resourceUrl, params };
-  });
-  /**
-   * This signal holds the list of regulatoryParam that have been fetched. It is updated when the regulatoryParamsResource emits a new value.
-   * In case of error while fetching the regulatoryParams, the signal is set to an empty array.
-   */
-  readonly regulatoryParams = computed(() =>
-    (this.regulatoryParamsResource.hasValue() ? this.regulatoryParamsResource.value() : []).map(item => this.convertValueFromServer(item)),
-  );
-  protected readonly applicationConfigService = inject(ApplicationConfigService);
-  protected readonly resourceUrl = this.applicationConfigService.getEndpointFor('api/regulatory-params');
-
-  protected convertValueFromServer(restRegulatoryParam: RestRegulatoryParam): IRegulatoryParam {
-    return {
-      ...restRegulatoryParam,
-      effectiveFrom: restRegulatoryParam.effectiveFrom ? dayjs(restRegulatoryParam.effectiveFrom) : undefined,
-      effectiveTo: restRegulatoryParam.effectiveTo ? dayjs(restRegulatoryParam.effectiveTo) : undefined,
-    };
-  }
-}
+export type EntityResponseType      = HttpResponse<IRegulatoryParam>;
+export type EntityArrayResponseType = HttpResponse<IRegulatoryParam[]>;
 
 @Injectable({ providedIn: 'root' })
-export class RegulatoryParamService extends RegulatoryParamsService {
-  protected readonly http = inject(HttpClient);
+export class RegulatoryParamService {
+  protected readonly http      = inject(HttpClient);
+  protected readonly appConfig = inject(ApplicationConfigService);
+  protected resourceUrl        = this.appConfig.getEndpointFor('api/regulatory-params');
 
-  create(regulatoryParam: NewRegulatoryParam): Observable<IRegulatoryParam> {
-    const copy = this.convertValueFromClient(regulatoryParam);
-    return this.http.post<RestRegulatoryParam>(this.resourceUrl, copy).pipe(map(res => this.convertResponseFromServer(res)));
-  }
+  // ── CRUD ──────────────────────────────────────────────────────────
 
-  update(regulatoryParam: IRegulatoryParam): Observable<IRegulatoryParam> {
-    const copy = this.convertValueFromClient(regulatoryParam);
+  create(p: NewRegulatoryParam): Observable<EntityResponseType> {
     return this.http
-      .put<RestRegulatoryParam>(`${this.resourceUrl}/${encodeURIComponent(this.getRegulatoryParamIdentifier(regulatoryParam))}`, copy)
-      .pipe(map(res => this.convertResponseFromServer(res)));
+      .post<RestRegulatoryParam>(this.resourceUrl, this.convertDateFromClient(p), { observe: 'response' })
+      .pipe(map(r => this.convertResponseFromServer(r)));
   }
 
-  partialUpdate(regulatoryParam: PartialUpdateRegulatoryParam): Observable<IRegulatoryParam> {
-    const copy = this.convertValueFromClient(regulatoryParam);
+  update(p: IRegulatoryParam): Observable<EntityResponseType> {
     return this.http
-      .patch<RestRegulatoryParam>(`${this.resourceUrl}/${encodeURIComponent(this.getRegulatoryParamIdentifier(regulatoryParam))}`, copy)
-      .pipe(map(res => this.convertResponseFromServer(res)));
+      .put<RestRegulatoryParam>(`${this.resourceUrl}/${p.id}`, this.convertDateFromClient(p), { observe: 'response' })
+      .pipe(map(r => this.convertResponseFromServer(r)));
   }
 
-  find(id: number): Observable<IRegulatoryParam> {
+  partialUpdate(p: PartialUpdateRegulatoryParam): Observable<EntityResponseType> {
     return this.http
-      .get<RestRegulatoryParam>(`${this.resourceUrl}/${encodeURIComponent(id)}`)
-      .pipe(map(res => this.convertResponseFromServer(res)));
+      .patch<RestRegulatoryParam>(`${this.resourceUrl}/${p.id}`, this.convertDateFromClient(p), { observe: 'response' })
+      .pipe(map(r => this.convertResponseFromServer(r)));
   }
 
-  query(req?: any): Observable<HttpResponse<IRegulatoryParam[]>> {
+  find(id: number): Observable<EntityResponseType> {
+    return this.http
+      .get<RestRegulatoryParam>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+      .pipe(map(r => this.convertResponseFromServer(r)));
+  }
+
+  query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
       .get<RestRegulatoryParam[]>(this.resourceUrl, { params: options, observe: 'response' })
-      .pipe(map(res => res.clone({ body: this.convertResponseArrayFromServer(res.body!) })));
+      .pipe(map(r => this.convertResponseArrayFromServer(r)));
   }
 
-  delete(id: number): Observable<undefined> {
-    return this.http.delete<undefined>(`${this.resourceUrl}/${encodeURIComponent(id)}`);
+  delete(id: number): Observable<HttpResponse<{}>> {
+    return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  getRegulatoryParamIdentifier(regulatoryParam: Pick<IRegulatoryParam, 'id'>): number {
-    return regulatoryParam.id;
+  // ── Helpers JHipster standard ─────────────────────────────────────
+
+  getRegulatoryParamIdentifier(p: Pick<IRegulatoryParam, 'id'>): number {
+    return p.id;
   }
 
-  compareRegulatoryParam(o1: Pick<IRegulatoryParam, 'id'> | null, o2: Pick<IRegulatoryParam, 'id'> | null): boolean {
-    return o1 && o2 ? this.getRegulatoryParamIdentifier(o1) === this.getRegulatoryParamIdentifier(o2) : o1 === o2;
+  compareRegulatoryParam(
+    o1: Pick<IRegulatoryParam, 'id'> | null,
+    o2: Pick<IRegulatoryParam, 'id'> | null,
+  ): boolean {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
   }
 
-  addRegulatoryParamToCollectionIfMissing<Type extends Pick<IRegulatoryParam, 'id'>>(
-    regulatoryParamCollection: Type[],
-    ...regulatoryParamsToCheck: (Type | null | undefined)[]
-  ): Type[] {
-    const regulatoryParams: Type[] = regulatoryParamsToCheck.filter(isPresent);
-    if (regulatoryParams.length > 0) {
-      const regulatoryParamCollectionIdentifiers = regulatoryParamCollection.map(regulatoryParamItem =>
-        this.getRegulatoryParamIdentifier(regulatoryParamItem),
-      );
-      const regulatoryParamsToAdd = regulatoryParams.filter(regulatoryParamItem => {
-        const regulatoryParamIdentifier = this.getRegulatoryParamIdentifier(regulatoryParamItem);
-        if (regulatoryParamCollectionIdentifiers.includes(regulatoryParamIdentifier)) {
-          return false;
-        }
-        regulatoryParamCollectionIdentifiers.push(regulatoryParamIdentifier);
-        return true;
-      });
-      return [...regulatoryParamsToAdd, ...regulatoryParamCollection];
-    }
-    return regulatoryParamCollection;
+  addRegulatoryParamToCollectionIfMissing<T extends Pick<IRegulatoryParam, 'id'>>(
+    collection: T[],
+    ...toCheck: (T | null | undefined)[]
+  ): T[] {
+    const items = toCheck.filter(isPresent) as T[];
+    if (items.length === 0) return collection;
+    const ids = new Set(collection.map(i => this.getRegulatoryParamIdentifier(i)));
+    const toAdd = items.filter(i => !ids.has(this.getRegulatoryParamIdentifier(i)));
+    return [...toAdd, ...collection];
   }
 
-  protected convertValueFromClient<T extends IRegulatoryParam | NewRegulatoryParam | PartialUpdateRegulatoryParam>(
-    regulatoryParam: T,
+  // ── Conversions dates ─────────────────────────────────────────────
+
+  // ✅ APRÈS
+  protected convertDateFromClient<T extends IRegulatoryParam | NewRegulatoryParam | PartialUpdateRegulatoryParam>(
+    p: T,
   ): RestOf<T> {
+    const toDateString = (val: any): string | null => {
+      if (!val) return null;
+      if (typeof val === 'string') return val;          // déjà une string "YYYY-MM-DD"
+      if (typeof val?.format === 'function') return val.format(DATE_FORMAT); // objet dayjs
+      return null;
+    };
+
+    const toIsoString = (val: any): string | null => {
+      if (!val) return null;
+      if (typeof val === 'string') return val;
+      if (typeof val?.toJSON === 'function') return val.toJSON();
+      return null;
+    };
+
     return {
-      ...regulatoryParam,
-      effectiveFrom: regulatoryParam.effectiveFrom?.format(DATE_FORMAT) ?? null,
-      effectiveTo: regulatoryParam.effectiveTo?.format(DATE_FORMAT) ?? null,
+      ...p,
+      effectiveFrom: toDateString(p.effectiveFrom),
+      effectiveTo:   toDateString(p.effectiveTo),
+      updatedAt:     toIsoString(p.updatedAt),
     };
   }
 
-  protected convertResponseFromServer(res: RestRegulatoryParam): IRegulatoryParam {
-    return this.convertValueFromServer(res);
+  protected convertDateFromServer(r: RestRegulatoryParam): IRegulatoryParam {
+    return {
+      ...r,
+      effectiveFrom: r.effectiveFrom ? dayjs(r.effectiveFrom) : undefined,
+      effectiveTo:   r.effectiveTo   ? dayjs(r.effectiveTo)   : undefined,
+      updatedAt:     r.updatedAt     ? dayjs(r.updatedAt)     : undefined,
+    };
   }
 
-  protected convertResponseArrayFromServer(res: RestRegulatoryParam[]): IRegulatoryParam[] {
-    return res.map(item => this.convertValueFromServer(item));
+  protected convertResponseFromServer(r: HttpResponse<RestRegulatoryParam>): HttpResponse<IRegulatoryParam> {
+    return r.clone({ body: r.body ? this.convertDateFromServer(r.body) : null });
+  }
+
+  protected convertResponseArrayFromServer(r: HttpResponse<RestRegulatoryParam[]>): HttpResponse<IRegulatoryParam[]> {
+    return r.clone({ body: r.body ? r.body.map(i => this.convertDateFromServer(i)) : null });
   }
 }
+

@@ -1,12 +1,11 @@
 package tn.paiezone.rh.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static tn.paiezone.rh.domain.EmployeeTestSamples.*;
-import static tn.paiezone.rh.domain.TimeEntryTestSamples.*;
-import static tn.paiezone.rh.domain.UserProfileTestSamples.*;
-
 import org.junit.jupiter.api.Test;
 import tn.paiezone.rh.web.rest.TestUtil;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static tn.paiezone.rh.domain.EmployeeTestSamples.getEmployeeRandomSampleGenerator;
+import static tn.paiezone.rh.domain.TimeEntryTestSamples.*;
 
 class TimeEntryTest {
 
@@ -36,15 +35,13 @@ class TimeEntryTest {
         assertThat(timeEntry.getEmployee()).isNull();
     }
 
+
     @Test
-    void validatedByUserTest() {
+    void validatedByTest() {
         TimeEntry timeEntry = getTimeEntryRandomSampleGenerator();
-        UserProfile userProfileBack = getUserProfileRandomSampleGenerator();
-
-        timeEntry.setValidatedByUser(userProfileBack);
-        assertThat(timeEntry.getValidatedByUser()).isEqualTo(userProfileBack);
-
-        timeEntry.validatedByUser(null);
-        assertThat(timeEntry.getValidatedByUser()).isNull();
+        timeEntry.setValidatedBy("admin");
+        assertThat(timeEntry.getValidatedBy()).isEqualTo("admin");
+        timeEntry.setValidatedBy(null);
+        assertThat(timeEntry.getValidatedBy()).isNull();
     }
 }

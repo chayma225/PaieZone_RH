@@ -1,18 +1,15 @@
 package tn.paiezone.rh.service.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import tn.paiezone.rh.domain.enumeration.TimeEntrySource;
+import tn.paiezone.rh.domain.enumeration.TimeEntryStatus;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
-import tn.paiezone.rh.domain.enumeration.TimeEntrySource;
-import tn.paiezone.rh.domain.enumeration.TimeEntryStatus;
 
-/**
- * A DTO for the {@link tn.paiezone.rh.domain.TimeEntry} entity.
- */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class TimeEntryDTO implements Serializable {
 
     private Long id;
@@ -21,13 +18,9 @@ public class TimeEntryDTO implements Serializable {
     private LocalDate entryDate;
 
     private Instant checkIn;
-
     private Instant checkOut;
-
     private BigDecimal workedHours;
-
     private BigDecimal overtimeHours;
-
     private Integer lateMinutes;
 
     @NotNull
@@ -36,170 +29,73 @@ public class TimeEntryDTO implements Serializable {
     @NotNull
     private TimeEntryStatus status;
 
-    @Size(max = 500)
     private String anomalyNote;
 
-    @Size(max = 100)
+    // ✅ validatedBy = String (login) — plus UserProfileDTO
     private String validatedBy;
 
     private Instant validatedAt;
+    private String notes;
 
-    @NotNull
-    private EmployeeDTO employee;
+    // ✅ Relation ID (style JHipster)
+    private Long employeeId;
 
-    private UserProfileDTO validatedByUser;
+    // ── Getters / Setters ──────────────────────────────────────────
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public LocalDate getEntryDate() { return entryDate; }
+    public void setEntryDate(LocalDate entryDate) { this.entryDate = entryDate; }
 
-    public LocalDate getEntryDate() {
-        return entryDate;
-    }
+    public Instant getCheckIn() { return checkIn; }
+    public void setCheckIn(Instant checkIn) { this.checkIn = checkIn; }
 
-    public void setEntryDate(LocalDate entryDate) {
-        this.entryDate = entryDate;
-    }
+    public Instant getCheckOut() { return checkOut; }
+    public void setCheckOut(Instant checkOut) { this.checkOut = checkOut; }
 
-    public Instant getCheckIn() {
-        return checkIn;
-    }
+    public BigDecimal getWorkedHours() { return workedHours; }
+    public void setWorkedHours(BigDecimal workedHours) { this.workedHours = workedHours; }
 
-    public void setCheckIn(Instant checkIn) {
-        this.checkIn = checkIn;
-    }
+    public BigDecimal getOvertimeHours() { return overtimeHours; }
+    public void setOvertimeHours(BigDecimal overtimeHours) { this.overtimeHours = overtimeHours; }
 
-    public Instant getCheckOut() {
-        return checkOut;
-    }
+    public Integer getLateMinutes() { return lateMinutes; }
+    public void setLateMinutes(Integer lateMinutes) { this.lateMinutes = lateMinutes; }
 
-    public void setCheckOut(Instant checkOut) {
-        this.checkOut = checkOut;
-    }
+    public TimeEntrySource getSource() { return source; }
+    public void setSource(TimeEntrySource source) { this.source = source; }
 
-    public BigDecimal getWorkedHours() {
-        return workedHours;
-    }
+    public TimeEntryStatus getStatus() { return status; }
+    public void setStatus(TimeEntryStatus status) { this.status = status; }
 
-    public void setWorkedHours(BigDecimal workedHours) {
-        this.workedHours = workedHours;
-    }
+    public String getAnomalyNote() { return anomalyNote; }
+    public void setAnomalyNote(String anomalyNote) { this.anomalyNote = anomalyNote; }
 
-    public BigDecimal getOvertimeHours() {
-        return overtimeHours;
-    }
+    public String getValidatedBy() { return validatedBy; }
+    public void setValidatedBy(String validatedBy) { this.validatedBy = validatedBy; }
 
-    public void setOvertimeHours(BigDecimal overtimeHours) {
-        this.overtimeHours = overtimeHours;
-    }
+    public Instant getValidatedAt() { return validatedAt; }
+    public void setValidatedAt(Instant validatedAt) { this.validatedAt = validatedAt; }
 
-    public Integer getLateMinutes() {
-        return lateMinutes;
-    }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
-    public void setLateMinutes(Integer lateMinutes) {
-        this.lateMinutes = lateMinutes;
-    }
-
-    public TimeEntrySource getSource() {
-        return source;
-    }
-
-    public void setSource(TimeEntrySource source) {
-        this.source = source;
-    }
-
-    public TimeEntryStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TimeEntryStatus status) {
-        this.status = status;
-    }
-
-    public String getAnomalyNote() {
-        return anomalyNote;
-    }
-
-    public void setAnomalyNote(String anomalyNote) {
-        this.anomalyNote = anomalyNote;
-    }
-
-    public String getValidatedBy() {
-        return validatedBy;
-    }
-
-    public void setValidatedBy(String validatedBy) {
-        this.validatedBy = validatedBy;
-    }
-
-    public Instant getValidatedAt() {
-        return validatedAt;
-    }
-
-    public void setValidatedAt(Instant validatedAt) {
-        this.validatedAt = validatedAt;
-    }
-
-    public EmployeeDTO getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(EmployeeDTO employee) {
-        this.employee = employee;
-    }
-
-    public UserProfileDTO getValidatedByUser() {
-        return validatedByUser;
-    }
-
-    public void setValidatedByUser(UserProfileDTO validatedByUser) {
-        this.validatedByUser = validatedByUser;
-    }
+    public Long getEmployeeId() { return employeeId; }
+    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof TimeEntryDTO)) {
-            return false;
-        }
-
-        TimeEntryDTO timeEntryDTO = (TimeEntryDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, timeEntryDTO.id);
+        if (this == o) return true;
+        if (!(o instanceof TimeEntryDTO)) return false;
+        return Objects.equals(id, ((TimeEntryDTO) o).id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
+    public int hashCode() { return Objects.hash(id); }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "TimeEntryDTO{" +
-            "id=" + getId() +
-            ", entryDate='" + getEntryDate() + "'" +
-            ", checkIn='" + getCheckIn() + "'" +
-            ", checkOut='" + getCheckOut() + "'" +
-            ", workedHours=" + getWorkedHours() +
-            ", overtimeHours=" + getOvertimeHours() +
-            ", lateMinutes=" + getLateMinutes() +
-            ", source='" + getSource() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", anomalyNote='" + getAnomalyNote() + "'" +
-            ", validatedBy='" + getValidatedBy() + "'" +
-            ", validatedAt='" + getValidatedAt() + "'" +
-            ", employee=" + getEmployee() +
-            ", validatedByUser=" + getValidatedByUser() +
-            "}";
+        return "TimeEntryDTO{id=" + id + ", entryDate=" + entryDate + ", status=" + status + "}";
     }
 }

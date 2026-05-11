@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-add-category-to-regulatory-param" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="regulatory_param" columnName="category"/></not>
+    </preConditions>
+    <addColumn tableName="regulatory_param">
+      <column name="category" type="varchar(50)"/>
+    </addColumn>
+    <!-- Colonnes de traçabilité utiles -->
+    <addColumn tableName="regulatory_param">
+      <column name="effective_to" type="date"/>
+    </addColumn>
+    <addColumn tableName="regulatory_param">
+      <column name="description" type="varchar(1000)"/>
+    </addColumn>
+    <addColumn tableName="regulatory_param">
+      <column name="updated_at" type="timestamp"/>
+    </addColumn>
+    <addColumn tableName="regulatory_param">
+      <column name="updated_by" type="varchar(100)"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-regulatory-params-seed-v2" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+
+    <sql>
+      TRUNCATE TABLE regulatory_param CASCADE;
+      ALTER SEQUENCE sequence_generator RESTART WITH 1050;
+    </sql>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="FRAIS_PRO_TAUX"/>
+      <column name="param_label"     value="Taux frais professionnels (10%)"/>
+      <column name="category"        value="FISCAL"/>
+      <column name="numeric_value"   valueNumeric="0.1000"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="legal_reference" value="Art. 26 CIRPP"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="FRAIS_PRO_PLAFOND"/>
+      <column name="param_label"     value="Plafond frais professionnels annuel (DT)"/>
+      <column name="category"        value="FISCAL"/>
+      <column name="numeric_value"   valueNumeric="2000.0000"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="legal_reference" value="Art. 26 CIRPP"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="DEDUCTION_CHEF_FAMILLE"/>
+      <column name="param_label"     value="Déduction chef de famille par an (DT)"/>
+      <column name="category"        value="FAMILLE"/>
+      <column name="numeric_value"   valueNumeric="300.0000"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="DEDUCTION_PAR_ENFANT"/>
+      <column name="param_label"     value="Déduction par enfant à charge par an (DT)"/>
+      <column name="category"        value="FAMILLE"/>
+      <column name="numeric_value"   valueNumeric="100.0000"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="HEURES_MENSUELLES_BASE"/>
+      <column name="param_label"     value="Heures mensuelles de base (173,33h)"/>
+      <column name="category"        value="WORK_TIME"/>
+      <column name="numeric_value"   valueNumeric="173.3300"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="TAUX_HS_25"/>
+      <column name="param_label"     value="Coefficient HS 25%"/>
+      <column name="category"        value="WORK_TIME"/>
+      <column name="numeric_value"   valueNumeric="1.2500"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="CSS_TAUX_TRANCHE1"/>
+      <column name="param_label"     value="CSS tranche 1 (1%)"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="numeric_value"   valueNumeric="0.0100"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="TFP_TAUX"/>
+      <column name="param_label"     value="Taxe Formation Professionnelle (1%)"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="numeric_value"   valueNumeric="0.0100"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="CONGE_MENSUEL_ACCRU"/>
+      <column name="param_label"     value="Accumulation mensuelle congé"/>
+      <column name="category"        value="LEAVE"/>
+      <column name="numeric_value"   valueNumeric="1.5000"/>
+      <column name="effective_from"  valueDate="2024-01-01"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

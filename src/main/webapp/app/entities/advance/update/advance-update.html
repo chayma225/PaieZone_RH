@@ -1,236 +1,63 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="pz-advance-heading" data-cy="AdvanceCreateUpdateHeading" pzTranslate="paieZoneRhApp.advance.home.createOrEditLabel">
-        Créer ou éditer un Advance
-      </h2>
+<!-- src/main/webapp/app/entities/advance/update/advance-update.component.html -->
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <form novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2>{{ advance?.id ? 'Modifier' : 'Nouvelle' }} Avance sur salaire</h2>
+      <pz-alert-error></pz-alert-error>
+      <div class="mb-3">
+        <label class="form-label">Employé ID <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" formControlName="employeeId"/>
+      </div>
 
-      <div>
-        <pz-alert-error />
-
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
-        @let requestDateRef = editForm.get('requestDate')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_requestDate" pzTranslate="paieZoneRhApp.advance.requestDate">Request Date</label>
-          <div class="input-group">
-            <input
-              id="field_requestDate"
-              data-cy="requestDate"
-              type="text"
-              class="form-control"
-              name="requestDate"
-              ngbDatepicker
-              #requestDateDp="ngbDatepicker"
-              formControlName="requestDate"
-            />
-            <button type="button" class="btn btn-secondary" (click)="requestDateDp.toggle()"><fa-icon icon="calendar-alt" /></button>
-          </div>
-          @if (requestDateRef.invalid && (requestDateRef.dirty || requestDateRef.touched)) {
-            <div>
-              @if (editForm.get('requestDate')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Date de demande <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" formControlName="requestDate"/>
         </div>
-
-        @let amountRef = editForm.get('amount')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_amount" pzTranslate="paieZoneRhApp.advance.amount">Amount</label>
-          <input type="number" class="form-control" name="amount" id="field_amount" data-cy="amount" formControlName="amount" />
-          @if (amountRef.invalid && (amountRef.dirty || amountRef.touched)) {
-            <div>
-              @if (editForm.get('amount')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              <small class="form-text text-danger" [hidden]="!editForm.get('amount')?.errors?.number" pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Montant (DT) <span class="text-danger">*</span></label>
+          <input type="number" step="0.001" class="form-control text-end" formControlName="amount"/>
         </div>
+      </div>
 
-        @let deductionMonthRef = editForm.get('deductionMonth')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_deductionMonth" pzTranslate="paieZoneRhApp.advance.deductionMonth">Deduction Month</label>
-          <input
-            type="number"
-            class="form-control"
-            name="deductionMonth"
-            id="field_deductionMonth"
-            data-cy="deductionMonth"
-            formControlName="deductionMonth"
-          />
-          @if (deductionMonthRef.invalid && (deductionMonthRef.dirty || deductionMonthRef.touched)) {
-            <div>
-              @if (editForm.get('deductionMonth')?.errors?.min) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '1' }"
-                  >Ce champ doit être supérieur à 1.</small
-                >
-              }
-              @if (editForm.get('deductionMonth')?.errors?.max) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.max" [translateValues]="{ max: '12' }"
-                  >Ce champ doit être inférieur à 12.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('deductionMonth')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
+      <div class="mb-3">
+        <label class="form-label">Motif</label>
+        <input type="text" class="form-control" formControlName="reason"/>
+      </div>
 
-        <div class="mb-3">
-          <label class="form-label" for="field_deductionYear" pzTranslate="paieZoneRhApp.advance.deductionYear">Deduction Year</label>
-          <input
-            type="number"
-            class="form-control"
-            name="deductionYear"
-            id="field_deductionYear"
-            data-cy="deductionYear"
-            formControlName="deductionYear"
-          />
-        </div>
-
-        @let statusRef = editForm.get('status')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_status" pzTranslate="paieZoneRhApp.advance.status">Status</label>
-          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
-            <option [ngValue]="null">{{ 'paieZoneRhApp.AdvanceStatus.null' | translate }}</option>
-            @for (advanceStatus of advanceStatusValues; track $index) {
-              <option [value]="advanceStatus">{{ 'paieZoneRhApp.AdvanceStatus.' + advanceStatus | translate }}</option>
-            }
-          </select>
-          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
-            <div>
-              @if (editForm.get('status')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let approvedByRef = editForm.get('approvedBy')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_approvedBy" pzTranslate="paieZoneRhApp.advance.approvedBy">Approved By</label>
-          <input
-            type="text"
-            class="form-control"
-            name="approvedBy"
-            id="field_approvedBy"
-            data-cy="approvedBy"
-            formControlName="approvedBy"
-          />
-          @if (approvedByRef.invalid && (approvedByRef.dirty || approvedByRef.touched)) {
-            <div>
-              @if (editForm.get('approvedBy')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
-                  >Ce champ doit faire au maximum 100 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let notesRef = editForm.get('notes')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_notes" pzTranslate="paieZoneRhApp.advance.notes">Notes</label>
-          <input type="text" class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes" />
-          @if (notesRef.invalid && (notesRef.dirty || notesRef.touched)) {
-            <div>
-              @if (editForm.get('notes')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '500' }"
-                  >Ce champ doit faire au maximum 500 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_employee" pzTranslate="paieZoneRhApp.advance.employee">Employee</label>
-          <select
-            class="form-control"
-            id="field_employee"
-            data-cy="employee"
-            name="employee"
-            formControlName="employee"
-            [compareWith]="compareEmployee"
-          >
-            @if (!editForm.get('employee')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
-            @for (employeeOption of employeesSharedCollection(); track $index) {
-              <option [ngValue]="employeeOption">{{ employeeOption.id }}</option>
-            }
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Mois déduction <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="deductionMonth">
+            <option *ngFor="let m of months" [value]="m">{{ monthLabels[m] }}</option>
           </select>
         </div>
-        @if (editForm.get(['employee'])!.invalid && (editForm.get(['employee'])!.dirty || editForm.get(['employee'])!.touched)) {
-          <div>
-            @if (editForm.get(['employee'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
-
-        <div class="mb-3">
-          <label class="form-label" for="field_paySlip" pzTranslate="paieZoneRhApp.advance.paySlip">Pay Slip</label>
-          <select
-            class="form-control"
-            id="field_paySlip"
-            data-cy="paySlip"
-            name="paySlip"
-            formControlName="paySlip"
-            [compareWith]="comparePaySlip"
-          >
-            <option [ngValue]="null"></option>
-            @for (paySlipOption of paySlipsSharedCollection(); track $index) {
-              <option [ngValue]="paySlipOption">{{ paySlipOption.id }}</option>
-            }
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Année déduction <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="deductionYear">
+            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
           </select>
         </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_approvedByUser" pzTranslate="paieZoneRhApp.advance.approvedByUser">Approved By User</label>
-          <select
-            class="form-control"
-            id="field_approvedByUser"
-            data-cy="approvedByUser"
-            name="approvedByUser"
-            formControlName="approvedByUser"
-            [compareWith]="compareUserProfile"
-          >
-            <option [ngValue]="null"></option>
-            @for (userProfileOption of userProfilesSharedCollection(); track $index) {
-              <option [ngValue]="userProfileOption">{{ userProfileOption.id }}</option>
-            }
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Statut <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="status">
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
           </select>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-        </button>
+      <div class="mb-3">
+        <label class="form-label">Approuvé par</label>
+        <input type="text" class="form-control" formControlName="approvedBy" placeholder="Login du manager"/>
+      </div>
 
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving()"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
-        </button>
+      <div class="alert alert-info small">
+        ⚠️ Seules les avances avec statut <strong>APPROVED</strong> seront déduites lors du calcul de paie.
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-secondary" (click)="previousState()"><fa-icon icon="ban"></fa-icon> Annuler</button>
+        <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid || isSaving"><fa-icon icon="save"></fa-icon> Enregistrer</button>
       </div>
     </form>
   </div>

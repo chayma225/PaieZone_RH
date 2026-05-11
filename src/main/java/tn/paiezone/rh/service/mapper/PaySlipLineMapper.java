@@ -1,29 +1,32 @@
 package tn.paiezone.rh.service.mapper;
 
 import org.mapstruct.*;
-import tn.paiezone.rh.domain.PaySlip;
 import tn.paiezone.rh.domain.PaySlipLine;
-import tn.paiezone.rh.domain.Rubrique;
-import tn.paiezone.rh.service.dto.PaySlipDTO;
 import tn.paiezone.rh.service.dto.PaySlipLineDTO;
-import tn.paiezone.rh.service.dto.RubriqueDTO;
 
-/**
- * Mapper for the entity {@link PaySlipLine} and its DTO {@link PaySlipLineDTO}.
- */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {
+    PaySlipMapper.class,
+    RubriqueMapper.class
+})
 public interface PaySlipLineMapper extends EntityMapper<PaySlipLineDTO, PaySlipLine> {
-    @Mapping(target = "paySlip", source = "paySlip", qualifiedByName = "paySlipId")
-    @Mapping(target = "rubrique", source = "rubrique", qualifiedByName = "rubriqueId")
+
+    @Mapping(source = "paySlip.id",  target = "paySlipId")
+    @Mapping(source = "rubrique.id", target = "rubriqueId")
     PaySlipLineDTO toDto(PaySlipLine s);
 
-    @Named("paySlipId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    PaySlipDTO toDtoPaySlipId(PaySlip paySlip);
+    @Mapping(source = "paySlipId",  target = "paySlip")
+    @Mapping(source = "rubriqueId", target = "rubrique")
+    PaySlipLine toEntity(PaySlipLineDTO dto);
 
-    @Named("rubriqueId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    RubriqueDTO toDtoRubriqueId(Rubrique rubrique);
+    @Mapping(source = "paySlipId",  target = "paySlip")
+    @Mapping(source = "rubriqueId", target = "rubrique")
+    void partialUpdate(@MappingTarget PaySlipLine entity, PaySlipLineDTO dto);
+
+    // Helpers — définis ici car pas dans PaySlipMapper/RubriqueMapper
+    default tn.paiezone.rh.domain.Rubrique rubriqueFromId(Long id) {
+        if (id == null) return null;
+        tn.paiezone.rh.domain.Rubrique r = new tn.paiezone.rh.domain.Rubrique();
+        r.setId(id);
+        return r;
+    }
 }

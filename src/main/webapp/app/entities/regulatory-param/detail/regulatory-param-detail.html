@@ -1,64 +1,84 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    @if (regulatoryParam(); as regulatoryParamRef) {
-      <div>
-        <h2 data-cy="regulatoryParamDetailsHeading">
-          <span pzTranslate="paieZoneRhApp.regulatoryParam.detail.title">Regulatory Param</span>
-        </h2>
+@if (regulatoryParam) {
+  <div class="rp-detail-page">
 
-        <hr />
-
-        <pz-alert-error />
-
-        <pz-alert />
-
-        <dl class="row-md jh-entity-details">
-          <dt><span pzTranslate="global.field.id">ID</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.id }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.paramKey">Param Key</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.paramKey }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.paramLabel">Param Label</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.paramLabel }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.numericValue">Numeric Value</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.numericValue }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.textValue">Text Value</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.textValue }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.effectiveFrom">Effective From</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.effectiveFrom | formatMediumDate }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.effectiveTo">Effective To</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.effectiveTo | formatMediumDate }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.legalReference">Legal Reference</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.legalReference }}</span>
-          </dd>
-          <dt><span pzTranslate="paieZoneRhApp.regulatoryParam.active">Active</span></dt>
-          <dd>
-            <span>{{ regulatoryParamRef.active }}</span>
-          </dd>
-        </dl>
-
-        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-          <fa-icon icon="arrow-left" />&nbsp;<span pzTranslate="entity.action.back">Retour</span>
-        </button>
-
-        <button type="button" [routerLink]="['/regulatory-param', regulatoryParamRef.id, 'edit']" class="btn btn-primary">
-          <fa-icon icon="pencil-alt" />&nbsp;<span pzTranslate="entity.action.edit">Editer</span>
-        </button>
+    <div class="rp-detail-header">
+      <div class="rp-detail-header__left">
+        <button class="btn-back" (click)="previousState()">← Retour</button>
+        <div>
+          <div class="rp-detail-header__top">
+            <h1 class="rp-detail-header__title">{{ regulatoryParam.paramLabel }}</h1>
+            <span
+              class="rp-badge"
+              [style.background]="(categoryColors[regulatoryParam.category || ''] || '#64748b') + '18'"
+              [style.color]="categoryColors[regulatoryParam.category || ''] || '#475569'">
+              {{ categoryLabels[regulatoryParam.category || ''] || 'Autre' }}
+            </span>
+            <span class="rp-status" [class.rp-status--active]="regulatoryParam.active">
+              {{ regulatoryParam.active ? '✅ Actif' : '⛔ Inactif' }}
+            </span>
+          </div>
+        </div>
       </div>
-    }
+      <div class="rp-detail-header__actions">
+        <a class="rp-action-btn rp-action-btn--edit" [routerLink]="['/regulatory-param', regulatoryParam.id, 'edit']" title="Modifier">
+          Modifier
+        </a>
+      </div>
+    </div>
+
+    <div class="rp-detail-grid">
+
+      <div class="rp-card rp-card--highlight">
+        <div class="rp-card__label">Valeur actuelle</div>
+        <div class="rp-value-big">
+          <span class="rp-value-big__number">
+            {{ formatValue() }}
+          </span>
+          <span class="rp-value-big__unit">
+            {{ getUnit() }}
+          </span>
+        </div>
+      </div>
+
+      <div class="rp-card">
+        <div class="rp-card__icon">📅</div>
+        <div class="rp-card__label">Date d'effet</div>
+        <div class="rp-card__value">
+          {{ $any(regulatoryParam.effectiveFrom) | formatMediumDate }}
+        </div>
+      </div>
+
+      <div class="rp-card">
+        <div class="rp-card__icon">📜</div>
+        <div class="rp-card__label">Référence légale</div>
+        <div class="rp-card__value">{{ regulatoryParam.legalReference || 'Non renseignée' }}</div>
+      </div>
+
+    </div>
+
   </div>
-</div>
+}
+
+<style>
+  :host {
+    --primary: #1d4ed8; --success: #059669; --danger: #dc2626;
+    --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+    --gray-400: #94a3b8; --gray-600: #475569; --gray-900: #0f172a;
+    --radius: 10px; --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .rp-detail-page { padding: 28px 32px; max-width: 900px; margin: 0 auto; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .rp-detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
+  .rp-detail-header__left { display: flex; align-items: flex-start; gap: 14px; }
+  .rp-detail-header__top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+  .rp-detail-header__title { font-size: 20px; font-weight: 700; margin: 0; }
+  .btn-back { background: none; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 8px 14px; font-size: 14px; cursor: pointer; color: var(--gray-600); }
+  .btn-back:hover { border-color: var(--gray-400); color: var(--gray-900); }
+  .rp-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid; }
+  .rp-status { font-size: 12px; font-weight: 600; }
+  .rp-detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .rp-card { background: white; border: 1.5px solid var(--gray-200); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm); }
+  .rp-card--highlight { background: var(--primary); color: white; border-color: var(--primary); }
+  .rp-value-big { display: flex; align-items: baseline; gap: 4px; }
+  .rp-value-big__number { font-size: 32px; font-weight: 800; line-height: 1; color: white; }
+  .rp-value-big__unit { font-size: 18px; font-weight: 600; color: rgba(255,255,255,.8); }
+</style>

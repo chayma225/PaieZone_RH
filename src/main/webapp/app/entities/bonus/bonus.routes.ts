@@ -1,43 +1,23 @@
+// src/main/webapp/app/entities/bonus/bonus.routes.ts
 import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { EMPTY, Observable, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { IBonus } from './bonus.model';
+import { BonusService } from './service/bonus.service';
 
-import { ASC } from 'app/config/navigation.constants';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+const resolveBonus = (route: ActivatedRouteSnapshot): Observable<null | IBonus> => {
+  const id = route.params['id'];
+  if (id) return inject(BonusService).find(id).pipe(
+    mergeMap(r => { if (r.body) return of(r.body); inject(Router).navigate(['404']); return EMPTY; })
+  );
+  return of(null);
+};
 
-import BonusResolve from './route/bonus-routing-resolve.service';
-
-const bonusRoute: Routes = [
-  {
-    path: '',
-    loadComponent: () => import('./list/bonus').then(m => m.Bonus),
-    data: {
-      defaultSort: `id,${ASC}`,
-    },
-    canActivate: [UserRouteAccessService],
-  },
-  {
-    path: ':id/view',
-    loadComponent: () => import('./detail/bonus-detail').then(m => m.BonusDetail),
-    resolve: {
-      bonus: BonusResolve,
-    },
-    canActivate: [UserRouteAccessService],
-  },
-  {
-    path: 'new',
-    loadComponent: () => import('./update/bonus-update').then(m => m.BonusUpdate),
-    resolve: {
-      bonus: BonusResolve,
-    },
-    canActivate: [UserRouteAccessService],
-  },
-  {
-    path: ':id/edit',
-    loadComponent: () => import('./update/bonus-update').then(m => m.BonusUpdate),
-    resolve: {
-      bonus: BonusResolve,
-    },
-    canActivate: [UserRouteAccessService],
-  },
+const routes: Routes = [
+  { path: '', loadComponent: () => import('./list/bonus').then(m => m.Bonus) },
+  { path: 'new', loadComponent: () => import('./update/bonus-update').then(m => m.BonusUpdate), resolve: { bonus: resolveBonus } },
+  { path: ':id/edit', loadComponent: () => import('./update/bonus-update').then(m => m.BonusUpdate), resolve: { bonus: resolveBonus } },
 ];
-
-export default bonusRoute;
+export default routes;

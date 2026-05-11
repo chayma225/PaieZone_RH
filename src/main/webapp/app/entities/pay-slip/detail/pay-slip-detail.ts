@@ -1,24 +1,37 @@
-import { Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { TranslateModule } from '@ngx-translate/core';
-
-import { Alert } from 'app/shared/alert/alert';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { FormatMediumDatetimePipe } from 'app/shared/date';
-import { TranslateDirective } from 'app/shared/language';
+// src/main/webapp/app/entities/pay-slip/detail/pay-slip-detail.component.ts
+import { Component, inject } from '@angular/core';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { IPaySlip } from '../pay-slip.model';
+import { PaySlipService } from '../service/pay-slip.service';
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {DecimalPipe} from "@angular/common";
 
 @Component({
-  selector: 'pz-pay-slip-detail',
+  standalone: true,
+  selector: 'jhi-pay-slip-detail',
   templateUrl: './pay-slip-detail.html',
-  imports: [FontAwesomeModule, Alert, AlertError, TranslateDirective, TranslateModule, RouterLink, FormatMediumDatetimePipe],
+  imports: [RouterModule, FaIconComponent, DecimalPipe],
 })
 export class PaySlipDetail {
-  readonly paySlip = input<IPaySlip | null>(null);
+  paySlip!: IPaySlip;
+  isRecalculating = false;
+  protected service = inject(PaySlipService);
+  protected route   = inject(ActivatedRoute);
 
-  previousState(): void {
-    globalThis.history.back();
+  constructor() {
+    this.route.data.subscribe(({ paySlip }) => {
+      this.paySlip = paySlip;  // Le resolve redirige vers 404 si null
+    });
+  }
+
+  previousState(): void { window.history.back(); }
+
+  recalculate(): void {
+    if (!this.paySlip || !confirm('Recalculer ce bulletin ?')) return;
+    this.isRecalculating = true;
+    this.service.recalculate(this.paySlip.id).subscribe({
+      next: () => { window.location.reload(); },
+      error: () => { this.isRecalculating = false; },
+    });
   }
 }

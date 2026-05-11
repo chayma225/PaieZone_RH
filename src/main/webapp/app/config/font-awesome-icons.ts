@@ -37,16 +37,22 @@ import {
   faUsers,
   faUsersCog,
   faWrench,
-  faFileAlt,
+  // --- AJOUTS POUR PAIEZONE_RH ---
+  faExclamationTriangle,
+  faCalculator,
   faInfoCircle,
-  faHistory, // ✅ AJOUTÉ : Pour l'historique
-  faChevronLeft, // ✅ AJOUTÉ : Pour la pagination
-  faChevronRight, // ✅ AJOUTÉ : Pour la pagination
-  faFilter, // ✅ AJOUTÉ : Pour l'icône de filtre
-  faBuilding, // ✅ AJOUTÉ
-  faBriefcase, // ✅ AJOUTÉ
-  faArrowRight,
-  // jhipster-needle-add-icon-import
+  faEdit,
+  faCalendarCheck,
+  faFileMedical,
+  faRedo,
+  faCalendarDay,
+  faDollarSign,
+  faHandHoldingUsd,
+  faBuilding,      // <--- AJOUTER CECI pour l'entreprise
+  faCheckCircle,   // <--- AJOUTER CECI pour les statuts valides
+  faTimesCircle,   // <--- AJOUTER CECI pour les statuts invalides
+  faMinus,
+  faSpinner,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -74,6 +80,7 @@ export const fontAwesomeIcons = [
   faSearch,
   faSignOutAlt,
   faSignInAlt,
+  faSpinner,
   faSort,
   faSortDown,
   faSortUp,
@@ -88,14 +95,19 @@ export const fontAwesomeIcons = [
   faUsers,
   faUsersCog,
   faWrench,
-  faFileAlt,
+  // --- AJOUTS POUR PAIEZONE_RH ---
+  faExclamationTriangle,
+  faCalculator,
   faInfoCircle,
-  faHistory, // ✅ AJOUTÉ
-  faChevronLeft, // ✅ AJOUTÉ
-  faChevronRight, // ✅ AJOUTÉ
-  faFilter, // ✅ AJOUTÉ
-  faBuilding, // ✅ AJOUTÉ
-  faBriefcase, // ✅ AJOUTÉ
-  faArrowRight,
-  // jhipster-needle-add-icon-import
+  faEdit,
+  faCalendarCheck,
+  faFileMedical,
+  faRedo,
+  faCalendarDay,
+  faDollarSign,
+  faHandHoldingUsd,
+  faBuilding,
+  faCheckCircle,
+  faTimesCircle,
+  faMinus
 ];

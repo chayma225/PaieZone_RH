@@ -1,33 +1,35 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal';
-import { TranslateModule } from '@ngx-translate/core';
-
-import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { TranslateDirective } from 'app/shared/language';
-import { IPayrollPeriod } from '../payroll-period.model';
+import { Component, inject, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { IPayrollPeriod, MONTH_LABELS } from '../payroll-period.model';
 import { PayrollPeriodService } from '../service/payroll-period.service';
 
 @Component({
+  selector: 'jhi-payroll-period-delete-dialog',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './payroll-period-delete-dialog.html',
-  imports: [TranslateDirective, TranslateModule, FormsModule, FontAwesomeModule, AlertError],
 })
-export class PayrollPeriodDeleteDialog {
-  payrollPeriod?: IPayrollPeriod;
+export class PayrollPeriodDeleteDialogComponent {
 
-  protected readonly payrollPeriodService = inject(PayrollPeriodService);
-  protected readonly activeModal = inject(NgbActiveModal);
+  modal         = inject(NgbActiveModal);
+  periodService = inject(PayrollPeriodService);
 
-  cancel(): void {
-    this.activeModal.dismiss();
+  @Input() payrollPeriod!: IPayrollPeriod;
+  isDeleting = false;
+
+  getMonthLabel(m: number): string {
+    return MONTH_LABELS[m] ?? String(m);
   }
 
-  confirmDelete(id: number): void {
-    this.payrollPeriodService.delete(id).subscribe(() => {
-      this.activeModal.close(ITEM_DELETED_EVENT);
+  onConfirm(): void {
+    this.isDeleting = true;
+    this.periodService.delete(this.payrollPeriod.id!).subscribe({
+      next: () => this.modal.close('deleted'),
+      error: err => {
+        alert(err?.error?.detail ?? 'Erreur lors de la suppression.');
+        this.isDeleting = false;
+      },
     });
   }
 }

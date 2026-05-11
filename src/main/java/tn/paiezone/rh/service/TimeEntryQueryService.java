@@ -85,10 +85,7 @@ public class TimeEntryQueryService extends QueryService<TimeEntry> {
                 buildStringSpecification(criteria.getAnomalyNote(), TimeEntry_.anomalyNote),
                 buildStringSpecification(criteria.getValidatedBy(), TimeEntry_.validatedBy),
                 buildRangeSpecification(criteria.getValidatedAt(), TimeEntry_.validatedAt),
-                buildSpecification(criteria.getEmployeeId(), root -> root.join(TimeEntry_.employee, JoinType.LEFT).get(Employee_.id)),
-                buildSpecification(criteria.getValidatedByUserId(), root ->
-                    root.join(TimeEntry_.validatedByUser, JoinType.LEFT).get(UserProfile_.id)
-                )
+                buildSpecification(criteria.getEmployeeId(), root -> root.join(TimeEntry_.employee, JoinType.LEFT).get(Employee_.id)),buildStringSpecification(criteria.getValidatedBy(), TimeEntry_.validatedBy)
             );
         }
         return specification;

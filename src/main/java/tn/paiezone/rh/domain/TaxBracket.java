@@ -2,12 +2,15 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Tranche IRPP
@@ -16,37 +19,43 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "tax_bracket")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class TaxBracket implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "taxBracketSeq")
+    @SequenceGenerator(name = "taxBracketSeq", sequenceName = "tax_bracket_seq", allocationSize = 1)
     private Long id;
 
-    @NotNull
     @Column(name = "year", nullable = false)
     private Integer year;
 
-    @NotNull
-    @Column(name = "min_income", precision = 21, scale = 2, nullable = false)
+    // Borne inférieure (ex: 5000.000)
+    @Column(name = "min_income", nullable = false, precision = 15, scale = 3)
     private BigDecimal minIncome;
 
-    @Column(name = "max_income", precision = 21, scale = 2)
+    // Borne supérieure — null = dernière tranche (illimitée)
+    @Column(name = "max_income", precision = 15, scale = 3)
     private BigDecimal maxIncome;
 
-    @NotNull
-    @Column(name = "rate", precision = 21, scale = 2, nullable = false)
+    // Taux (ex: 0.2600 = 26%)
+    @Column(name = "rate", nullable = false, precision = 6, scale = 4)
     private BigDecimal rate;
 
-    @NotNull
-    @Column(name = "fixed_deduction", precision = 21, scale = 2, nullable = false)
+    /**
+     * Déduction forfaitaire globale.
+     * FORMULE OFFICIELLE : Impôt = (Revenu × rate) - fixedDeduction
+     * S'applique sur le REVENU TOTAL, PAS tranche par tranche.
+     */
+    @Column(name = "fixed_deduction", nullable = false, precision = 15, scale = 3)
     private BigDecimal fixedDeduction;
 
-    @NotNull
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;
 

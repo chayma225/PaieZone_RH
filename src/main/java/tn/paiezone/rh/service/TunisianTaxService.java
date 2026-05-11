@@ -1,291 +1,319 @@
 package tn.paiezone.rh.service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.Employee;
 import tn.paiezone.rh.domain.RegulatoryParam;
 import tn.paiezone.rh.domain.TaxBracket;
 import tn.paiezone.rh.repository.RegulatoryParamRepository;
 import tn.paiezone.rh.repository.TaxBracketRepository;
 
-@Service // Déclare ce service comme bean Spring — injectable partout
-@RequiredArgsConstructor // Lombok génère le constructeur avec les dépendances
-@Slf4j // Lombok fournit logger : log.debug(), log.info()...
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Service fiscal tunisien — TOUS les taux sont lus depuis regulatory_param.
+ * CnssRate n'est plus utilisé : CNSS_TAUX_SALARIAL, CNSS_TAUX_PATRONAL et
+ * CNSS_PLAFOND_MENSUEL sont pilotables par le Super Admin.
+ */
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Slf4j
 public class TunisianTaxService {
 
-    // Les deux seules dépendances de ce service
-    // Tout passe par ces deux repositories
-    private final RegulatoryParamRepository paramRepository;
-    private final TaxBracketRepository taxBracketRepository;
+    private static final BigDecimal ZERO = BigDecimal.ZERO;
+    private static final RoundingMode RM = RoundingMode.HALF_UP;
 
-    // ════════════════════════════════════════════════════════════
-    // MÉTHODE 1 — CNSS SALARIALE
-    //
-    // Formule légale :
-    //   CNSS = MIN(Salaire Brut, CNSS_PLAFOND_MENSUEL) × CNSS_TAUX_SALARIAL
-    //
-    // Exemple (salaire = 3 000 DT) :
-    //   base   = MIN(3000, 5000) = 3 000 DT
-    //   CNSS   = 3 000 × 9,68% = 290,400 DT
-    //
-    // Exemple (salaire = 7 000 DT — dépasse le plafond) :
-    //   base   = MIN(7000, 5000) = 5 000 DT  ← plafonné !
-    //   CNSS   = 5 000 × 9,68% = 484,000 DT
-    // ════════════════════════════════════════════════════════════
-    public BigDecimal calculateCnssSalariale(BigDecimal grossSalary, LocalDate payDate) {
-        // Lecture du taux et du plafond DEPUIS LA BASE (pas de valeur en dur)
-        BigDecimal taux = getParam("CNSS_TAUX_SALARIAL", payDate);
-        BigDecimal plafond = getParam("CNSS_PLAFOND_MENSUEL", payDate);
+    // Valeurs de fallback — utilisées UNIQUEMENT si le paramètre est absent
+    // (première installation avant que le Super Admin n'ait configuré les taux)
+    private static final BigDecimal DEFAULT_CNSS_SALARIAL    = new BigDecimal("0.0918");
+    private static final BigDecimal DEFAULT_CNSS_PATRONAL    = new BigDecimal("0.1657");
+    private static final BigDecimal DEFAULT_CNSS_PLAFOND     = new BigDecimal("3000");
+    private static final BigDecimal DEFAULT_CAVIS_SALARIE    = new BigDecimal("0.0100");
+    private static final BigDecimal DEFAULT_CSS_TAUX         = new BigDecimal("0.0050");
+    private static final BigDecimal DEFAULT_TFP_TAUX         = new BigDecimal("0.0100");
+    private static final BigDecimal DEFAULT_HS_25            = new BigDecimal("1.2500");
+    private static final BigDecimal DEFAULT_HS_50            = new BigDecimal("1.5000");
+    private static final BigDecimal DEFAULT_HEURES_MENSUEL   = new BigDecimal("173.33");
+    private static final BigDecimal DEFAULT_FRAIS_PRO_TAUX   = new BigDecimal("0.10");
+    private static final BigDecimal DEFAULT_FRAIS_PRO_PLAFOND= new BigDecimal("2000");
+    private static final BigDecimal DEFAULT_CHEF_FAMILLE     = new BigDecimal("300");
+    private static final BigDecimal DEFAULT_PAR_ENFANT       = new BigDecimal("100");
+    private static final BigDecimal DEFAULT_MAX_ENFANTS      = new BigDecimal("4");
 
-        // Application du plafond avec BigDecimal.min()
-        BigDecimal base = grossSalary.min(plafond);
+    private final TaxBracketRepository      taxBracketRepository;
+    private final RegulatoryParamRepository regulatoryParamRepository;
 
-        // Calcul avec arrondi à 3 décimales (millimes)
-        BigDecimal result = base.multiply(taux).setScale(3, RoundingMode.HALF_UP);
+    // ═══════════════════════════════════════════════════════════════
+    //  CNSS — lus depuis regulatory_param
+    // ═══════════════════════════════════════════════════════════════
 
-        // Log de debug : visible uniquement en mode dev (ne pas mettre en prod)
-        log.debug("[CNSS_SAL] brut={} | base_après_plafond={} | taux={} | résultat={}", grossSalary, base, taux, result);
+    /**
+     * CNSS salarié : CNSS_TAUX_SALARIAL × min(salaire, CNSS_PLAFOND_MENSUEL)
+     * Pilotable par le Super Admin via RegulatoryParam.
+     */
+    public BigDecimal calculateEmployeeCnss(BigDecimal salary, int year) {
+        BigDecimal taux    = getParam("CNSS_TAUX_SALARIAL",   year, DEFAULT_CNSS_SALARIAL);
+        BigDecimal plafond = getParam("CNSS_PLAFOND_MENSUEL", year, DEFAULT_CNSS_PLAFOND);
+        BigDecimal base    = salary.min(plafond);
+        BigDecimal result  = base.multiply(taux).setScale(3, RM);
+        log.debug("CNSS salarié | salaire={} plafond={} taux={} → {}", salary, plafond, taux, result);
         return result;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // MÉTHODE 2 — CNSS PATRONALE
-    //
-    // Formule : même assiette que le salarial (plafonnée)
-    //   CNSS Patronale = MIN(Brut, PLAFOND) × CNSS_TAUX_PATRONAL
-    //
-    // Cette charge est payée PAR L'EMPLOYEUR en plus du salaire.
-    // Elle ne touche PAS le salaire net de l'employé.
-    // Elle est utilisée pour calculer le coût total d'un employé.
-    // ════════════════════════════════════════════════════════════
-    public BigDecimal calculateCnssPatronale(BigDecimal grossSalary, LocalDate payDate) {
-        BigDecimal taux = getParam("CNSS_TAUX_PATRONAL", payDate);
-        BigDecimal plafond = getParam("CNSS_PLAFOND_MENSUEL", payDate);
-
-        BigDecimal base = grossSalary.min(plafond);
-        return base.multiply(taux).setScale(3, RoundingMode.HALF_UP);
-    }
-
-    // ════════════════════════════════════════════════════════════
-    // MÉTHODE 3 — CSS (Contribution Sociale de Solidarité)
-    //
-    // ATTENTION : l'assiette de la CSS est le REVENU NET,
-    // pas le salaire brut !
-    //
-    // Revenu Net = Salaire Brut - CNSS Salariale
-    // CSS = Revenu Net × CSS_TAUX (0,50%)
-    //
-    // Exemple (Brut = 2000, CNSS = 193,6) :
-    //   Revenu Net = 2000 - 193,6 = 1 806,4 DT
-    //   CSS = 1 806,4 × 0,5% = 9,032 DT
-    //
-    // C'est l'appelant (PayrollCalculationService) qui calcule
-    // le revenu net et le passe ici en paramètre.
-    // ════════════════════════════════════════════════════════════
-    public BigDecimal calculateCss(BigDecimal revenuNet, LocalDate payDate) {
-        BigDecimal taux = getParam("CSS_TAUX", payDate);
-
-        BigDecimal result = revenuNet.multiply(taux).setScale(3, RoundingMode.HALF_UP);
-
-        log.debug("[CSS] revenu_net={} | taux={} | résultat={}", revenuNet, taux, result);
+    /**
+     * CNSS patronal : CNSS_TAUX_PATRONAL × min(salaire, CNSS_PLAFOND_MENSUEL)
+     */
+    public BigDecimal calculateEmployerCnss(BigDecimal salary, int year) {
+        BigDecimal taux    = getParam("CNSS_TAUX_PATRONAL",   year, DEFAULT_CNSS_PATRONAL);
+        BigDecimal plafond = getParam("CNSS_PLAFOND_MENSUEL", year, DEFAULT_CNSS_PLAFOND);
+        BigDecimal base    = salary.min(plafond);
+        BigDecimal result  = base.multiply(taux).setScale(3, RM);
+        log.debug("CNSS patronal | salaire={} plafond={} taux={} → {}", salary, plafond, taux, result);
         return result;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // MÉTHODE 4 — IRPP MENSUEL (Point d'entrée)
-    //
-    // Algorithme en 4 étapes :
-    //   4a. Annualiser le revenu net mensuel
-    //   4b. Calculer le RANI (Revenu Annuel Net Imposable)
-    //       = Revenu annuel - Frais pro - Déductions familiales
-    //   4c. Appliquer le barème progressif sur le RANI
-    //   4d. Diviser l'IRPP annuel par 12 → IRPP mensuel
-    //
-    // @param revenuNetMensuel  = Salaire Brut - CNSS Salariale
-    //                            (calculé en amont par PayrollCalculationService)
-    // @param employee          = pour accéder à chefDeFamille, numberOfChildren
-    // @param payDate           = date de référence pour lire les bons paramètres
-    // ════════════════════════════════════════════════════════════
-    public BigDecimal calculateIrppMensuel(BigDecimal revenuNetMensuel, Employee employee, LocalDate payDate) {
-        // ── Étape 4a : Annualiser ──────────────────────────────
-        // On travaille en base annuelle pour le barème IRPP
-        BigDecimal revenuAnnuelBrut = revenuNetMensuel.multiply(BigDecimal.valueOf(12));
-
-        // ── Étape 4b.1 : Frais professionnels ─────────────────
-        // Déduction automatique = 10% du revenu annuel, max 2 000 DT
-        // Représente les dépenses liées au travail (transport, vêtements...)
-        BigDecimal fpTaux = getParam("FRAIS_PRO_TAUX", payDate); // 0.10
-        BigDecimal fpPlafond = getParam("FRAIS_PRO_PLAFOND", payDate); // 2000
-        BigDecimal fraisPro = revenuAnnuelBrut.multiply(fpTaux).min(fpPlafond);
-
-        // ── Étape 4b.2 : Déductions familiales ────────────────
-        BigDecimal deductionsFamiliales = calculateDeductionsFamiliales(employee, payDate, revenuNetMensuel);
-
-        // ── Étape 4b.3 : RANI final ────────────────────────────
-        // Le .max(ZERO) garantit qu'on ne descend jamais en dessous de 0
-        BigDecimal rani = revenuAnnuelBrut.subtract(fraisPro).subtract(deductionsFamiliales).max(BigDecimal.ZERO);
-
-        log.debug("[IRPP] revAnnuel={} | fraisPro={} | deducFam={} | RANI={}", revenuAnnuelBrut, fraisPro, deductionsFamiliales, rani);
-
-        // ── Étape 4c : Barème progressif ──────────────────────
-        BigDecimal irppAnnuel = applyBaremeProgressif(rani, payDate.getYear());
-
-        // ── Étape 4d : Mensualiser ─────────────────────────────
-        BigDecimal irppMensuel = irppAnnuel.divide(BigDecimal.valueOf(12), 3, RoundingMode.HALF_UP);
-
-        log.debug("[IRPP] annuel={} | mensuel={}", irppAnnuel, irppMensuel);
-        return irppMensuel;
+    /**
+     * CAVIS salarié : CAVIS_TAUX_SALARIE × salaire (sans plafond)
+     */
+    public BigDecimal calculateCavisEmployee(BigDecimal salary, int year) {
+        BigDecimal taux   = getParam("CAVIS_TAUX_SALARIE", year, DEFAULT_CAVIS_SALARIE);
+        BigDecimal result = salary.multiply(taux).setScale(3, RM);
+        log.debug("CAVIS salarié | salaire={} taux={} → {}", salary, taux, result);
+        return result;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // SOUS-MÉTHODE — Déductions familiales
-    //
-    // Calcule le total des déductions IRPP liées à la situation
-    // personnelle de l'employé. Ces montants réduisent le RANI
-    // et donc l'impôt à payer.
-    //
-    // Déductions actuellement implémentées :
-    //   ✅ Chef de famille (Employee.chefDeFamille)
-    //   ✅ Enfants à charge standard (Employee.numberOfChildren)
-    //   🔜 Sprint 4 : enfants étudiants, infirmes, parents à charge
-    // ════════════════════════════════════════════════════════════
-    private BigDecimal calculateDeductionsFamiliales(Employee emp, LocalDate payDate, BigDecimal revenuNetMensuel) {
-        BigDecimal total = BigDecimal.ZERO;
+    /**
+     * CAVIS patronal : même taux que salarié (symétrique en Tunisie)
+     */
+    public BigDecimal calculateCavisEmployer(BigDecimal salary, int year) {
+        BigDecimal taux   = getParam("CAVIS_TAUX_SALARIE", year, DEFAULT_CAVIS_SALARIE);
+        BigDecimal result = salary.multiply(taux).setScale(3, RM);
+        log.debug("CAVIS patronal | salaire={} taux={} → {}", salary, taux, result);
+        return result;
+    }
 
-        // ── Chef de famille : 300 DT/an ────────────────────────
-        // Condition : Employee.chefDeFamille = true dans le dossier employé
-        if (Boolean.TRUE.equals(emp.getChefDeFamille())) {
-            BigDecimal deduction = getParam("DEDUCTION_CHEF_FAMILLE", payDate);
-            total = total.add(deduction);
-            log.debug("[DEF] Chef de famille : -{} DT", deduction);
+    /**
+     * CSS — Contribution Sociale de Solidarité : CSS_TAUX × base
+     * Base = brut - CNSS - CAVIS (CSS ne s'applique PAS sur les cotisations)
+     */
+    public BigDecimal calculateCss(BigDecimal baseNetCotisations, int year) {
+        if (baseNetCotisations == null || baseNetCotisations.compareTo(ZERO) <= 0) return ZERO;
+        BigDecimal taux   = getParam("CSS_TAUX", year, DEFAULT_CSS_TAUX);
+        BigDecimal result = baseNetCotisations.multiply(taux).setScale(3, RM);
+        log.debug("CSS | base={} taux={} → {}", baseNetCotisations, taux, result);
+        return result;
+    }
+
+    /**
+     * CSS avec LocalDate (utilisé par les tests)
+     */
+    public BigDecimal calculateCss(BigDecimal baseNetCotisations, LocalDate date) {
+        return calculateCss(baseNetCotisations, date.getYear());
+    }
+
+    /**
+     * TFP — Taxe Formation Professionnelle : TFP_TAUX × brut (charge patronale uniquement)
+     */
+    public BigDecimal calculateTfp(BigDecimal grossSalary, int year) {
+        if (grossSalary == null || grossSalary.compareTo(ZERO) <= 0) return ZERO;
+        BigDecimal taux   = getParam("TFP_TAUX", year, DEFAULT_TFP_TAUX);
+        BigDecimal result = grossSalary.multiply(taux).setScale(3, RM);
+        log.debug("TFP patronal | brut={} taux={} → {}", grossSalary, taux, result);
+        return result;
+    }
+
+    /**
+     * Coefficient HS jour (×1.25 par défaut) — depuis TAUX_HS_25
+     */
+    public BigDecimal getTauxHs25(int year) {
+        return getParam("TAUX_HS_25", year, DEFAULT_HS_25);
+    }
+
+    /**
+     * Coefficient HS nuit/férié (×1.50 par défaut) — depuis TAUX_HS_50
+     */
+    public BigDecimal getTauxHs50(int year) {
+        return getParam("TAUX_HS_50", year, DEFAULT_HS_50);
+    }
+
+    /**
+     * Taux horaire = baseSalary / HEURES_MENSUELLES_BASE
+     */
+    public BigDecimal calculateHourlyRate(BigDecimal baseSalary, int year) {
+        BigDecimal heures = getParam("HEURES_MENSUELLES_BASE", year, DEFAULT_HEURES_MENSUEL);
+        return baseSalary.divide(heures, 4, RM);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  IRPP — Algorithme officiel tunisien
+    // ═══════════════════════════════════════════════════════════════
+
+    /**
+     * IRPP mensuel — Ordre de calcul légal :
+     * 1. Base = brut déjà net de CNSS+CAVIS (fourni par le moteur)
+     * 2. Annualiser × 12
+     * 3. Frais professionnels = min(annuel × FRAIS_PRO_TAUX, FRAIS_PRO_PLAFOND)
+     * 4. Déductions personnelles (chef famille, enfants)
+     * 5. Revenu imposable annuel = annuel - frais pro - déductions perso
+     * 6. Appliquer barème TaxBracket
+     * 7. Diviser par 12
+     *
+     * NOTE : La CSS n'est PAS déductible de la base IRPP en droit tunisien.
+     */
+    public BigDecimal calculateMonthlyIrpp(BigDecimal monthlyNetOfCotisations, int year, Employee employee) {
+        if (monthlyNetOfCotisations == null || monthlyNetOfCotisations.compareTo(ZERO) <= 0)
+            return ZERO;
+
+        BigDecimal annuelBrut    = monthlyNetOfCotisations.multiply(BigDecimal.valueOf(12));
+        BigDecimal fpTaux        = getParam("FRAIS_PRO_TAUX",    year, DEFAULT_FRAIS_PRO_TAUX);
+        BigDecimal fpPlafond     = getParam("FRAIS_PRO_PLAFOND", year, DEFAULT_FRAIS_PRO_PLAFOND);
+        BigDecimal fraisPro      = annuelBrut.multiply(fpTaux).min(fpPlafond).setScale(3, RM);
+        BigDecimal deducPerso    = calculatePersonalDeductions(year, employee);
+        BigDecimal imposableAnnuel = annuelBrut.subtract(fraisPro).subtract(deducPerso).max(ZERO);
+
+        log.debug("IRPP | mensuel={} annuel={} fraisPro={} perso={} imposable={}",
+            monthlyNetOfCotisations, annuelBrut, fraisPro, deducPerso, imposableAnnuel);
+
+        BigDecimal irppAnnuel = applyTunisianBrackets(imposableAnnuel, year);
+        return irppAnnuel.divide(BigDecimal.valueOf(12), 3, RM);
+    }
+
+    /**
+     * Variante avec LocalDate (pour les tests)
+     */
+    public BigDecimal calculateIrppMensuel(BigDecimal base, Employee employee, LocalDate date) {
+        return calculateMonthlyIrpp(base, date.getYear(), employee);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  API LocalDate — compatibilité tests
+    // ═══════════════════════════════════════════════════════════════
+
+    public BigDecimal calculateCnssSalariale(BigDecimal salaireBrut, LocalDate date) {
+        return calculateEmployeeCnss(salaireBrut, date.getYear());
+    }
+
+    public BigDecimal calculateCnssPatronale(BigDecimal salaireBrut, LocalDate date) {
+        return calculateEmployerCnss(salaireBrut, date.getYear());
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  BARÈME IRPP
+    // ═══════════════════════════════════════════════════════════════
+
+    /**
+     * Formule officielle tunisienne (méthode simplifiée) :
+     * Impôt = (Revenu_Total × Taux_tranche_haute) − Déduction_Forfaitaire_tranche
+     */
+    private BigDecimal applyTunisianBrackets(BigDecimal annualTaxable, int year) {
+        if (annualTaxable.compareTo(ZERO) <= 0) return ZERO;
+
+        List<TaxBracket> brackets = taxBracketRepository.findByYearOrderBySortOrderAsc(year);
+        if (brackets.isEmpty()) {
+            log.error("Aucun barème IRPP en base pour {}. Vérifiez 05_tax_brackets_seed.xml", year);
+            throw new IllegalStateException(
+                "Aucun barème IRPP en base pour " + year + ". Contactez l'administrateur.");
         }
 
-        // ── Enfants à charge : 100 DT × nb enfants (max 4) ────
-        // Employee.numberOfChildren est saisi dans le dossier employé
-        int maxEnfants = getParam("MAX_ENFANTS_DEDUCTIBLES", payDate).intValue(); // 4
-        int nbEnfants = Math.min(emp.getNumberOfChildren(), maxEnfants);
+        TaxBracket applicable = null;
+        for (TaxBracket b : brackets) {
+            if (annualTaxable.compareTo(b.getMinIncome()) > 0) {
+                applicable = b;
+            }
+        }
+
+        if (applicable == null || applicable.getRate().compareTo(ZERO) == 0) return ZERO;
+
+        BigDecimal impot = annualTaxable
+            .multiply(applicable.getRate())
+            .subtract(applicable.getFixedDeduction())
+            .max(ZERO)
+            .setScale(3, RM);
+
+        log.debug("Barème IRPP | tranche min={} taux={} déd={} → impôt annuel={}",
+            applicable.getMinIncome(), applicable.getRate(),
+            applicable.getFixedDeduction(), impot);
+
+        return impot;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  DÉDUCTIONS PERSONNELLES
+    // ═══════════════════════════════════════════════════════════════
+
+    private BigDecimal calculatePersonalDeductions(int year, Employee employee) {
+        BigDecimal total = ZERO;
+
+        if (Boolean.TRUE.equals(employee.getChefDeFamille())) {
+            total = total.add(getParam("DEDUCTION_CHEF_FAMILLE", year, DEFAULT_CHEF_FAMILLE));
+        }
+
+        int maxEnfants = getParam("MAX_ENFANTS_DEDUCTIBLES", year, DEFAULT_MAX_ENFANTS).intValue();
+        int nbEnfants  = Math.min(
+            employee.getNumberOfChildren() != null ? employee.getNumberOfChildren() : 0,
+            maxEnfants
+        );
 
         if (nbEnfants > 0) {
-            BigDecimal parEnfant = getParam("DEDUCTION_PAR_ENFANT", payDate); // 100
-            BigDecimal deductionEnfants = parEnfant.multiply(BigDecimal.valueOf(nbEnfants));
-            total = total.add(deductionEnfants);
-            log.debug("[DEF] {} enfant(s) × {} DT = -{} DT", nbEnfants, parEnfant, deductionEnfants);
+            BigDecimal parEnfant = getParam("DEDUCTION_PAR_ENFANT", year, DEFAULT_PAR_ENFANT);
+            total = total.add(parEnfant.multiply(BigDecimal.valueOf(nbEnfants)));
         }
-
-        // ── TODO Sprint 4 : Parents à charge ──────────────────
-        // Formule : MIN(5% × revenu annuel net, 450 DT) × nb parents
-        // Nécessite un champ numberOfDependentParents sur Employee
 
         return total;
     }
 
-    // ════════════════════════════════════════════════════════════
-    // SOUS-MÉTHODE — Barème progressif
-    //
-    // Parcourt chaque tranche dans l'ordre croissant.
-    // Pour chaque tranche, calcule uniquement la portion du RANI
-    // qui tombe dans cette tranche.
-    //
-    // Trace un log détaillé pour faciliter l'audit.
-    // ════════════════════════════════════════════════════════════
-    private BigDecimal applyBaremeProgressif(BigDecimal rani, int year) {
-        List<TaxBracket> tranches = taxBracketRepository.findByYearOrderBySortOrderAsc(year);
+    // ═══════════════════════════════════════════════════════════════
+    //  HELPERS — getParam avec log ERROR sur fallback
+    // ═══════════════════════════════════════════════════════════════
 
-        if (tranches.isEmpty()) {
-            // Si les données de base ne sont pas en place → erreur explicite
-            throw new IllegalStateException(
-                "Aucune tranche IRPP trouvée pour l'année " + year + ". Vérifiez les données dans l'interface Super Admin."
-            );
-        }
-
-        BigDecimal totalImpot = BigDecimal.ZERO;
-
-        for (TaxBracket tranche : tranches) {
-            // Si le RANI est en dessous du seuil minimum de cette tranche
-            // → on s'arrête, les tranches suivantes ne s'appliquent pas
-            if (rani.compareTo(tranche.getMinIncome()) <= 0) break;
-
-            // Calculer le plafond effectif pour cette tranche
-            // Si max_income est NULL (dernière tranche), on prend le RANI directement
-            BigDecimal plafondTranche =
-                tranche.getMaxIncome() != null
-                    ? rani.min(tranche.getMaxIncome()) // limiter au max de la tranche
-                    : rani; // pas de plafond → prendre tout
-
-            // Montant imposable dans cette tranche
-            BigDecimal montantDansTranche = plafondTranche.subtract(tranche.getMinIncome()).max(BigDecimal.ZERO);
-
-            // Impôt de cette tranche
-            BigDecimal impotTranche = montantDansTranche.multiply(tranche.getRate()).setScale(3, RoundingMode.HALF_UP);
-
-            totalImpot = totalImpot.add(impotTranche);
-
-            log.debug(
-                "[IRPP tranche {}] {}-{} | dans_tranche={} × {}% = {} DT",
-                tranche.getSortOrder(),
-                tranche.getMinIncome(),
-                tranche.getMaxIncome() != null ? tranche.getMaxIncome() : "∞",
-                montantDansTranche,
-                tranche.getRate().multiply(BigDecimal.valueOf(100)),
-                impotTranche
-            );
-        }
-
-        return totalImpot.setScale(3, RoundingMode.HALF_UP);
+    /**
+     * Lit un paramètre réglementaire actif à la date du 31/12/year.
+     * Si absent → log ERROR et retourne defaultVal.
+     * Si defaultVal est null et le paramètre est absent → IllegalStateException.
+     */
+    public BigDecimal getParam(String key, int year, BigDecimal defaultVal) {
+        return regulatoryParamRepository
+            .findActiveByKeyAndDate(key, LocalDate.of(year, 12, 31))
+            .map(RegulatoryParam::getNumericValue)
+            .orElseGet(() -> {
+                if (defaultVal == null) {
+                    throw new IllegalStateException(
+                        "Paramètre réglementaire obligatoire absent : '" + key +
+                            "' pour l'année " + year +
+                            ". Configurez ce paramètre dans l'interface Super Admin.");
+                }
+                log.error(
+                    "⚠️ PARAMÈTRE MANQUANT : '{}' pour {}. " +
+                        "Valeur de secours utilisée : {}. " +
+                        "Action requise : configurer ce paramètre via l'interface Super Admin → Paramètres réglementaires.",
+                    key, year, defaultVal
+                );
+                return defaultVal;
+            });
     }
 
-    // ════════════════════════════════════════════════════════════
-    // MÉTHODE 5 — TFP (Taxe de Formation Professionnelle)
-    //
-    // Charge patronale, ne touche pas le salaire de l'employé.
-    // Taux différent selon le secteur d'activité de l'entreprise.
-    //
-    // @param isIndustry  true = secteur industriel (1%)
-    //                    false = autres secteurs (2%)
-    // ════════════════════════════════════════════════════════════
-    public BigDecimal calculateTfp(BigDecimal grossSalary, LocalDate payDate, boolean isIndustry) {
-        String key = isIndustry ? "TFP_TAUX_INDUSTRIE" : "TFP_TAUX_AUTRES";
-        return grossSalary.multiply(getParam(key, payDate)).setScale(3, RoundingMode.HALF_UP);
-    }
-
-    // ════════════════════════════════════════════════════════════
-    // MÉTHODE 6 — FOPROLOS
-    //
-    // Fonds de Promotion du Logement Social : 1% du salaire brut.
-    // Charge patronale uniquement.
-    // ════════════════════════════════════════════════════════════
-    public BigDecimal calculateFoprolos(BigDecimal grossSalary, LocalDate payDate) {
-        return grossSalary.multiply(getParam("FOPROLOS_TAUX", payDate)).setScale(3, RoundingMode.HALF_UP);
-    }
-
-    // ════════════════════════════════════════════════════════════
-    // HELPER CENTRAL — getParam()
-    //
-    // C'est la méthode la plus importante du service.
-    // Elle centralise TOUTES les lectures de paramètres.
-    //
-    // Si le paramètre n'existe pas en base → exception claire
-    // avec le nom de la clé manquante.
-    // Cela évite les erreurs silencieuses avec des valeurs null.
-    // ════════════════════════════════════════════════════════════
-    private BigDecimal getParam(String key, LocalDate date) {
-        return paramRepository
+    /**
+     * Lit un paramètre par date exacte.
+     * Retourne defaultVal si absent (peut être null).
+     */
+    public BigDecimal getParamByDate(String key, LocalDate date, BigDecimal defaultVal) {
+        return regulatoryParamRepository
             .findActiveByKeyAndDate(key, date)
             .map(RegulatoryParam::getNumericValue)
-            .orElseThrow(() ->
-                new IllegalStateException(
-                    "Paramètre de paie manquant : '" +
-                        key +
-                        "' à la date " +
-                        date +
-                        ".\n" +
-                        "→ Action requise : insérez ce paramètre via l'interface Super Admin."
-                )
-            );
+            .orElseGet(() -> {
+                if (defaultVal != null) {
+                    log.error(
+                        "⚠️ PARAMÈTRE MANQUANT : '{}' pour la date {}. Valeur de secours : {}.",
+                        key, date, defaultVal
+                    );
+                }
+                return defaultVal;
+            });
     }
 }

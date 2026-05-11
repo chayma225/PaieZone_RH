@@ -1,121 +1,86 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { filter } from 'rxjs';
+import SharedModule from 'app/shared/shared.module';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Data, ParamMap, Router, RouterLink } from '@angular/router';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap/modal';
-import { TranslateModule } from '@ngx-translate/core';
-import { Subscription, combineLatest, filter, tap } from 'rxjs';
-
-import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
-import { Alert } from 'app/shared/alert/alert';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { FormatMediumDatePipe } from 'app/shared/date';
-import { TranslateDirective } from 'app/shared/language';
-import { SortByDirective, SortDirective, SortService, type SortState, sortStateSignal } from 'app/shared/sort';
-import { RegulatoryParamDeleteDialog } from '../delete/regulatory-param-delete-dialog';
-import { IRegulatoryParam } from '../regulatory-param.model';
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
+import {
+  IRegulatoryParam,
+  PARAM_FORMAT,
+  CATEGORY_COLORS,
+  CATEGORY_LABELS,
+} from '../regulatory-param.model';
 import { RegulatoryParamService } from '../service/regulatory-param.service';
+import { RegulatoryParamDeleteDialog } from '../delete/regulatory-param-delete-dialog';
 
 @Component({
-  selector: 'pz-regulatory-param',
+  standalone: true,
+  selector: 'jhi-regulatory-param',
   templateUrl: './regulatory-param.html',
-  imports: [
-    RouterLink,
-    FormsModule,
-    FontAwesomeModule,
-    AlertError,
-    Alert,
-    SortDirective,
-    SortByDirective,
-    TranslateDirective,
-    TranslateModule,
-    FormatMediumDatePipe,
-  ],
+  imports: [RouterModule, FormsModule, SharedModule],
 })
 export class RegulatoryParam implements OnInit {
-  subscription: Subscription | null = null;
-  readonly regulatoryParams = signal<IRegulatoryParam[]>([]);
+  regulatoryParams?: IRegulatoryParam[];
+  isLoading       = false;
+  filterCategory  = '';
+  filterKey       = '';
+  errorMsg        = '';
 
-  sortState = sortStateSignal({});
+  readonly paramFormat     = PARAM_FORMAT;
+  readonly categoryColors  = CATEGORY_COLORS;
+  readonly categoryLabels  = CATEGORY_LABELS;
 
-  readonly router = inject(Router);
-  protected readonly regulatoryParamService = inject(RegulatoryParamService);
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  readonly isLoading = this.regulatoryParamService.regulatoryParamsResource.isLoading;
-  protected readonly activatedRoute = inject(ActivatedRoute);
-  protected readonly sortService = inject(SortService);
-  protected modalService = inject(NgbModal);
+  protected regulatoryParamService = inject(RegulatoryParamService);
+  protected modalService           = inject(NgbModal);
 
-  constructor() {
-    effect(() => {
-      this.regulatoryParams.set(this.fillComponentAttributesFromResponseBody([...this.regulatoryParamService.regulatoryParams()]));
-    });
-  }
-
-  trackId = (item: IRegulatoryParam): number => this.regulatoryParamService.getRegulatoryParamIdentifier(item);
-
-  ngOnInit(): void {
-    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
-      .pipe(
-        tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        tap(() => {
-          if (this.regulatoryParams().length === 0) {
-            this.load();
-          }
-        }),
-      )
-      .subscribe();
-  }
-
-  delete(regulatoryParam: IRegulatoryParam): void {
-    const modalRef = this.modalService.open(RegulatoryParamDeleteDialog, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.regulatoryParam = regulatoryParam;
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed
-      .pipe(
-        filter(reason => reason === ITEM_DELETED_EVENT),
-        tap(() => this.load()),
-      )
-      .subscribe();
-  }
+  ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.queryBackend();
-  }
-
-  navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(event);
-  }
-
-  protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
-    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
-  }
-
-  protected refineData(data: IRegulatoryParam[]): IRegulatoryParam[] {
-    const { predicate, order } = this.sortState();
-    return predicate && order ? data.sort(this.sortService.startSort({ predicate, order })) : data;
-  }
-
-  protected fillComponentAttributesFromResponseBody(data: IRegulatoryParam[]): IRegulatoryParam[] {
-    return this.refineData(data);
-  }
-
-  protected queryBackend(): void {
-    const queryObject: any = {
-      sort: this.sortService.buildSortParam(this.sortState()),
-    };
-    this.regulatoryParamService.regulatoryParamsParams.set(queryObject);
-  }
-
-  protected handleNavigation(sortState: SortState): void {
-    const queryParamsObj = {
-      sort: this.sortService.buildSortParam(sortState),
-    };
-
-    this.router.navigate(['./'], {
-      relativeTo: this.activatedRoute,
-      queryParams: queryParamsObj,
+    this.isLoading = true;
+    this.errorMsg  = '';
+    this.regulatoryParamService.query({ sort: ['category,asc', 'paramKey,asc'] }).subscribe({
+      next:  res => { this.regulatoryParams = res.body ?? []; this.isLoading = false; },
+      error: ()  => { this.errorMsg = 'Erreur lors du chargement.'; this.isLoading = false; },
     });
   }
+
+  // ── Formatage de la valeur ────────────────────────────────
+
+  formatValue(p: IRegulatoryParam): string {
+    const fmt = this.paramFormat[p.paramKey ?? ''];
+    const v   = p.numericValue ?? 0;
+    if (!fmt) return v.toFixed(4);
+    if (fmt.isPercent) return `${(v * 100).toFixed(2)} %`;
+    if (fmt.unit === 'DT') return `${v.toFixed(3)} DT`;
+    if (fmt.unit === '×') return `× ${v.toFixed(2)}`;
+    return `${v} ${fmt.unit}`;
+  }
+
+  // ── Filtres ───────────────────────────────────────────────
+
+  get filteredParams(): IRegulatoryParam[] {
+    return (this.regulatoryParams ?? []).filter(p =>
+      (!this.filterCategory || p.category === this.filterCategory) &&
+      (!this.filterKey || (p.paramKey ?? '').toLowerCase().includes(this.filterKey.toLowerCase())),
+    );
+  }
+
+  get categories(): string[] {
+    return [...new Set((this.regulatoryParams ?? []).map(p => p.category ?? '').filter(Boolean))];
+  }
+
+  // ── Suppression ───────────────────────────────────────────
+
+  delete(p: IRegulatoryParam): void {
+    const ref = this.modalService.open(RegulatoryParamDeleteDialog, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+    ref.componentInstance.regulatoryParam = p;
+    ref.closed.pipe(filter(r => r === ITEM_DELETED_EVENT)).subscribe(() => this.load());
+  }
+
+  trackId = (_i: number, p: IRegulatoryParam): number => p.id;
 }

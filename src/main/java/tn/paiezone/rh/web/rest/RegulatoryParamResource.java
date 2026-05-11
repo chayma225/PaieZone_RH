@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -27,14 +28,12 @@ import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 public class RegulatoryParamResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegulatoryParamResource.class);
-
     private static final String ENTITY_NAME = "regulatoryParam";
 
     @Value("${jhipster.clientApp.name:paieZoneRH}")
     private String applicationName;
 
     private final RegulatoryParamService regulatoryParamService;
-
     private final RegulatoryParamRepository regulatoryParamRepository;
 
     public RegulatoryParamResource(RegulatoryParamService regulatoryParamService, RegulatoryParamRepository regulatoryParamRepository) {
@@ -43,36 +42,43 @@ public class RegulatoryParamResource {
     }
 
     /**
-     * {@code POST  /regulatory-params} : Create a new regulatoryParam.
-     *
-     * @param regulatoryParamDTO the regulatoryParamDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new regulatoryParamDTO, or with status {@code 400 (Bad Request)} if the regulatoryParam has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * GET /categories : Récupère la liste des catégories uniques (SOCIAL_CHARGES, TAXES, etc.)
+     * Utile pour générer les onglets dans Angular.
      */
-    @PostMapping("")
-    public ResponseEntity<RegulatoryParamDTO> createRegulatoryParam(@Valid @RequestBody RegulatoryParamDTO regulatoryParamDTO)
-        throws URISyntaxException {
-        LOG.debug("REST request to save RegulatoryParam : {}", regulatoryParamDTO);
-        if (regulatoryParamDTO.getId() != null) {
-            throw new BadRequestAlertException("A new regulatoryParam cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        regulatoryParamDTO = regulatoryParamService.save(regulatoryParamDTO);
-        return ResponseEntity.created(new URI("/api/regulatory-params/" + regulatoryParamDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, regulatoryParamDTO.getId().toString()))
-            .body(regulatoryParamDTO);
+    @GetMapping("/categories")
+    public List<String> getAllCategories() {
+        LOG.debug("REST request to get all RegulatoryParam categories");
+        return regulatoryParamRepository.findAllCategories();
     }
 
     /**
-     * {@code PUT  /regulatory-params/:id} : Updates an existing regulatoryParam.
-     *
-     * @param id the id of the regulatoryParamDTO to save.
-     * @param regulatoryParamDTO the regulatoryParamDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated regulatoryParamDTO,
-     * or with status {@code 400 (Bad Request)} if the regulatoryParamDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the regulatoryParamDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * GET /category/{category} : Récupère les paramètres d'une catégorie précise.
+     */
+    @GetMapping("/category/{category}")
+    public List<RegulatoryParamDTO> getByCategory(@PathVariable String category) {
+        LOG.debug("REST request to get RegulatoryParams by category : {}", category);
+        // On utilise ici le repository pour le filtrage mais on pourrait passer par le service
+        return regulatoryParamRepository.findByCategoryAndActiveTrueOrderByParamLabelAsc(category)
+            .stream()
+            .map(param -> {
+                RegulatoryParamDTO dto = new RegulatoryParamDTO();
+                dto.setId(param.getId());
+                dto.setParamKey(param.getParamKey());
+                dto.setParamLabel(param.getParamLabel());
+                dto.setNumericValue(param.getNumericValue());
+                dto.setCategory(param.getCategory());
+                dto.setEffectiveFrom(param.getEffectiveFrom());
+                dto.setActive(param.getActive());
+                return dto;
+            }).toList();
+    }
+
+    /**
+     * PUT /regulatory-params/:id : Updates an existing regulatoryParam.
+     * SÉCURITÉ : Seul l'ADMIN peut modifier un taux de paie.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<RegulatoryParamDTO> updateRegulatoryParam(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody RegulatoryParamDTO regulatoryParamDTO
@@ -84,7 +90,6 @@ public class RegulatoryParamResource {
         if (!Objects.equals(id, regulatoryParamDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!regulatoryParamRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
@@ -95,59 +100,26 @@ public class RegulatoryParamResource {
             .body(regulatoryParamDTO);
     }
 
-    /**
-     * {@code PATCH  /regulatory-params/:id} : Partial updates given fields of an existing regulatoryParam, field will ignore if it is null
-     *
-     * @param id the id of the regulatoryParamDTO to save.
-     * @param regulatoryParamDTO the regulatoryParamDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated regulatoryParamDTO,
-     * or with status {@code 400 (Bad Request)} if the regulatoryParamDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the regulatoryParamDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the regulatoryParamDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<RegulatoryParamDTO> partialUpdateRegulatoryParam(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody RegulatoryParamDTO regulatoryParamDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to partial update RegulatoryParam partially : {}, {}", id, regulatoryParamDTO);
-        if (regulatoryParamDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+    @PostMapping("")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<RegulatoryParamDTO> createRegulatoryParam(@Valid @RequestBody RegulatoryParamDTO regulatoryParamDTO)
+        throws URISyntaxException {
+        // ... (code identique à votre version mais avec @PreAuthorize)
+        if (regulatoryParamDTO.getId() != null) {
+            throw new BadRequestAlertException("A new regulatoryParam cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        if (!Objects.equals(id, regulatoryParamDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!regulatoryParamRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        Optional<RegulatoryParamDTO> result = regulatoryParamService.partialUpdate(regulatoryParamDTO);
-
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, regulatoryParamDTO.getId().toString())
-        );
+        regulatoryParamDTO = regulatoryParamService.save(regulatoryParamDTO);
+        return ResponseEntity.created(new URI("/api/regulatory-params/" + regulatoryParamDTO.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, regulatoryParamDTO.getId().toString()))
+            .body(regulatoryParamDTO);
     }
 
-    /**
-     * {@code GET  /regulatory-params} : get all the Regulatory Params.
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Regulatory Params in body.
-     */
     @GetMapping("")
     public List<RegulatoryParamDTO> getAllRegulatoryParams() {
         LOG.debug("REST request to get all RegulatoryParams");
         return regulatoryParamService.findAll();
     }
 
-    /**
-     * {@code GET  /regulatory-params/:id} : get the "id" regulatoryParam.
-     *
-     * @param id the id of the regulatoryParamDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the regulatoryParamDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<RegulatoryParamDTO> getRegulatoryParam(@PathVariable("id") Long id) {
         LOG.debug("REST request to get RegulatoryParam : {}", id);
@@ -155,13 +127,8 @@ public class RegulatoryParamResource {
         return ResponseUtil.wrapOrNotFound(regulatoryParamDTO);
     }
 
-    /**
-     * {@code DELETE  /regulatory-params/:id} : delete the "id" regulatoryParam.
-     *
-     * @param id the id of the regulatoryParamDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteRegulatoryParam(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete RegulatoryParam : {}", id);
         regulatoryParamService.delete(id);

@@ -1,9 +1,11 @@
 package tn.paiezone.rh.repository;
 
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.Advance;
-import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
+
+import java.util.List;
 
 /**
  * Spring Data JPA repository for the Advance entity.
@@ -11,9 +13,14 @@ import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 @SuppressWarnings("unused")
 @Repository
 public interface AdvanceRepository extends JpaRepository<Advance, Long>, JpaSpecificationExecutor<Advance> {
-    long countByStatus(AdvanceStatus status);
 
-    // ou :
-    @Query("SELECT COUNT(a) FROM Advance a WHERE a.status = :status")
-    long countByStatus(String status);
+    List<Advance> findByPaySlipId(Long paySlipId);
+    @Query("SELECT a FROM Advance a WHERE a.employee.id = :employeeId " +
+        "AND a.deductionMonth = :month AND a.deductionYear = :year " +
+        "AND a.status = 'APPROVED'")
+    List<Advance> findApprovedForDeduction(
+        @Param("employeeId") Long employeeId,
+        @Param("month") int month,
+        @Param("year") int year
+    );
 }

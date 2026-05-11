@@ -1,33 +1,25 @@
+// src/main/webapp/app/entities/bonus/delete/bonus-delete-dialog.component.ts
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap/modal';
-import { TranslateModule } from '@ngx-translate/core';
-
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
-import { AlertError } from 'app/shared/alert/alert-error';
-import { TranslateDirective } from 'app/shared/language';
 import { IBonus } from '../bonus.model';
 import { BonusService } from '../service/bonus.service';
+import {FormsModule} from "@angular/forms";
+import SharedModule from 'app/shared/shared.module';
+import {DecimalPipe} from "@angular/common";
 
-@Component({
-  templateUrl: './bonus-delete-dialog.html',
-  imports: [TranslateDirective, TranslateModule, FormsModule, FontAwesomeModule, AlertError],
+@Component({ standalone: true, templateUrl: './bonus-delete-dialog.html', imports: [
+    FormsModule,
+    SharedModule,
+    DecimalPipe
+  ]
 })
 export class BonusDeleteDialog {
   bonus?: IBonus;
-
-  protected readonly bonusService = inject(BonusService);
-  protected readonly activeModal = inject(NgbActiveModal);
-
-  cancel(): void {
-    this.activeModal.dismiss();
-  }
-
+  protected service     = inject(BonusService);
+  protected activeModal = inject(NgbActiveModal);
+  cancel(): void { this.activeModal.dismiss(); }
   confirmDelete(id: number): void {
-    this.bonusService.delete(id).subscribe(() => {
-      this.activeModal.close(ITEM_DELETED_EVENT);
-    });
+    this.service.delete(id).subscribe(() => this.activeModal.close(ITEM_DELETED_EVENT));
   }
 }

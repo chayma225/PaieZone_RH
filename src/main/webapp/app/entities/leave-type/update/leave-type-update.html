@@ -1,205 +1,162 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="pz-leave-type-heading" data-cy="LeaveTypeCreateUpdateHeading" pzTranslate="paieZoneRhApp.leaveType.home.createOrEditLabel">
-        Créer ou éditer un Leave Type
-      </h2>
-
-      <div>
-        <pz-alert-error />
-
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3">
-            <label class="form-label" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-          </div>
-        }
-
-        @let nameRef = editForm.get('name')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_name" pzTranslate="paieZoneRhApp.leaveType.name">Name</label>
-          <select class="form-control" name="name" formControlName="name" id="field_name" data-cy="name">
-            <option [ngValue]="null">{{ 'paieZoneRhApp.LeaveTypeName.null' | translate }}</option>
-            @for (leaveTypeName of leaveTypeNameValues; track $index) {
-              <option [value]="leaveTypeName">{{ 'paieZoneRhApp.LeaveTypeName.' + leaveTypeName | translate }}</option>
-            }
-          </select>
-          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
-            <div>
-              @if (editForm.get('name')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let labelRef = editForm.get('label')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_label" pzTranslate="paieZoneRhApp.leaveType.label">Label</label>
-          <input type="text" class="form-control" name="label" id="field_label" data-cy="label" formControlName="label" />
-          @if (labelRef.invalid && (labelRef.dirty || labelRef.touched)) {
-            <div>
-              @if (editForm.get('label')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('label')?.errors?.maxlength) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '100' }"
-                  >Ce champ doit faire au maximum 100 caractères.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let maxDaysPerYearRef = editForm.get('maxDaysPerYear')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_maxDaysPerYear" pzTranslate="paieZoneRhApp.leaveType.maxDaysPerYear"
-            >Max Days Per Year</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="maxDaysPerYear"
-            id="field_maxDaysPerYear"
-            data-cy="maxDaysPerYear"
-            formControlName="maxDaysPerYear"
-          />
-          @if (maxDaysPerYearRef.invalid && (maxDaysPerYearRef.dirty || maxDaysPerYearRef.touched)) {
-            <div>
-              @if (editForm.get('maxDaysPerYear')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('maxDaysPerYear')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        @let carryOverDaysRef = editForm.get('carryOverDays')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_carryOverDays" pzTranslate="paieZoneRhApp.leaveType.carryOverDays">Carry Over Days</label>
-          <input
-            type="number"
-            class="form-control"
-            name="carryOverDays"
-            id="field_carryOverDays"
-            data-cy="carryOverDays"
-            formControlName="carryOverDays"
-          />
-          @if (carryOverDaysRef.invalid && (carryOverDaysRef.dirty || carryOverDaysRef.touched)) {
-            <div>
-              @if (editForm.get('carryOverDays')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-              @if (editForm.get('carryOverDays')?.errors?.min) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.min" [translateValues]="{ min: '0' }"
-                  >Ce champ doit être supérieur à 0.</small
-                >
-              }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('carryOverDays')?.errors?.number"
-                pzTranslate="entity.validation.number"
-                >Ce champ doit être un nombre.</small
-              >
-            </div>
-          }
-        </div>
-
-        @let paidRef = editForm.get('paid')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_paid" pzTranslate="paieZoneRhApp.leaveType.paid">Paid</label>
-          <input type="checkbox" class="form-check" name="paid" id="field_paid" data-cy="paid" formControlName="paid" />
-          @if (paidRef.invalid && (paidRef.dirty || paidRef.touched)) {
-            <div>
-              @if (editForm.get('paid')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let requiresMedicalRef = editForm.get('requiresMedical')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_requiresMedical" pzTranslate="paieZoneRhApp.leaveType.requiresMedical"
-            >Requires Medical</label
-          >
-          <input
-            type="checkbox"
-            class="form-check"
-            name="requiresMedical"
-            id="field_requiresMedical"
-            data-cy="requiresMedical"
-            formControlName="requiresMedical"
-          />
-          @if (requiresMedicalRef.invalid && (requiresMedicalRef.dirty || requiresMedicalRef.touched)) {
-            <div>
-              @if (editForm.get('requiresMedical')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let activeRef = editForm.get('active')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_active" pzTranslate="paieZoneRhApp.leaveType.active">Active</label>
-          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
-          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
-            <div>
-              @if (editForm.get('active')?.errors?.required) {
-                <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_company" pzTranslate="paieZoneRhApp.leaveType.company">Company</label>
-          <select
-            class="form-control"
-            id="field_company"
-            data-cy="company"
-            name="company"
-            formControlName="company"
-            [compareWith]="compareCompany"
-          >
-            @if (!editForm.get('company')!.value) {
-              <option [ngValue]="null" selected></option>
-            }
-            @for (companyOption of companiesSharedCollection(); track $index) {
-              <option [ngValue]="companyOption">{{ companyOption.id }}</option>
-            }
-          </select>
-        </div>
-        @if (editForm.get(['company'])!.invalid && (editForm.get(['company'])!.dirty || editForm.get(['company'])!.touched)) {
-          <div>
-            @if (editForm.get(['company'])?.errors?.required) {
-              <small class="form-text text-danger" pzTranslate="entity.validation.required">Ce champ est obligatoire.</small>
-            }
-          </div>
-        }
-      </div>
-
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban" />&nbsp;<span pzTranslate="entity.action.cancel">Annuler</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving()"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save" />&nbsp;<span pzTranslate="entity.action.save">Sauvegarder</span>
-        </button>
-      </div>
-    </form>
+<div class="rp-update-page">
+  <div class="rp-update-header">
+    <button type="button" class="btn-back" (click)="previousState()" title="Retour">
+      <fa-icon icon="arrow-left"></fa-icon>
+    </button>
+    <div>
+      <h1 class="rp-update-header__title">
+        {{ editForm.get('id')?.value ? '✏️ Modifier le type de congé' : '＋ Nouveau type de congé' }}
+      </h1>
+      <p class="rp-update-header__subtitle">Configurez les règles de calcul et les contraintes légales.</p>
+    </div>
   </div>
+
+  <form [formGroup]="editForm" (ngSubmit)="save()" novalidate>
+    <pz-alert-error></pz-alert-error>
+
+    <div class="rp-form-section">
+      <div class="rp-form-section__header">
+        <span class="rp-form-section__number">1</span>
+        <span class="rp-form-section__title">Identification & Visibilité</span>
+      </div>
+
+      <div class="rp-form-grid">
+        @if (editForm.get('id')?.value) {
+          <div class="rp-form-field rp-form-field--full">
+            <label class="rp-form-label">Référence Système</label>
+            <input type="text" class="rp-form-input bg-light text-muted" formControlName="id" readonly />
+          </div>
+        }
+
+        <div class="rp-form-field">
+          <label class="rp-form-label" for="field_name">Code Technique <span class="rp-form-label__req">*</span></label>
+          <select class="rp-form-input rp-form-input--code" name="name" formControlName="name" id="field_name">
+            <option [ngValue]="null">-- Sélectionner --</option>
+            @for (leaveTypeName of leaveTypeNameValues; track $index) {
+              <option [value]="leaveTypeName">{{ leaveTypeName }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="rp-form-field">
+          <label class="rp-form-label">Statut opérationnel</label>
+          <div class="rp-toggle-wrapper">
+            <label class="rp-toggle">
+              <input type="checkbox" formControlName="active" id="field_active" />
+              <span class="rp-toggle__track"><span class="rp-toggle__thumb"></span></span>
+            </label>
+            <span class="rp-toggle__label" [class.text-success]="editForm.get('active')?.value">
+              {{ editForm.get('active')?.value ? '✅ Actif' : '⛔ Inactif' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="rp-form-field rp-form-field--full">
+          <label class="rp-form-label" for="field_label">Libellé complet <span class="rp-form-label__req">*</span></label>
+          <input type="text" class="rp-form-input" formControlName="label" id="field_label" placeholder="Ex: Congé Annuel Légal" />
+        </div>
+      </div>
+    </div>
+
+    <div class="rp-form-section">
+      <div class="rp-form-section__header">
+        <span class="rp-form-section__number">2</span>
+        <span class="rp-form-section__title">Paramétrage des Quotas</span>
+      </div>
+      <div class="rp-form-grid">
+        <div class="rp-form-field">
+          <label class="rp-form-label">Nombre de jours max / an</label>
+          <div class="rp-input-group">
+            <input type="number" class="rp-form-input rp-form-input--no-border" formControlName="maxDaysPerYear" />
+            <span class="rp-input-group__unit">Jours</span>
+          </div>
+        </div>
+        <div class="rp-form-field">
+          <label class="rp-form-label">Jours reportables</label>
+          <div class="rp-input-group">
+            <input type="number" class="rp-form-input rp-form-input--no-border" formControlName="carryOverDays" />
+            <span class="rp-input-group__unit">Jours</span>
+          </div>
+        </div>
+        <div class="rp-form-field">
+          <label class="rp-form-label">Rémunération</label>
+          <div class="rp-toggle-wrapper">
+            <label class="rp-toggle">
+              <input type="checkbox" formControlName="paid" />
+              <span class="rp-toggle__track"><span class="rp-toggle__thumb"></span></span>
+            </label>
+            <span class="rp-toggle__label">{{ editForm.get('paid')?.value ? '💰 Payé' : '☁️ Sans Solde' }}</span>
+          </div>
+        </div>
+        <div class="rp-form-field">
+          <label class="rp-form-label">Justificatif Médical</label>
+          <div class="rp-toggle-wrapper">
+            <label class="rp-toggle">
+              <input type="checkbox" formControlName="requiresMedical" />
+              <span class="rp-toggle__track"><span class="rp-toggle__thumb"></span></span>
+            </label>
+            <span class="rp-toggle__label">{{ editForm.get('requiresMedical')?.value ? '📋 Requis' : 'Non requis' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rp-form-section">
+      <div class="rp-form-section__header">
+        <span class="rp-form-section__number">3</span>
+        <span class="rp-form-section__title">Affectation</span>
+      </div>
+      <div class="rp-form-field rp-form-field--full">
+        <label class="rp-form-label">Entreprise cliente</label>
+        <select class="rp-form-input" formControlName="company" [compareWith]="compareCompany">
+          @for (companyOption of companiesSharedCollection(); track companyOption.id) {
+            <option [ngValue]="companyOption">Société : {{ companyOption.id }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="rp-form-actions mt-4">
+      <button type="button" class="btn-ghost" (click)="previousState()">Annuler</button>
+      <button type="submit" class="btn-primary" [disabled]="editForm.invalid || isSaving()">
+        <fa-icon *ngIf="isSaving()" icon="sync" animation="spin" class="me-2"></fa-icon>
+        {{ editForm.get('id')?.value ? 'Enregistrer' : 'Créer' }}
+      </button>
+    </div>
+  </form>
 </div>
+
+<style>
+  :host {
+    --primary: #1d4ed8; --success: #059669; --danger: #dc2626;
+    --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+    --gray-600: #475569; --gray-700: #334155; --gray-900: #0f172a;
+    --radius: 10px;
+  }
+  .rp-update-page { padding: 28px 32px; max-width: 750px; margin: 0 auto; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .rp-update-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 28px; }
+  .rp-update-header__title { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+  .btn-back { background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 8px 12px; cursor: pointer; }
+  .btn-primary { background: var(--primary); color: white; border: none; border-radius: var(--radius); padding: 12px 24px; font-weight: 600; cursor: pointer; }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 12px 24px; cursor: pointer; color: var(--gray-600); }
+  .rp-form-section { background: white; border: 1.5px solid var(--gray-200); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .rp-form-section__header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--gray-100); padding-bottom: 12px; }
+  .rp-form-section__number { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; }
+  .rp-form-section__title { font-weight: 700; color: var(--gray-700); text-transform: uppercase; font-size: 12px; }
+  .rp-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .rp-form-field--full { grid-column: span 2; }
+  .rp-form-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; color: var(--gray-700); }
+  .rp-form-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; }
+  .rp-form-input--code { font-family: monospace; font-weight: 600; color: var(--primary); background: var(--gray-50); }
+  .rp-input-group { display: flex; align-items: center; border: 1.5px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; }
+  .rp-form-input--no-border { border: none; flex: 1; outline: none; }
+  .rp-input-group__unit { padding: 10px 14px; background: var(--gray-100); border-left: 1.5px solid var(--gray-200); font-size: 12px; font-weight: 700; color: var(--gray-600); }
+  .rp-toggle-wrapper { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+  .rp-toggle { position: relative; width: 44px; height: 22px; }
+  .rp-toggle input { opacity: 0; width: 0; height: 0; }
+  .rp-toggle__track { position: absolute; cursor: pointer; inset: 0; background: #e2e8f0; border-radius: 22px; transition: .3s; }
+  .rp-toggle input:checked + .rp-toggle__track { background: var(--success); }
+  .rp-toggle__thumb { position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; }
+  .rp-toggle input:checked + .rp-toggle__track .rp-toggle__thumb { transform: translateX(22px); }
+  .rp-form-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 20px; border-top: 1px solid var(--gray-200); }
+</style>

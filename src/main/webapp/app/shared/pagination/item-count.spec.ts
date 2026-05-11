@@ -4,12 +4,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import ItemCount from './item-count';
-
+import { ItemCountComponent } from './item-count';
 describe('ItemCount test', () => {
-  let comp: ItemCount;
-  let compRef: ComponentRef<ItemCount>;
-  let fixture: ComponentFixture<ItemCount>;
+  let comp: ItemCountComponent;
+  let compRef: ComponentRef<ItemCountComponent>;
+  let fixture: ComponentFixture<ItemCountComponent>;
   const inputParams = 'params';
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('ItemCount test', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ItemCount);
+    fixture = TestBed.createComponent(ItemCountComponent);
     comp = fixture.componentInstance;
     compRef = fixture.componentRef;
   });

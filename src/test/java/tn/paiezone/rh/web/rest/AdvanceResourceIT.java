@@ -1,20 +1,7 @@
 package tn.paiezone.rh.web.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static tn.paiezone.rh.domain.AdvanceAsserts.*;
-import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
-import static tn.paiezone.rh.web.rest.TestUtil.sameNumber;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +20,20 @@ import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 import tn.paiezone.rh.repository.AdvanceRepository;
 import tn.paiezone.rh.service.dto.AdvanceDTO;
 import tn.paiezone.rh.service.mapper.AdvanceMapper;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static tn.paiezone.rh.domain.AdvanceAsserts.*;
+import static tn.paiezone.rh.web.rest.TestUtil.createUpdateProxyForBean;
+import static tn.paiezone.rh.web.rest.TestUtil.sameNumber;
 
 /**
  * Integration tests for the {@link AdvanceResource} REST controller.
@@ -813,7 +814,7 @@ class AdvanceResourceIT {
         }
         em.persist(approvedByUser);
         em.flush();
-        advance.setApprovedByUser(approvedByUser);
+        advance.setApprovedBy("admin");
         advanceRepository.saveAndFlush(advance);
         Long approvedByUserId = approvedByUser.getId();
         // Get all the advanceList where approvedByUser equals to approvedByUserId

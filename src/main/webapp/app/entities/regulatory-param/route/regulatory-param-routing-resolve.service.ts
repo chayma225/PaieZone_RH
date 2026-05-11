@@ -1,30 +1,25 @@
-import { HttpErrorResponse } from '@angular/common/http';
+
 import { inject } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-
 import { EMPTY, Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-
+import { mergeMap } from 'rxjs/operators';
 import { IRegulatoryParam } from '../regulatory-param.model';
 import { RegulatoryParamService } from '../service/regulatory-param.service';
 
 const regulatoryParamResolve = (route: ActivatedRouteSnapshot): Observable<null | IRegulatoryParam> => {
-  const id = route.params.id;
+  const id = route.params['id'];
   if (id) {
-    const router = inject(Router);
-    const service = inject(RegulatoryParamService);
-    return service.find(id).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 404) {
-          router.navigate(['404']);
-        } else {
-          router.navigate(['error']);
-        }
-        return EMPTY;
-      }),
-    );
+    return inject(RegulatoryParamService)
+      .find(id)
+      .pipe(
+        mergeMap((r: HttpResponse<IRegulatoryParam>) => {
+          if (r.body) return of(r.body);
+          inject(Router).navigate(['404']);
+          return EMPTY;
+        }),
+      );
   }
-
   return of(null);
 };
 

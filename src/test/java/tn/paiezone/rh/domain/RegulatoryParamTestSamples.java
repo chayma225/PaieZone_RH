@@ -14,7 +14,7 @@ public class RegulatoryParamTestSamples {
             .id(1L)
             .paramKey("paramKey1")
             .paramLabel("paramLabel1")
-            .textValue("textValue1")
+            .stringValue("textValue1")
             .legalReference("legalReference1");
     }
 
@@ -23,7 +23,7 @@ public class RegulatoryParamTestSamples {
             .id(2L)
             .paramKey("paramKey2")
             .paramLabel("paramLabel2")
-            .textValue("textValue2")
+            .stringValue("textValue2")
             .legalReference("legalReference2");
     }
 
@@ -32,7 +32,7 @@ public class RegulatoryParamTestSamples {
             .id(longCount.incrementAndGet())
             .paramKey(UUID.randomUUID().toString())
             .paramLabel(UUID.randomUUID().toString())
-            .textValue(UUID.randomUUID().toString())
+            .stringValue(UUID.randomUUID().toString())
             .legalReference(UUID.randomUUID().toString());
     }
 }

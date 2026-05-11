@@ -2,16 +2,23 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import tn.paiezone.rh.domain.enumeration.ContractStatus;
+import tn.paiezone.rh.domain.enumeration.ContractType;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import tn.paiezone.rh.domain.enumeration.ContractStatus;
-import tn.paiezone.rh.domain.enumeration.ContractType;
+import java.util.List;
 
 /**
  * Contrat de travail
@@ -59,6 +66,10 @@ public class Contract implements Serializable {
     @NotNull
     @Column(name = "base_salary", precision = 21, scale = 2, nullable = false)
     private BigDecimal baseSalary;
+
+    @Size(max = 150)
+    @Column(name = "job_title", length = 150)
+    private String jobTitle;
 
     @NotNull
     @Min(value = 1)
@@ -129,6 +140,7 @@ public class Contract implements Serializable {
         this.setReference(reference);
         return this;
     }
+
 
     public void setReference(String reference) {
         this.reference = reference;
@@ -210,6 +222,19 @@ public class Contract implements Serializable {
 
     public void setBaseSalary(BigDecimal baseSalary) {
         this.baseSalary = baseSalary;
+    }
+
+    public String getJobTitle() {
+        return this.jobTitle;
+    }
+
+    public Contract jobTitle(String jobTitle) {
+        this.setJobTitle(jobTitle);
+        return this;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     public Integer getWorkingHoursWeek() {
@@ -346,22 +371,16 @@ public class Contract implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Contract)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Contract)) return false;
         return getId() != null && getId().equals(((Contract) o).getId());
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "Contract{" +
@@ -373,6 +392,7 @@ public class Contract implements Serializable {
             ", endDate='" + getEndDate() + "'" +
             ", signedDate='" + getSignedDate() + "'" +
             ", baseSalary=" + getBaseSalary() +
+            ", jobTitle='" + getJobTitle() + "'" +
             ", workingHoursWeek=" + getWorkingHoursWeek() +
             ", workingDaysWeek=" + getWorkingDaysWeek() +
             ", conventionCollective='" + getConventionCollective() + "'" +
@@ -382,5 +402,11 @@ public class Contract implements Serializable {
             ", notes='" + getNotes() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             "}";
+    }
+    @Repository
+    public interface ContractRepository extends JpaRepository<Contract, Long> {
+
+        // Récupère les contrats actifs pour générer les fiches de paie
+        List<Contract> findAllByStatus(ContractStatus status);
     }
 }

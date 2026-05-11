@@ -1,29 +1,33 @@
 package tn.paiezone.rh.service.mapper;
 
 import org.mapstruct.*;
-import tn.paiezone.rh.domain.Employee;
 import tn.paiezone.rh.domain.TimeEntry;
-import tn.paiezone.rh.domain.UserProfile;
-import tn.paiezone.rh.service.dto.EmployeeDTO;
 import tn.paiezone.rh.service.dto.TimeEntryDTO;
-import tn.paiezone.rh.service.dto.UserProfileDTO;
 
-/**
- * Mapper for the entity {@link TimeEntry} and its DTO {@link TimeEntryDTO}.
- */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { EmployeeMapper.class })
 public interface TimeEntryMapper extends EntityMapper<TimeEntryDTO, TimeEntry> {
-    @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
-    @Mapping(target = "validatedByUser", source = "validatedByUser", qualifiedByName = "userProfileId")
+
+    @Mapping(source = "employee.id", target = "employeeId")
     TimeEntryDTO toDto(TimeEntry s);
 
-    @Named("employeeId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    EmployeeDTO toDtoEmployeeId(Employee employee);
+    @Mapping(source = "employeeId", target = "employee")
+    @Mapping(target = "createdBy",        ignore = true)
+    @Mapping(target = "createdDate",      ignore = true)
+    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    TimeEntry toEntity(TimeEntryDTO dto);
 
-    @Named("userProfileId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    UserProfileDTO toDtoUserProfileId(UserProfile userProfile);
+    @Mapping(source = "employeeId", target = "employee")
+    @Mapping(target = "createdBy",        ignore = true)
+    @Mapping(target = "createdDate",      ignore = true)
+    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    void partialUpdate(@MappingTarget TimeEntry entity, TimeEntryDTO dto);
+
+    default tn.paiezone.rh.domain.Employee employeeFromId(Long id) {
+        if (id == null) return null;
+        tn.paiezone.rh.domain.Employee e = new tn.paiezone.rh.domain.Employee();
+        e.setId(id);
+        return e;
+    }
 }

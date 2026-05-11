@@ -1,22 +1,24 @@
 package tn.paiezone.rh.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Instant;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 
-/**
- * A PayrollPeriod.
- */
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.Instant;
+
 @Entity
-@Table(name = "payroll_period")
+@Table(
+    name = "payroll_period",
+    uniqueConstraints = @UniqueConstraint(
+        name = "uq_period_company_month_year",
+        columnNames = { "company_id", "month", "year" }
+    )
+)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class PayrollPeriod implements Serializable {
 
     @Serial
@@ -29,19 +31,19 @@ public class PayrollPeriod implements Serializable {
     private Long id;
 
     @NotNull
-    @Min(value = 1)
-    @Max(value = 12)
+    @Min(1) @Max(12)
     @Column(name = "month", nullable = false)
     private Integer month;
 
     @NotNull
+    @Min(2000) @Max(2100)
     @Column(name = "year", nullable = false)
     private Integer year;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private PayrollStatus status;
+    private PayrollStatus status = PayrollStatus.DRAFT;
 
     @Column(name = "calculated_at")
     private Instant calculatedAt;
@@ -52,182 +54,94 @@ public class PayrollPeriod implements Serializable {
     @Column(name = "locked_at")
     private Instant lockedAt;
 
-    @Lob
-    @Column(name = "notes")
-    private String notes;
+    @Size(max = 100)
+    @Column(name = "closed_by", length = 100)
+    private String closedBy;
+
+    @Column(name = "created_by", nullable = false, length = 50)
+    private String createdBy;
+
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private Instant createdDate;
+
+    @Column(name = "last_modified_by", length = 50)
+    private String lastModifiedBy;
+
+    @Column(name = "last_modified_date")
+    private Instant lastModifiedDate;
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "companySubscription" }, allowSetters = true)
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "company" }, allowSetters = true)
-    private UserProfile createdBy;
+    // ── Getters / Setters + Fluent setters ──────────────────────
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public PayrollPeriod id(Long id) { this.id = id; return this; }
 
-    public Long getId() {
-        return this.id;
-    }
+    public Integer getMonth() { return month; }
+    public void setMonth(Integer month) { this.month = month; }
+    public PayrollPeriod month(Integer month) { this.month = month; return this; }
 
-    public PayrollPeriod id(Long id) {
-        this.setId(id);
-        return this;
-    }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
+    public PayrollPeriod year(Integer year) { this.year = year; return this; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public PayrollStatus getStatus() { return status; }
+    public void setStatus(PayrollStatus status) { this.status = status; }
+    public PayrollPeriod status(PayrollStatus status) { this.status = status; return this; }
 
-    public Integer getMonth() {
-        return this.month;
-    }
+    public Instant getCalculatedAt() { return calculatedAt; }
+    public void setCalculatedAt(Instant calculatedAt) { this.calculatedAt = calculatedAt; }
+    public PayrollPeriod calculatedAt(Instant calculatedAt) { this.calculatedAt = calculatedAt; return this; }
 
-    public PayrollPeriod month(Integer month) {
-        this.setMonth(month);
-        return this;
-    }
+    public Instant getValidatedAt() { return validatedAt; }
+    public void setValidatedAt(Instant validatedAt) { this.validatedAt = validatedAt; }
+    public PayrollPeriod validatedAt(Instant validatedAt) { this.validatedAt = validatedAt; return this; }
 
-    public void setMonth(Integer month) {
-        this.month = month;
-    }
+    public Instant getLockedAt() { return lockedAt; }
+    public void setLockedAt(Instant lockedAt) { this.lockedAt = lockedAt; }
+    public PayrollPeriod lockedAt(Instant lockedAt) { this.lockedAt = lockedAt; return this; }
 
-    public Integer getYear() {
-        return this.year;
-    }
+    public String getClosedBy() { return closedBy; }
+    public void setClosedBy(String closedBy) { this.closedBy = closedBy; }
+    public PayrollPeriod closedBy(String closedBy) { this.closedBy = closedBy; return this; }
 
-    public PayrollPeriod year(Integer year) {
-        this.setYear(year);
-        return this;
-    }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public PayrollPeriod createdBy(String createdBy) { this.createdBy = createdBy; return this; }
 
-    public void setYear(Integer year) {
-        this.year = year;
-    }
+    public Instant getCreatedDate() { return createdDate; }
+    public void setCreatedDate(Instant createdDate) { this.createdDate = createdDate; }
+    public PayrollPeriod createdDate(Instant createdDate) { this.createdDate = createdDate; return this; }
 
-    public PayrollStatus getStatus() {
-        return this.status;
-    }
+    public String getLastModifiedBy() { return lastModifiedBy; }
+    public void setLastModifiedBy(String lastModifiedBy) { this.lastModifiedBy = lastModifiedBy; }
+    public PayrollPeriod lastModifiedBy(String lastModifiedBy) { this.lastModifiedBy = lastModifiedBy; return this; }
 
-    public PayrollPeriod status(PayrollStatus status) {
-        this.setStatus(status);
-        return this;
-    }
+    public Instant getLastModifiedDate() { return lastModifiedDate; }
+    public void setLastModifiedDate(Instant lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
+    public PayrollPeriod lastModifiedDate(Instant lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; return this; }
 
-    public void setStatus(PayrollStatus status) {
-        this.status = status;
-    }
-
-    public Instant getCalculatedAt() {
-        return this.calculatedAt;
-    }
-
-    public PayrollPeriod calculatedAt(Instant calculatedAt) {
-        this.setCalculatedAt(calculatedAt);
-        return this;
-    }
-
-    public void setCalculatedAt(Instant calculatedAt) {
-        this.calculatedAt = calculatedAt;
-    }
-
-    public Instant getValidatedAt() {
-        return this.validatedAt;
-    }
-
-    public PayrollPeriod validatedAt(Instant validatedAt) {
-        this.setValidatedAt(validatedAt);
-        return this;
-    }
-
-    public void setValidatedAt(Instant validatedAt) {
-        this.validatedAt = validatedAt;
-    }
-
-    public Instant getLockedAt() {
-        return this.lockedAt;
-    }
-
-    public PayrollPeriod lockedAt(Instant lockedAt) {
-        this.setLockedAt(lockedAt);
-        return this;
-    }
-
-    public void setLockedAt(Instant lockedAt) {
-        this.lockedAt = lockedAt;
-    }
-
-    public String getNotes() {
-        return this.notes;
-    }
-
-    public PayrollPeriod notes(String notes) {
-        this.setNotes(notes);
-        return this;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Company getCompany() {
-        return this.company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public PayrollPeriod company(Company company) {
-        this.setCompany(company);
-        return this;
-    }
-
-    public UserProfile getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(UserProfile userProfile) {
-        this.createdBy = userProfile;
-    }
-
-    public PayrollPeriod createdBy(UserProfile userProfile) {
-        this.setCreatedBy(userProfile);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) { this.company = company; }
+    public PayrollPeriod company(Company company) { this.company = company; return this; }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PayrollPeriod)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof PayrollPeriod)) return false;
         return getId() != null && getId().equals(((PayrollPeriod) o).getId());
     }
 
     @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
+    public int hashCode() { return getClass().hashCode(); }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "PayrollPeriod{" +
-            "id=" + getId() +
-            ", month=" + getMonth() +
-            ", year=" + getYear() +
-            ", status='" + getStatus() + "'" +
-            ", calculatedAt='" + getCalculatedAt() + "'" +
-            ", validatedAt='" + getValidatedAt() + "'" +
-            ", lockedAt='" + getLockedAt() + "'" +
-            ", notes='" + getNotes() + "'" +
-            "}";
+        return "PayrollPeriod{id=" + id + ", month=" + month
+            + ", year=" + year + ", status=" + status + "}";
     }
 }
