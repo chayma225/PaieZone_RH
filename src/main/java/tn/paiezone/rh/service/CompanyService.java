@@ -1,8 +1,11 @@
 package tn.paiezone.rh.service;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,18 +15,16 @@ import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.repository.CompanyRepository;
 import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.service.mapper.CompanyMapper;
+import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
-/**
- * Service Implementation for managing {@link tn.paiezone.rh.domain.Company}.
- */
 @Service
 @Transactional
 public class CompanyService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CompanyService.class);
+    private static final String ENTITY_NAME = "company";
 
     private final CompanyRepository companyRepository;
-
     private final CompanyMapper companyMapper;
 
     public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper) {
@@ -32,36 +33,51 @@ public class CompanyService {
     }
 
     /**
-     * Save a company.
-     *
-     * @param companyDTO the entity to save.
-     * @return the persisted entity.
+     * ✅ CREATE — génération automatique des champs techniques
      */
     public CompanyDTO save(CompanyDTO companyDTO) {
         LOG.debug("Request to save Company : {}", companyDTO);
+
+        companyDTO.setTenantSchema("tenant_" + UUID.randomUUID().toString().replace("-", ""));
+        companyDTO.setCreatedAt(Instant.now());
+        companyDTO.setActive(true);
+        companyDTO.setTrialEnd(LocalDate.now().plusDays(14));
+
         Company company = companyMapper.toEntity(companyDTO);
         company = companyRepository.save(company);
         return companyMapper.toDto(company);
     }
 
     /**
-     * Update a company.
-     *
-     * @param companyDTO the entity to save.
-     * @return the persisted entity.
+     * ✅ UPDATE — protège les champs immuables MAIS respecte active
+     *    (permet au toggleStatus de fonctionner)
      */
     public CompanyDTO update(CompanyDTO companyDTO) {
         LOG.debug("Request to update Company : {}", companyDTO);
+
+        Company existing = companyRepository.findById(companyDTO.getId())
+            .orElseThrow(() -> new BadRequestAlertException(
+                "Entreprise introuvable.", ENTITY_NAME, "idnotfound"
+            ));
+
+        // ✅ Champs vraiment immuables → toujours protégés
+        companyDTO.setTenantSchema(existing.getTenantSchema());
+        companyDTO.setCreatedAt(existing.getCreatedAt());
+        companyDTO.setTrialEnd(existing.getTrialEnd());
+
+        // ✅ active → on garde la valeur du DTO si elle est fournie
+        //    sinon on reprend celle de la base (sécurité)
+        if (companyDTO.getActive() == null) {
+            companyDTO.setActive(existing.getActive());
+        }
+
         Company company = companyMapper.toEntity(companyDTO);
         company = companyRepository.save(company);
         return companyMapper.toDto(company);
     }
 
     /**
-     * Partially update a company.
-     *
-     * @param companyDTO the entity to update partially.
-     * @return the persisted entity.
+     * ✅ PARTIAL UPDATE — protège tous les champs techniques
      */
     public Optional<CompanyDTO> partialUpdate(CompanyDTO companyDTO) {
         LOG.debug("Request to partially update Company : {}", companyDTO);
@@ -69,8 +85,13 @@ public class CompanyService {
         return companyRepository
             .findById(companyDTO.getId())
             .map(existingCompany -> {
+                companyDTO.setTenantSchema(existingCompany.getTenantSchema());
+                companyDTO.setCreatedAt(existingCompany.getCreatedAt());
+                companyDTO.setTrialEnd(existingCompany.getTrialEnd());
+                if (companyDTO.getActive() == null) {
+                    companyDTO.setActive(existingCompany.getActive());
+                }
                 companyMapper.partialUpdate(existingCompany, companyDTO);
-
                 return existingCompany;
             })
             .map(companyRepository::save)
@@ -79,20 +100,17 @@ public class CompanyService {
 
     /**
      * Get all the companies.
-     *
-     * @return the list of entities.
      */
     @Transactional(readOnly = true)
     public List<CompanyDTO> findAll() {
         LOG.debug("Request to get all Companies");
-        return companyRepository.findAll().stream().map(companyMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
+        return companyRepository.findAll().stream()
+            .map(companyMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
      * Get one company by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
      */
     @Transactional(readOnly = true)
     public Optional<CompanyDTO> findOne(Long id) {
@@ -102,8 +120,6 @@ public class CompanyService {
 
     /**
      * Delete the company by id.
-     *
-     * @param id the id of the entity.
      */
     public void delete(Long id) {
         LOG.debug("Request to delete Company : {}", id);

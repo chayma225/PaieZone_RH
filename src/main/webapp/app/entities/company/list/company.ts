@@ -6,6 +6,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap/modal';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription, combineLatest, filter, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
 import { Alert } from 'app/shared/alert/alert';
@@ -42,11 +43,11 @@ export class Company implements OnInit {
 
   readonly router = inject(Router);
   protected readonly companyService = inject(CompanyService);
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   readonly isLoading = this.companyService.companiesResource.isLoading;
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
   protected modalService = inject(NgbModal);
+  protected http = inject(HttpClient);
 
   constructor() {
     effect(() => {
@@ -72,7 +73,6 @@ export class Company implements OnInit {
   delete(company: ICompany): void {
     const modalRef = this.modalService.open(CompanyDeleteDialog, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.company = company;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
@@ -87,6 +87,19 @@ export class Company implements OnInit {
 
   navigateToWithComponentValues(event: SortState): void {
     this.handleNavigation(event);
+  }
+
+  // ✅ Toggle statut avec mise à jour locale immédiate du signal
+  toggleStatus(company: ICompany): void {
+    this.http.patch<ICompany>(`/api/companies/${company.id}/toggle-status`, {}).subscribe({
+      next: (updated) => {
+        // ✅ Mise à jour immédiate dans le signal sans attendre reload
+        this.companies.update(list =>
+          list.map(c => c.id === updated.id ? { ...c, active: updated.active } : c)
+        );
+      },
+      error: (err) => console.error('Erreur toggle status', err),
+    });
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
@@ -113,7 +126,6 @@ export class Company implements OnInit {
     const queryParamsObj = {
       sort: this.sortService.buildSortParam(sortState),
     };
-
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute,
       queryParams: queryParamsObj,

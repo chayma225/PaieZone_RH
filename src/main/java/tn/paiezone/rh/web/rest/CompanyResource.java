@@ -19,6 +19,8 @@ import tn.paiezone.rh.repository.CompanyRepository;
 import tn.paiezone.rh.service.CompanyService;
 import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 @RestController
 @RequestMapping("/api/companies")
@@ -117,5 +119,25 @@ public class CompanyResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+    @PatchMapping("/{id}/toggle-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Auditable(action = "TOGGLE_STATUS", entityType = "Company")
+    public ResponseEntity<CompanyDTO> toggleStatus(@PathVariable Long id) {
+        LOG.debug("REST request to toggle status of Company : {}", id);
+
+        CompanyDTO dto = companyService.findOne(id)
+            .orElseThrow(() -> new BadRequestAlertException(
+                "Entreprise introuvable.", ENTITY_NAME, "idnotfound"
+            ));
+
+        dto.setActive(!dto.getActive());
+        dto = companyService.update(dto);
+
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(
+                applicationName, true, ENTITY_NAME, id.toString()
+            ))
+            .body(dto);
     }
 }

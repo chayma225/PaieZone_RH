@@ -7,9 +7,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 
-/**
- * A DTO for the {@link tn.paiezone.rh.domain.Company} entity.
- */
 @Schema(description = "Entreprise = Tenant SaaS")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CompanyDTO implements Serializable {
@@ -48,16 +45,16 @@ public class CompanyDTO implements Serializable {
     @Size(max = 500)
     private String logoUrl;
 
-    @NotNull
+    // ✅ @NotNull supprimé — généré automatiquement par le backend
     @Size(max = 63)
     private String tenantSchema;
 
-    @NotNull
+    // ✅ @NotNull supprimé — géré automatiquement par le backend
     private Boolean active;
 
     private LocalDate trialEnd;
 
-    @NotNull
+    // ✅ @NotNull supprimé — généré automatiquement par le backend
     private Instant createdAt;
 
     private CompanySubscriptionDTO companySubscription;
@@ -192,17 +189,10 @@ public class CompanyDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CompanyDTO)) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (!(o instanceof CompanyDTO)) return false;
         CompanyDTO companyDTO = (CompanyDTO) o;
-        if (this.id == null) {
-            return false;
-        }
+        if (this.id == null) return false;
         return Objects.equals(this.id, companyDTO.id);
     }
 
@@ -211,7 +201,6 @@ public class CompanyDTO implements Serializable {
         return Objects.hash(this.id);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "CompanyDTO{" +

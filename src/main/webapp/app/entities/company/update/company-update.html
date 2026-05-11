@@ -1,277 +1,137 @@
-<div class="d-flex justify-content-center p-4">
-  <div class="col-md-10 card shadow border-0 p-0 overflow-hidden">
-    <div class="bg-primary p-3 text-white">
-      <h2
-        id="pz-company-heading"
-        data-cy="CompanyCreateUpdateHeading"
-        class="h4 mb-0 fw-bold"
-        pzTranslate="paieZoneRhApp.company.home.createOrEditLabel"
-      >
-        <fa-icon icon="building" class="me-2"></fa-icon>
-        Créer ou éditer une Entreprise
-      </h2>
-    </div>
+<div class="row justify-content-center">
+  <div class="col-md-8">
 
-    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="p-4">
-      <pz-alert-error />
+    <h4 class="mb-4 fw-semibold">
+      @if (company) { Modifier l'entreprise } @else { Créer une entreprise }
+    </h4>
+
+    <pz-alert-error />
+
+    <form [formGroup]="editForm" (ngSubmit)="save()">
+
+      <!-- Informations générales -->
+      <h5 class="text-primary mt-4 mb-3 border-bottom pb-1">
+        Informations générales
+      </h5>
+
+      <div class="mb-3">
+        <label class="form-label">Nom de l'entreprise *</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="editForm.get('name')?.invalid && editForm.get('name')?.touched"
+        />
+        @if (editForm.get('name')?.invalid && editForm.get('name')?.touched) {
+        <div class="invalid-feedback">Le nom est obligatoire (2-150 caractères).</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Nom commercial</label>
+        <input type="text" class="form-control" formControlName="tradeName" />
+      </div>
+
+      <!-- Informations légales -->
+      <h5 class="text-primary mt-4 mb-3 border-bottom pb-1">
+        Informations légales
+      </h5>
 
       <div class="row">
-        <div class="col-12 border-bottom mb-3">
-          <h5 class="text-primary fw-bold">1. Informations Générales</h5>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Matricule fiscal *</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="taxId"
+            [class.is-invalid]="editForm.get('taxId')?.invalid && editForm.get('taxId')?.touched"
+          />
+          @if (editForm.get('taxId')?.invalid && editForm.get('taxId')?.touched) {
+          <div class="invalid-feedback">Le matricule fiscal est obligatoire.</div>
+          }
         </div>
 
-        @if (editForm.controls.id.value !== null) {
-          <div class="mb-3 col-12">
-            <label class="form-label text-muted small fw-bold" for="field_id" pzTranslate="global.field.id">ID</label>
-            <input
-              type="number"
-              class="form-control bg-light border-0"
-              name="id"
-              id="field_id"
-              data-cy="id"
-              formControlName="id"
-              [readonly]="true"
-            />
-          </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Numéro CNSS</label>
+          <input type="text" class="form-control" formControlName="cnssId" />
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <h5 class="text-primary mt-4 mb-3 border-bottom pb-1">
+        Contact
+      </h5>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Téléphone</label>
+          <input type="tel" class="form-control" formControlName="phone" />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            [class.is-invalid]="editForm.get('email')?.invalid && editForm.get('email')?.touched"
+          />
+          @if (editForm.get('email')?.invalid && editForm.get('email')?.touched) {
+          <div class="invalid-feedback">Email invalide.</div>
+          }
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Adresse</label>
+        <input type="text" class="form-control" formControlName="address" />
+      </div>
+
+      <div class="row">
+        <div class="col-md-8 mb-3">
+          <label class="form-label">Ville</label>
+          <input type="text" class="form-control" formControlName="city" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Code postal</label>
+          <input type="text" class="form-control" formControlName="postalCode" />
+        </div>
+      </div>
+
+      <!-- Logo -->
+      <h5 class="text-primary mt-4 mb-3 border-bottom pb-1">
+        Logo
+      </h5>
+
+      <div class="mb-4">
+        <label class="form-label">URL du logo</label>
+        <input type="url" class="form-control" formControlName="logoUrl" />
+        @if (editForm.get('logoUrl')?.value) {
+        <div class="mt-2">
+          <img
+            [src]="editForm.get('logoUrl')?.value"
+            alt="Aperçu logo"
+            style="max-height: 60px; border-radius: 6px;"
+            (error)="$any($event.target).style.display='none'"
+          />
+        </div>
         }
-
-        @let nameRef = editForm.get('name')!;
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_name" pzTranslate="paieZoneRhApp.company.name">Nom / Raison Sociale</label>
-          <input type="text" class="form-control border-primary-subtle" name="name" id="field_name" data-cy="name" formControlName="name" />
-          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
-            <div class="mt-1">
-              @if (nameRef.errors?.required) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Obligatoire.</small>
-              }
-              @if (nameRef.errors?.minlength) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.minlength" [translateValues]="{ min: '2' }"
-                  >Min 2 car.</small
-                >
-              }
-              @if (nameRef.errors?.maxlength) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
-                  >Max 150 car.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let tradeNameRef = editForm.get('tradeName')!;
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_tradeName" pzTranslate="paieZoneRhApp.company.tradeName">Nom Commercial</label>
-          <input
-            type="text"
-            class="form-control border-primary-subtle"
-            name="tradeName"
-            id="field_tradeName"
-            data-cy="tradeName"
-            formControlName="tradeName"
-          />
-          @if (tradeNameRef.invalid && (tradeNameRef.dirty || tradeNameRef.touched)) {
-            <div class="mt-1">
-              @if (tradeNameRef.errors?.maxlength) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '150' }"
-                  >Max 150 car.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        <div class="col-12 border-bottom mb-3 mt-3">
-          <h5 class="text-primary fw-bold">2. Identifiants Légaux</h5>
-        </div>
-
-        @let taxIdRef = editForm.get('taxId')!;
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_taxId" pzTranslate="paieZoneRhApp.company.taxId">Matricule Fiscal</label>
-          <div class="input-group">
-            <span class="input-group-text bg-white border-primary-subtle"><fa-icon icon="file-invoice" /></span>
-            <input
-              type="text"
-              class="form-control border-primary-subtle"
-              name="taxId"
-              id="field_taxId"
-              data-cy="taxId"
-              formControlName="taxId"
-            />
-          </div>
-          @if (taxIdRef.invalid && (taxIdRef.dirty || taxIdRef.touched)) {
-            <div class="mt-1">
-              @if (taxIdRef.errors?.required) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Obligatoire.</small>
-              }
-              @if (taxIdRef.errors?.maxlength) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
-                  >Max 20 car.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        @let cnssIdRef = editForm.get('cnssId')!;
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_cnssId" pzTranslate="paieZoneRhApp.company.cnssId">Numéro CNSS</label>
-          <input
-            type="text"
-            class="form-control border-primary-subtle"
-            name="cnssId"
-            id="field_cnssId"
-            data-cy="cnssId"
-            formControlName="cnssId"
-          />
-          @if (cnssIdRef.invalid && (cnssIdRef.dirty || cnssIdRef.touched)) {
-            <div class="mt-1">
-              @if (cnssIdRef.errors?.maxlength) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.maxlength" [translateValues]="{ max: '20' }"
-                  >Max 20 car.</small
-                >
-              }
-            </div>
-          }
-        </div>
-
-        <div class="col-12 border-bottom mb-3 mt-3">
-          <h5 class="text-primary fw-bold">3. Contact & Localisation</h5>
-        </div>
-
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_phone" pzTranslate="paieZoneRhApp.company.phone">Téléphone</label>
-          <div class="input-group">
-            <span class="input-group-text bg-white border-primary-subtle"><fa-icon icon="phone" /></span>
-            <input
-              type="text"
-              class="form-control border-primary-subtle"
-              name="phone"
-              id="field_phone"
-              data-cy="phone"
-              formControlName="phone"
-            />
-          </div>
-        </div>
-
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_email" pzTranslate="paieZoneRhApp.company.email">Email</label>
-          <div class="input-group">
-            <span class="input-group-text bg-white border-primary-subtle"><fa-icon icon="envelope" /></span>
-            <input
-              type="text"
-              class="form-control border-primary-subtle"
-              name="email"
-              id="field_email"
-              data-cy="email"
-              formControlName="email"
-            />
-          </div>
-        </div>
-
-        <div class="mb-3 col-md-8">
-          <label class="form-label fw-bold" for="field_address" pzTranslate="paieZoneRhApp.company.address">Adresse</label>
-          <input
-            type="text"
-            class="form-control border-primary-subtle"
-            name="address"
-            id="field_address"
-            data-cy="address"
-            formControlName="address"
-          />
-        </div>
-
-        <div class="mb-3 col-md-4">
-          <label class="form-label fw-bold" for="field_city" pzTranslate="paieZoneRhApp.company.city">Ville</label>
-          <input type="text" class="form-control border-primary-subtle" name="city" id="field_city" data-cy="city" formControlName="city" />
-        </div>
-
-        <div class="col-12 border-bottom mb-3 mt-3">
-          <h5 class="text-primary fw-bold">4. Paramètres Système</h5>
-        </div>
-
-        @let tenantSchemaRef = editForm.get('tenantSchema')!;
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_tenantSchema" pzTranslate="paieZoneRhApp.company.tenantSchema">Schéma Tenant</label>
-          <input
-            type="text"
-            class="form-control border-primary-subtle bg-light"
-            name="tenantSchema"
-            id="field_tenantSchema"
-            data-cy="tenantSchema"
-            formControlName="tenantSchema"
-          />
-          @if (tenantSchemaRef.invalid && (tenantSchemaRef.dirty || tenantSchemaRef.touched)) {
-            <div class="mt-1">
-              @if (tenantSchemaRef.errors?.required) {
-                <small class="text-danger fw-bold" pzTranslate="entity.validation.required">Obligatoire.</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3 col-md-6">
-          <label class="form-label fw-bold" for="field_companySubscription" pzTranslate="paieZoneRhApp.company.companySubscription"
-            >Abonnement</label
-          >
-          <select
-            class="form-select border-primary-subtle"
-            id="field_companySubscription"
-            name="companySubscription"
-            formControlName="companySubscription"
-            [compareWith]="compareCompanySubscription"
-          >
-            <option [ngValue]="null"></option>
-            @for (opt of companySubscriptionsCollection(); track $index) {
-              <option [ngValue]="opt">{{ opt.id }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="mb-3 col-md-4">
-          <label class="form-label fw-bold" for="field_trialEnd" pzTranslate="paieZoneRhApp.company.trialEnd">Fin d'essai</label>
-          <div class="input-group">
-            <input
-              id="field_trialEnd"
-              type="text"
-              class="form-control border-primary-subtle"
-              name="trialEnd"
-              ngbDatepicker
-              #trialEndDp="ngbDatepicker"
-              formControlName="trialEnd"
-            />
-            <button type="button" class="btn btn-outline-primary" (click)="trialEndDp.toggle()"><fa-icon icon="calendar-alt" /></button>
-          </div>
-        </div>
-
-        <div class="mb-3 col-md-4">
-          <label class="form-label fw-bold" for="field_createdAt" pzTranslate="paieZoneRhApp.company.createdAt">Créé le</label>
-          <input
-            id="field_createdAt"
-            type="datetime-local"
-            class="form-control border-primary-subtle"
-            name="createdAt"
-            formControlName="createdAt"
-          />
-        </div>
-
-        <div class="mb-3 col-md-4 d-flex align-items-end">
-          <div class="form-check form-switch p-2 ps-5 border rounded bg-light w-100 shadow-sm mb-1">
-            <input type="checkbox" class="form-check-input" name="active" id="field_active" formControlName="active" />
-            <label class="form-check-label fw-bold ms-2" for="field_active" pzTranslate="paieZoneRhApp.company.active">Actif</label>
-          </div>
-        </div>
       </div>
 
-      <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-        <button type="button" class="btn btn-outline-secondary px-4 shadow-sm" (click)="previousState()">
-          <fa-icon icon="ban" class="me-1"></fa-icon>
-          <span pzTranslate="entity.action.cancel">Annuler</span>
+      <!-- Actions -->
+      <div class="d-flex gap-2 mt-2">
+        <button type="button" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>  <!-- ✅ balise fermante explicite -->
+          Annuler
         </button>
-        <button type="submit" [disabled]="editForm.invalid || isSaving()" class="btn btn-primary px-5 shadow">
-          <fa-icon icon="save" class="me-1"></fa-icon>
-          <span pzTranslate="entity.action.save">Sauvegarder</span>
+
+        <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid || isSaving">
+          <fa-icon icon="save"></fa-icon>  <!-- ✅ balise fermante explicite -->
+          @if (isSaving) { Enregistrement... } @else { Enregistrer }
         </button>
       </div>
+
     </form>
   </div>
 </div>
