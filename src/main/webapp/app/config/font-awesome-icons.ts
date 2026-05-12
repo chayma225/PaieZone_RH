@@ -48,11 +48,14 @@ import {
   faCalendarDay,
   faDollarSign,
   faHandHoldingUsd,
-  faBuilding,      // <--- AJOUTER CECI pour l'entreprise
-  faCheckCircle,   // <--- AJOUTER CECI pour les statuts valides
-  faTimesCircle,   // <--- AJOUTER CECI pour les statuts invalides
+  faBuilding, // <--- AJOUTER CECI pour l'entreprise
+  faCheckCircle, // <--- AJOUTER CECI pour les statuts valides
+  faTimesCircle, // <--- AJOUTER CECI pour les statuts invalides
   faMinus,
   faSpinner,
+  faComments,
+  faHistory,
+  faPaperPlane,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -109,5 +112,8 @@ export const fontAwesomeIcons = [
   faBuilding,
   faCheckCircle,
   faTimesCircle,
-  faMinus
+  faMinus,
+  faComments,
+  faHistory,
+  faPaperPlane,
 ];

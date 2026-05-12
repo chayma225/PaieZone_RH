@@ -2,235 +2,110 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import tn.paiezone.rh.domain.enumeration.ChatChannel;
-import tn.paiezone.rh.domain.enumeration.ChatSessionStatus;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * A ChatSession.
- */
 @Entity
 @Table(name = "chat_session")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ChatSession implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chatSessionSequenceGenerator")
+    @SequenceGenerator(name = "chatSessionSequenceGenerator", sequenceName = "chat_session_sequence", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "channel", nullable = false)
-    private ChatChannel channel;
+    @Column(name = "session_title")
+    private String sessionTitle;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private ChatSessionStatus status;
+    @Column(name = "user_login", nullable = false, length = 50)
+    private String userLogin;
 
-    @NotNull
-    @Column(name = "started_at", nullable = false)
-    private Instant startedAt;
+    @Column(name = "created_at")
+    private Instant createdAt;
 
-    @Column(name = "ended_at")
-    private Instant endedAt;
+    @Column(name = "last_activity")
+    private Instant lastActivity;
 
-    @Column(name = "escalated_at")
-    private Instant escalatedAt;
+    @Column(name = "active")
+    private boolean active;
 
-    @Size(max = 100)
-    @Column(name = "escalated_to", length = 100)
-    private String escalatedTo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    @JsonIgnoreProperties(value = { "subscriptions", "users" }, allowSetters = true)
+    private Company company;
 
-    @Lob
-    @Column(name = "context_data")
-    private String contextData;
-
-    @Min(value = 1)
-    @Max(value = 5)
-    @Column(name = "satisfaction_score")
-    private Integer satisfactionScore;
-
-    @ManyToOne(optional = false)
-    @NotNull
-    @JsonIgnoreProperties(value = { "company", "department", "position", "manager", "userProfile" }, allowSetters = true)
-    private Employee employee;
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OrderBy("sentAt ASC")
+    @JsonIgnoreProperties(value = { "session" }, allowSetters = true)
+    private List<ChatMessage> messages = new ArrayList<>();
 
     public Long getId() {
-        return this.id;
-    }
-
-    public ChatSession id(Long id) {
-        this.setId(id);
-        return this;
+        return id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public ChatChannel getChannel() {
-        return this.channel;
+    public String getSessionTitle() {
+        return sessionTitle;
     }
 
-    public ChatSession channel(ChatChannel channel) {
-        this.setChannel(channel);
-        return this;
+    public void setSessionTitle(String sessionTitle) {
+        this.sessionTitle = sessionTitle;
     }
 
-    public void setChannel(ChatChannel channel) {
-        this.channel = channel;
+    public String getUserLogin() {
+        return userLogin;
     }
 
-    public ChatSessionStatus getStatus() {
-        return this.status;
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
     }
 
-    public ChatSession status(ChatSessionStatus status) {
-        this.setStatus(status);
-        return this;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
-    public void setStatus(ChatSessionStatus status) {
-        this.status = status;
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Instant getStartedAt() {
-        return this.startedAt;
+    public Instant getLastActivity() {
+        return lastActivity;
     }
 
-    public ChatSession startedAt(Instant startedAt) {
-        this.setStartedAt(startedAt);
-        return this;
+    public void setLastActivity(Instant lastActivity) {
+        this.lastActivity = lastActivity;
     }
 
-    public void setStartedAt(Instant startedAt) {
-        this.startedAt = startedAt;
+    public boolean isActive() {
+        return active;
     }
 
-    public Instant getEndedAt() {
-        return this.endedAt;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public ChatSession endedAt(Instant endedAt) {
-        this.setEndedAt(endedAt);
-        return this;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setEndedAt(Instant endedAt) {
-        this.endedAt = endedAt;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
-    public Instant getEscalatedAt() {
-        return this.escalatedAt;
+    public List<ChatMessage> getMessages() {
+        return messages;
     }
 
-    public ChatSession escalatedAt(Instant escalatedAt) {
-        this.setEscalatedAt(escalatedAt);
-        return this;
-    }
-
-    public void setEscalatedAt(Instant escalatedAt) {
-        this.escalatedAt = escalatedAt;
-    }
-
-    public String getEscalatedTo() {
-        return this.escalatedTo;
-    }
-
-    public ChatSession escalatedTo(String escalatedTo) {
-        this.setEscalatedTo(escalatedTo);
-        return this;
-    }
-
-    public void setEscalatedTo(String escalatedTo) {
-        this.escalatedTo = escalatedTo;
-    }
-
-    public String getContextData() {
-        return this.contextData;
-    }
-
-    public ChatSession contextData(String contextData) {
-        this.setContextData(contextData);
-        return this;
-    }
-
-    public void setContextData(String contextData) {
-        this.contextData = contextData;
-    }
-
-    public Integer getSatisfactionScore() {
-        return this.satisfactionScore;
-    }
-
-    public ChatSession satisfactionScore(Integer satisfactionScore) {
-        this.setSatisfactionScore(satisfactionScore);
-        return this;
-    }
-
-    public void setSatisfactionScore(Integer satisfactionScore) {
-        this.satisfactionScore = satisfactionScore;
-    }
-
-    public Employee getEmployee() {
-        return this.employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public ChatSession employee(Employee employee) {
-        this.setEmployee(employee);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ChatSession)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((ChatSession) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "ChatSession{" +
-            "id=" + getId() +
-            ", channel='" + getChannel() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", startedAt='" + getStartedAt() + "'" +
-            ", endedAt='" + getEndedAt() + "'" +
-            ", escalatedAt='" + getEscalatedAt() + "'" +
-            ", escalatedTo='" + getEscalatedTo() + "'" +
-            ", contextData='" + getContextData() + "'" +
-            ", satisfactionScore=" + getSatisfactionScore() +
-            "}";
+    public void setMessages(List<ChatMessage> messages) {
+        this.messages = messages;
     }
 }

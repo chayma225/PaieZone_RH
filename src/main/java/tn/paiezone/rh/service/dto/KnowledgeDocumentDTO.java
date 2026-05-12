@@ -1,47 +1,25 @@
 package tn.paiezone.rh.service.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Lob;
-import jakarta.validation.constraints.*;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.Objects;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-/**
- * A DTO for the {@link tn.paiezone.rh.domain.KnowledgeDocument} entity.
- */
-@Schema(description = "Documents indexés pour le RAG")
-@SuppressWarnings("common-java:DuplicatedBlocks")
-public class KnowledgeDocumentDTO implements Serializable {
+public class KnowledgeDocumentDTO {
 
     private Long id;
 
-    @NotNull
-    @Size(max = 200)
+    @NotBlank(message = "Le titre est obligatoire")
+    @Size(max = 255)
     private String title;
 
-    @Size(max = 100)
-    private String category;
-
-    @Lob
+    @NotBlank(message = "Le contenu est obligatoire")
     private String content;
 
+    private String category;
+
     @Size(max = 500)
-    private String fileUrl;
+    private String keywords;
 
-    @NotNull
-    private Boolean vectorIndexed;
-
-    private Instant indexedAt;
-
-    @NotNull
-    private Boolean active;
-
-    @NotNull
-    private Instant createdAt;
-
-    @NotNull
-    private CompanyDTO company;
+    private boolean active;
 
     public Long getId() {
         return id;
@@ -59,14 +37,6 @@ public class KnowledgeDocumentDTO implements Serializable {
         this.title = title;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public String getContent() {
         return content;
     }
@@ -75,89 +45,27 @@ public class KnowledgeDocumentDTO implements Serializable {
         this.content = content;
     }
 
-    public String getFileUrl() {
-        return fileUrl;
+    public String getCategory() {
+        return category;
     }
 
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public Boolean getVectorIndexed() {
-        return vectorIndexed;
+    public String getKeywords() {
+        return keywords;
     }
 
-    public void setVectorIndexed(Boolean vectorIndexed) {
-        this.vectorIndexed = vectorIndexed;
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
     }
 
-    public Instant getIndexedAt() {
-        return indexedAt;
-    }
-
-    public void setIndexedAt(Instant indexedAt) {
-        this.indexedAt = indexedAt;
-    }
-
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public CompanyDTO getCompany() {
-        return company;
-    }
-
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof KnowledgeDocumentDTO)) {
-            return false;
-        }
-
-        KnowledgeDocumentDTO knowledgeDocumentDTO = (KnowledgeDocumentDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, knowledgeDocumentDTO.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "KnowledgeDocumentDTO{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", category='" + getCategory() + "'" +
-            ", content='" + getContent() + "'" +
-            ", fileUrl='" + getFileUrl() + "'" +
-            ", vectorIndexed='" + getVectorIndexed() + "'" +
-            ", indexedAt='" + getIndexedAt() + "'" +
-            ", active='" + getActive() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            ", company=" + getCompany() +
-            "}";
     }
 }

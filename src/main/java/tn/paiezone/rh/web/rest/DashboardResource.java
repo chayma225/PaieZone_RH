@@ -86,7 +86,7 @@ public class DashboardResource {
         stats.put("positions", jobPositionRepository.count());
         stats.put("activeContracts", contractRepository.countByStatus("ACTIVE"));
         stats.put("expiringContracts", contractRepository.countExpiringWithin30Days(limite));
-        stats.put("chatSessions", chatSessionRepository.countByStatus("ACTIVE"));
+        //--stats.put("chatSessions", chatSessionRepository.countByStatus("ACTIVE"));
 
         // --- Congés ---
         stats.put("pendingLeaves", leaveRequestRepository.countByStatus("PENDING"));

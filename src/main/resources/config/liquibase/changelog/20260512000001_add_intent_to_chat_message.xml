@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+      Fix : ajout de la colonne `intent` manquante dans chat_message.
+      Cette colonne est présente dans l'entité JPA mais absente de la table PostgreSQL.
+
+      À ajouter dans master.xml APRÈS la migration 20260512000000 :
+      <include file="config/liquibase/changelog/20260512000001_add_intent_to_chat_message.xml"
+               relativeToChangelogFile="false"/>
+  -->
+
+  <changeSet id="20260512000010" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <!-- N'exécute que si la colonne n'existe pas déjà -->
+      <not>
+        <columnExists tableName="chat_message" columnName="intent"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="chat_message">
+      <column name="intent" type="varchar(50)">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+
+    <rollback>
+      <dropColumn tableName="chat_message" columnName="intent"/>
+    </rollback>
+  </changeSet>
+
+</databaseChangeLog>

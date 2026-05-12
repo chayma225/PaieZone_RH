@@ -1,0 +1,123 @@
+<!-- ===================================================================
+     PaieBot — Widget chatbot flottant (bas-droite)
+     À inclure dans app.component.html : <jhi-chatbot />
+=================================================================== -->
+<div class="pz-chatbot">
+  <!-- ── Bouton flottant ── -->
+  <button
+    class="pz-chatbot__toggle"
+    [class.pz-chatbot__toggle--open]="isOpen"
+    (click)="toggleChat()"
+    [title]="isOpen ? 'Fermer PaieBot' : 'Ouvrir PaieBot — Assistant RH'"
+    aria-label="PaieBot assistant RH"
+  >
+    <i class="fa" [class.fa-comments]="!isOpen" [class.fa-times]="isOpen"></i>
+    <span class="pz-chatbot__badge" *ngIf="!isOpen">IA</span>
+    <span class="pz-chatbot__offline" *ngIf="!ollamaOnline" title="Ollama hors ligne">!</span>
+  </button>
+
+  <!-- ── Panneau principal ── -->
+  <div class="pz-chatbot__panel" [class.pz-chatbot__panel--open]="isOpen" role="dialog" aria-label="PaieBot">
+    <!-- En-tête -->
+    <div class="pz-chatbot__header">
+      <div class="pz-chatbot__header-info">
+        <div class="pz-chatbot__avatar">🤖</div>
+        <div>
+          <div class="pz-chatbot__name">PaieBot</div>
+          <div class="pz-chatbot__status" [class.pz-chatbot__status--offline]="!ollamaOnline">
+            <span class="pz-chatbot__dot"></span>
+            {{ ollamaOnline ? 'phi3 · En ligne' : 'Ollama hors ligne' }}
+          </div>
+        </div>
+      </div>
+      <div class="pz-chatbot__header-actions">
+        <button class="pz-chatbot__icon-btn" (click)="showSessions = !showSessions" title="Historique des conversations">
+          <i class="fa fa-history"></i>
+        </button>
+        <button class="pz-chatbot__icon-btn" (click)="startNewSession()" title="Nouvelle conversation">
+          <i class="fa fa-plus"></i>
+        </button>
+        <button class="pz-chatbot__icon-btn" (click)="toggleChat()" title="Réduire">
+          <i class="fa fa-chevron-down"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Panneau latéral — historique des sessions -->
+    <div class="pz-chatbot__sessions" *ngIf="showSessions">
+      <div class="pz-chatbot__sessions-title"><i class="fa fa-history me-2"></i>Conversations récentes</div>
+      <div class="pz-chatbot__sessions-list">
+        <div
+          class="pz-chatbot__session-item"
+          *ngFor="let session of sessions"
+          [class.pz-chatbot__session-item--active]="activeSession?.id === session.id"
+          (click)="selectSession(session)"
+        >
+          <i class="fa fa-comment-o me-2 text-muted"></i>
+          <span class="pz-chatbot__session-title">{{ session.sessionTitle }}</span>
+        </div>
+        <div class="pz-chatbot__sessions-empty" *ngIf="sessions.length === 0">Aucune conversation pour l'instant</div>
+      </div>
+      <button class="btn btn-sm btn-outline-primary w-100 mt-2" (click)="startNewSession()">
+        <i class="fa fa-plus me-1"></i>Nouvelle conversation
+      </button>
+    </div>
+
+    <!-- Zone des messages -->
+    <div class="pz-chatbot__messages" #messagesContainer [class.pz-chatbot__messages--blurred]="showSessions">
+      <!-- Message individuel -->
+      <div
+        class="pz-chatbot__message"
+        *ngFor="let msg of messages; trackBy: trackByMsgId"
+        [class.pz-chatbot__message--user]="msg.role === 'user'"
+        [class.pz-chatbot__message--bot]="msg.role === 'assistant'"
+      >
+        <div
+          class="pz-chatbot__bubble"
+          [class.pz-chatbot__bubble--user]="msg.role === 'user'"
+          [class.pz-chatbot__bubble--bot]="msg.role === 'assistant'"
+        >
+          <div class="pz-chatbot__content" [innerHTML]="formatContent(msg.content)"></div>
+          <div class="pz-chatbot__time">{{ msg.sentAt | date: 'HH:mm' }}</div>
+          <!-- Badge escalade -->
+          <div class="pz-chatbot__escalation" *ngIf="msg.escalatedToHuman">
+            <i class="fa fa-user-circle me-1"></i>Transmis au service RH
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicateur de chargement -->
+      <div class="pz-chatbot__message pz-chatbot__message--bot" *ngIf="isLoading">
+        <div class="pz-chatbot__bubble pz-chatbot__bubble--bot">
+          <div class="pz-chatbot__typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+
+      <!-- Alerte Ollama hors ligne -->
+      <div class="pz-chatbot__offline-alert" *ngIf="!ollamaOnline">
+        <i class="fa fa-exclamation-triangle me-2"></i>
+        Ollama n'est pas démarré. Lancez <code>ollama serve</code> dans un terminal.
+        <button class="btn btn-sm btn-warning ms-2" (click)="checkHealth()">Réessayer</button>
+      </div>
+    </div>
+
+    <!-- Barre de saisie -->
+    <div class="pz-chatbot__input-area">
+      <textarea
+        class="pz-chatbot__textarea"
+        [(ngModel)]="currentMessage"
+        (keydown)="onKeydown($event)"
+        placeholder="Posez votre question RH…"
+        rows="2"
+        [disabled]="isLoading"
+        maxlength="2000"
+      ></textarea>
+      <button class="pz-chatbot__send-btn" (click)="sendMessage()" [disabled]="!currentMessage.trim() || isLoading">
+        <i class="fa" [class.fa-paper-plane]="!isLoading" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading"></i>
+      </button>
+    </div>
+
+    <!-- Pied de page -->
+    <div class="pz-chatbot__footer">🔒 PaieZone RH · PaieBot · phi3 · Ollama local</div>
+  </div>
+</div>

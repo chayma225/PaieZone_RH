@@ -2,87 +2,62 @@ package tn.paiezone.rh.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import tn.paiezone.rh.domain.enumeration.MessageIntent;
 import tn.paiezone.rh.domain.enumeration.MessageRole;
 
-/**
- * A ChatMessage.
- */
 @Entity
 @Table(name = "chat_message")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ChatMessage implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chatMessageSequenceGenerator")
+    @SequenceGenerator(name = "chatMessageSequenceGenerator", sequenceName = "chat_message_sequence", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private MessageRole role;
-
-    @Lob
-    @Column(name = "content", nullable = false)
-    private String content;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "intent")
-    private MessageIntent intent;
-
-    @Size(max = 200)
-    @Column(name = "action_taken", length = 200)
-    private String actionTaken;
-
-    @Column(name = "token_used")
-    private Integer tokenUsed;
-
-    @NotNull
-    @Column(name = "sent_at", nullable = false)
-    private Instant sentAt;
-
-    @Column(name = "error_occurred")
-    private Boolean errorOccurred;
-
-    @ManyToOne(optional = false)
-    @NotNull
-    @JsonIgnoreProperties(value = { "employee" }, allowSetters = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id", nullable = false)
+    @JsonIgnoreProperties(value = { "messages" }, allowSetters = true)
     private ChatSession session;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 20)
+    private MessageRole role;
+
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    private String content;
+
+    @Column(name = "sent_at")
+    private Instant sentAt;
+
+    @Column(name = "escalated_to_human")
+    private boolean escalatedToHuman;
+
+    @Column(name = "intent", length = 50)
+    private String intent;
 
     public Long getId() {
-        return this.id;
-    }
-
-    public ChatMessage id(Long id) {
-        this.setId(id);
-        return this;
+        return id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public MessageRole getRole() {
-        return this.role;
+    public ChatSession getSession() {
+        return session;
     }
 
-    public ChatMessage role(MessageRole role) {
-        this.setRole(role);
-        return this;
+    public void setSession(ChatSession session) {
+        this.session = session;
+    }
+
+    public MessageRole getRole() {
+        return role;
     }
 
     public void setRole(MessageRole role) {
@@ -90,127 +65,34 @@ public class ChatMessage implements Serializable {
     }
 
     public String getContent() {
-        return this.content;
-    }
-
-    public ChatMessage content(String content) {
-        this.setContent(content);
-        return this;
+        return content;
     }
 
     public void setContent(String content) {
         this.content = content;
     }
 
-    public MessageIntent getIntent() {
-        return this.intent;
-    }
-
-    public ChatMessage intent(MessageIntent intent) {
-        this.setIntent(intent);
-        return this;
-    }
-
-    public void setIntent(MessageIntent intent) {
-        this.intent = intent;
-    }
-
-    public String getActionTaken() {
-        return this.actionTaken;
-    }
-
-    public ChatMessage actionTaken(String actionTaken) {
-        this.setActionTaken(actionTaken);
-        return this;
-    }
-
-    public void setActionTaken(String actionTaken) {
-        this.actionTaken = actionTaken;
-    }
-
-    public Integer getTokenUsed() {
-        return this.tokenUsed;
-    }
-
-    public ChatMessage tokenUsed(Integer tokenUsed) {
-        this.setTokenUsed(tokenUsed);
-        return this;
-    }
-
-    public void setTokenUsed(Integer tokenUsed) {
-        this.tokenUsed = tokenUsed;
-    }
-
     public Instant getSentAt() {
-        return this.sentAt;
-    }
-
-    public ChatMessage sentAt(Instant sentAt) {
-        this.setSentAt(sentAt);
-        return this;
+        return sentAt;
     }
 
     public void setSentAt(Instant sentAt) {
         this.sentAt = sentAt;
     }
 
-    public Boolean getErrorOccurred() {
-        return this.errorOccurred;
+    public boolean isEscalatedToHuman() {
+        return escalatedToHuman;
     }
 
-    public ChatMessage errorOccurred(Boolean errorOccurred) {
-        this.setErrorOccurred(errorOccurred);
-        return this;
+    public void setEscalatedToHuman(boolean escalatedToHuman) {
+        this.escalatedToHuman = escalatedToHuman;
     }
 
-    public void setErrorOccurred(Boolean errorOccurred) {
-        this.errorOccurred = errorOccurred;
+    public String getIntent() {
+        return intent;
     }
 
-    public ChatSession getSession() {
-        return this.session;
-    }
-
-    public void setSession(ChatSession chatSession) {
-        this.session = chatSession;
-    }
-
-    public ChatMessage session(ChatSession chatSession) {
-        this.setSession(chatSession);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ChatMessage)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((ChatMessage) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "ChatMessage{" +
-            "id=" + getId() +
-            ", role='" + getRole() + "'" +
-            ", content='" + getContent() + "'" +
-            ", intent='" + getIntent() + "'" +
-            ", actionTaken='" + getActionTaken() + "'" +
-            ", tokenUsed=" + getTokenUsed() +
-            ", sentAt='" + getSentAt() + "'" +
-            ", errorOccurred='" + getErrorOccurred() + "'" +
-            "}";
+    public void setIntent(String intent) {
+        this.intent = intent;
     }
 }

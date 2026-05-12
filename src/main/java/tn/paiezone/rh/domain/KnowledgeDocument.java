@@ -1,78 +1,44 @@
 package tn.paiezone.rh.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-/**
- * Documents indexés pour le RAG
- */
 @Entity
 @Table(name = "knowledge_document")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class KnowledgeDocument implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "knowledgeDocumentSequenceGenerator")
+    @SequenceGenerator(name = "knowledgeDocumentSequenceGenerator", sequenceName = "knowledge_document_sequence", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Size(max = 200)
-    @Column(name = "title", length = 200, nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Size(max = 100)
-    @Column(name = "category", length = 100)
-    private String category;
-
-    @Lob
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Size(max = 500)
-    @Column(name = "file_url", length = 500)
-    private String fileUrl;
+    /** CONGE | PAIE | CONTRAT | CNSS | IRPP | GENERAL */
+    @Column(name = "category", length = 50)
+    private String category;
 
-    @NotNull
-    @Column(name = "vector_indexed", nullable = false)
-    private Boolean vectorIndexed;
+    /** Mots-clés séparés par des virgules, utilisés pour la recherche RAG */
+    @Column(name = "keywords", length = 500)
+    private String keywords;
 
-    @Column(name = "indexed_at")
-    private Instant indexedAt;
+    @Column(name = "active")
+    private boolean active;
 
-    @NotNull
-    @Column(name = "active", nullable = false)
-    private Boolean active;
-
-    @NotNull
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     private Instant createdAt;
 
-    @ManyToOne(optional = false)
-    @NotNull
-    @JsonIgnoreProperties(value = { "companySubscription" }, allowSetters = true)
-    private Company company;
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-
     public Long getId() {
-        return this.id;
-    }
-
-    public KnowledgeDocument id(Long id) {
-        this.setId(id);
-        return this;
+        return id;
     }
 
     public void setId(Long id) {
@@ -80,154 +46,50 @@ public class KnowledgeDocument implements Serializable {
     }
 
     public String getTitle() {
-        return this.title;
-    }
-
-    public KnowledgeDocument title(String title) {
-        this.setTitle(title);
-        return this;
+        return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getCategory() {
-        return this.category;
-    }
-
-    public KnowledgeDocument category(String category) {
-        this.setCategory(category);
-        return this;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public String getContent() {
-        return this.content;
-    }
-
-    public KnowledgeDocument content(String content) {
-        this.setContent(content);
-        return this;
+        return content;
     }
 
     public void setContent(String content) {
         this.content = content;
     }
 
-    public String getFileUrl() {
-        return this.fileUrl;
+    public String getCategory() {
+        return category;
     }
 
-    public KnowledgeDocument fileUrl(String fileUrl) {
-        this.setFileUrl(fileUrl);
-        return this;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
+    public String getKeywords() {
+        return keywords;
     }
 
-    public Boolean getVectorIndexed() {
-        return this.vectorIndexed;
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
     }
 
-    public KnowledgeDocument vectorIndexed(Boolean vectorIndexed) {
-        this.setVectorIndexed(vectorIndexed);
-        return this;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setVectorIndexed(Boolean vectorIndexed) {
-        this.vectorIndexed = vectorIndexed;
-    }
-
-    public Instant getIndexedAt() {
-        return this.indexedAt;
-    }
-
-    public KnowledgeDocument indexedAt(Instant indexedAt) {
-        this.setIndexedAt(indexedAt);
-        return this;
-    }
-
-    public void setIndexedAt(Instant indexedAt) {
-        this.indexedAt = indexedAt;
-    }
-
-    public Boolean getActive() {
-        return this.active;
-    }
-
-    public KnowledgeDocument active(Boolean active) {
-        this.setActive(active);
-        return this;
-    }
-
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
     public Instant getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public KnowledgeDocument createdAt(Instant createdAt) {
-        this.setCreatedAt(createdAt);
-        return this;
+        return createdAt;
     }
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Company getCompany() {
-        return this.company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public KnowledgeDocument company(Company company) {
-        this.setCompany(company);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof KnowledgeDocument)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((KnowledgeDocument) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "KnowledgeDocument{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", category='" + getCategory() + "'" +
-            ", content='" + getContent() + "'" +
-            ", fileUrl='" + getFileUrl() + "'" +
-            ", vectorIndexed='" + getVectorIndexed() + "'" +
-            ", indexedAt='" + getIndexedAt() + "'" +
-            ", active='" + getActive() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            "}";
     }
 }

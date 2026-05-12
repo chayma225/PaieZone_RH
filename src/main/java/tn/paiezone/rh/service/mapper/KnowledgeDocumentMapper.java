@@ -1,9 +1,7 @@
 package tn.paiezone.rh.service.mapper;
 
 import org.mapstruct.*;
-import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.KnowledgeDocument;
-import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.service.dto.KnowledgeDocumentDTO;
 
 /**
@@ -11,11 +9,8 @@ import tn.paiezone.rh.service.dto.KnowledgeDocumentDTO;
  */
 @Mapper(componentModel = "spring")
 public interface KnowledgeDocumentMapper extends EntityMapper<KnowledgeDocumentDTO, KnowledgeDocument> {
-    @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
+    /**
+     * Mappe directement les champs title, content, category, keywords et active.
+     */
     KnowledgeDocumentDTO toDto(KnowledgeDocument s);
-
-    @Named("companyId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    CompanyDTO toDtoCompanyId(Company company);
 }

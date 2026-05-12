@@ -1,15 +1,14 @@
 package tn.paiezone.rh.repository;
 
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.ChatSession;
 
-/**
- * Spring Data JPA repository for the ChatSession entity.
- */
-@SuppressWarnings("unused")
 @Repository
 public interface ChatSessionRepository extends JpaRepository<ChatSession, Long> {
-    @Query("SELECT COUNT(c) FROM ChatSession c WHERE c.status = :status")
-    long countByStatus(String status);
+    List<ChatSession> findByUserLoginAndActiveTrueOrderByLastActivityDesc(String userLogin);
+
+    Optional<ChatSession> findByIdAndUserLogin(Long id, String userLogin);
 }

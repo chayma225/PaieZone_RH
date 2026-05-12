@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!-- ============================================================
+       Sprint 4 — PaieBot : tables chatbot
+       Auteur : paiezone | Date : 2026-05-12
+  ============================================================ -->
+
+  <changeSet id="20260512000001" author="paiezone">
+    <comment>Création des séquences et tables du chatbot PaieBot</comment>
+
+    <!-- Séquences PostgreSQL -->
+    <createSequence sequenceName="chat_session_sequence"      startValue="1" incrementBy="1"/>
+    <createSequence sequenceName="chat_message_sequence"      startValue="1" incrementBy="1"/>
+    <createSequence sequenceName="knowledge_document_sequence" startValue="1" incrementBy="1"/>
+
+    <!-- Table chat_session -->
+    <createTable tableName="chat_session">
+      <column name="id" type="bigint" defaultValueSequenceNext="chat_session_sequence">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="session_title" type="varchar(255)"/>
+      <column name="user_login" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="timestamp"/>
+      <column name="last_activity" type="timestamp"/>
+      <column name="active" type="boolean" defaultValueBoolean="true"/>
+      <column name="company_id" type="bigint"/>
+    </createTable>
+
+    <!-- Table chat_message -->
+    <createTable tableName="chat_message">
+      <column name="id" type="bigint" defaultValueSequenceNext="chat_message_sequence">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="session_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="role" type="varchar(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="content" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sent_at" type="timestamp"/>
+      <column name="escalated_to_human" type="boolean" defaultValueBoolean="false"/>
+      <column name="intent" type="varchar(50)"/>
+    </createTable>
+
+    <!-- Table knowledge_document (RAG) -->
+    <createTable tableName="knowledge_document">
+      <column name="id" type="bigint" defaultValueSequenceNext="knowledge_document_sequence">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="title" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="content" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="category" type="varchar(50)"/>
+      <column name="keywords" type="varchar(500)"/>
+      <column name="active" type="boolean" defaultValueBoolean="true"/>
+      <column name="created_at" type="timestamp"/>
+    </createTable>
+
+    <!-- Clés étrangères -->
+    <addForeignKeyConstraint
+      baseTableName="chat_session"
+      baseColumnNames="company_id"
+      referencedTableName="company"
+      referencedColumnNames="id"
+      constraintName="fk_chat_session_company"
+      onDelete="SET NULL"/>
+
+    <addForeignKeyConstraint
+      baseTableName="chat_message"
+      baseColumnNames="session_id"
+      referencedTableName="chat_session"
+      referencedColumnNames="id"
+      constraintName="fk_chat_message_session"
+      onDelete="CASCADE"/>
+
+    <!-- Index pour les requêtes fréquentes -->
+    <createIndex tableName="chat_session" indexName="idx_chat_session_user_login">
+      <column name="user_login"/>
+    </createIndex>
+    <createIndex tableName="chat_message" indexName="idx_chat_message_session_sent">
+      <column name="session_id"/>
+      <column name="sent_at"/>
+    </createIndex>
+  </changeSet>
+
+  <!-- ============================================================
+       Données initiales — Base de connaissances RAG (3 documents)
+  ============================================================ -->
+  <changeSet id="20260512000002" author="paiezone">
+    <comment>Documents de référence initiaux pour le RAG de PaieBot</comment>
+
+    <insert tableName="knowledge_document">
+      <column name="id" valueSequenceNext="knowledge_document_sequence"/>
+      <column name="title" value="Types de congés légaux en Tunisie"/>
+      <column name="content" value="Les types de congés légaux en Tunisie selon le Code du Travail :&#xa;- Congé annuel payé : 1 jour ouvrable par mois de travail effectif (minimum 12 jours/an, 18 jours après 10 ans d'ancienneté).&#xa;- Congé maladie : sur certificat médical. CNSS prend en charge à partir du 4ème jour (taux 66,67 % du salaire journalier moyen).&#xa;- Congé maternité : 30 jours avant/après accouchement + 15 jours supplémentaires en cas de complications, pris en charge par la CNSS.&#xa;- Congé paternité : 1 jour (secteur privé).&#xa;- Congé sans solde : accordé à la discrétion de l'employeur, non rémunéré.&#xa;&#xa;Pour déposer une demande de congé dans PaieZone RH : Menu Congés → Nouvelle demande → choisir le type → saisir les dates → envoyer pour validation Manager/RH."/>
+      <column name="category" value="CONGE"/>
+      <column name="keywords" value="congé,conge,vacances,maladie,maternité,paternité,absence,repos,arrêt"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="created_at" valueComputed="NOW()"/>
+    </insert>
+
+    <insert tableName="knowledge_document">
+      <column name="id" valueSequenceNext="knowledge_document_sequence"/>
+      <column name="title" value="Cotisations CNSS, CAVIS et barème IRPP 2026"/>
+      <column name="content" value="Cotisations salariales 2026 en Tunisie :&#xa;&#xa;CNSS (part salariale) : 9,18 % à 9,68 % du salaire brut&#xa;CAVIS (assurance vieillesse) : 1 % du salaire brut&#xa;Total retenues salariales : environ 10,18 % à 10,68 %&#xa;&#xa;Barème IRPP 2026 (revenus annuels nets imposables) :&#xa;  0 %  → tranche de 0 à 5 000 DT&#xa; 15 %  → tranche de 5 001 à 20 000 DT&#xa; 20 %  → tranche de 20 001 à 30 000 DT&#xa; 26 %  → tranche de 30 001 à 50 000 DT&#xa; 28 %  → tranche de 50 001 à 100 000 DT&#xa; 35 %  → tranche au-delà de 100 000 DT&#xa;&#xa;Déductions :&#xa;- Frais professionnels : 10 % du salaire brut (plafond 2 000 DT/an)&#xa;- Cotisations CNSS et CAVIS déductibles de l'assiette imposable&#xa;&#xa;Heures supplémentaires : +25 % (jour ouvrable), +50 % (nuit, vendredi, jours fériés)."/>
+      <column name="category" value="PAIE"/>
+      <column name="keywords" value="cnss,irpp,cavis,cotisation,salaire,brut,net,retenue,impôt,heures supplémentaires,bulletin,paie,calcul"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="created_at" valueComputed="NOW()"/>
+    </insert>
+
+    <insert tableName="knowledge_document">
+      <column name="id" valueSequenceNext="knowledge_document_sequence"/>
+      <column name="title" value="Types de contrats de travail — LF 2026 Tunisie"/>
+      <column name="content" value="Contrats disponibles selon la Loi de Finances 2026 Tunisie :&#xa;&#xa;CDI (Contrat à Durée Indéterminée) : contrat permanent, le plus courant. Rupture possible par démission ou licenciement avec respect du préavis.&#xa;&#xa;CDD (Contrat à Durée Déterminée) : durée maximale cumulée 4 ans, renouvelable 2 fois. Au-delà de la 2ème reconduction, le contrat se transforme automatiquement en CDI.&#xa;&#xa;CIVP (Contrat d'Insertion à la Vie Professionnelle) : réservé aux jeunes diplômés de moins de 30 ans, premier emploi, durée max 1 an, salaire subventionné par l'État.&#xa;&#xa;KARAMA : programme national pour l'emploi des jeunes et des chômeurs, durée déterminée, l'État prend en charge une partie du salaire et des cotisations.&#xa;&#xa;Intérim : via une agence de travail temporaire, max 3 mois renouvelable selon besoin.&#xa;&#xa;Stage : période d'apprentissage pratique en entreprise, rémunération selon accord (minimum SMIG proratisé conseillé)."/>
+      <column name="category" value="CONTRAT"/>
+      <column name="keywords" value="contrat,cdi,cdd,civp,karama,intérim,stage,emploi,durée,renouvellement,reconduction"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="created_at" valueComputed="NOW()"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>
