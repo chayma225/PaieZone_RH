@@ -1,6 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { ApiService } from './api.service';
-import type { Company, Employee, Department, PayrollPeriod, LeaveRequest, Advance, AuditEntry, TenantUser } from './types';
+import type { Company, Employee, Department, PayrollPeriod, LeaveRequest, Advance, AuditEntry, TenantUser, RegulatoryParam } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -19,15 +19,11 @@ export class DataService {
   readonly audit = signal<AuditEntry[]>([]);
   readonly tenantUsers = signal<TenantUser[]>([]);
 
-  // Static regulatory data — NEVER modify these payroll formulas
-  readonly regulatory = signal([
-    { code: 'CNSS_SAL', label: 'CNSS salarié (base)', rate: 9.18, unit: '%', updated: '2026-01-01', source: 'JORT n°3-2026' },
-    { code: 'CAVIS', label: 'CAVIS (régime complémentaire)', rate: 1.0, unit: '%', updated: '2026-01-01', source: 'JORT n°3-2026' },
-    { code: 'CSS', label: 'CSS (contribution sociale solidaire)', rate: 0.5, unit: '%', updated: '2026-01-01', source: 'LF 2026 Art. 12' },
-    { code: 'CNSS_EMP', label: 'CNSS employeur', rate: 16.57, unit: '%', updated: '2026-01-01', source: 'JORT n°3-2026' },
-    { code: 'TFP', label: 'TFP (taxe formation pro.)', rate: 1.0, unit: '%', updated: '2026-01-01', source: 'LF 2026 Art. 18' },
-    { code: 'FOPROLOS', label: 'FOPROLOS (employeur)', rate: 1.0, unit: '%', updated: '2026-01-01', source: 'LF 2026 Art. 19' },
-  ]);
+  readonly myEmployee = signal<Employee | null>(null);
+
+  // Regulatory params — loaded from API, fallback to validated static values
+  // GOLDEN RULE: NEVER modify the fallback rates (CNSS 9.18%, CAVIS 1%, CSS 0.5%)
+  readonly regulatoryParams = signal<RegulatoryParam[]>([]);
 
   readonly irppBrackets = signal([
     { from: 0, to: 5000, rate: 0, label: 'Tranche exonérée' },
@@ -60,6 +56,8 @@ export class DataService {
     this.api.companies().subscribe({ next: v => this.companies.set(v), error: () => {} });
     this.api.departments().subscribe({ next: v => this.departments.set(v), error: () => {} });
     this.api.dashboardStats().subscribe({ next: v => this.stats.set(v as any), error: () => {} });
+    this.api.regulatoryParams().subscribe({ next: v => this.regulatoryParams.set(v), error: () => {} });
+    this.api.myEmployee().subscribe({ next: v => this.myEmployee.set(v), error: () => {} });
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────

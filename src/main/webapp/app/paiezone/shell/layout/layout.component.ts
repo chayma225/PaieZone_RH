@@ -2,19 +2,17 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import TopNavComponent from '../top-nav/top-nav.component';
-import ChatbotComponent from '../../components/chatbot/chatbot.component';
 
 @Component({
   selector: 'pz-layout',
   standalone: true,
-  imports: [RouterOutlet, TopNavComponent, ChatbotComponent],
+  imports: [RouterOutlet, TopNavComponent],
   template: `
     <div class="pz-app">
       <pz-top-nav />
       <main>
         <router-outlet />
       </main>
-      <pz-chatbot />
     </div>
   `,
   styles: [

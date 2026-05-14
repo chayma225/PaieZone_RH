@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-advance-add-approved-at" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="approved_at"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="approved_at" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="sprint3-advance-add-approved-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="approved_by"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="approved_by" type="varchar(100)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="sprint3-advance-add-pay-slip-id" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="pay_slip_id"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="pay_slip_id" type="bigint"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

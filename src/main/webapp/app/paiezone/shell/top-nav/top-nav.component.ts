@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 import IconComponent from '../../core/icon/icon.component';
 import { RoleService } from '../../core/role.service';
+import { LoginService } from 'app/login/login.service';
 import type { Role } from '../../core/types';
 
 @Component({
@@ -17,6 +18,7 @@ import type { Role } from '../../core/types';
 export default class TopNavComponent {
   protected readonly roleService = inject(RoleService);
   private readonly router = inject(Router);
+  private readonly loginService = inject(LoginService);
 
   protected readonly menuOpen = signal(false);
 
@@ -32,6 +34,11 @@ export default class TopNavComponent {
     this.menuOpen.set(false);
   }
 
+  protected logout(): void {
+    this.loginService.logout();
+    this.router.navigate(['/login']);
+  }
+
   @HostListener('document:click')
   onDocClick(): void {
     if (this.menuOpen()) this.menuOpen.set(false);
@@ -41,6 +48,6 @@ export default class TopNavComponent {
     { id: 'super', title: 'Super Administrateur', sub: 'SaaS · tenants & taux légaux', icon: 'Server', bg: '5' },
     { id: 'admin', title: 'Admin entreprise', sub: 'Accès complet : RH + accès + audit', icon: 'Shield', bg: '2' },
     { id: 'rh', title: 'RH / Comptable', sub: 'Paie · employés · congés', icon: 'Briefcase', bg: '4' },
-    { id: 'emp', title: 'Employé (self-service)', sub: 'Mehdi Ben Salah · Engineering', icon: 'User', bg: '3' },
+    { id: 'emp', title: 'Employé (self-service)', sub: 'Self-service', icon: 'User', bg: '3' },
   ];
 }

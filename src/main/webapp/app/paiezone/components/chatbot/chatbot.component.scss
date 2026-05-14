@@ -2,50 +2,69 @@
   display: contents;
 }
 
-.chat-fab {
+/* ── Onglet ancré sur le bord droit ── */
+.chat-tab {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  background: linear-gradient(135deg, var(--pz-primary), #7c3aed);
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 12px 12px;
+  background: linear-gradient(180deg, var(--pz-primary), #7c3aed);
   color: #fff;
-  display: grid;
-  place-items: center;
-  box-shadow:
-    0 8px 24px rgba(79, 70, 229, 0.32),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-  z-index: 40;
-  transition:
-    transform 0.16s,
-    box-shadow 0.16s;
   border: 0;
+  border-radius: 12px 0 0 12px;
   cursor: pointer;
+  box-shadow:
+    -4px 0 24px rgba(79, 70, 229, 0.28),
+    -2px 0 8px rgba(0, 0, 0, 0.08);
+  transition:
+    padding 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
 
   &:hover {
-    transform: translateY(-2px);
+    padding-right: 18px;
     box-shadow:
-      0 12px 30px rgba(79, 70, 229, 0.4),
-      0 2px 8px rgba(0, 0, 0, 0.1);
+      -6px 0 30px rgba(79, 70, 229, 0.38),
+      -2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.is-open {
+    padding: 12px;
+    background: #6b21a8;
+  }
+
+  .chat-tab-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    line-height: 1;
   }
 
   .pulse {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 12px;
-    height: 12px;
+    top: 8px;
+    left: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: var(--pz-pos);
-    border: 2px solid var(--pz-surface);
+    background: #4ade80;
+    border: 2px solid rgba(255, 255, 255, 0.8);
 
     &::after {
       content: '';
       position: absolute;
       inset: -3px;
       border-radius: 50%;
-      border: 2px solid var(--pz-pos);
+      border: 2px solid #4ade80;
       animation: chatPulse 1.8s ease-out infinite;
     }
   }
@@ -64,8 +83,8 @@
 
 .chat-win {
   position: fixed;
-  right: 24px;
-  bottom: 92px;
+  right: 8px;
+  bottom: 24px;
   width: 380px;
   height: 540px;
   max-height: calc(100vh - 120px);

@@ -1,6 +1,10 @@
 // src/main/java/tn/paiezone/rh/service/RegulatoryParamService.java
 package tn.paiezone.rh.service;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -8,11 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.RegulatoryParam;
 import tn.paiezone.rh.repository.RegulatoryParamRepository;
 import tn.paiezone.rh.service.dto.RegulatoryParamDTO;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,8 +28,7 @@ public class RegulatoryParamService {
 
     @Transactional(readOnly = true)
     public List<RegulatoryParamDTO> findAll() {
-        return repo.findAllByOrderByParamKeyAscEffectiveFromDesc()
-            .stream().map(this::toDTO).collect(Collectors.toList());
+        return repo.findAllByOrderByParamKeyAscEffectiveFromDesc().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -40,8 +38,7 @@ public class RegulatoryParamService {
 
     @Transactional(readOnly = true)
     public List<RegulatoryParamDTO> findHistoryByKey(String key) {
-        return repo.findByParamKeyOrderByEffectiveFromDesc(key)
-            .stream().map(this::toDTO).collect(Collectors.toList());
+        return repo.findByParamKeyOrderByEffectiveFromDesc(key).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     /**
@@ -50,15 +47,14 @@ public class RegulatoryParamService {
      * - Date différente → fermer l'ancien + créer nouveau (historique préservé)
      */
     public RegulatoryParamDTO update(Long id, RegulatoryParamDTO dto, String updatedBy) {
-        RegulatoryParam existing = repo.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Paramètre introuvable : id=" + id));
+        RegulatoryParam existing = repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Paramètre introuvable : id=" + id));
 
         // Modification in-place si même date d'effet
         if (dto.getEffectiveFrom().equals(existing.getEffectiveFrom())) {
             existing.setNumericValue(dto.getNumericValue());
-            if (dto.getParamLabel()     != null) existing.setParamLabel(dto.getParamLabel());
+            if (dto.getParamLabel() != null) existing.setParamLabel(dto.getParamLabel());
             if (dto.getLegalReference() != null) existing.setLegalReference(dto.getLegalReference());
-            if (dto.getDescription()    != null) existing.setDescription(dto.getDescription());
+            if (dto.getDescription() != null) existing.setDescription(dto.getDescription());
             existing.setUpdatedBy(updatedBy);
             existing.setUpdatedAt(Instant.now());
             log.info("Param {} modifié in-place par {}", existing.getParamKey(), updatedBy);
@@ -83,8 +79,13 @@ public class RegulatoryParamService {
         newP.setUpdatedBy(updatedBy);
         newP.setUpdatedAt(Instant.now());
 
-        log.info("Param {} nouvelle version | valeur={} effective={} par {}",
-            existing.getParamKey(), dto.getNumericValue(), dto.getEffectiveFrom(), updatedBy);
+        log.info(
+            "Param {} nouvelle version | valeur={} effective={} par {}",
+            existing.getParamKey(),
+            dto.getNumericValue(),
+            dto.getEffectiveFrom(),
+            updatedBy
+        );
         return toDTO(repo.save(newP));
     }
 
@@ -108,13 +109,22 @@ public class RegulatoryParamService {
         return d;
     }
 
-    public RegulatoryParamDTO save(RegulatoryParamDTO regulatoryParamDTO) {
-        log.debug("Request to save RegulatoryParam : {}", regulatoryParamDTO);
-        // Vous pouvez réutiliser votre logique de conversion ou un mapper
-        RegulatoryParam regulatoryParam = new RegulatoryParam(); // À adapter selon vos besoins
-        // ... remplissage de l'entité ...
-        regulatoryParam = repo.save(regulatoryParam);
-        return toDTO(regulatoryParam);
+    public RegulatoryParamDTO save(RegulatoryParamDTO dto) {
+        log.debug("Request to save RegulatoryParam : {}", dto);
+        RegulatoryParam entity = new RegulatoryParam();
+        entity.setParamKey(dto.getParamKey());
+        entity.setParamLabel(dto.getParamLabel());
+        entity.setCategory(dto.getCategory());
+        entity.setNumericValue(dto.getNumericValue());
+        entity.setStringValue(dto.getStringValue());
+        entity.setEffectiveFrom(dto.getEffectiveFrom());
+        entity.setEffectiveTo(dto.getEffectiveTo());
+        entity.setLegalReference(dto.getLegalReference());
+        entity.setDescription(dto.getDescription());
+        entity.setActive(dto.getActive() != null ? dto.getActive() : true);
+        entity.setUpdatedAt(Instant.now());
+        entity.setUpdatedBy(dto.getUpdatedBy());
+        return toDTO(repo.save(entity));
     }
 
     // Modifiez ou surchargez la méthode update pour le contrôleur

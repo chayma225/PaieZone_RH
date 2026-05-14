@@ -44,6 +44,7 @@ const ICONS: Record<string, string> = {
   Briefcase: '<rect x="2.5" y="5" width="11" height="8" rx="1"/><path d="M6 5V3.5h4V5M2.5 9h11"/>',
   CircleHelp: '<circle cx="8" cy="8" r="6"/><path d="M6.5 6.2c.3-.9 1-1.4 1.9-1.4 1.1 0 1.8.7 1.8 1.6 0 1.5-2.2 1.4-2.2 3.1M8 11.7h.01"/>',
   Beach: '<path d="M8 8v6"/><path d="M3 8c1-3.5 4-5 5-5s4 1.5 5 5z"/><path d="M2 14h12"/>',
+  LogOut: '<path d="M6 2.5H3.5A1 1 0 0 0 2.5 3.5v9A1 1 0 0 0 3.5 13.5H6"/><path d="M10.5 11 13.5 8l-3-3"/><path d="M13.5 8H6"/>',
 };
 
 @Component({

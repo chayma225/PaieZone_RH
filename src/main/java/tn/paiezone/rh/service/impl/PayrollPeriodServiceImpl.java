@@ -43,9 +43,13 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
 
     @Override
     public PayrollPeriodDTO save(PayrollPeriodDTO dto) {
-        Company company = getCurrentCompany().orElseThrow(() ->
-            new EntityNotFoundException("Aucune société associée à l'utilisateur courant.")
-        );
+        Company company = getCurrentCompany()
+            .or(() ->
+                dto.getCompanyId() != null
+                    ? companyRepository.findById(dto.getCompanyId())
+                    : companyRepository.findAll().stream().findFirst()
+            )
+            .orElseThrow(() -> new EntityNotFoundException("Aucune société trouvée."));
 
         if (periodRepository.existsByCompanyIdAndMonthAndYear(company.getId(), dto.getMonth(), dto.getYear())) {
             throw new IllegalArgumentException("Une période existe déjà pour " + dto.getMonth() + "/" + dto.getYear());

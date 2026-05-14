@@ -7,7 +7,9 @@
     </div>
     <div class="pz-page-actions">
       <button class="pz-btn"><pz-icon name="Upload" [size]="14" [strokeWidth]="1.5" /> Importer</button>
-      <button class="pz-btn pz-primary"><pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvel employé</button>
+      <button class="pz-btn pz-primary" (click)="openCreate()">
+        <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvel employé
+      </button>
     </div>
   </div>
 
@@ -263,6 +265,142 @@
       <div class="modal-foot">
         <button class="pz-btn" (click)="closeDrawer()">Fermer</button>
         <button class="pz-btn pz-primary"><pz-icon name="Edit" [size]="14" [strokeWidth]="1.4" /> Modifier</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Nouvel employé -->
+@if (showCreate()) {
+  <div class="pz-overlay" (click)="closeCreate()">
+    <div class="pz-modal pz-modal-lg" (click)="$event.stopPropagation()">
+      <div class="pz-modal-head">
+        <span>Nouvel employé</span>
+        <button class="pz-modal-close" (click)="closeCreate()"><pz-icon name="X" [size]="16" /></button>
+      </div>
+      <div class="pz-modal-body">
+        <div class="pz-section-label">Identité</div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Matricule *</label>
+            <input type="text" [(ngModel)]="createForm.matricule" placeholder="ex: EMP-001" />
+          </div>
+          <div class="pz-field">
+            <label>N° CIN / Identité nationale *</label>
+            <input type="text" [(ngModel)]="createForm.nationalId" placeholder="ex: 08765432" />
+          </div>
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Prénom *</label>
+            <input type="text" [(ngModel)]="createForm.firstName" placeholder="Prénom" />
+          </div>
+          <div class="pz-field">
+            <label>Nom *</label>
+            <input type="text" [(ngModel)]="createForm.lastName" placeholder="Nom de famille" />
+          </div>
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Date de naissance *</label>
+            <input type="date" [(ngModel)]="createForm.birthDate" />
+          </div>
+          <div class="pz-field">
+            <label>Genre *</label>
+            <select [(ngModel)]="createForm.gender">
+              @for (g of genders; track g.value) {
+                <option [value]="g.value">{{ g.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="pz-field">
+            <label>Situation familiale *</label>
+            <select [(ngModel)]="createForm.maritalStatus">
+              @for (s of maritalStatuses; track s.value) {
+                <option [value]="s.value">{{ s.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Enfants à charge</label>
+            <input type="number" [(ngModel)]="createForm.numberOfChildren" min="0" />
+          </div>
+          <div class="pz-field" style="justify-content: flex-end">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; margin-top: auto; padding-bottom: 10px">
+              <input type="checkbox" [(ngModel)]="createForm.chefDeFamille" style="width: 15px; height: 15px; accent-color: #4f46e5" />
+              Chef de famille
+            </label>
+          </div>
+        </div>
+
+        <div class="pz-section-label" style="margin-top: 8px">Poste & Contrat</div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Date d'embauche *</label>
+            <input type="date" [(ngModel)]="createForm.hireDate" />
+          </div>
+          <div class="pz-field">
+            <label>Catégorie</label>
+            <select [(ngModel)]="createForm.category">
+              @for (c of categories; track c.value) {
+                <option [value]="c.value">{{ c.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Département</label>
+            <select [(ngModel)]="createForm.departmentId">
+              <option value="">— Premier département —</option>
+              @for (d of data.departments(); track d.id) {
+                <option [value]="d.id">{{ d.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="pz-field">
+            <label>Intitulé du poste</label>
+            <input type="text" [(ngModel)]="createForm.positionTitle" placeholder="ex: Développeur Senior" />
+          </div>
+        </div>
+
+        <div class="pz-section-label" style="margin-top: 8px">Contact &amp; Coordonnées</div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Email professionnel</label>
+            <input type="email" [(ngModel)]="createForm.professionalEmail" placeholder="prenom.nom@entreprise.tn" />
+          </div>
+          <div class="pz-field">
+            <label>Téléphone</label>
+            <input type="text" [(ngModel)]="createForm.phoneNumber" placeholder="+216 XX XXX XXX" />
+          </div>
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Ville</label>
+            <input type="text" [(ngModel)]="createForm.city" placeholder="ex: Tunis" />
+          </div>
+          <div class="pz-field">
+            <label>N° CNSS</label>
+            <input type="text" [(ngModel)]="createForm.cnssNumber" placeholder="ex: 123456789" />
+          </div>
+        </div>
+
+        @if (errMsg()) {
+          <div class="pz-modal-err">{{ errMsg() }}</div>
+        }
+      </div>
+      <div class="pz-modal-foot">
+        <button class="pz-btn" (click)="closeCreate()">Annuler</button>
+        <button class="pz-btn pz-primary" [disabled]="busy()" (click)="submitCreate()">
+          @if (busy()) {
+            Enregistrement…
+          } @else {
+            Créer l'employé
+          }
+        </button>
       </div>
     </div>
   </div>

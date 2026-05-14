@@ -120,3 +120,19 @@ export interface ChatMessage {
   text: string;
   cite?: string;
 }
+
+export interface RegulatoryParam {
+  id: number;
+  paramKey: string;
+  paramLabel: string;
+  category: string | null;
+  numericValue: number | null;
+  stringValue: string | null;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+  legalReference: string | null;
+  description: string | null;
+  active: boolean;
+  updatedAt: string | null;
+  updatedBy: string | null;
+}

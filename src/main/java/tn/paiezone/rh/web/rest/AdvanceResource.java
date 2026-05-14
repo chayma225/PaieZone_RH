@@ -2,9 +2,12 @@ package tn.paiezone.rh.web.rest;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -20,8 +23,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 import tn.paiezone.rh.repository.AdvanceRepository;
-import tn.paiezone.rh.security.SecurityUtils; // Import ajouté
+import tn.paiezone.rh.repository.EmployeeRepository;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.AdvanceQueryService;
 import tn.paiezone.rh.service.AdvanceService;
 import tn.paiezone.rh.service.criteria.AdvanceCriteria;
@@ -45,15 +50,50 @@ public class AdvanceResource {
     private final AdvanceService advanceService;
     private final AdvanceRepository advanceRepository;
     private final AdvanceQueryService advanceQueryService;
+    private final EmployeeRepository employeeRepository;
 
     public AdvanceResource(
         AdvanceService advanceService,
         AdvanceRepository advanceRepository,
-        AdvanceQueryService advanceQueryService
+        AdvanceQueryService advanceQueryService,
+        EmployeeRepository employeeRepository
     ) {
         this.advanceService = advanceService;
         this.advanceRepository = advanceRepository;
         this.advanceQueryService = advanceQueryService;
+        this.employeeRepository = employeeRepository;
+    }
+
+    /**
+     * {@code POST /advances/request} : Simplified endpoint — no @Valid, sets status/date/employee server-side.
+     * employeeId is optional: if omitted, uses the current user's employee profile.
+     */
+    @PostMapping("/request")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AdvanceDTO> requestAdvance(@RequestBody Map<String, Object> body) throws URISyntaxException {
+        Long empId = body.get("employeeId") != null ? Long.valueOf(body.get("employeeId").toString()) : null;
+        if (empId == null) {
+            String login = SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new BadRequestAlertException("Utilisateur non authentifié", ENTITY_NAME, "notauthenticated")
+            );
+            empId = employeeRepository
+                .findByUserProfile_JhiUserId(login)
+                .map(e -> e.getId())
+                .orElseThrow(() ->
+                    new BadRequestAlertException("Aucun profil employé trouvé pour cet utilisateur", ENTITY_NAME, "noemployee")
+                );
+        }
+        AdvanceDTO dto = new AdvanceDTO();
+        dto.setRequestDate(LocalDate.now());
+        dto.setAmount(new BigDecimal(body.get("amount").toString()));
+        dto.setReason(body.get("reason") != null ? body.get("reason").toString() : "");
+        dto.setDeductionMonth(body.get("deductionMonth") != null ? Integer.valueOf(body.get("deductionMonth").toString()) : null);
+        dto.setStatus(AdvanceStatus.REQUESTED);
+        dto.setEmployeeId(empId);
+        AdvanceDTO result = advanceService.save(dto);
+        return ResponseEntity.created(new URI("/api/advances/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     /**

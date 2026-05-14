@@ -24,20 +24,28 @@
     </div>
     <button class="pz-icon-btn"><pz-icon name="Bell" /><span class="dot"></span></button>
     <button class="pz-icon-btn"><pz-icon name="Globe" /></button>
-    <button class="pz-icon-btn"><pz-icon name="CircleHelp" /></button>
+    <button class="pz-icon-btn" (click)="logout()" title="Déconnexion"><pz-icon name="LogOut" /></button>
 
     <button class="pz-role-pill" (click)="toggleMenu($event)">
       <span class="role-dot" [attr.data-color]="roleService.config().color"></span>
       <span>{{ roleService.roleLabel(roleService.current()) }}</span>
       <span class="role-caret"><pz-icon name="Caret" [size]="10" [strokeWidth]="2" /></span>
-      <div class="pz-avatar sm">{{ roleService.config().initials }}</div>
+      <div class="pz-avatar sm">{{ roleService.userInitials() }}</div>
     </button>
   </div>
 </header>
 
 @if (menuOpen()) {
   <div class="pz-role-menu" (click)="$event.stopPropagation()">
-    <div class="menu-title">Changer de rôle (démo)</div>
+    <div class="menu-user">
+      <div class="pz-avatar lg">{{ roleService.userInitials() }}</div>
+      <div>
+        <div class="menu-user-name">{{ roleService.userLabel() }}</div>
+        <div class="menu-user-email">{{ roleService.userSub() }}</div>
+      </div>
+    </div>
+    <div class="menu-sep"></div>
+    <div class="menu-title">Changer de vue</div>
     @for (opt of roleOptions; track opt.id) {
       <button class="role-opt" [class.active]="roleService.current() === opt.id" (click)="switchRole(opt.id)">
         <div class="pz-avatar" [attr.data-bg]="opt.bg">
@@ -53,6 +61,14 @@
       </button>
     }
     <div class="role-opt-sep"></div>
-    <div class="menu-note">En production, le rôle est défini par l'authentification.</div>
+    <button class="role-opt logout-opt" (click)="logout()">
+      <div class="pz-avatar" data-bg="1">
+        <pz-icon name="LogOut" />
+      </div>
+      <div>
+        <div class="role-title">Déconnexion</div>
+        <div class="role-sub">Quitter la session</div>
+      </div>
+    </button>
   </div>
 }

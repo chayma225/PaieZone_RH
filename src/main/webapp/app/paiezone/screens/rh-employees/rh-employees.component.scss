@@ -443,3 +443,125 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+
+// ── Nouvel employé modal ──────────────────────────────────────────────────
+.pz-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pz-modal {
+  background: var(--pz-surface);
+  border-radius: 14px;
+  width: 560px;
+  max-width: 95vw;
+  max-height: 90vh;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+
+  &.pz-modal-lg {
+    width: 680px;
+  }
+}
+
+.pz-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  font-weight: 600;
+  font-size: 15px;
+  border-bottom: 1px solid var(--pz-line);
+  flex-shrink: 0;
+}
+
+.pz-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--pz-muted);
+  display: flex;
+}
+
+.pz-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+}
+
+.pz-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--pz-line);
+  flex-shrink: 0;
+}
+
+.pz-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--pz-muted);
+  }
+
+  input,
+  select {
+    border: 1px solid var(--pz-line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 13px;
+    background: var(--pz-surface);
+    color: var(--pz-ink);
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: var(--pz-primary);
+    }
+  }
+}
+
+.pz-field-row {
+  display: flex;
+  gap: 12px;
+
+  .pz-field {
+    flex: 1;
+  }
+}
+
+.pz-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pz-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--pz-line);
+}
+
+.pz-modal-err {
+  color: #b91c1c;
+  font-size: 12.5px;
+  background: #fee2e2;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 4px;
+}

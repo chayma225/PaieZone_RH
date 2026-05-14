@@ -203,11 +203,18 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET, "/api/time-entries/**")
                     .hasAnyAuthority(AuthoritiesConstants.RH_COMPTABLE, AuthoritiesConstants.ADMIN, AuthoritiesConstants.SUPER_ADMIN)
                     // ═══════════════════════════════════════════════════════════════════
-                    // PARAMÉTRAGE RÉGLEMENTAIRE — SUPER_ADMIN UNIQUEMENT
-                    // Taux CNSS, barème IRPP, paramètres légaux
+                    // PARAMÉTRAGE RÉGLEMENTAIRE
+                    // Lecture : ADMIN + RH_COMPTABLE + SUPER_ADMIN
+                    // Écriture (POST/PUT/DELETE) : ADMIN + SUPER_ADMIN uniquement
                     // ═══════════════════════════════════════════════════════════════════
-                    .requestMatchers("/api/regulatory-params/**")
-                    .hasAuthority(AuthoritiesConstants.SUPER_ADMIN)
+                    .requestMatchers(HttpMethod.GET, "/api/regulatory-params/**")
+                    .hasAnyAuthority(AuthoritiesConstants.SUPER_ADMIN, AuthoritiesConstants.ADMIN, AuthoritiesConstants.RH_COMPTABLE)
+                    .requestMatchers(HttpMethod.POST, "/api/regulatory-params/**")
+                    .hasAnyAuthority(AuthoritiesConstants.SUPER_ADMIN, AuthoritiesConstants.ADMIN)
+                    .requestMatchers(HttpMethod.PUT, "/api/regulatory-params/**")
+                    .hasAnyAuthority(AuthoritiesConstants.SUPER_ADMIN, AuthoritiesConstants.ADMIN)
+                    .requestMatchers(HttpMethod.DELETE, "/api/regulatory-params/**")
+                    .hasAnyAuthority(AuthoritiesConstants.SUPER_ADMIN, AuthoritiesConstants.ADMIN)
                     .requestMatchers("/api/cnss-rates/**")
                     .hasAuthority(AuthoritiesConstants.SUPER_ADMIN)
                     .requestMatchers("/api/tax-brackets/**")

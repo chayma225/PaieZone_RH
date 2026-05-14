@@ -1,6 +1,7 @@
 package tn.paiezone.rh.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.Employee;
@@ -20,4 +21,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
     List<Employee> findByCompanyIdAndActiveTrue(Long companyId);
     List<Employee> findByActiveTrue();
     long countByActiveTrue();
+    Optional<Employee> findByUserProfile_JhiUserId(String jhiUserId);
 }

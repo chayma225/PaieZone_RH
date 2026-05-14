@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- Chaque colonne dans son propre changeSet pour éviter les conflits partiels -->
+
+  <changeSet id="sprint3-regulatory-param-add-string-value" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="regulatory_param" columnName="string_value"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="regulatory_param">
+      <column name="string_value" type="varchar(500)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="sprint3-regulatory-param-add-effective-to" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="regulatory_param" columnName="effective_to"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="regulatory_param">
+      <column name="effective_to" type="date"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

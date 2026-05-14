@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- Créer la séquence dédiée à regulatory_param si elle n'existe pas -->
+  <changeSet id="sprint3-create-regulatory-param-seq" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM pg_sequences WHERE schemaname = current_schema() AND sequencename = 'regulatory_param_seq'
+      </sqlCheck>
+    </preConditions>
+    <sql>CREATE SEQUENCE regulatory_param_seq START WITH 2000 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;</sql>
+  </changeSet>
+
+</databaseChangeLog>

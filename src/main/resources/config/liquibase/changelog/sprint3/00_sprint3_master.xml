@@ -43,4 +43,10 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/sprint3/18_add_file_data_to_hr_document.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/19_fix_regulatory_param_string_effective_to.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/20_fix_regulatory_param_seq_and_cols.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/21_fix_advance_missing_cols.xml"
+           relativeToChangelogFile="false"/>
 </databaseChangeLog>

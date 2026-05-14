@@ -1,10 +1,14 @@
 package tn.paiezone.rh.web.rest;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -21,12 +25,26 @@ import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 import tn.paiezone.rh.aop.logging.audit.Auditable;
+import tn.paiezone.rh.domain.Company;
+import tn.paiezone.rh.domain.Department;
+import tn.paiezone.rh.domain.JobPosition;
+import tn.paiezone.rh.domain.enumeration.EmployeeCategory;
+import tn.paiezone.rh.domain.enumeration.Gender;
+import tn.paiezone.rh.domain.enumeration.MaritalStatus;
+import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.DepartmentRepository;
 import tn.paiezone.rh.repository.EmployeeRepository;
+import tn.paiezone.rh.repository.JobPositionRepository;
+import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.EmployeeQueryService;
 import tn.paiezone.rh.service.EmployeeService;
 import tn.paiezone.rh.service.criteria.EmployeeCriteria;
+import tn.paiezone.rh.service.dto.CompanyDTO;
+import tn.paiezone.rh.service.dto.DepartmentDTO;
 import tn.paiezone.rh.service.dto.EmployeeDTO;
+import tn.paiezone.rh.service.dto.JobPositionDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @RestController
@@ -42,15 +60,137 @@ public class EmployeeResource {
     private final EmployeeService employeeService;
     private final EmployeeRepository employeeRepository;
     private final EmployeeQueryService employeeQueryService;
+    private final CompanyRepository companyRepository;
+    private final DepartmentRepository departmentRepository;
+    private final JobPositionRepository jobPositionRepository;
+    private final UserProfileRepository userProfileRepository;
 
     public EmployeeResource(
         EmployeeService employeeService,
         EmployeeRepository employeeRepository,
-        EmployeeQueryService employeeQueryService
+        EmployeeQueryService employeeQueryService,
+        CompanyRepository companyRepository,
+        DepartmentRepository departmentRepository,
+        JobPositionRepository jobPositionRepository,
+        UserProfileRepository userProfileRepository
     ) {
         this.employeeService = employeeService;
         this.employeeRepository = employeeRepository;
         this.employeeQueryService = employeeQueryService;
+        this.companyRepository = companyRepository;
+        this.departmentRepository = departmentRepository;
+        this.jobPositionRepository = jobPositionRepository;
+        this.userProfileRepository = userProfileRepository;
+    }
+
+    /** GET /api/employees/me — Retourne le profil employé de l'utilisateur connecté */
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<EmployeeDTO> getMyEmployee() {
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(login -> employeeRepository.findByUserProfile_JhiUserId(login))
+            .flatMap(e -> employeeService.findOne(e.getId()))
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /** POST /api/employees/create-simple — Création simplifiée sans @Valid */
+    @PostMapping("/create-simple")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    @Auditable(action = "CREATE", entityType = "Employee")
+    public ResponseEntity<EmployeeDTO> createSimpleEmployee(@RequestBody Map<String, Object> body) throws URISyntaxException {
+        EmployeeDTO dto = new EmployeeDTO();
+
+        // Champs obligatoires
+        dto.setMatricule(require(body, "matricule"));
+        dto.setFirstName(require(body, "firstName"));
+        dto.setLastName(require(body, "lastName"));
+        dto.setBirthDate(LocalDate.parse(require(body, "birthDate")));
+        dto.setGender(Gender.valueOf(require(body, "gender")));
+        dto.setMaritalStatus(MaritalStatus.valueOf(require(body, "maritalStatus")));
+        dto.setNumberOfChildren(body.get("numberOfChildren") != null ? Integer.valueOf(body.get("numberOfChildren").toString()) : 0);
+        dto.setChefDeFamille(body.get("chefDeFamille") != null ? Boolean.valueOf(body.get("chefDeFamille").toString()) : false);
+        dto.setNationalId(require(body, "nationalId"));
+        dto.setCategory(EmployeeCategory.valueOf(body.get("category") != null ? body.get("category").toString() : "EMPLOYEE"));
+        dto.setHireDate(LocalDate.parse(require(body, "hireDate")));
+        dto.setActive(true);
+        dto.setCreatedAt(Instant.now());
+
+        // Champs optionnels
+        if (body.get("personalEmail") != null) dto.setPersonalEmail(body.get("personalEmail").toString());
+        if (body.get("professionalEmail") != null) dto.setProfessionalEmail(body.get("professionalEmail").toString());
+        if (body.get("phoneNumber") != null) dto.setPhoneNumber(body.get("phoneNumber").toString());
+        if (body.get("city") != null) dto.setCity(body.get("city").toString());
+        if (body.get("cnssNumber") != null) dto.setCnssNumber(body.get("cnssNumber").toString());
+        if (body.get("address") != null) dto.setAddress(body.get("address").toString());
+
+        // Société — résolution depuis l'utilisateur courant ou première société
+        Company company = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userProfileRepository::findByJhiUserId)
+            .map(up -> up.getCompany())
+            .orElseGet(() ->
+                companyRepository
+                    .findAll()
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("Aucune société trouvée"))
+            );
+        CompanyDTO companyDto = new CompanyDTO();
+        companyDto.setId(company.getId());
+        dto.setCompany(companyDto);
+
+        // Département
+        if (body.get("departmentId") != null) {
+            DepartmentDTO deptDto = new DepartmentDTO();
+            deptDto.setId(Long.valueOf(body.get("departmentId").toString()));
+            dto.setDepartment(deptDto);
+        } else {
+            Department dept = departmentRepository
+                .findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new BadRequestAlertException("Veuillez créer au moins un département", ENTITY_NAME, "nodepartment"));
+            DepartmentDTO deptDto = new DepartmentDTO();
+            deptDto.setId(dept.getId());
+            dto.setDepartment(deptDto);
+        }
+
+        // Poste
+        if (body.get("positionId") != null) {
+            JobPositionDTO posDto = new JobPositionDTO();
+            posDto.setId(Long.valueOf(body.get("positionId").toString()));
+            dto.setPosition(posDto);
+        } else {
+            String posTitle = body.get("positionTitle") != null ? body.get("positionTitle").toString() : "Collaborateur";
+            JobPosition pos = jobPositionRepository
+                .findAll()
+                .stream()
+                .filter(p -> p.getTitle().equalsIgnoreCase(posTitle))
+                .findFirst()
+                .orElseGet(() -> {
+                    JobPosition newPos = new JobPosition();
+                    newPos.setCode(posTitle.substring(0, Math.min(posTitle.length(), 18)).toUpperCase().replaceAll("\\s+", "_"));
+                    newPos.setTitle(posTitle);
+                    newPos.setActive(true);
+                    return jobPositionRepository.save(newPos);
+                });
+            JobPositionDTO posDto = new JobPositionDTO();
+            posDto.setId(pos.getId());
+            dto.setPosition(posDto);
+        }
+
+        EmployeeDTO result = employeeService.save(dto);
+        return ResponseEntity.created(new URI("/api/employees/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     // ── US-09 : Créer employé ─────────────────────────────────────────────────
@@ -92,16 +232,9 @@ public class EmployeeResource {
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody EmployeeDTO employeeDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to update Employee : {}, {}", id, employeeDTO);
-        if (employeeDTO.getId() == null) {
-            throw new BadRequestAlertException("ID invalide.", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, employeeDTO.getId())) {
-            throw new BadRequestAlertException("ID non correspondant.", ENTITY_NAME, "idinvalid");
-        }
-        if (!employeeRepository.existsById(id)) {
-            throw new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound");
-        }
+        if (employeeDTO.getId() == null) throw new BadRequestAlertException("ID invalide.", ENTITY_NAME, "idnull");
+        if (!Objects.equals(id, employeeDTO.getId())) throw new BadRequestAlertException("ID non correspondant.", ENTITY_NAME, "idinvalid");
+        if (!employeeRepository.existsById(id)) throw new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound");
         employeeDTO = employeeService.update(employeeDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, employeeDTO.getId().toString()))
@@ -122,15 +255,9 @@ public class EmployeeResource {
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody EmployeeDTO employeeDTO
     ) throws URISyntaxException {
-        if (employeeDTO.getId() == null) {
-            throw new BadRequestAlertException("ID invalide.", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, employeeDTO.getId())) {
-            throw new BadRequestAlertException("ID non correspondant.", ENTITY_NAME, "idinvalid");
-        }
-        if (!employeeRepository.existsById(id)) {
-            throw new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound");
-        }
+        if (employeeDTO.getId() == null) throw new BadRequestAlertException("ID invalide.", ENTITY_NAME, "idnull");
+        if (!Objects.equals(id, employeeDTO.getId())) throw new BadRequestAlertException("ID non correspondant.", ENTITY_NAME, "idinvalid");
+        if (!employeeRepository.existsById(id)) throw new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound");
         Optional<EmployeeDTO> result = employeeService.partialUpdate(employeeDTO);
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -138,13 +265,11 @@ public class EmployeeResource {
         );
     }
 
-    // ── US-09 : Recherche et filtres ──────────────────────────────────────────
     @GetMapping("")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees(
         EmployeeCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
-        LOG.debug("REST request to get Employees by criteria: {}", criteria);
         Page<EmployeeDTO> page = employeeQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -152,26 +277,29 @@ public class EmployeeResource {
 
     @GetMapping("/count")
     public ResponseEntity<Long> countEmployees(EmployeeCriteria criteria) {
-        LOG.debug("REST request to count Employees by criteria: {}", criteria);
         return ResponseEntity.ok().body(employeeQueryService.countByCriteria(criteria));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable("id") Long id) {
-        LOG.debug("REST request to get Employee : {}", id);
-        Optional<EmployeeDTO> employeeDTO = employeeService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(employeeDTO);
+        return ResponseUtil.wrapOrNotFound(employeeService.findOne(id));
     }
 
-    // ── Désactiver employé (soft delete) ──────────────────────────────────────
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('" + AuthoritiesConstants.ADMIN + "', '" + AuthoritiesConstants.SUPER_ADMIN + "')")
     @Auditable(action = "DELETE", entityType = "Employee")
     public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long id) {
-        LOG.debug("REST request to delete Employee : {}", id);
         employeeService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    private String require(Map<String, Object> body, String key) {
+        Object val = body.get(key);
+        if (val == null || val.toString().isBlank()) {
+            throw new BadRequestAlertException("Champ obligatoire manquant : " + key, ENTITY_NAME, "missingfield");
+        }
+        return val.toString();
     }
 }

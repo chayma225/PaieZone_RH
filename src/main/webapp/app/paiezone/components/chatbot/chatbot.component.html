@@ -1,9 +1,10 @@
-@if (!open()) {
-  <button class="chat-fab" (click)="toggleOpen()" aria-label="Assistant IA">
-    <pz-icon name="Sparkles" [size]="22" />
+<button class="chat-tab" (click)="toggleOpen()" aria-label="PaieBot — Assistant IA" [class.is-open]="open()">
+  <pz-icon [name]="open() ? 'X' : 'Sparkles'" [size]="18" />
+  @if (!open()) {
+    <span class="chat-tab-label">PaieBot</span>
     <span class="pulse"></span>
-  </button>
-}
+  }
+</button>
 
 @if (open()) {
   <div class="chat-win" role="dialog">

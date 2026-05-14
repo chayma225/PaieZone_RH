@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
+import { ApiService } from '../../core/api.service';
 import type { Employee } from '../../core/types';
 
 interface DocItem {
@@ -33,6 +34,7 @@ interface UploadingItem {
 })
 export default class RhEmployeesComponent {
   protected readonly data = inject(DataService);
+  protected readonly api = inject(ApiService);
 
   protected readonly dept = signal('Tous');
   protected readonly searchQ = signal('');
@@ -59,6 +61,123 @@ export default class RhEmployeesComponent {
   protected readonly selected = signal<Employee | null>(null);
   protected readonly tab = signal<'infos' | 'contract' | 'docs' | 'pay'>('infos');
 
+  // ── Nouvel employé modal ──────────────────────────────────────────────────
+  protected readonly showCreate = signal(false);
+  protected readonly busy = signal(false);
+  protected readonly errMsg = signal('');
+
+  protected createForm = {
+    matricule: '',
+    firstName: '',
+    lastName: '',
+    birthDate: '',
+    gender: 'MALE',
+    maritalStatus: 'SINGLE',
+    numberOfChildren: 0,
+    chefDeFamille: false,
+    nationalId: '',
+    hireDate: '',
+    category: 'EMPLOYEE',
+    departmentId: '',
+    positionTitle: '',
+    professionalEmail: '',
+    phoneNumber: '',
+    city: '',
+    cnssNumber: '',
+  };
+
+  protected readonly genders = [
+    { value: 'MALE', label: 'Homme' },
+    { value: 'FEMALE', label: 'Femme' },
+  ];
+
+  protected readonly maritalStatuses = [
+    { value: 'SINGLE', label: 'Célibataire' },
+    { value: 'MARRIED', label: 'Marié(e)' },
+    { value: 'DIVORCED', label: 'Divorcé(e)' },
+    { value: 'WIDOWED', label: 'Veuf / Veuve' },
+  ];
+
+  protected readonly categories = [
+    { value: 'EMPLOYEE', label: 'Employé' },
+    { value: 'WORKER', label: 'Ouvrier' },
+    { value: 'TECHNICIAN', label: 'Technicien' },
+    { value: 'SUPERVISOR', label: 'Agent de maîtrise' },
+    { value: 'MANAGER', label: 'Cadre' },
+    { value: 'EXECUTIVE', label: 'Cadre supérieur' },
+    { value: 'DIRECTOR', label: 'Directeur' },
+  ];
+
+  openCreate(): void {
+    this.createForm = {
+      matricule: '',
+      firstName: '',
+      lastName: '',
+      birthDate: '',
+      gender: 'MALE',
+      maritalStatus: 'SINGLE',
+      numberOfChildren: 0,
+      chefDeFamille: false,
+      nationalId: '',
+      hireDate: '',
+      category: 'EMPLOYEE',
+      departmentId: '',
+      positionTitle: '',
+      professionalEmail: '',
+      phoneNumber: '',
+      city: '',
+      cnssNumber: '',
+    };
+    this.errMsg.set('');
+    this.showCreate.set(true);
+  }
+
+  closeCreate(): void {
+    this.showCreate.set(false);
+  }
+
+  submitCreate(): void {
+    const f = this.createForm;
+    if (!f.matricule.trim() || !f.firstName.trim() || !f.lastName.trim() || !f.birthDate || !f.nationalId.trim() || !f.hireDate) {
+      this.errMsg.set('Veuillez remplir tous les champs obligatoires (*).');
+      return;
+    }
+    this.busy.set(true);
+    this.errMsg.set('');
+    const body: Record<string, any> = {
+      matricule: f.matricule.trim(),
+      firstName: f.firstName.trim(),
+      lastName: f.lastName.trim(),
+      birthDate: f.birthDate,
+      gender: f.gender,
+      maritalStatus: f.maritalStatus,
+      numberOfChildren: f.numberOfChildren,
+      chefDeFamille: f.chefDeFamille,
+      nationalId: f.nationalId.trim(),
+      hireDate: f.hireDate,
+      category: f.category,
+    };
+    if (f.departmentId) body['departmentId'] = +f.departmentId;
+    if (f.positionTitle.trim()) body['positionTitle'] = f.positionTitle.trim();
+    if (f.professionalEmail.trim()) body['professionalEmail'] = f.professionalEmail.trim();
+    if (f.phoneNumber.trim()) body['phoneNumber'] = f.phoneNumber.trim();
+    if (f.city.trim()) body['city'] = f.city.trim();
+    if (f.cnssNumber.trim()) body['cnssNumber'] = f.cnssNumber.trim();
+
+    this.api.createEmployeeSimple(body).subscribe({
+      next: emp => {
+        this.data.employees.update(list => [...list, emp]);
+        this.closeCreate();
+        this.busy.set(false);
+      },
+      error: err => {
+        this.errMsg.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la création.');
+        this.busy.set(false);
+      },
+    });
+  }
+
+  // ── Documents ─────────────────────────────────────────────────────────────
   protected readonly docs = signal<DocItem[]>([
     { id: 1, name: 'Contrat de travail signé', type: 'Contrat', size: 'PDF · 2.1 Mo', date: '14/04/2024', icon: 'Pdf' },
     { id: 2, name: "Pièce d'identité (CIN)", type: 'Identité', size: 'PDF · 480 Ko', date: '02/04/2024', icon: 'Pdf' },

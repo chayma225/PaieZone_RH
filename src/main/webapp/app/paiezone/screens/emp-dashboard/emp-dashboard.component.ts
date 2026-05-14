@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
@@ -7,7 +8,7 @@ import { DataService } from '../../core/data.service';
 @Component({
   selector: 'pz-emp-dashboard',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, RouterLink, IconComponent],
   template: `
     <div class="pz-page">
       <div class="pz-page-head">
@@ -17,8 +18,8 @@ import { DataService } from '../../core/data.service';
           <div class="pz-muted">Mercredi 14 mai 2026 · Lead Développeur · matricule <span class="pz-mono">A12-018</span></div>
         </div>
         <div class="pz-page-actions">
-          <button class="pz-btn"><pz-icon name="Calendar" /> Demander un congé</button>
-          <button class="pz-btn pz-primary"><pz-icon name="Cash" /> Demander une avance</button>
+          <button class="pz-btn" routerLink="/paiezone/emp-leaves"><pz-icon name="Calendar" /> Demander un congé</button>
+          <button class="pz-btn pz-primary" routerLink="/paiezone/emp-requests"><pz-icon name="Cash" /> Demander une avance</button>
         </div>
       </div>
 

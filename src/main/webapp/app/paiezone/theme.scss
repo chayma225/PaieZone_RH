@@ -123,6 +123,17 @@
     }
   }
 
+  &.pz-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: #fca5a5;
+
+    &:hover {
+      background: #fecaca;
+      border-color: #f87171;
+    }
+  }
+
   &.pz-sm {
     height: 30px;
     padding: 0 10px;

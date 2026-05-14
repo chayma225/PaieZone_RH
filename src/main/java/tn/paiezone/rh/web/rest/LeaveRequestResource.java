@@ -4,7 +4,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -14,16 +17,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import tn.paiezone.rh.domain.enumeration.LeaveStatus;
+import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.LeaveRequestRepository;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.LeaveRequestQueryService;
 import tn.paiezone.rh.service.LeaveRequestService;
 import tn.paiezone.rh.service.criteria.LeaveRequestCriteria;
+import tn.paiezone.rh.service.dto.EmployeeDTO;
 import tn.paiezone.rh.service.dto.LeaveRequestDTO;
+import tn.paiezone.rh.service.dto.LeaveTypeDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -41,19 +50,60 @@ public class LeaveRequestResource {
     private String applicationName;
 
     private final LeaveRequestService leaveRequestService;
-
     private final LeaveRequestRepository leaveRequestRepository;
-
     private final LeaveRequestQueryService leaveRequestQueryService;
+    private final EmployeeRepository employeeRepository;
 
     public LeaveRequestResource(
         LeaveRequestService leaveRequestService,
         LeaveRequestRepository leaveRequestRepository,
-        LeaveRequestQueryService leaveRequestQueryService
+        LeaveRequestQueryService leaveRequestQueryService,
+        EmployeeRepository employeeRepository
     ) {
         this.leaveRequestService = leaveRequestService;
         this.leaveRequestRepository = leaveRequestRepository;
         this.leaveRequestQueryService = leaveRequestQueryService;
+        this.employeeRepository = employeeRepository;
+    }
+
+    /**
+     * {@code POST /leave-requests/submit} : Simplified endpoint — no @Valid, sets required fields server-side.
+     * employeeId optional: omit to use current user's employee profile (self-service).
+     */
+    @PostMapping("/submit")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<LeaveRequestDTO> submitLeaveRequest(@RequestBody Map<String, Object> body) throws URISyntaxException {
+        Long empId = body.get("employeeId") != null ? Long.valueOf(body.get("employeeId").toString()) : null;
+        if (empId == null) {
+            String login = SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new BadRequestAlertException("Utilisateur non authentifié", ENTITY_NAME, "notauthenticated")
+            );
+            empId = employeeRepository
+                .findByUserProfile_JhiUserId(login)
+                .map(e -> e.getId())
+                .orElseThrow(() -> new BadRequestAlertException("Aucun profil employé trouvé", ENTITY_NAME, "noemployee"));
+        }
+
+        EmployeeDTO empDto = new EmployeeDTO();
+        empDto.setId(empId);
+
+        LeaveTypeDTO ltDto = new LeaveTypeDTO();
+        ltDto.setId(Long.valueOf(body.get("leaveTypeId").toString()));
+
+        LeaveRequestDTO dto = new LeaveRequestDTO();
+        dto.setEmployee(empDto);
+        dto.setLeaveType(ltDto);
+        dto.setStartDate(LocalDate.parse(body.get("startDate").toString()));
+        dto.setEndDate(LocalDate.parse(body.get("endDate").toString()));
+        dto.setNumberOfDays(body.get("numberOfDays") != null ? Integer.valueOf(body.get("numberOfDays").toString()) : 1);
+        dto.setEmployeeComment(body.get("comment") != null ? body.get("comment").toString() : null);
+        dto.setStatus(LeaveStatus.PENDING);
+        dto.setRequestedAt(Instant.now());
+
+        LeaveRequestDTO result = leaveRequestService.submit(dto);
+        return ResponseEntity.created(new URI("/api/leave-requests/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -187,6 +237,32 @@ public class LeaveRequestResource {
         LOG.debug("REST request to get LeaveRequest : {}", id);
         Optional<LeaveRequestDTO> leaveRequestDTO = leaveRequestService.findOne(id);
         return ResponseUtil.wrapOrNotFound(leaveRequestDTO);
+    }
+
+    /**
+     * {@code PUT  /leave-requests/:id/approve} : Approve a leave request.
+     */
+    @PutMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    public ResponseEntity<LeaveRequestDTO> approveLeaveRequest(@PathVariable("id") Long id) {
+        LOG.debug("REST request to approve LeaveRequest : {}", id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse("system");
+        LeaveRequestDTO result = leaveRequestService.approve(id, null);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * {@code PUT  /leave-requests/:id/reject} : Reject a leave request.
+     */
+    @PutMapping("/{id}/reject")
+    @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    public ResponseEntity<LeaveRequestDTO> rejectLeaveRequest(
+        @PathVariable("id") Long id,
+        @RequestParam(required = false, defaultValue = "") String comment
+    ) {
+        LOG.debug("REST request to reject LeaveRequest : {}", id);
+        LeaveRequestDTO result = leaveRequestService.reject(id, comment);
+        return ResponseEntity.ok(result);
     }
 
     /**
