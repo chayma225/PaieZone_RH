@@ -32,7 +32,7 @@ public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSp
     )
     Optional<Contract> findActiveContractByEmployee(@Param("employeeId") Long employeeId, @Param("date") LocalDate date);
 
-    long countByStatus(String status);
+    long countByStatus(ContractStatus status);
 
     @Query("SELECT count(c) FROM Contract c WHERE c.endDate <= :date AND c.status = 'ACTIVE'")
     long countExpiringWithin30Days(@Param("date") LocalDate date);

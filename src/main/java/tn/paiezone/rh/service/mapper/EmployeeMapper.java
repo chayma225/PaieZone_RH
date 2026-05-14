@@ -15,7 +15,7 @@ import tn.paiezone.rh.service.dto.UserProfileDTO;
 /**
  * Mapper for the entity {@link Employee} and its DTO {@link EmployeeDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EmployeeMapper extends EntityMapper<EmployeeDTO, Employee> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     @Mapping(target = "department", source = "department", qualifiedByName = "departmentId")

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.Advance;
+import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 
 /**
  * Spring Data JPA repository for the Advance entity.
@@ -21,5 +22,5 @@ public interface AdvanceRepository extends JpaRepository<Advance, Long>, JpaSpec
     )
     List<Advance> findApprovedForDeduction(@Param("employeeId") Long employeeId, @Param("month") int month, @Param("year") int year);
 
-    long countByStatus(String status);
+    long countByStatus(AdvanceStatus status);
 }

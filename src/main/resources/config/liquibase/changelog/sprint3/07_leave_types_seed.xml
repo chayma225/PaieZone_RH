@@ -7,6 +7,9 @@
 
   <changeSet id="sprint3-leave-types-tunisia-full-v2" author="dev">
     <validCheckSum>ANY</validCheckSum>
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">SELECT COUNT(*) FROM company WHERE id = 1</sqlCheck>
+    </preConditions>
 
     <insert tableName="leave_type">
       <column name="id"              valueComputed="nextval('sequence_generator')"/>

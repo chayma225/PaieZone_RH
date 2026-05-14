@@ -10,6 +10,7 @@
         Added the entity Employee.
     -->
     <changeSet id="20260408181740-1" author="jhipster">
+        <validCheckSum>ANY</validCheckSum>
         <createTable tableName="employee" remarks="Dossier Employé">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -113,6 +114,9 @@
             <column name="user_profile_id" type="bigint">
                 <constraints nullable="true" />
             </column>
+          <column name="bank_rib" type="varchar(30)">
+            <constraints nullable="true" />
+          </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
         <dropDefaultValue tableName="employee" columnName="created_at" columnDataType="${datetimeType}"/>
@@ -167,6 +171,7 @@
             <column name="company_id" type="numeric"/>
             <column name="department_id" type="numeric"/>
             <column name="position_id" type="numeric"/>
+
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

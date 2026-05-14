@@ -1,16 +1,32 @@
 package tn.paiezone.rh.service.dto;
 
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 
 public class ChatMessageDTO {
 
     private Long id;
-    private Long sessionId;
-    private String role; // "user" | "assistant"
+
+    @NotNull
+    private String role;
+
+    @NotNull
     private String content;
+
+    @NotNull
     private Instant sentAt;
-    private boolean escalatedToHuman;
+
     private String intent;
+    private boolean escalatedToHuman;
+
+    // ── Champs JDL complets ───────────────────────────────────────────────────
+    private String actionTaken;
+    private Integer tokenUsed;
+    private Boolean errorOccurred;
+
+    private Long sessionId;
+
+    // ── Getters / Setters ─────────────────────────────────────────────────────
 
     public Long getId() {
         return id;
@@ -18,14 +34,6 @@ public class ChatMessageDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(Long sessionId) {
-        this.sessionId = sessionId;
     }
 
     public String getRole() {
@@ -52,6 +60,14 @@ public class ChatMessageDTO {
         this.sentAt = sentAt;
     }
 
+    public String getIntent() {
+        return intent;
+    }
+
+    public void setIntent(String intent) {
+        this.intent = intent;
+    }
+
     public boolean isEscalatedToHuman() {
         return escalatedToHuman;
     }
@@ -60,11 +76,48 @@ public class ChatMessageDTO {
         this.escalatedToHuman = escalatedToHuman;
     }
 
-    public String getIntent() {
-        return intent;
+    public String getActionTaken() {
+        return actionTaken;
     }
 
-    public void setIntent(String intent) {
-        this.intent = intent;
+    public void setActionTaken(String actionTaken) {
+        this.actionTaken = actionTaken;
+    }
+
+    public Integer getTokenUsed() {
+        return tokenUsed;
+    }
+
+    public void setTokenUsed(Integer tokenUsed) {
+        this.tokenUsed = tokenUsed;
+    }
+
+    public Boolean getErrorOccurred() {
+        return errorOccurred;
+    }
+
+    public void setErrorOccurred(Boolean errorOccurred) {
+        this.errorOccurred = errorOccurred;
+    }
+
+    public Long getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Long sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChatMessageDTO)) return false;
+        ChatMessageDTO dto = (ChatMessageDTO) o;
+        return id != null && id.equals(dto.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

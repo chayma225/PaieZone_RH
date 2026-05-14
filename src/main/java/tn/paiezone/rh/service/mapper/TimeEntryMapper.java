@@ -4,23 +4,22 @@ import org.mapstruct.*;
 import tn.paiezone.rh.domain.TimeEntry;
 import tn.paiezone.rh.service.dto.TimeEntryDTO;
 
-@Mapper(componentModel = "spring", uses = { EmployeeMapper.class })
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { EmployeeMapper.class })
 public interface TimeEntryMapper extends EntityMapper<TimeEntryDTO, TimeEntry> {
-
     @Mapping(source = "employee.id", target = "employeeId")
     TimeEntryDTO toDto(TimeEntry s);
 
     @Mapping(source = "employeeId", target = "employee")
-    @Mapping(target = "createdBy",        ignore = true)
-    @Mapping(target = "createdDate",      ignore = true)
-    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     TimeEntry toEntity(TimeEntryDTO dto);
 
     @Mapping(source = "employeeId", target = "employee")
-    @Mapping(target = "createdBy",        ignore = true)
-    @Mapping(target = "createdDate",      ignore = true)
-    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     void partialUpdate(@MappingTarget TimeEntry entity, TimeEntryDTO dto);
 

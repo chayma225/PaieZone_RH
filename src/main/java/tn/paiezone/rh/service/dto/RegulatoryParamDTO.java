@@ -51,65 +51,144 @@ public class RegulatoryParamDTO implements Serializable {
 
     // ── Getters / Setters ──────────────────────────────────────────
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getParamKey() { return paramKey; }
-    public void setParamKey(String paramKey) { this.paramKey = paramKey; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getParamLabel() { return paramLabel; }
-    public void setParamLabel(String paramLabel) { this.paramLabel = paramLabel; }
+    public String getParamKey() {
+        return paramKey;
+    }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public void setParamKey(String paramKey) {
+        this.paramKey = paramKey;
+    }
 
-    public BigDecimal getNumericValue() { return numericValue; }
-    public void setNumericValue(BigDecimal numericValue) { this.numericValue = numericValue; }
+    public String getParamLabel() {
+        return paramLabel;
+    }
 
-    public String getStringValue() { return stringValue; }
-    public void setStringValue(String stringValue) { this.stringValue = stringValue; }
+    public void setParamLabel(String paramLabel) {
+        this.paramLabel = paramLabel;
+    }
 
-    public LocalDate getEffectiveFrom() { return effectiveFrom; }
-    public void setEffectiveFrom(LocalDate effectiveFrom) { this.effectiveFrom = effectiveFrom; }
+    public String getCategory() {
+        return category;
+    }
 
-    public LocalDate getEffectiveTo() { return effectiveTo; }
-    public void setEffectiveTo(LocalDate effectiveTo) { this.effectiveTo = effectiveTo; }
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-    public String getLegalReference() { return legalReference; }
-    public void setLegalReference(String legalReference) { this.legalReference = legalReference; }
+    public BigDecimal getNumericValue() {
+        return numericValue;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setNumericValue(BigDecimal numericValue) {
+        this.numericValue = numericValue;
+    }
 
-    public Boolean getActive() { return active; }
-    public void setActive(Boolean active) { this.active = active; }
+    public String getStringValue() {
+        return stringValue;
+    }
 
-    public Instant getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
-    public String getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
+    public LocalDate getEffectiveFrom() {
+        return effectiveFrom;
+    }
+
+    public void setEffectiveFrom(LocalDate effectiveFrom) {
+        this.effectiveFrom = effectiveFrom;
+    }
+
+    public LocalDate getEffectiveTo() {
+        return effectiveTo;
+    }
+
+    public void setEffectiveTo(LocalDate effectiveTo) {
+        this.effectiveTo = effectiveTo;
+    }
+
+    public String getLegalReference() {
+        return legalReference;
+    }
+
+    public void setLegalReference(String legalReference) {
+        this.legalReference = legalReference;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RegulatoryParamDTO)) return false;
-        return Objects.equals(id, ((RegulatoryParamDTO) o).id);
+        return id != null && id.equals(((RegulatoryParamDTO) o).id);
     }
 
     @Override
-    public int hashCode() { return Objects.hash(id); }
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
     @Override
     public String toString() {
-        return "RegulatoryParamDTO{" +
-            "id=" + id +
-            ", paramKey='" + paramKey + '\'' +
-            ", paramLabel='" + paramLabel + '\'' +
-            ", category='" + category + '\'' +
-            ", numericValue=" + numericValue +
-            ", effectiveFrom=" + effectiveFrom +
-            ", active=" + active +
-            '}';
+        return (
+            "RegulatoryParamDTO{" +
+            "id=" +
+            id +
+            ", paramKey='" +
+            paramKey +
+            '\'' +
+            ", paramLabel='" +
+            paramLabel +
+            '\'' +
+            ", category='" +
+            category +
+            '\'' +
+            ", numericValue=" +
+            numericValue +
+            ", effectiveFrom=" +
+            effectiveFrom +
+            ", active=" +
+            active +
+            '}'
+        );
     }
 }

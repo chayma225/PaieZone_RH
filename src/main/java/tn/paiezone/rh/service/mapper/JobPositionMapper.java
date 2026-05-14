@@ -11,7 +11,7 @@ import tn.paiezone.rh.service.dto.JobPositionDTO;
 /**
  * Mapper for the entity {@link JobPosition} and its DTO {@link JobPositionDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface JobPositionMapper extends EntityMapper<JobPositionDTO, JobPosition> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     @Mapping(target = "department", source = "department", qualifiedByName = "departmentId")

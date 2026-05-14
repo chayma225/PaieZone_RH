@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+      Ajout des colonnes salary_brut, salary_net, balance_conge, job_title
+      à la table employee pour le module Text-to-SQL du chatbot PaieBot.
+
+      À ajouter dans master.xml :
+      <include file="config/liquibase/changelog/20260512000002_add_employee_salary_columns.xml"
+               relativeToChangelogFile="false"/>
+  -->
+
+  <changeSet id="20260512000020" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="employee" columnName="salary_brut"/></not>
+    </preConditions>
+    <addColumn tableName="employee">
+      <column name="salary_brut"    type="numeric(15,3)" defaultValue="0"/>
+      <column name="salary_net"     type="numeric(15,3)" defaultValue="0"/>
+      <column name="balance_conge"  type="integer"       defaultValue="0"/>
+      <column name="job_title"      type="varchar(255)"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

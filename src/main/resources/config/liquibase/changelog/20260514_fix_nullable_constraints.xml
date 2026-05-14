@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+    DROP NOT NULL sur les colonnes chat_session dont le service ne remplit pas la valeur.
+    Les colonnes channel/status/started_at/employee_id ont été créées NOT NULL par JHipster
+    mais le ChatbotService crée des sessions sans les renseigner.
+    ALTER ... DROP NOT NULL est idempotent dans PostgreSQL.
+  -->
+  <changeSet id="20260514-chat-session-drop-not-null" author="paiezone">
+    <sql>ALTER TABLE chat_session ALTER COLUMN channel     DROP NOT NULL</sql>
+    <sql>ALTER TABLE chat_session ALTER COLUMN status      DROP NOT NULL</sql>
+    <sql>ALTER TABLE chat_session ALTER COLUMN started_at  DROP NOT NULL</sql>
+    <sql>ALTER TABLE chat_session ALTER COLUMN employee_id DROP NOT NULL</sql>
+  </changeSet>
+
+  <!--
+    hr_document : file_url était NOT NULL dans le schéma JHipster initial,
+    mais depuis l'ajout du stockage binaire (file_data), l'URL est optionnelle.
+  -->
+  <changeSet id="20260514-hr-document-file-url-nullable" author="paiezone">
+    <sql>ALTER TABLE hr_document ALTER COLUMN file_url DROP NOT NULL</sql>
+  </changeSet>
+
+  <changeSet id="20260514-knowledge-document-missing-columns" author="paiezone">
+    <sql>ALTER TABLE knowledge_document ADD COLUMN IF NOT EXISTS file_url VARCHAR(500)</sql>
+    <sql>ALTER TABLE knowledge_document ADD COLUMN IF NOT EXISTS vector_indexed BOOLEAN DEFAULT FALSE</sql>
+    <sql>ALTER TABLE knowledge_document ADD COLUMN IF NOT EXISTS indexed_at TIMESTAMP WITH TIME ZONE</sql>
+  </changeSet>
+
+</databaseChangeLog>

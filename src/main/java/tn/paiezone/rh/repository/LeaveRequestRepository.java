@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.LeaveRequest;
+import tn.paiezone.rh.domain.enumeration.LeaveStatus;
 
 /**
  * Spring Data JPA repository for the LeaveRequest entity.
@@ -21,5 +22,5 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
     )
     List<LeaveRequest> findApprovedByEmployeeAndMonth(@Param("empId") Long empId, @Param("month") int month, @Param("year") int year);
 
-    long countByStatus(String status);
+    long countByStatus(LeaveStatus status);
 }

@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.TaxBracketDTO;
 /**
  * Mapper for the entity {@link TaxBracket} and its DTO {@link TaxBracketDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TaxBracketMapper extends EntityMapper<TaxBracketDTO, TaxBracket> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     TaxBracketDTO toDto(TaxBracket s);

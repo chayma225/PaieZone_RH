@@ -11,7 +11,7 @@ import tn.paiezone.rh.service.dto.UserProfileDTO;
 /**
  * Mapper for the entity {@link AuditLog} and its DTO {@link AuditLogDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AuditLogMapper extends EntityMapper<AuditLogDTO, AuditLog> {
     @Mapping(target = "user", source = "user", qualifiedByName = "userProfileId")
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")

@@ -146,6 +146,11 @@ public class EmployeeCriteria implements Serializable, Criteria {
 
     private Boolean distinct;
 
+    private BigDecimalFilter salaryBrut;
+    private BigDecimalFilter salaryNet;
+    private IntegerFilter balanceConge;
+    private StringFilter jobTitle;
+
     public EmployeeCriteria() {}
 
     public EmployeeCriteria(EmployeeCriteria other) {
@@ -183,6 +188,76 @@ public class EmployeeCriteria implements Serializable, Criteria {
         this.managerId = other.optionalManagerId().map(LongFilter::copy).orElse(null);
         this.userProfileId = other.optionalUserProfileId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
+    }
+
+    // ── Getters / Setters + Optional (même pattern que les autres champs) ──
+
+    public BigDecimalFilter getSalaryBrut() {
+        return salaryBrut;
+    }
+
+    public Optional<BigDecimalFilter> optionalSalaryBrut() {
+        return Optional.ofNullable(salaryBrut);
+    }
+
+    public BigDecimalFilter salaryBrut() {
+        if (salaryBrut == null) setSalaryBrut(new BigDecimalFilter());
+        return salaryBrut;
+    }
+
+    public void setSalaryBrut(BigDecimalFilter salaryBrut) {
+        this.salaryBrut = salaryBrut;
+    }
+
+    public BigDecimalFilter getSalaryNet() {
+        return salaryNet;
+    }
+
+    public Optional<BigDecimalFilter> optionalSalaryNet() {
+        return Optional.ofNullable(salaryNet);
+    }
+
+    public BigDecimalFilter salaryNet() {
+        if (salaryNet == null) setSalaryNet(new BigDecimalFilter());
+        return salaryNet;
+    }
+
+    public void setSalaryNet(BigDecimalFilter salaryNet) {
+        this.salaryNet = salaryNet;
+    }
+
+    public IntegerFilter getBalanceConge() {
+        return balanceConge;
+    }
+
+    public Optional<IntegerFilter> optionalBalanceConge() {
+        return Optional.ofNullable(balanceConge);
+    }
+
+    public IntegerFilter balanceConge() {
+        if (balanceConge == null) setBalanceConge(new IntegerFilter());
+        return balanceConge;
+    }
+
+    public void setBalanceConge(IntegerFilter balanceConge) {
+        this.balanceConge = balanceConge;
+    }
+
+    public StringFilter getJobTitle() {
+        return jobTitle;
+    }
+
+    public Optional<StringFilter> optionalJobTitle() {
+        return Optional.ofNullable(jobTitle);
+    }
+
+    public StringFilter jobTitle() {
+        if (jobTitle == null) setJobTitle(new StringFilter());
+        return jobTitle;
+    }
+
+    public void setJobTitle(StringFilter jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     @Override

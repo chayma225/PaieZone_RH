@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.CompanyDTO;
 /**
  * Mapper for the entity {@link AccountPlan} and its DTO {@link AccountPlanDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AccountPlanMapper extends EntityMapper<AccountPlanDTO, AccountPlan> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     AccountPlanDTO toDto(AccountPlan s);

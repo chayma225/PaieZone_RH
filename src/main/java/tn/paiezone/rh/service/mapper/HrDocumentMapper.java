@@ -11,7 +11,7 @@ import tn.paiezone.rh.service.dto.UserProfileDTO;
 /**
  * Mapper for the entity {@link HrDocument} and its DTO {@link HrDocumentDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface HrDocumentMapper extends EntityMapper<HrDocumentDTO, HrDocument> {
     @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
     @Mapping(target = "uploadedBy", source = "uploadedBy", qualifiedByName = "userProfileId")

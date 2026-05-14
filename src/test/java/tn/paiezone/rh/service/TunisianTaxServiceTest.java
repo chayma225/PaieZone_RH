@@ -134,23 +134,24 @@ class TunisianTaxServiceTest {
 
     private List<TaxBracket> buildBareme2026() {
         return List.of(
-            tranche(1, "0", "5000", "0.00"),
-            tranche(2, "5000.001", "10000", "0.15"),
-            tranche(3, "10000.001", "20000", "0.25"),
-            tranche(4, "20000.001", "30000", "0.30"),
-            tranche(5, "30000.001", "40000", "0.33"),
-            tranche(6, "40000.001", "50000", "0.36"),
-            tranche(7, "50000.001", "70000", "0.38"),
-            tranche(8, "70000.001", null, "0.40")
+            tranche(1, "0", "5000", "0.00", "0"),
+            tranche(2, "5000.001", "10000", "0.15", "750"),
+            tranche(3, "10000.001", "20000", "0.25", "1750"),
+            tranche(4, "20000.001", "30000", "0.30", "2750"),
+            tranche(5, "30000.001", "40000", "0.33", "3650"),
+            tranche(6, "40000.001", "50000", "0.36", "4850"),
+            tranche(7, "50000.001", "70000", "0.38", "5850"),
+            tranche(8, "70000.001", null, "0.40", "7250")
         );
     }
 
-    private TaxBracket tranche(int order, String min, String max, String rate) {
+    private TaxBracket tranche(int order, String min, String max, String rate, String fixedDeduction) {
         TaxBracket t = new TaxBracket();
         t.setSortOrder(order);
         t.setMinIncome(new BigDecimal(min));
         t.setMaxIncome(max != null ? new BigDecimal(max) : null);
         t.setRate(new BigDecimal(rate));
+        t.setFixedDeduction(new BigDecimal(fixedDeduction));
         t.setYear(2026);
         return t;
     }

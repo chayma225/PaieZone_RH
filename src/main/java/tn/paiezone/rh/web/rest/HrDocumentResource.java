@@ -2,6 +2,7 @@ package tn.paiezone.rh.web.rest;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -13,8 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -160,6 +163,51 @@ public class HrDocumentResource {
         LOG.debug("REST request to get HrDocument : {}", id);
         Optional<HrDocumentDTO> hrDocumentDTO = hrDocumentService.findOne(id);
         return ResponseUtil.wrapOrNotFound(hrDocumentDTO);
+    }
+
+    /**
+     * {@code POST  /hr-documents/{id}/upload} : Upload un fichier pour un document existant.
+     */
+    @PostMapping(value = "/{id}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<HrDocumentDTO> uploadFile(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file)
+        throws IOException {
+        LOG.debug("REST request to upload file for HrDocument : {}", id);
+        if (!hrDocumentRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        HrDocumentDTO dto = hrDocumentService
+            .findOne(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
+
+        dto.setFileData(file.getBytes());
+        dto.setFileDataContentType(file.getContentType());
+        dto.setFileSize(file.getSize());
+        if (dto.getMimeType() == null) dto.setMimeType(file.getContentType());
+
+        HrDocumentDTO result = hrDocumentService.update(dto);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .body(result);
+    }
+
+    /**
+     * {@code GET  /hr-documents/{id}/file} : Télécharge le fichier binaire du document.
+     */
+    @GetMapping("/{id}/file")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable("id") Long id) {
+        LOG.debug("REST request to download file for HrDocument : {}", id);
+        return hrDocumentService
+            .findOne(id)
+            .filter(dto -> dto.getFileData() != null)
+            .map(dto -> {
+                String contentType =
+                    dto.getFileDataContentType() != null ? dto.getFileDataContentType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;
+                return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"document-" + id + "\"")
+                    .body(dto.getFileData());
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 
     /**

@@ -1,50 +1,75 @@
 package tn.paiezone.rh.service;
 
-import tn.paiezone.rh.domain.*;
-import tn.paiezone.rh.domain.enumeration.*;
-import tn.paiezone.rh.repository.*;
-import tn.paiezone.rh.service.dto.BulkCalculationResultDTO;
-import tn.paiezone.rh.service.impl.PayrollCalculationServiceImpl;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import tn.paiezone.rh.domain.*;
+import tn.paiezone.rh.domain.enumeration.*;
+import tn.paiezone.rh.repository.*;
+import tn.paiezone.rh.service.dto.BulkCalculationResultDTO;
+import tn.paiezone.rh.service.impl.PayrollCalculationServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class PayrollCalculationServiceTest {
 
-    @Mock TunisianTaxService         taxService;
-    @Mock EmployeeRepository         employeeRepository;
-    @Mock ContractRepository         contractRepository;
-    @Mock RubriqueRepository         rubriqueRepository;
-    @Mock PaySlipRepository          paySlipRepository;
-    @Mock PaySlipLineRepository      paySlipLineRepository;
-    @Mock BonusRepository            bonusRepository;
-    @Mock AdvanceRepository          advanceRepository;
-    @Mock PayrollPeriodRepository    periodRepository;
-    @Mock TimeEntryRepository        timeEntryRepository;
-    @Mock RegulatoryParamRepository  paramRepository;
+    @Mock
+    TunisianTaxService taxService;
+
+    @Mock
+    EmployeeRepository employeeRepository;
+
+    @Mock
+    ContractRepository contractRepository;
+
+    @Mock
+    RubriqueRepository rubriqueRepository;
+
+    @Mock
+    PaySlipRepository paySlipRepository;
+
+    @Mock
+    PaySlipLineRepository paySlipLineRepository;
+
+    @Mock
+    BonusRepository bonusRepository;
+
+    @Mock
+    AdvanceRepository advanceRepository;
+
+    @Mock
+    PayrollPeriodRepository periodRepository;
+
+    @Mock
+    TimeEntryRepository timeEntryRepository;
+
+    @Mock
+    PublicHolidayRepository publicHolidayRepository;
+
+    @Mock
+    LeaveRequestRepository leaveRequestRepository;
+
+    @Mock
+    RegulatoryParamRepository paramRepository;
 
     @InjectMocks
     PayrollCalculationServiceImpl calculationService;
 
-    private Employee    employee;
+    private Employee employee;
     private PayrollPeriod period;
-    private Contract    contract;
-    private Company     company;
+    private Contract contract;
+    private Company company;
 
     @BeforeEach
     void setUp() {
@@ -74,6 +99,7 @@ class PayrollCalculationServiceTest {
         contract.setBaseSalary(new BigDecimal("2000"));
         contract.setStatus(ContractStatus.ACTIVE);
         contract.setEmployee(employee);
+        contract.setStartDate(LocalDate.of(2024, 1, 1));
     }
 
     // ── TEST 1 : Calcul normal ─────────────────────────────────────
@@ -82,30 +108,23 @@ class PayrollCalculationServiceTest {
         // Arrange
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(periodRepository.findById(1L)).thenReturn(Optional.of(period));
-        when(contractRepository.findActiveContractByEmployee(eq(10L), any()))
-            .thenReturn(Optional.of(contract));
-        when(rubriqueRepository.findByCompanyIdAndActiveTrueOrderBySortOrderAsc(1L))
-            .thenReturn(List.of());                    // pas de rubriques variables
-        when(timeEntryRepository.findValidatedByEmployeeAndMonth(10L, 1, 2026))
-            .thenReturn(List.of());                    // pas d'heures sup
-        when(bonusRepository.findByEmployeeIdAndMonthAndYear(10L, 1, 2026))
-            .thenReturn(List.of());                    // pas de primes
-        when(advanceRepository.findApprovedForDeduction(10L, 1, 2026))
-            .thenReturn(List.of());                    // pas d'avances
-        when(paySlipRepository.findByEmployeeIdAndPayrollPeriodId(10L, 1L))
-            .thenReturn(Optional.empty());
-        when(paramRepository.findActiveByKeyAndDate(eq("HEURES_MENSUELLES_BASE"), any()))
-            .thenReturn(Optional.of(param("HEURES_MENSUELLES_BASE", "173.33")));
+        when(contractRepository.findActiveContractByEmployee(eq(10L), any())).thenReturn(Optional.of(contract));
+        when(rubriqueRepository.findByCompanyIdAndActiveTrueOrderBySortOrderAsc(1L)).thenReturn(List.of()); // pas de rubriques variables
+        when(timeEntryRepository.findValidatedByEmployeeAndMonth(10L, 1, 2026)).thenReturn(List.of()); // pas d'heures sup
+        when(bonusRepository.findByEmployeeIdAndMonthAndYear(10L, 1, 2026)).thenReturn(List.of()); // pas de primes
+        when(advanceRepository.findApprovedForDeduction(10L, 1, 2026)).thenReturn(List.of()); // pas d'avances
+        when(paySlipRepository.findByEmployeeIdAndPayrollPeriodId(10L, 1L)).thenReturn(Optional.empty());
+        when(publicHolidayRepository.findByYearAndActiveTrue(2026)).thenReturn(List.of());
+        when(leaveRequestRepository.findApprovedByEmployeeAndMonth(10L, 1, 2026)).thenReturn(List.of());
 
         // Simuler TunisianTaxService (déjà testé séparément)
-        when(taxService.calculateCnssSalariale(any(), any()))
-            .thenReturn(new BigDecimal("193.600"));
-        when(taxService.calculateCss(any(), any()))
-            .thenReturn(new BigDecimal("9.032"));
-        when(taxService.calculateIrppMensuel(any(), any(), any()))
-            .thenReturn(new BigDecimal("253.683"));
-        when(taxService.calculateCnssPatronale(any(), any()))
-            .thenReturn(new BigDecimal("331.400"));
+        when(taxService.calculateEmployeeCnss(any(), anyInt())).thenReturn(new BigDecimal("193.600"));
+        when(taxService.calculateEmployerCnss(any(), anyInt())).thenReturn(new BigDecimal("331.400"));
+        when(taxService.calculateCavisEmployee(any(), anyInt())).thenReturn(BigDecimal.ZERO);
+        when(taxService.calculateCavisEmployer(any(), anyInt())).thenReturn(BigDecimal.ZERO);
+        when(taxService.calculateCss(any(), anyInt())).thenReturn(new BigDecimal("9.032"));
+        when(taxService.calculateMonthlyIrpp(any(), anyInt(), any())).thenReturn(new BigDecimal("253.683"));
+        when(taxService.calculateTfp(any(), anyInt())).thenReturn(BigDecimal.ZERO);
         when(paySlipRepository.save(any())).thenAnswer(inv -> {
             PaySlip ps = inv.getArgument(0);
             ps.setId(100L);
@@ -143,8 +162,7 @@ class PayrollCalculationServiceTest {
     void calculatePaySlip_sansContratActif_doitLeverException() {
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(periodRepository.findById(1L)).thenReturn(Optional.of(period));
-        when(contractRepository.findActiveContractByEmployee(eq(10L), any()))
-            .thenReturn(Optional.empty());
+        when(contractRepository.findActiveContractByEmployee(eq(10L), any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> calculationService.calculatePaySlip(10L, 1L))
             .isInstanceOf(IllegalStateException.class)
@@ -159,30 +177,25 @@ class PayrollCalculationServiceTest {
 
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(periodRepository.findById(1L)).thenReturn(Optional.of(period));
-        when(contractRepository.findActiveContractByEmployee(eq(10L), any()))
-            .thenReturn(Optional.of(contract));
-        when(rubriqueRepository.findByCompanyIdAndActiveTrueOrderBySortOrderAsc(1L))
-            .thenReturn(List.of());
-        when(timeEntryRepository.findValidatedByEmployeeAndMonth(10L, 1, 2026))
-            .thenReturn(List.of());
-        when(bonusRepository.findByEmployeeIdAndMonthAndYear(10L, 1, 2026))
-            .thenReturn(List.of(prime));              // ← prime de 200 DT
-        when(advanceRepository.findApprovedForDeduction(10L, 1, 2026))
-            .thenReturn(List.of());
-        when(paySlipRepository.findByEmployeeIdAndPayrollPeriodId(10L, 1L))
-            .thenReturn(Optional.empty());
-        when(paramRepository.findActiveByKeyAndDate(eq("HEURES_MENSUELLES_BASE"), any()))
-            .thenReturn(Optional.of(param("HEURES_MENSUELLES_BASE", "173.33")));
-        when(taxService.calculateCnssSalariale(any(), any()))
-            .thenReturn(new BigDecimal("193.600"));
-        when(taxService.calculateCss(any(), any()))
-            .thenReturn(new BigDecimal("9.032"));
-        when(taxService.calculateIrppMensuel(any(), any(), any()))
-            .thenReturn(new BigDecimal("253.683"));
-        when(taxService.calculateCnssPatronale(any(), any()))
-            .thenReturn(new BigDecimal("331.400"));
+        when(contractRepository.findActiveContractByEmployee(eq(10L), any())).thenReturn(Optional.of(contract));
+        when(rubriqueRepository.findByCompanyIdAndActiveTrueOrderBySortOrderAsc(1L)).thenReturn(List.of());
+        when(timeEntryRepository.findValidatedByEmployeeAndMonth(10L, 1, 2026)).thenReturn(List.of());
+        when(bonusRepository.findByEmployeeIdAndMonthAndYear(10L, 1, 2026)).thenReturn(List.of(prime)); // ← prime de 200 DT
+        when(advanceRepository.findApprovedForDeduction(10L, 1, 2026)).thenReturn(List.of());
+        when(paySlipRepository.findByEmployeeIdAndPayrollPeriodId(10L, 1L)).thenReturn(Optional.empty());
+        when(publicHolidayRepository.findByYearAndActiveTrue(2026)).thenReturn(List.of());
+        when(leaveRequestRepository.findApprovedByEmployeeAndMonth(10L, 1, 2026)).thenReturn(List.of());
+        when(taxService.calculateEmployeeCnss(any(), anyInt())).thenReturn(new BigDecimal("193.600"));
+        when(taxService.calculateEmployerCnss(any(), anyInt())).thenReturn(new BigDecimal("331.400"));
+        when(taxService.calculateCavisEmployee(any(), anyInt())).thenReturn(BigDecimal.ZERO);
+        when(taxService.calculateCavisEmployer(any(), anyInt())).thenReturn(BigDecimal.ZERO);
+        when(taxService.calculateCss(any(), anyInt())).thenReturn(new BigDecimal("9.032"));
+        when(taxService.calculateMonthlyIrpp(any(), anyInt(), any())).thenReturn(new BigDecimal("253.683"));
+        when(taxService.calculateTfp(any(), anyInt())).thenReturn(BigDecimal.ZERO);
         when(paySlipRepository.save(any())).thenAnswer(inv -> {
-            PaySlip ps = inv.getArgument(0); ps.setId(100L); return ps;
+            PaySlip ps = inv.getArgument(0);
+            ps.setId(100L);
+            return ps;
         });
 
         PaySlip result = calculationService.calculatePaySlip(10L, 1L);
@@ -202,15 +215,12 @@ class PayrollCalculationServiceTest {
         emp2.setNumberOfChildren(0);
 
         when(periodRepository.findById(1L)).thenReturn(Optional.of(period));
-        when(employeeRepository.findByCompanyIdAndActiveTrue(1L))
-            .thenReturn(List.of(employee, emp2));
+        when(employeeRepository.findByCompanyIdAndActiveTrue(1L)).thenReturn(List.of(employee, emp2));
 
         // Simuler calculatePaySlip pour les 2 employés
         PayrollCalculationServiceImpl spy = spy(calculationService);
-        doReturn(mockPaySlip(new BigDecimal("1543.685"), new BigDecimal("2000")))
-            .when(spy).calculatePaySlip(10L, 1L);
-        doReturn(mockPaySlip(new BigDecimal("1200.000"), new BigDecimal("1500")))
-            .when(spy).calculatePaySlip(11L, 1L);
+        doReturn(mockPaySlip(new BigDecimal("1543.685"), new BigDecimal("2000"))).when(spy).calculatePaySlip(10L, 1L);
+        doReturn(mockPaySlip(new BigDecimal("1200.000"), new BigDecimal("1500"))).when(spy).calculatePaySlip(11L, 1L);
 
         BulkCalculationResultDTO result = spy.calculateAllPaySlips(1L);
 

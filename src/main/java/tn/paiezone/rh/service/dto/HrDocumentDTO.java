@@ -25,6 +25,10 @@ public class HrDocumentDTO implements Serializable {
     @Size(max = 500)
     private String description;
 
+    private byte[] fileData;
+
+    private String fileDataContentType;
+
     @Size(max = 500)
     private String fileUrl;
 
@@ -75,6 +79,22 @@ public class HrDocumentDTO implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public byte[] getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(byte[] fileData) {
+        this.fileData = fileData;
+    }
+
+    public String getFileDataContentType() {
+        return fileDataContentType;
+    }
+
+    public void setFileDataContentType(String fileDataContentType) {
+        this.fileDataContentType = fileDataContentType;
     }
 
     public String getFileUrl() {

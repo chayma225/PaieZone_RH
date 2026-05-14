@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-add-file-data-to-hr-document" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="hr_document" columnName="file_data"/></not>
+    </preConditions>
+    <addColumn tableName="hr_document">
+      <column name="file_data" type="bytea"/>
+    </addColumn>
+    <addColumn tableName="hr_document">
+      <column name="file_data_content_type" type="varchar(255)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="sprint3-make-file-url-nullable-hr-document" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM information_schema.columns
+        WHERE table_name='hr_document' AND column_name='file_url' AND is_nullable='YES'
+      </sqlCheck>
+    </preConditions>
+    <dropNotNullConstraint tableName="hr_document" columnName="file_url" columnDataType="varchar(500)"/>
+  </changeSet>
+
+</databaseChangeLog>

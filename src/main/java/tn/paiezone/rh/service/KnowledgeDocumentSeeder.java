@@ -4,15 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import tn.paiezone.rh.repository.CompanyRepository;
 
 /**
  * Seeder automatique — s'exécute une seule fois au démarrage de l'application.
@@ -28,80 +25,36 @@ public class KnowledgeDocumentSeeder implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(KnowledgeDocumentSeeder.class);
 
     private final DataSource dataSource;
-    private final CompanyRepository companyRepository;
 
-    public KnowledgeDocumentSeeder(DataSource dataSource, CompanyRepository companyRepository) {
+    public KnowledgeDocumentSeeder(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.companyRepository = companyRepository;
     }
 
     @Override
     public void run(ApplicationArguments args) {
         log.info("=== KnowledgeDocumentSeeder : démarrage ===");
-
-        List<String> schemas = getTenantSchemas();
-        log.info("Tenants actifs détectés : {}", schemas.size());
-
-        for (String schema : schemas) {
-            try {
-                seedForTenant(schema);
-            } catch (Exception e) {
-                log.warn("Impossible de seeder le schéma [{}] : {}", schema, e.getMessage());
-            }
+        try {
+            seedPublicSchema();
+        } catch (Exception e) {
+            log.warn("Impossible de seeder knowledge_document : {}", e.getMessage());
         }
-
         log.info("=== KnowledgeDocumentSeeder : terminé ===");
     }
 
-    /**
-     * Récupère tous les tenantSchema des entreprises actives.
-     * Utilise une connexion raw pour lire depuis le schéma public.
-     */
-    private List<String> getTenantSchemas() {
-        List<String> schemas = new ArrayList<>();
-        String sql = "SELECT tenant_schema FROM company WHERE active = true AND tenant_schema IS NOT NULL";
-
-        try (Connection conn = dataSource.getConnection(); ResultSet rs = conn.createStatement().executeQuery(sql)) {
-            while (rs.next()) {
-                schemas.add(rs.getString("tenant_schema"));
-            }
-        } catch (SQLException e) {
-            log.error("Erreur lecture des tenants : {}", e.getMessage());
-        }
-
-        return schemas;
-    }
-
-    /**
-     * Pour un tenant donné :
-     * 1. Switche vers son schéma PostgreSQL
-     * 2. Vérifie si knowledge_document est vide
-     * 3. Insère les documents de référence si besoin
-     */
-    public void seedForTenant(String schema) throws SQLException {
-        // Validation basique du nom de schéma (évite injection SQL)
-        if (!schema.matches("^[a-z][a-z0-9_]{1,62}$")) {
-            log.warn("Schéma invalide ignoré : {}", schema);
-            return;
-        }
-
+    // knowledge_document est une table globale dans le schéma public (non per-tenant)
+    private void seedPublicSchema() throws SQLException {
         try (Connection conn = dataSource.getConnection()) {
-            // Switcher vers le schéma du tenant
-            conn.createStatement().execute("SET search_path TO " + schema);
-
-            // Vérifier si déjà seedé
             ResultSet rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM knowledge_document WHERE active = true");
             rs.next();
             long count = rs.getLong(1);
 
             if (count > 0) {
-                log.debug("Schéma [{}] déjà seedé ({} documents)", schema, count);
+                log.debug("Knowledge documents déjà présents ({} documents) — seeder ignoré", count);
                 return;
             }
 
-            // Insérer les documents de référence
-            insertDocuments(conn, schema);
-            log.info("✓ Knowledge documents insérés pour le schéma [{}]", schema);
+            insertDocuments(conn, "public");
+            log.info("✓ Knowledge documents insérés dans le schéma public");
         }
     }
 

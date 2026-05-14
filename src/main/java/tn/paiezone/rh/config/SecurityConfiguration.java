@@ -89,6 +89,10 @@ public class SecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/api/account/reset-password/finish")
                     .permitAll()
+                    .requestMatchers("/api/account/invitation/finish")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/verify-2fa")
+                    .permitAll()
                     .requestMatchers("/api/2fa/**")
                     .authenticated()
                     // ═══════════════════════════════════════════════════════════════════

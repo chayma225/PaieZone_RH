@@ -7,5 +7,5 @@ import tn.paiezone.rh.service.dto.RegulatoryParamDTO;
 /**
  * Mapper for the entity {@link RegulatoryParam} and its DTO {@link RegulatoryParamDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RegulatoryParamMapper extends EntityMapper<RegulatoryParamDTO, RegulatoryParam> {}

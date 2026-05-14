@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\chayma\\\\PaieZoneRH\" -File)",
+      "Bash(Select-Object Name)",
+      "Bash(./mvnw clean *)",
+      "Bash(./mvnw.cmd verify *)",
+      "PowerShell(.\\\\mvnw.cmd verify -DskipTests=false -Denforcer.skip=true 2>&1)",
+      "PowerShell(.\\\\mvnw.cmd verify \"-DskipTests=false\" \"-Denforcer.skip=true\" 2>&1)",
+      "PowerShell(.\\\\mvnw.cmd verify \"-DskipUnitTests\" \"-Denforcer.skip=true\" 2>&1)",
+      "PowerShell(Out-File *)",
+      "PowerShell(Get-Content \"C:\\\\Users\\\\chayma\\\\PaieZoneRH\\\\target\\\\it-test-output.txt\" | Select-String -Pattern \"\\(Caused by|liquibase|ChangeSet|DatabaseException|FK|foreign key|ApplicationContext failed\\)\" | Select-Object -First 30 | ForEach-Object { $_.Line })",
+      "PowerShell(.\\\\mvnw.cmd spring-boot:run \"-DskipTests\" \"-Denforcer.skip=true\" 2>&1)",
+      "PowerShell(.\\\\mvnw.cmd spring-boot:run \"-DskipTests\" \"-Denforcer.skip=true\")",
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(.\\\\mvnw.cmd spring-boot:run *)",
+      "PowerShell(.\\\\mvnw.cmd spring-boot:run -DskipTests -Denforcer.skip=true)",
+      "PowerShell(netstat *)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://localhost:8080/actuator/health\" -TimeoutSec 5 -ErrorAction Stop; $response.StatusCode } catch { $_.Exception.Message })",
+      "PowerShell($ProgressPreference = 'SilentlyContinue'; Invoke-RestMethod -Uri \"http://localhost:8080/actuator/health\" -Method Get -TimeoutSec 5 2>&1)",
+      "PowerShell($ProgressPreference = 'SilentlyContinue'; try { $r = Invoke-RestMethod -Uri \"http://localhost:8080/api/authenticate\" -Method POST -ContentType \"application/json\" -Body '{\"username\":\"admin\",\"password\":\"admin\",\"rememberMe\":false}' -TimeoutSec 10; $r } catch { $_.Exception.Message })",
+      "PowerShell(Get-Command *)"
+    ]
+  }
+}

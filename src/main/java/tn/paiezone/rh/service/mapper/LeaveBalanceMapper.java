@@ -11,7 +11,7 @@ import tn.paiezone.rh.service.dto.LeaveTypeDTO;
 /**
  * Mapper for the entity {@link LeaveBalance} and its DTO {@link LeaveBalanceDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LeaveBalanceMapper extends EntityMapper<LeaveBalanceDTO, LeaveBalance> {
     @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
     @Mapping(target = "leaveType", source = "leaveType", qualifiedByName = "leaveTypeId")

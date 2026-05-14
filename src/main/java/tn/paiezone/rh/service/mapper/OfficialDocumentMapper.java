@@ -13,7 +13,7 @@ import tn.paiezone.rh.service.dto.UserProfileDTO;
 /**
  * Mapper for the entity {@link OfficialDocument} and its DTO {@link OfficialDocumentDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OfficialDocumentMapper extends EntityMapper<OfficialDocumentDTO, OfficialDocument> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")

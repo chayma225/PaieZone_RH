@@ -13,7 +13,7 @@ import tn.paiezone.rh.service.dto.UserProfileDTO;
 /**
  * Mapper for the entity {@link LeaveRequest} and its DTO {@link LeaveRequestDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LeaveRequestMapper extends EntityMapper<LeaveRequestDTO, LeaveRequest> {
     @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
     @Mapping(target = "leaveType", source = "leaveType", qualifiedByName = "leaveTypeId")

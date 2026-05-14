@@ -71,6 +71,7 @@
     </preConditions>
     <comment>CNSS Taux Salarié 9.18% — pilotable Super Admin</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="CNSS_TAUX_SALARIAL"/>
       <column name="param_label"     value="Taux CNSS salarié (9.18%)"/>
       <column name="numeric_value"   valueNumeric="0.0918"/>
@@ -90,6 +91,7 @@
     </preConditions>
     <comment>CNSS Taux Patronal 16.57% — pilotable Super Admin</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="CNSS_TAUX_PATRONAL"/>
       <column name="param_label"     value="Taux CNSS patronal (16.57%)"/>
       <column name="numeric_value"   valueNumeric="0.1657"/>
@@ -109,6 +111,7 @@
     </preConditions>
     <comment>Plafond mensuel CNSS 3000 DT 2026</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="CNSS_PLAFOND_MENSUEL"/>
       <column name="param_label"     value="Plafond mensuel CNSS (DT)"/>
       <column name="numeric_value"   valueNumeric="3000.0000"/>
@@ -128,6 +131,7 @@
     </preConditions>
     <comment>CAVIS Taux Salarié 1%</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="CAVIS_TAUX_SALARIE"/>
       <column name="param_label"     value="Taux CAVIS salarié (1%)"/>
       <column name="numeric_value"   valueNumeric="0.0100"/>
@@ -146,6 +150,7 @@
     </preConditions>
     <comment>CSS — Contribution Sociale de Solidarité 0.5%</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="CSS_TAUX"/>
       <column name="param_label"     value="Contribution Sociale de Solidarité (0.5%)"/>
       <column name="numeric_value"   valueNumeric="0.0050"/>
@@ -164,6 +169,7 @@
     </preConditions>
     <comment>TFP — Taxe Formation Professionnelle patronale 1%</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="TFP_TAUX"/>
       <column name="param_label"     value="Taxe Formation Professionnelle patronale (1%)"/>
       <column name="numeric_value"   valueNumeric="0.0100"/>
@@ -182,6 +188,7 @@
     </preConditions>
     <comment>Coefficient HS jour ×1.25</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="TAUX_HS_25"/>
       <column name="param_label"     value="Coefficient heures supplémentaires jour (×1.25)"/>
       <column name="numeric_value"   valueNumeric="1.2500"/>
@@ -201,6 +208,7 @@
     </preConditions>
     <comment>Coefficient HS nuit/férié ×1.50</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="TAUX_HS_50"/>
       <column name="param_label"     value="Coefficient heures supplémentaires nuit/férié (×1.50)"/>
       <column name="numeric_value"   valueNumeric="1.5000"/>
@@ -220,6 +228,7 @@
     </preConditions>
     <comment>Heures mensuelles de référence 173.33h</comment>
     <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
       <column name="param_key"       value="HEURES_MENSUELLES_BASE"/>
       <column name="param_label"     value="Heures mensuelles de référence (173.33h)"/>
       <column name="numeric_value"   valueNumeric="173.3300"/>

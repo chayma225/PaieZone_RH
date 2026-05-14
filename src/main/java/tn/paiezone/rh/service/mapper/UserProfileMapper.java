@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.UserProfileDTO;
 /**
  * Mapper for the entity {@link UserProfile} and its DTO {@link UserProfileDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserProfileMapper extends EntityMapper<UserProfileDTO, UserProfile> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     UserProfileDTO toDto(UserProfile s);

@@ -41,15 +41,13 @@ public class TwoFactorAuthService {
                 if (stored != null && stored.contains("|")) {
                     long expiry = Long.parseLong(stored.split("\\|")[1]);
                     long now = Instant.now().toEpochMilli();
-
-                    // Si le code expire dans plus de 4min 50s, c'est qu'on vient d'en envoyer un.
-                    // On bloque le deuxième envoi.
-                    if (expiry - now > 290000) {
+                    // Code encore valide → ne pas renvoyer un nouveau mail
+                    if (expiry > now) {
                         return true;
                     }
                 }
 
-                String code = String.format("%06d", new java.util.Random().nextInt(999999));
+                String code = String.format("%06d", new java.util.Random().nextInt(1000000));
                 userProfile.setTwoFactorSecret(code + "|" + Instant.now().plus(5, java.time.temporal.ChronoUnit.MINUTES).toEpochMilli());
 
                 userProfileRepository.saveAndFlush(userProfile); // On force l'enregistrement immédiat
@@ -76,13 +74,20 @@ public class TwoFactorAuthService {
                     return false;
                 }
 
-                String[] parts = stored.split("\\|");
-                String storedCode = parts[0];
+                String[] parts = stored.split("\\|", 2);
+                String storedCode = parts[0].trim();
+                long expiry = Long.parseLong(parts[1]);
+                long now = Instant.now().toEpochMilli();
 
-                // On affiche exactement ce qu'on compare avec des crochets
+                if (now > expiry) {
+                    LOG.error("CODE EXPIRÉ pour {}", login);
+                    userProfile.setTwoFactorSecret(null);
+                    userProfileRepository.save(userProfile);
+                    return false;
+                }
+
                 LOG.info("COMPARAISON -> Saisi: [{}] | En base: [{}]", code, storedCode);
-
-                boolean valid = storedCode.trim().equals(code.trim());
+                boolean valid = storedCode.equals(code.trim());
 
                 if (valid) {
                     userProfile.setTwoFactorSecret(null);

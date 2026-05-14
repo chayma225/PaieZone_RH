@@ -11,7 +11,7 @@ import tn.paiezone.rh.service.dto.UserProfileDTO;
 /**
  * Mapper for the entity {@link Contract} and its DTO {@link ContractDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ContractMapper extends EntityMapper<ContractDTO, Contract> {
     @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeId")
     @Mapping(target = "createdBy", source = "createdBy", qualifiedByName = "userProfileId")

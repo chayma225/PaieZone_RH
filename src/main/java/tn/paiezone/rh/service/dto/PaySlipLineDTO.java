@@ -2,11 +2,10 @@ package tn.paiezone.rh.service.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import tn.paiezone.rh.domain.enumeration.RubriqueType;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import tn.paiezone.rh.domain.enumeration.RubriqueType;
 
 public class PaySlipLineDTO implements Serializable {
 
@@ -41,52 +40,108 @@ public class PaySlipLineDTO implements Serializable {
 
     // ── Getters / Setters ──────────────────────────────────────────
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Integer getSortOrder() { return sortOrder; }
-    public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getRubriqueCode() { return rubriqueCode; }
-    public void setRubriqueCode(String rubriqueCode) { this.rubriqueCode = rubriqueCode; }
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
 
-    public String getRubriqueLabel() { return rubriqueLabel; }
-    public void setRubriqueLabel(String rubriqueLabel) { this.rubriqueLabel = rubriqueLabel; }
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-    public RubriqueType getRubriqueType() { return rubriqueType; }
-    public void setRubriqueType(RubriqueType rubriqueType) { this.rubriqueType = rubriqueType; }
+    public String getRubriqueCode() {
+        return rubriqueCode;
+    }
 
-    public BigDecimal getBase() { return base; }
-    public void setBase(BigDecimal base) { this.base = base; }
+    public void setRubriqueCode(String rubriqueCode) {
+        this.rubriqueCode = rubriqueCode;
+    }
 
-    public BigDecimal getRate() { return rate; }
-    public void setRate(BigDecimal rate) { this.rate = rate; }
+    public String getRubriqueLabel() {
+        return rubriqueLabel;
+    }
 
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public void setRubriqueLabel(String rubriqueLabel) {
+        this.rubriqueLabel = rubriqueLabel;
+    }
 
-    public Boolean getTaxable() { return taxable; }
-    public void setTaxable(Boolean taxable) { this.taxable = taxable; }
+    public RubriqueType getRubriqueType() {
+        return rubriqueType;
+    }
 
-    public Long getPaySlipId() { return paySlipId; }
-    public void setPaySlipId(Long paySlipId) { this.paySlipId = paySlipId; }
+    public void setRubriqueType(RubriqueType rubriqueType) {
+        this.rubriqueType = rubriqueType;
+    }
 
-    public Long getRubriqueId() { return rubriqueId; }
-    public void setRubriqueId(Long rubriqueId) { this.rubriqueId = rubriqueId; }
+    public BigDecimal getBase() {
+        return base;
+    }
+
+    public void setBase(BigDecimal base) {
+        this.base = base;
+    }
+
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public Boolean getTaxable() {
+        return taxable;
+    }
+
+    public void setTaxable(Boolean taxable) {
+        this.taxable = taxable;
+    }
+
+    public Long getPaySlipId() {
+        return paySlipId;
+    }
+
+    public void setPaySlipId(Long paySlipId) {
+        this.paySlipId = paySlipId;
+    }
+
+    public Long getRubriqueId() {
+        return rubriqueId;
+    }
+
+    public void setRubriqueId(Long rubriqueId) {
+        this.rubriqueId = rubriqueId;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PaySlipLineDTO)) return false;
-        return Objects.equals(id, ((PaySlipLineDTO) o).id);
+        return id != null && id.equals(((PaySlipLineDTO) o).id);
     }
 
     @Override
-    public int hashCode() { return Objects.hash(id); }
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
     @Override
     public String toString() {
-        return "PaySlipLineDTO{id=" + id + ", rubriqueCode='" + rubriqueCode +
-            "', amount=" + amount + "}";
+        return "PaySlipLineDTO{id=" + id + ", rubriqueCode='" + rubriqueCode + "', amount=" + amount + "}";
     }
 }

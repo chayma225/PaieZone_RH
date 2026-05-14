@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        FIX : la colonne bank_rib existe dans Employee.java mais pas en base.
+        Cause : migration Liquibase manquante → INSERT employee échoue avec 500.
+
+        À ajouter dans master.xml :
+        <include file="config/liquibase/changelog/20260512000003_add_bank_rib_to_employee.xml"
+                 relativeToChangelogFile="false"/>
+    -->
+
+    <changeSet id="20260512000030" author="paiezone">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists tableName="employee" columnName="bank_rib"/></not>
+        </preConditions>
+
+        <addColumn tableName="employee">
+            <column name="bank_rib" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

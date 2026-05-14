@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.RubriqueDTO;
 /**
  * Mapper for the entity {@link Rubrique} and its DTO {@link RubriqueDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RubriqueMapper extends EntityMapper<RubriqueDTO, Rubrique> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     RubriqueDTO toDto(Rubrique s);

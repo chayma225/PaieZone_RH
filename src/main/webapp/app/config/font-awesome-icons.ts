@@ -55,7 +55,11 @@ import {
   faSpinner,
   faComments,
   faHistory,
+  faFilter,
+  faBriefcase,
   faPaperPlane,
+  faArrowRight,
+  faFileAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -113,7 +117,11 @@ export const fontAwesomeIcons = [
   faCheckCircle,
   faTimesCircle,
   faMinus,
+  faFilter,
+  faBriefcase,
   faComments,
   faHistory,
   faPaperPlane,
+  faArrowRight,
+  faFileAlt,
 ];

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.jhipster.security.RandomUtil;
 import tn.paiezone.rh.domain.Authority;
 import tn.paiezone.rh.domain.Employee;
 import tn.paiezone.rh.domain.EmployeeHistory;
@@ -197,16 +198,19 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
             userDTO.setLangKey("fr");
             userDTO.setActivated(true);
 
-            String tempPassword = "Temp@" + employee.getMatricule();
             User user = userService.createUser(userDTO);
 
             // Ajouter rôle EMPLOYE
             Authority authority = new Authority();
             authority.setName(AuthoritiesConstants.EMPLOYE);
             user.getAuthorities().add(authority);
+
+            // Générer un resetKey pour que l'employé puisse définir son mot de passe
+            user.setResetKey(RandomUtil.generateResetKey());
+            user.setResetDate(Instant.now());
             userRepository.save(user);
 
-            // Envoyer email de bienvenue
+            // Envoyer email de bienvenue avec lien de définition de mot de passe
             mailService.sendCreationEmail(user);
 
             LOG.debug("Compte utilisateur créé pour l'employé : {}", employee.getMatricule());

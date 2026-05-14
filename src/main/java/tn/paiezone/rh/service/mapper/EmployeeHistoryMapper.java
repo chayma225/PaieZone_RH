@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.EmployeeHistoryDTO;
 /**
  * Mapper for the entity {@link EmployeeHistory} and its DTO {@link EmployeeHistoryDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EmployeeHistoryMapper extends EntityMapper<EmployeeHistoryDTO, EmployeeHistory> {
     @Mapping(target = "employee", source = "employee", qualifiedByName = "employeeFullDetails")
     EmployeeHistoryDTO toDto(EmployeeHistory s);

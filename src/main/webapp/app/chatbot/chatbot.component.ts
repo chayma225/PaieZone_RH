@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatbotService } from './chatbot.service';
@@ -7,169 +7,143 @@ import { ChatSession, ChatMessage } from './chatbot.model';
 @Component({
   selector: 'jhi-chatbot',
   standalone: true,
+  // ─── FIX NG0100 définitif ────────────────────────────────────────────────
+  // OnPush : Angular ne re-vérifie ce composant QUE quand :
+  //   - une @Input() change
+  //   - un événement part du composant
+  //   - cd.markForCheck() est appelé explicitement
+  // → La clock de home.ts ne peut plus déclencher de vérification ici
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  // ─────────────────────────────────────────────────────────────────────────
   imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './chatbot.component.html',
   styleUrls: ['./chatbot.component.scss'],
 })
-export class ChatbotComponent implements OnInit, AfterViewChecked {
-  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
+export class ChatbotComponent implements OnInit {
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
-  // État de l'interface
+  private chatbotService = inject(ChatbotService);
+  private cd = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
   isOpen = false;
   isLoading = false;
   showSessions = false;
   ollamaOnline = true;
 
-  // Données
   currentMessage = '';
   sessions: ChatSession[] = [];
   activeSession: ChatSession | null = null;
   messages: ChatMessage[] = [];
-
-  private shouldScrollToBottom = false;
-
-  constructor(
-    private chatbotService: ChatbotService,
-    private cd: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.loadSessions();
     this.checkHealth();
   }
 
-  ngAfterViewChecked(): void {
-    if (this.shouldScrollToBottom) {
-      this.scrollToBottom();
-      this.shouldScrollToBottom = false;
-    }
-  }
-
-  // ===========================
-  //  Contrôle du panneau
-  // ===========================
+  // ── Public actions ────────────────────────────────────────────
 
   toggleChat(): void {
     this.isOpen = !this.isOpen;
-    // Si on ouvre le chat et qu'il n'y a pas de session, on en prépare une
     if (this.isOpen && !this.activeSession) {
-      if (this.sessions.length > 0) {
-        this.selectSession(this.sessions[0]);
-      } else {
-        this.startNewSession();
-      }
+      this.startNewSession();
     }
+    this.mark();
   }
 
   checkHealth(): void {
     this.chatbotService.checkHealth().subscribe({
-      next: () => (this.ollamaOnline = true),
-      error: () => (this.ollamaOnline = false),
+      next: () => {
+        this.ollamaOnline = true;
+        this.mark();
+      },
+      error: () => {
+        this.ollamaOnline = false;
+        this.mark();
+      },
     });
   }
 
-  // ===========================
-  //  Sessions
-  // ===========================
-
   loadSessions(): void {
     this.chatbotService.getSessions().subscribe({
-      next: sessions => (this.sessions = sessions),
-      error: err => console.error('Erreur chargement sessions chatbot:', err),
+      next: (sessions: ChatSession[]) => {
+        this.sessions = sessions;
+        this.mark();
+      },
+      error: (err: unknown) => console.error('Erreur sessions:', err),
     });
   }
 
   startNewSession(): void {
     this.chatbotService.createSession().subscribe({
-      next: session => {
+      next: (session: ChatSession) => {
         this.activeSession = session;
-        this.messages = [];
-        this.sessions.unshift(session);
+        this.sessions = [session, ...this.sessions];
         this.showSessions = false;
         this.showWelcomeMessage();
+        this.mark();
       },
-      error: err => console.error('Erreur création session:', err),
+      error: (err: unknown) => console.error('Erreur création session:', err),
     });
   }
 
   selectSession(session: ChatSession): void {
     this.chatbotService.getSession(session.id).subscribe({
-      next: fullSession => {
+      next: (fullSession: ChatSession) => {
         this.activeSession = fullSession;
         this.messages = fullSession.messages ?? [];
         this.showSessions = false;
-        this.shouldScrollToBottom = true;
+        this.mark();
+        this.scrollToBottom();
       },
-      error: err => console.error('Erreur chargement session:', err),
+      error: (err: unknown) => console.error('Erreur chargement session:', err),
     });
   }
 
-  // ===========================
-  //  Envoi de message
-  // ===========================
-
   sendMessage(): void {
     const text = this.currentMessage.trim();
-
-    // Si pas de texte ou déjà en train de charger, on ignore
-    if (!text || this.isLoading) return;
-
-    // SÉCURITÉ : Si la session est manquante, on la crée à la volée
-    if (!this.activeSession) {
-      this.isLoading = true;
-      this.chatbotService.createSession().subscribe({
-        next: session => {
-          this.activeSession = session;
-          this.sessions.unshift(session);
-          this.processMessageSending(text);
-        },
-        error: () => (this.isLoading = false),
-      });
-      return;
-    }
-
-    this.processMessageSending(text);
-  }
-
-  private processMessageSending(text: string): void {
-    if (!this.activeSession) return;
+    if (!text || !this.activeSession || this.isLoading) return;
 
     this.currentMessage = '';
     this.isLoading = true;
 
-    // UI Optimiste : Affichage immédiat du message utilisateur
-    this.messages.push({
-      id: Date.now() * -1,
-      sessionId: this.activeSession.id,
-      role: 'user',
-      content: text,
-      sentAt: new Date().toISOString(),
-      escalatedToHuman: false,
-    });
-
-    this.shouldScrollToBottom = true;
-    this.cd.detectChanges();
+    // Message optimiste immédiat
+    this.messages = [
+      ...this.messages,
+      {
+        id: Date.now() * -1,
+        sessionId: this.activeSession.id,
+        role: 'user',
+        content: text,
+        sentAt: new Date().toISOString(),
+        escalatedToHuman: false,
+      },
+    ];
+    this.mark();
+    this.scrollToBottom();
 
     this.chatbotService.sendMessage(this.activeSession.id, text).subscribe({
-      next: response => {
-        this.messages.push(response);
+      next: (response: ChatMessage) => {
+        this.messages = [...this.messages, response];
         this.isLoading = false;
-        this.shouldScrollToBottom = true;
-        this.loadSessions(); // Rafraîchir les titres si nécessaire
-        this.cd.detectChanges();
+        this.loadSessions();
+        this.mark();
+        this.scrollToBottom();
       },
-      error: () => {
+      error: (_err: unknown) => {
+        this.messages = [
+          ...this.messages,
+          {
+            id: Date.now() * -1,
+            sessionId: this.activeSession!.id,
+            role: 'assistant',
+            content: "⚠️ Erreur de connexion. Vérifiez qu'**Ollama est démarré** (`ollama serve`) et réessayez.",
+            sentAt: new Date().toISOString(),
+            escalatedToHuman: false,
+          },
+        ];
         this.isLoading = false;
-        this.messages.push({
-          id: Date.now() * -1,
-          sessionId: this.activeSession!.id,
-          role: 'assistant',
-          content: "⚠️ **Erreur de connexion.** Vérifiez qu'Ollama est lancé (`ollama serve`).",
-          sentAt: new Date().toISOString(),
-          escalatedToHuman: false,
-        });
-        this.shouldScrollToBottom = true;
-        this.cd.detectChanges();
+        this.mark();
       },
     });
   }
@@ -180,11 +154,7 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
       this.sendMessage();
     }
   }
-  // ===========================
-  //  Utilitaires
-  // ===========================
 
-  /** Convertit le Markdown basique en HTML pour l'affichage */
   formatContent(content: string): string {
     return content
       .replace(/&/g, '&amp;')
@@ -200,6 +170,8 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
     return msg.id;
   }
 
+  // ── Privés ───────────────────────────────────────────────────
+
   private showWelcomeMessage(): void {
     this.messages = [
       {
@@ -207,26 +179,34 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
         sessionId: this.activeSession?.id ?? 0,
         role: 'assistant',
         content:
-          '👋 Bonjour ! Je suis **PaieBot**, votre assistant RH intelligent.\n\n' +
-          'Je peux vous aider avec :\n' +
-          '📋 Questions sur les **contrats** (CDI, CDD, CIVP, KARAMA…)\n' +
-          '💰 Calculs **CNSS, IRPP, bulletin de paie**\n' +
-          '🏖️ Procédures de **congé**\n' +
-          '📄 Informations **RH générales** — Loi de Finances 2026\n\n' +
+          '👋 Bonjour ! Je suis **PaieBot**, votre assistant RH.\n\n' +
+          '📋 **Contrats** — CDI, CDD, CIVP, KARAMA…\n' +
+          '💰 **Paie** — CNSS, IRPP, cotisations\n' +
+          '🏖️ **Congés** — procédures légales\n' +
+          '📊 **Données RH** — liste employés, effectifs, départements\n\n' +
           'Comment puis-je vous aider ?',
         sentAt: new Date().toISOString(),
         escalatedToHuman: false,
       },
     ];
-    this.shouldScrollToBottom = true;
+  }
+
+  /** Informe Angular qu'un re-rendu est nécessaire (OnPush) */
+  private mark(): void {
+    this.cd.markForCheck();
   }
 
   private scrollToBottom(): void {
-    try {
-      const el: HTMLElement = this.messagesContainer.nativeElement;
-      el.scrollTop = el.scrollHeight;
-    } catch (_) {
-      // ignore
-    }
+    // ngZone.runOutsideAngular pour ne pas déclencher de détection supplémentaire
+    this.ngZone.runOutsideAngular(() => {
+      setTimeout(() => {
+        try {
+          const el: HTMLElement = this.messagesContainer?.nativeElement;
+          if (el) el.scrollTop = el.scrollHeight;
+        } catch (_) {
+          /* ignore */
+        }
+      }, 50);
+    });
   }
 }

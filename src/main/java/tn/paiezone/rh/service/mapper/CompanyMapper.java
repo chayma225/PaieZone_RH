@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.CompanySubscriptionDTO;
 /**
  * Mapper for the entity {@link Company} and its DTO {@link CompanyDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CompanyMapper extends EntityMapper<CompanyDTO, Company> {
     @Mapping(target = "companySubscription", source = "companySubscription", qualifiedByName = "companySubscriptionId")
     CompanyDTO toDto(Company s);

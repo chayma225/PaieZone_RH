@@ -4,35 +4,34 @@ import org.mapstruct.*;
 import tn.paiezone.rh.domain.PaySlip;
 import tn.paiezone.rh.service.dto.PaySlipDTO;
 
-@Mapper(componentModel = "spring", uses = {
-    EmployeeMapper.class,
-    PayrollPeriodMapper.class,
-    ContractMapper.class
-})
+@Mapper(
+    componentModel = "spring",
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    uses = { EmployeeMapper.class, PayrollPeriodMapper.class, ContractMapper.class }
+)
 public interface PaySlipMapper extends EntityMapper<PaySlipDTO, PaySlip> {
-
-    @Mapping(source = "employee.id",      target = "employeeId")
+    @Mapping(source = "employee.id", target = "employeeId")
     @Mapping(source = "payrollPeriod.id", target = "payrollPeriodId")
-    @Mapping(source = "contract.id",      target = "contractId")
-        // Les nouveaux champs (cssAmount, tfpAmount, unpaidLeaveDeduction, overtimeAmount)
-        // sont mappés automatiquement par MapStruct (même nom source/target)
+    @Mapping(source = "contract.id", target = "contractId")
+    // Les nouveaux champs (cssAmount, tfpAmount, unpaidLeaveDeduction, overtimeAmount)
+    // sont mappés automatiquement par MapStruct (même nom source/target)
     PaySlipDTO toDto(PaySlip s);
 
-    @Mapping(source = "employeeId",      target = "employee")
+    @Mapping(source = "employeeId", target = "employee")
     @Mapping(source = "payrollPeriodId", target = "payrollPeriod")
-    @Mapping(source = "contractId",      target = "contract")
-    @Mapping(target = "createdBy",        ignore = true)
-    @Mapping(target = "createdDate",      ignore = true)
-    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(source = "contractId", target = "contract")
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     PaySlip toEntity(PaySlipDTO dto);
 
-    @Mapping(source = "employeeId",      target = "employee")
+    @Mapping(source = "employeeId", target = "employee")
     @Mapping(source = "payrollPeriodId", target = "payrollPeriod")
-    @Mapping(source = "contractId",      target = "contract")
-    @Mapping(target = "createdBy",        ignore = true)
-    @Mapping(target = "createdDate",      ignore = true)
-    @Mapping(target = "lastModifiedBy",   ignore = true)
+    @Mapping(source = "contractId", target = "contract")
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     void partialUpdate(@MappingTarget PaySlip entity, PaySlipDTO dto);
 

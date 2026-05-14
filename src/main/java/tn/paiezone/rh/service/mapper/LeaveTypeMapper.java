@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.LeaveTypeDTO;
 /**
  * Mapper for the entity {@link LeaveType} and its DTO {@link LeaveTypeDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LeaveTypeMapper extends EntityMapper<LeaveTypeDTO, LeaveType> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     LeaveTypeDTO toDto(LeaveType s);

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!-- Colonnes manquantes dans chat_session (présentes dans l'entité JPA mais absentes en BD) -->
+  <changeSet id="20260514-chat-session-missing-cols" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="chat_session" columnName="channel"/></not>
+    </preConditions>
+    <addColumn tableName="chat_session">
+      <column name="channel" type="varchar(20)"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="status" type="varchar(20)"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="started_at" type="timestamp"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="ended_at" type="timestamp"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="escalated_at" type="timestamp"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="escalated_to" type="varchar(100)"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="context_data" type="text"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="satisfaction_score" type="integer"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="employee_id" type="bigint"><constraints nullable="true"/></column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="20260514-fk-chat-session-employee" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><foreignKeyConstraintExists foreignKeyName="fk_chat_session_employee_id"/></not>
+    </preConditions>
+    <addForeignKeyConstraint
+      baseTableName="chat_session"
+      baseColumnNames="employee_id"
+      referencedTableName="employee"
+      referencedColumnNames="id"
+      constraintName="fk_chat_session_employee_id"
+      onDelete="SET NULL"/>
+  </changeSet>
+
+</databaseChangeLog>

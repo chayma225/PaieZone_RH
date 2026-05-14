@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+    Sprint 4 PaieBot — compléments de schéma chatbot.
+    Les tables ont été créées par les changelogs JHipster (20260408183840 à 20260408184040).
+    Ce fichier :
+      1. Crée les séquences spécifiques au chatbot
+      2. Ajoute les colonnes chatbot absentes du schéma JDL initial
+      3. Ajoute la FK company pour chat_session
+  -->
+
+  <!-- ── Séquences ──────────────────────────────────────────────────────── -->
+  <changeSet id="20260501-seq-chat-session" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><sequenceExists sequenceName="chat_session_sequence"/></not>
+    </preConditions>
+    <createSequence sequenceName="chat_session_sequence" startValue="1" incrementBy="1"/>
+  </changeSet>
+
+  <changeSet id="20260501-seq-chat-message" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><sequenceExists sequenceName="chat_message_sequence"/></not>
+    </preConditions>
+    <createSequence sequenceName="chat_message_sequence" startValue="1" incrementBy="1"/>
+  </changeSet>
+
+  <changeSet id="20260501-seq-knowledge-document" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><sequenceExists sequenceName="knowledge_document_sequence"/></not>
+    </preConditions>
+    <createSequence sequenceName="knowledge_document_sequence" startValue="1" incrementBy="1"/>
+  </changeSet>
+
+  <!-- ── Colonnes chatbot manquantes dans chat_session ─────────────────── -->
+  <changeSet id="20260501-chat-session-cols" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="chat_session" columnName="user_login"/></not>
+    </preConditions>
+    <addColumn tableName="chat_session">
+      <column name="session_title" type="varchar(255)"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="user_login" type="varchar(50)"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="created_at" type="timestamp"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="last_activity" type="timestamp"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="active" type="boolean" defaultValueBoolean="true"><constraints nullable="true"/></column>
+    </addColumn>
+    <addColumn tableName="chat_session">
+      <column name="company_id" type="bigint"><constraints nullable="true"/></column>
+    </addColumn>
+  </changeSet>
+
+  <!-- ── FK chat_session → company ─────────────────────────────────────── -->
+  <changeSet id="20260501-fk-chat-session-company" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <foreignKeyConstraintExists foreignKeyName="fk_chat_session_company_id"/>
+      </not>
+    </preConditions>
+    <addForeignKeyConstraint
+      baseTableName="chat_session"
+      baseColumnNames="company_id"
+      referencedTableName="company"
+      referencedColumnNames="id"
+      constraintName="fk_chat_session_company_id"
+      onDelete="SET NULL"/>
+  </changeSet>
+
+  <!-- ── Colonne escalated_to_human dans chat_message ──────────────────── -->
+  <changeSet id="20260501-chat-message-escalated" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="chat_message" columnName="escalated_to_human"/></not>
+    </preConditions>
+    <addColumn tableName="chat_message">
+      <column name="escalated_to_human" type="boolean" defaultValueBoolean="false">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <!-- ── Colonne keywords dans knowledge_document ───────────────────────── -->
+  <changeSet id="20260501-knowledge-keywords" author="paiezone">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="knowledge_document" columnName="keywords"/></not>
+    </preConditions>
+    <addColumn tableName="knowledge_document">
+      <column name="keywords" type="varchar(500)"><constraints nullable="true"/></column>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

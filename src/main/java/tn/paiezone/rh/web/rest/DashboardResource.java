@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
+import tn.paiezone.rh.domain.enumeration.CompanySubscriptionStatus;
+import tn.paiezone.rh.domain.enumeration.ContractStatus;
+import tn.paiezone.rh.domain.enumeration.LeaveStatus;
+import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 import tn.paiezone.rh.repository.*;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 
@@ -84,22 +89,21 @@ public class DashboardResource {
         stats.put("activeEmployees", employeeRepository.countByActiveTrue());
         stats.put("departments", departmentRepository.count());
         stats.put("positions", jobPositionRepository.count());
-        stats.put("activeContracts", contractRepository.countByStatus("ACTIVE"));
+        long activeContracts = contractRepository.countByStatus(ContractStatus.ACTIVE);
         stats.put("expiringContracts", contractRepository.countExpiringWithin30Days(limite));
         //--stats.put("chatSessions", chatSessionRepository.countByStatus("ACTIVE"));
-
         // --- Congés ---
-        stats.put("pendingLeaves", leaveRequestRepository.countByStatus("PENDING"));
-        stats.put("approvedLeaves", leaveRequestRepository.countByStatus("APPROVED"));
+        stats.put("pendingLeaves", leaveRequestRepository.countByStatus(LeaveStatus.PENDING));
+        stats.put("approvedLeaves", leaveRequestRepository.countByStatus(LeaveStatus.PENDING));
 
         // --- Paie ---
-        stats.put("payrollDrafts", payrollPeriodRepository.countByStatus("DRAFT"));
-        stats.put("payrollValidated", payrollPeriodRepository.countByStatus("VALIDATED"));
+        stats.put("payrollDrafts", payrollPeriodRepository.countByStatus(PayrollStatus.DRAFT));
+        stats.put("payrollValidated", payrollPeriodRepository.countByStatus(PayrollStatus.VALIDATED));
 
         // --- RH_COMPTABLE ---
         int currentMonth = java.time.LocalDate.now().getMonthValue();
         int currentYear = java.time.LocalDate.now().getYear();
-        stats.put("pendingAdvances", advanceRepository.countByStatus("REQUESTED"));
+        stats.put("pendingAdvances", advanceRepository.countByStatus(AdvanceStatus.REQUESTED));
         stats.put("bonusThisMonth", bonusRepository.countByMonthAndYear(currentMonth, currentYear));
 
         // --- ADMIN / SUPER_ADMIN ---
@@ -107,7 +111,7 @@ public class DashboardResource {
 
         // --- SUPER_ADMIN uniquement ---
         stats.put("totalCompanies", companyRepository.count());
-        stats.put("activeSubscriptions", companySubscriptionRepository.countByStatus("ACTIVE"));
+        stats.put("activeSubscriptions", companySubscriptionRepository.countByStatus(CompanySubscriptionStatus.ACTIVE));
 
         return ResponseEntity.ok(stats);
     }

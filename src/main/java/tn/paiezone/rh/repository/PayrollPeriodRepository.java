@@ -23,5 +23,5 @@ public interface PayrollPeriodRepository extends JpaRepository<PayrollPeriod, Lo
     long countByPayrollPeriodIdAndStatusNot(@Param("periodId") Long periodId, @Param("status") PayrollStatus status);
 
     Optional<PayrollPeriod> findByCompanyIdAndMonthAndYear(Long companyId, Integer month, Integer year);
-    long countByStatus(String status);
+    long countByStatus(PayrollStatus status);
 }

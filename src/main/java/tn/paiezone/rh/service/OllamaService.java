@@ -13,15 +13,11 @@ import org.springframework.web.client.RestClient;
 import tn.paiezone.rh.config.ApplicationProperties;
 
 /**
- * Service de communication avec Ollama.
+ * Service de communication avec Ollama (phi3:latest).
  *
- * IMPORTANT — URL selon le contexte de déploiement :
- *
- *   Spring Boot natif (Windows) + Ollama local :
- *     ollama-url: http://localhost:11434
- *
- *   Spring Boot dans Docker + Ollama sur la machine hôte Windows :
- *     ollama-url: http://host.docker.internal:11434
+ * Deux modes d'appel :
+ *  - chat()        : réponse conversationnelle (RAG, salutations) — température 0.7
+ *  - generateSql() : génération SQL déterministe — température 0.05
  */
 @Service
 public class OllamaService {
@@ -41,15 +37,54 @@ public class OllamaService {
 
         this.restClient = RestClient.builder().baseUrl(this.ollamaUrl).defaultHeader("Content-Type", "application/json").build();
 
-        log.info("OllamaService initialisé → {} (modèle: {})", this.ollamaUrl, model);
+        log.info("OllamaService → {} (modèle: {})", this.ollamaUrl, model);
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    //  Mode conversationnel (RAG + réponses générales)
+    // ──────────────────────────────────────────────────────────────────────────
+
     public String chat(List<OllamaMessage> messages) {
-        OllamaChatRequest request = new OllamaChatRequest(model, messages, false, Map.of("num_predict", maxTokens, "temperature", 0.7));
+        return callOllama(messages, 0.7, maxTokens);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  Mode Text-to-SQL (température très basse → SQL déterministe)
+    // ──────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Génère une requête SQL depuis une question en langage naturel.
+     *
+     * @param systemPrompt  Prompt système avec le schéma et les exemples
+     * @param question      Question de l'utilisateur
+     * @return Requête SQL brute générée par phi3
+     */
+    public String generateSql(String systemPrompt, String question) {
+        List<OllamaMessage> messages = List.of(
+            new OllamaMessage("system", systemPrompt + " " + question),
+            new OllamaMessage("user", question)
+        );
+
+        // Température 0.05 : quasi-déterministe pour le SQL
+        // Max 300 tokens : une requête SQL simple ne dépasse pas 300 tokens
+        String rawSql = callOllama(messages, 0.05, 300);
+        log.debug("[SQL-GEN] Réponse brute phi3 : {}", rawSql);
+        return rawSql;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    //  Appel HTTP commun
+    // ──────────────────────────────────────────────────────────────────────────
+
+    private String callOllama(List<OllamaMessage> messages, double temperature, int numPredict) {
+        OllamaChatRequest request = new OllamaChatRequest(
+            model,
+            messages,
+            false,
+            Map.of("num_predict", numPredict, "temperature", temperature, "top_p", 0.9, "repeat_penalty", 1.1)
+        );
 
         try {
-            log.debug("Appel Ollama ({} messages)...", messages.size());
-
             OllamaChatResponse response = restClient
                 .post()
                 .uri("/api/chat")
@@ -59,32 +94,25 @@ public class OllamaService {
                 .body(OllamaChatResponse.class);
 
             if (response != null && response.message() != null && response.message().content() != null) {
-                String content = response.message().content().trim();
-                log.debug("Réponse Ollama reçue ({} chars)", content.length());
-                return content;
+                return response.message().content().trim();
             }
-
-            log.warn("Réponse Ollama vide ou malformée");
-            return "Je n'ai pas pu générer une réponse. Veuillez réessayer.";
+            return "";
         } catch (ResourceAccessException e) {
-            // Ollama non joignable → message clair pour l'utilisateur
             log.error("Ollama non joignable à {} : {}", ollamaUrl, e.getMessage());
             return (
-                "⚠️ Le service IA est temporairement indisponible.\n\n" +
-                "**Pour l'administrateur système :**\n" +
-                "- Vérifiez qu'Ollama est démarré : `ollama serve`\n" +
-                "- URL configurée : `" +
-                ollamaUrl +
-                "`\n" +
-                "- Si Spring Boot tourne dans Docker, utilisez `http://host.docker.internal:11434`"
+                "⚠️ Le service IA est indisponible.\n" +
+                "**Solution :** Lancez `ollama serve` dans un terminal Windows.\n" +
+                "Si Spring Boot tourne dans Docker, configurez : `ollama-url: http://host.docker.internal:11434`"
             );
         } catch (Exception e) {
-            log.error("Erreur inattendue Ollama: {}", e.getMessage(), e);
-            return "⚠️ Erreur technique. Veuillez réessayer dans quelques instants.";
+            log.error("Erreur Ollama inattendue : {}", e.getMessage(), e);
+            return "";
         }
     }
 
-    // ── Records Java 21 ─────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────────────────────
+    //  Records Java 21
+    // ──────────────────────────────────────────────────────────────────────────
 
     public record OllamaChatRequest(String model, List<OllamaMessage> messages, boolean stream, Map<String, Object> options) {}
 

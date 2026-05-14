@@ -11,10 +11,7 @@
     <addColumn tableName="regulatory_param">
       <column name="category" type="varchar(50)"/>
     </addColumn>
-    <!-- Colonnes de traçabilité utiles -->
-    <addColumn tableName="regulatory_param">
-      <column name="effective_to" type="date"/>
-    </addColumn>
+    <!-- effective_to already created by the main JHipster entity changeset -->
     <addColumn tableName="regulatory_param">
       <column name="description" type="varchar(1000)"/>
     </addColumn>

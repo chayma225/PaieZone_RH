@@ -9,7 +9,7 @@ import tn.paiezone.rh.service.dto.CompanyDTO;
 /**
  * Mapper for the entity {@link CnssRate} and its DTO {@link CnssRateDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CnssRateMapper extends EntityMapper<CnssRateDTO, CnssRate> {
     @Mapping(target = "company", source = "company", qualifiedByName = "companyId")
     CnssRateDTO toDto(CnssRate s);

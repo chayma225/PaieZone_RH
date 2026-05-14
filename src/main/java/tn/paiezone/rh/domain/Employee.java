@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
@@ -173,7 +174,45 @@ public class Employee implements Serializable {
     @JsonIgnoreProperties(value = { "company" }, allowSetters = true)
     private UserProfile userProfile;
 
+    @Column(name = "salary_brut", precision = 15, scale = 3)
+    private BigDecimal salaryBrut;
+
+    @Column(name = "salary_net", precision = 15, scale = 3)
+    private BigDecimal salaryNet;
+
+    @Column(name = "balance_conge")
+    private Integer balanceConge;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+    // ── Getters / Setters ──
+    public BigDecimal getSalaryBrut() {
+        return salaryBrut;
+    }
+
+    public void setSalaryBrut(BigDecimal salaryBrut) {
+        this.salaryBrut = salaryBrut;
+    }
+
+    public BigDecimal getSalaryNet() {
+        return salaryNet;
+    }
+
+    public void setSalaryNet(BigDecimal salaryNet) {
+        this.salaryNet = salaryNet;
+    }
+
+    public Integer getBalanceConge() {
+        return balanceConge;
+    }
+
+    public void setBalanceConge(Integer balanceConge) {
+        this.balanceConge = balanceConge;
+    }
+
+    public String getJobTitle() {
+        return getPosition().getTitle();
+    }
 
     public Long getId() {
         return this.id;
@@ -671,6 +710,7 @@ public class Employee implements Serializable {
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
     }
+
     @Size(max = 30)
     @Column(name = "bank_rib", length = 30)
     private String bankRib;
@@ -687,5 +727,4 @@ public class Employee implements Serializable {
     public void setBankRib(String bankRib) {
         this.bankRib = bankRib;
     }
-
 }

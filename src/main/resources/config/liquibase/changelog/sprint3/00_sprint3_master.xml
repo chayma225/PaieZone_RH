@@ -41,4 +41,6 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/sprint3/17_add_missing_pay_slip_columns_and_params.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/18_add_file_data_to_hr_document.xml"
+           relativeToChangelogFile="false"/>
 </databaseChangeLog>

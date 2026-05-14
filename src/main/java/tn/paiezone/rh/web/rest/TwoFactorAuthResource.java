@@ -3,12 +3,13 @@ package tn.paiezone.rh.web.rest;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import tn.paiezone.rh.service.TwoFactorAuthService;
@@ -20,10 +21,16 @@ public class TwoFactorAuthResource {
     private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthResource.class);
     private final TwoFactorAuthService twoFactorAuthService;
     private final AuthenticateController authenticateController;
+    private final UserDetailsService userDetailsService;
 
-    public TwoFactorAuthResource(TwoFactorAuthService twoFactorAuthService, AuthenticateController authenticateController) {
+    public TwoFactorAuthResource(
+        TwoFactorAuthService twoFactorAuthService,
+        AuthenticateController authenticateController,
+        UserDetailsService userDetailsService
+    ) {
         this.twoFactorAuthService = twoFactorAuthService;
         this.authenticateController = authenticateController;
+        this.userDetailsService = userDetailsService;
     }
 
     @PostMapping("/2fa/check")
@@ -47,7 +54,8 @@ public class TwoFactorAuthResource {
         }
 
         if (twoFactorAuthService.verifyCode(login, code)) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = userDetailsService.loadUserByUsername(login);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             String jwt = authenticateController.createToken(authentication, false);
             return ResponseEntity.ok(new AuthenticateController.JWTToken(jwt));
         }

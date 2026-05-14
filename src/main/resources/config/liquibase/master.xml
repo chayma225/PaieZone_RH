@@ -76,6 +76,12 @@
   <include file="config/liquibase/changelog/20260501_chatbot_tables.xml" relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/20260512000001_add_intent_to_chat_message.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260514_add_missing_chat_session_columns.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260512000003_add_bank_rib_to_employee.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260514_fix_nullable_constraints.xml"
+           relativeToChangelogFile="false"/>
   <!-- SPRINT 3 — Paie & Congés -->
   <include file="config/liquibase/changelog/sprint3/00_sprint3_master.xml"
            relativeToChangelogFile="false"/>

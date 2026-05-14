@@ -9,13 +9,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.repository.CompanyRepository;
 import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.service.mapper.CompanyMapper;
-import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -27,16 +28,9 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
 
-    private final KnowledgeDocumentSeeder knowledgeDocumentSeeder;
-
-    public CompanyService(
-        CompanyRepository companyRepository,
-        CompanyMapper companyMapper,
-        KnowledgeDocumentSeeder knowledgeDocumentSeeder
-    ) {
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
-        this.knowledgeDocumentSeeder = knowledgeDocumentSeeder;
     }
 
     /**
@@ -53,16 +47,6 @@ public class CompanyService {
         Company company = companyMapper.toEntity(companyDTO);
         company = companyRepository.save(company);
 
-        String tenantSchema = company.getTenantSchema();
-        if (tenantSchema != null && !tenantSchema.isBlank()) {
-            try {
-                knowledgeDocumentSeeder.seedForTenant(tenantSchema);
-                LOG.info("✓ Knowledge documents seedés pour le nouveau tenant [{}]", tenantSchema);
-            } catch (Exception e) {
-                LOG.warn("⚠️ Impossible de seeder knowledge_document pour [{}] : {}", tenantSchema, e.getMessage());
-            }
-        }
-
         return companyMapper.toDto(company);
     }
 
@@ -75,7 +59,7 @@ public class CompanyService {
 
         Company existing = companyRepository
             .findById(companyDTO.getId())
-            .orElseThrow(() -> new BadRequestAlertException("Entreprise introuvable.", ENTITY_NAME, "idnotfound"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entreprise introuvable."));
 
         // ✅ Champs vraiment immuables → toujours protégés
         companyDTO.setTenantSchema(existing.getTenantSchema());
