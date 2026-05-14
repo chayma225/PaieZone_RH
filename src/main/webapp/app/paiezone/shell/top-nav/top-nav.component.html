@@ -1,0 +1,58 @@
+<header class="pz-topnav">
+  <div class="pz-brand">
+    <div class="pz-brand-mark">PZ</div>
+    <div class="pz-brand-name">paie<span>zone</span> RH</div>
+  </div>
+
+  <nav class="pz-nav-tabs">
+    @for (tab of roleService.config().tabs; track tab.id) {
+      <a class="pz-nav-tab" [routerLink]="['/paiezone', tab.id]" routerLinkActive="active">
+        <span class="ico"><pz-icon [name]="tab.icon" /></span>
+        {{ tab.label }}
+        @if (tab.badge) {
+          <span class="badge">{{ tab.badge }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <div class="pz-top-right">
+    <div class="pz-topbar-search">
+      <pz-icon name="Search" [size]="14" [strokeWidth]="1.6" />
+      <input placeholder="Rechercher…" />
+      <span class="kbd">⌘K</span>
+    </div>
+    <button class="pz-icon-btn"><pz-icon name="Bell" /><span class="dot"></span></button>
+    <button class="pz-icon-btn"><pz-icon name="Globe" /></button>
+    <button class="pz-icon-btn"><pz-icon name="CircleHelp" /></button>
+
+    <button class="pz-role-pill" (click)="toggleMenu($event)">
+      <span class="role-dot" [attr.data-color]="roleService.config().color"></span>
+      <span>{{ roleService.roleLabel(roleService.current()) }}</span>
+      <span class="role-caret"><pz-icon name="Caret" [size]="10" [strokeWidth]="2" /></span>
+      <div class="pz-avatar sm">{{ roleService.config().initials }}</div>
+    </button>
+  </div>
+</header>
+
+@if (menuOpen()) {
+  <div class="pz-role-menu" (click)="$event.stopPropagation()">
+    <div class="menu-title">Changer de rôle (démo)</div>
+    @for (opt of roleOptions; track opt.id) {
+      <button class="role-opt" [class.active]="roleService.current() === opt.id" (click)="switchRole(opt.id)">
+        <div class="pz-avatar" [attr.data-bg]="opt.bg">
+          <pz-icon [name]="opt.icon" />
+        </div>
+        <div>
+          <div class="role-title">{{ opt.title }}</div>
+          <div class="role-sub">{{ opt.sub }}</div>
+        </div>
+        @if (roleService.current() === opt.id) {
+          <span class="role-check"><pz-icon name="Check" [size]="14" [strokeWidth]="1.8" /></span>
+        }
+      </button>
+    }
+    <div class="role-opt-sep"></div>
+    <div class="menu-note">En production, le rôle est défini par l'authentification.</div>
+  </div>
+}

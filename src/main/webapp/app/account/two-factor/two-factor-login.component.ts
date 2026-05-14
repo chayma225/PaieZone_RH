@@ -3,9 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
+import { SessionStorageService } from 'ngx-webstorage';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { AccountService } from 'app/core/auth/account.service';
+import { StateStorageService } from 'app/core/auth/state-storage.service';
 
 @Component({
   standalone: true,
@@ -21,9 +22,9 @@ export class TwoFactorLoginComponent {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly sessionStorageService = inject(SessionStorageService);
-  private readonly localStorageService = inject(LocalStorageService);
   private readonly applicationConfigService = inject(ApplicationConfigService);
   private readonly accountService = inject(AccountService);
+  private readonly stateStorageService = inject(StateStorageService);
 
   confirmCode(): void {
     if (this.otpCode.length !== 6) return;
@@ -43,36 +44,22 @@ export class TwoFactorLoginComponent {
       })
       .subscribe({
         next: res => {
-          console.log('Réponse reçue du serveur:', res);
           const token = res.id_token;
 
           if (token) {
-            // Stockage du jeton final
-            if (rememberMe) {
-              this.localStorageService.store('authenticationToken', token);
-            } else {
-              this.sessionStorageService.store('authenticationToken', token);
-            }
+            // Stocker avec la bonne clé (pz-authenticationToken via StateStorageService)
+            this.stateStorageService.storeAuthenticationToken(token, rememberMe ?? false);
 
-            // Nettoyage immédiat pour éviter les boucles
+            // Nettoyage
             this.sessionStorageService.clear('2fa_login');
             this.sessionStorageService.clear('2fa_remember');
 
-            console.log('Jeton stocké, rafraîchissement de l identity...');
-
             // Forcer la récupération de l'utilisateur et rediriger
             this.accountService.identity(true).subscribe({
-              next: () => {
-                console.log('Utilisateur identifié, redirection vers l accueil...');
-                this.router.navigate(['/']);
-              },
-              error: err => {
-                console.error('Erreur lors de l identity:', err);
-                this.router.navigate(['/']); // Redirection forcée même en cas d'erreur
-              },
+              next: () => this.router.navigate(['/']),
+              error: () => this.router.navigate(['/']),
             });
           } else {
-            console.error('Aucun id_token trouvé dans la réponse');
             this.isLoading = false;
             this.error = true;
           }

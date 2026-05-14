@@ -20,7 +20,8 @@
       "PowerShell(try { $response = Invoke-WebRequest -Uri \"http://localhost:8080/actuator/health\" -TimeoutSec 5 -ErrorAction Stop; $response.StatusCode } catch { $_.Exception.Message })",
       "PowerShell($ProgressPreference = 'SilentlyContinue'; Invoke-RestMethod -Uri \"http://localhost:8080/actuator/health\" -Method Get -TimeoutSec 5 2>&1)",
       "PowerShell($ProgressPreference = 'SilentlyContinue'; try { $r = Invoke-RestMethod -Uri \"http://localhost:8080/api/authenticate\" -Method POST -ContentType \"application/json\" -Body '{\"username\":\"admin\",\"password\":\"admin\",\"rememberMe\":false}' -TimeoutSec 10; $r } catch { $_.Exception.Message })",
-      "PowerShell(Get-Command *)"
+      "PowerShell(Get-Command *)",
+      "Bash(Get-Content \"C:\\\\Users\\\\chayma\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-chayma-PaieZoneRH\\\\fcf4f363-2fea-4c73-bb54-88b2985bab70\\\\tasks\\\\bjfzdmrwb.output\" -Tail 40)"
     ]
   }
 }

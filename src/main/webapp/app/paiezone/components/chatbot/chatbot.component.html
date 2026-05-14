@@ -1,0 +1,60 @@
+@if (!open()) {
+  <button class="chat-fab" (click)="toggleOpen()" aria-label="Assistant IA">
+    <pz-icon name="Sparkles" [size]="22" />
+    <span class="pulse"></span>
+  </button>
+}
+
+@if (open()) {
+  <div class="chat-win" role="dialog">
+    <div class="chat-head">
+      <div class="head-avatar"><pz-icon name="Sparkles" /></div>
+      <div>
+        <div class="head-name">Assistant RH · PaieZone IA</div>
+        <div class="head-status"><span class="dot"></span>En ligne · RAG juridique TN</div>
+      </div>
+      <button class="chat-x" (click)="toggleOpen()"><pz-icon name="X" [size]="14" /></button>
+    </div>
+
+    <div class="chat-body" #body>
+      @for (m of messages(); track $index) {
+        <div class="chat-msg" [class.me]="m.role === 'me'">
+          @if (m.role === 'bot') {
+            <div class="chat-avatar"><pz-icon name="Sparkles" [size]="14" /></div>
+          }
+          <div class="bubble">
+            @for (line of m.text.split('\n'); track $index) {
+              <div>{{ line }}</div>
+            }
+            @if (m.cite) {
+              <div class="cite"><strong>Source :</strong> {{ m.cite }}</div>
+            }
+          </div>
+        </div>
+      }
+      @if (busy()) {
+        <div class="chat-msg">
+          <div class="chat-avatar"><pz-icon name="Sparkles" [size]="14" /></div>
+          <div class="bubble">
+            <div class="typing"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (messages().length <= 1) {
+      <div class="chat-quick">
+        @for (q of quickPrompts(); track q) {
+          <button (click)="send(q)">{{ q }}</button>
+        }
+      </div>
+    }
+
+    <form class="chat-input" (submit)="$event.preventDefault(); send()">
+      <input [ngModel]="input()" (ngModelChange)="input.set($event)" name="msg" placeholder="Posez votre question RH…" />
+      <button type="submit" class="chat-send" [disabled]="!input().trim() || busy()">
+        <pz-icon name="Send" [size]="16" [strokeWidth]="1.5" />
+      </button>
+    </form>
+  </div>
+}
