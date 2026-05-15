@@ -6,17 +6,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tn.paiezone.rh.domain.User;
+import tn.paiezone.rh.repository.CompanyRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.security.SecurityUtils;
+import tn.paiezone.rh.service.CompanyService;
 import tn.paiezone.rh.service.MailService;
 import tn.paiezone.rh.service.UserService;
 import tn.paiezone.rh.service.dto.AdminUserDTO;
+import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.service.dto.PasswordChangeDTO;
 import tn.paiezone.rh.web.rest.errors.*;
 import tn.paiezone.rh.web.rest.vm.KeyAndPasswordVM;
 import tn.paiezone.rh.web.rest.vm.ManagedUserVM;
+import tn.paiezone.rh.web.rest.vm.RegisterWithCompanyVM;
 
 /**
  * REST controller for managing the current user's account.
@@ -40,10 +45,22 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    private final CompanyService companyService;
+
+    private final CompanyRepository companyRepository;
+
+    public AccountResource(
+        UserRepository userRepository,
+        UserService userService,
+        MailService mailService,
+        CompanyService companyService,
+        CompanyRepository companyRepository
+    ) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.companyService = companyService;
+        this.companyRepository = companyRepository;
     }
 
     /**
@@ -62,6 +79,35 @@ public class AccountResource {
         }
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
         mailService.sendActivationEmail(user);
+    }
+
+    @PostMapping("/register-with-company")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
+    public void registerWithCompany(@Valid @RequestBody RegisterWithCompanyVM vm) {
+        if (isPasswordLengthInvalid(vm.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+        if (companyRepository.existsByTaxId(vm.getTaxId())) {
+            throw new BadRequestAlertException("Ce matricule fiscal est déjà utilisé par une autre entreprise.", "company", "taxIdExists");
+        }
+
+        User user = userService.registerUser(vm, vm.getPassword());
+
+        // Auto-activate immediately — company admins don't need email verification
+        userService.activateRegistration(user.getActivationKey());
+
+        CompanyDTO companyDTO = new CompanyDTO();
+        companyDTO.setName(vm.getCompanyName());
+        companyDTO.setTaxId(vm.getTaxId());
+        companyDTO.setPhone(vm.getPhone());
+        companyDTO.setEmail(vm.getCompanyEmail());
+        companyDTO.setAddress(vm.getAddress());
+        companyDTO.setGouvernorat(vm.getGouvernorat());
+        companyDTO.setCity(vm.getCity());
+        companyDTO.setPostalCode(vm.getPostalCode());
+        companyDTO.setAdminLogin(vm.getLogin());
+        companyService.save(companyDTO);
     }
 
     /**

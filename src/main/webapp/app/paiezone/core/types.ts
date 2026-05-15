@@ -21,13 +21,25 @@ export interface Company {
   name: string;
   tradeName: string;
   taxId: string;
+  cnssId: string;
   city: string;
+  gouvernorat: string;
+  address: string;
+  postalCode: string;
+  email: string;
+  phone: string;
+  website: string;
+  legalForm: string;
+  capitalSocial: number | null;
+  mainActivity: string;
   employees: number;
   plan: 'STARTER' | 'PME' | 'BUSINESS' | 'ENTERPRISE' | 'CUSTOM';
   status: 'ACTIVE' | 'TRIAL' | 'SUSPENDED' | 'CANCELLED';
   priceHT: number;
+  maxEmployees: number | null;
   renewal: string;
   schema: string;
+  createdAt: string;
   mrr: number;
 }
 
@@ -119,6 +131,97 @@ export interface ChatMessage {
   role: 'me' | 'bot';
   text: string;
   cite?: string;
+}
+
+export interface JobPosition {
+  id: number;
+  code: string;
+  title: string;
+  description: string;
+  minSalary: number | null;
+  maxSalary: number | null;
+  active: boolean;
+}
+
+export interface Bonus {
+  id: number;
+  bonusType: string;
+  label: string;
+  amount: number;
+  taxable: boolean;
+  month: number;
+  year: number;
+  notes: string;
+  employeeId: number;
+  paySlipId: number | null;
+}
+
+export interface Rubrique {
+  id: number;
+  code: string;
+  label: string;
+  rubriqueType: 'GAIN' | 'DEDUCTION' | 'EMPLOYER_CHARGE' | 'INFO';
+  base: 'FIXED' | 'PERCENT_BRUT' | 'PERCENT_NET' | 'HOURS' | 'FORMULA';
+  rate: number | null;
+  fixedAmount: number | null;
+  taxable: boolean;
+  cnssSalary: boolean;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface PaySlip {
+  id: number;
+  month: number;
+  year: number;
+  baseSalary: number;
+  grossSalary: number;
+  netSalary: number;
+  totalGains: number;
+  totalDeductions: number;
+  cnssSalaryAmount: number;
+  cavisAmount: number | null;
+  cssAmount: number | null;
+  irppAmount: number;
+  totalEmployerCost: number;
+  bonusTotal: number | null;
+  advanceDeduction: number | null;
+  status: 'DRAFT' | 'CALCULATED' | 'VALIDATED' | 'LOCKED' | 'EXPORTED';
+  employeeId: number;
+  payrollPeriodId: number;
+}
+
+export interface HrDocument {
+  id: number;
+  documentType: string;
+  title: string;
+  description: string;
+  fileUrl: string;
+  fileSize: number | null;
+  mimeType: string;
+  uploadedAt: string;
+  expiryDate: string | null;
+  active: boolean;
+  employeeId: number;
+}
+
+export interface Contract {
+  id: number;
+  reference: string;
+  contractType: 'CDI' | 'CDD' | 'CIVP' | 'KARAMA' | 'INTERIMAIRE' | 'STAGE';
+  status: 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'TERMINATED' | 'EXPIRED';
+  startDate: string;
+  endDate: string | null;
+  signedDate: string | null;
+  baseSalary: number;
+  jobTitle: string | null;
+  workingHoursWeek: number;
+  workingDaysWeek: number;
+  conventionCollective: string | null;
+  trialPeriodMonths: number | null;
+  renewalCount: number | null;
+  notes: string | null;
+  employeeId: number;
 }
 
 export interface RegulatoryParam {

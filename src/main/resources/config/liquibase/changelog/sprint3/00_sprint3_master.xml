@@ -49,4 +49,10 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/sprint3/21_fix_advance_missing_cols.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/22_add_gouvernorat_to_company.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/23_add_admin_login_to_company.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/24_add_company_extra_fields.xml"
+           relativeToChangelogFile="false"/>
 </databaseChangeLog>

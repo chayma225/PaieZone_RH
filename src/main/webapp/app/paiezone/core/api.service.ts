@@ -1,7 +1,21 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import type { Employee, Company, Department, PayrollPeriod, LeaveRequest, Advance, RegulatoryParam } from './types';
+import type {
+  Employee,
+  Company,
+  Department,
+  PayrollPeriod,
+  LeaveRequest,
+  Advance,
+  RegulatoryParam,
+  JobPosition,
+  Bonus,
+  Rubrique,
+  PaySlip,
+  HrDocument,
+  Contract,
+} from './types';
 
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
@@ -152,10 +166,14 @@ export class ApiService {
     };
   }
 
-  createDepartment(code: string, name: string, companyId: number): Observable<Department> {
+  createDepartment(code: string, name: string, companyId: number, description = ''): Observable<Department> {
     return this.http
-      .post<any>('/api/departments', { code, name, active: true, company: { id: companyId } })
+      .post<any>('/api/departments', { code, name, description: description || null, active: true, company: { id: companyId } })
       .pipe(map(d => ({ id: d.id, code: d.code ?? '', name: d.name ?? '', head: '', count: 0 }) as Department));
+  }
+
+  createCompany(dto: Record<string, any>): Observable<Company> {
+    return this.http.post<any>('/api/companies', dto).pipe(map(d => this.mapCompany(d)));
   }
 
   updateCompany(id: number, dto: Record<string, any>): Observable<Company> {
@@ -178,6 +196,15 @@ export class ApiService {
     });
   }
 
+  adminUsers(): Observable<any[]> {
+    const params = new HttpParams().set('page', 0).set('size', 200);
+    return this.http.get<any[]>('/api/admin/users', { params });
+  }
+
+  myCompanyUsers(): Observable<any[]> {
+    return this.http.get<any[]>('/api/companies/my-users');
+  }
+
   createChatSession(): Observable<{ id: number }> {
     return this.http.post<{ id: number }>('/api/chatbot/sessions', {});
   }
@@ -186,12 +213,130 @@ export class ApiService {
     return this.http.post<{ content: string }>(`/api/chatbot/sessions/${sessionId}/messages`, { message });
   }
 
+  jobPositions(companyId?: number): Observable<JobPosition[]> {
+    let params = new HttpParams().set('page', 0).set('size', 200);
+    if (companyId) params = params.set('companyId', companyId);
+    return this.http.get<any[]>('/api/job-positions', { params }).pipe(map(list => list.map(d => this.mapJobPosition(d))));
+  }
+
+  createJobPosition(dto: { code: string; title: string; description?: string; active: boolean }): Observable<JobPosition> {
+    return this.http.post<any>('/api/job-positions', dto).pipe(map(d => this.mapJobPosition(d)));
+  }
+
+  deleteJobPosition(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/job-positions/${id}`);
+  }
+
+  bonuses(filter?: { employeeId?: number; month?: number; year?: number }): Observable<Bonus[]> {
+    let params = new HttpParams().set('page', 0).set('size', 500);
+    if (filter?.employeeId) params = params.set('employeeId.equals', filter.employeeId);
+    if (filter?.month) params = params.set('month.equals', filter.month);
+    if (filter?.year) params = params.set('year.equals', filter.year);
+    return this.http.get<any[]>('/api/bonuses', { params }).pipe(map(list => list.map(d => this.mapBonus(d))));
+  }
+
+  createBonus(dto: Omit<Bonus, 'id' | 'paySlipId'>): Observable<Bonus> {
+    return this.http.post<any>('/api/bonuses', dto).pipe(map(d => this.mapBonus(d)));
+  }
+
+  deleteBonus(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/bonuses/${id}`);
+  }
+
+  rubriques(): Observable<Rubrique[]> {
+    const params = new HttpParams().set('page', 0).set('size', 200);
+    return this.http.get<any[]>('/api/rubriques', { params }).pipe(map(list => list.map(d => this.mapRubrique(d))));
+  }
+
+  createRubrique(dto: Omit<Rubrique, 'id'>): Observable<Rubrique> {
+    return this.http.post<any>('/api/rubriques', dto).pipe(map(d => this.mapRubrique(d)));
+  }
+
+  updateRubrique(id: number, dto: Partial<Rubrique>): Observable<Rubrique> {
+    return this.http.put<any>(`/api/rubriques/${id}`, { ...dto, id }).pipe(map(d => this.mapRubrique(d)));
+  }
+
+  deleteRubrique(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/rubriques/${id}`);
+  }
+
+  paySlips(periodId: number): Observable<PaySlip[]> {
+    const params = new HttpParams().set('payrollPeriodId.equals', periodId).set('page', 0).set('size', 500);
+    return this.http.get<any[]>('/api/pay-slips', { params }).pipe(map(list => list.map(d => this.mapPaySlip(d))));
+  }
+
+  myPaySlips(): Observable<PaySlip[]> {
+    const params = new HttpParams().set('page', 0).set('size', 24);
+    return this.http.get<any[]>('/api/pay-slips/my', { params }).pipe(map(list => list.map(d => this.mapPaySlip(d))));
+  }
+
+  hrDocuments(employeeId: number): Observable<HrDocument[]> {
+    const params = new HttpParams().set('employeeId.equals', employeeId).set('page', 0).set('size', 100);
+    return this.http.get<any[]>('/api/hr-documents', { params }).pipe(map(list => list.map(d => this.mapHrDocument(d))));
+  }
+
+  createHrDocument(dto: {
+    documentType: string;
+    title: string;
+    description?: string;
+    fileUrl?: string;
+    active: boolean;
+    employee: { id: number };
+  }): Observable<HrDocument> {
+    return this.http.post<any>('/api/hr-documents', dto).pipe(map(d => this.mapHrDocument(d)));
+  }
+
+  deleteHrDocument(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/hr-documents/${id}`);
+  }
+
   myEmployee(): Observable<Employee> {
     return this.http.get<any>('/api/employees/me').pipe(map(d => this.mapEmployee(d)));
   }
 
   createEmployeeSimple(body: Record<string, any>): Observable<Employee> {
     return this.http.post<any>('/api/employees/create-simple', body).pipe(map(d => this.mapEmployee(d)));
+  }
+
+  contracts(employeeId: number): Observable<Contract[]> {
+    const params = new HttpParams().set('employeeId.equals', employeeId).set('page', 0).set('size', 20);
+    return this.http.get<any[]>('/api/contracts', { params }).pipe(map(list => list.map(d => this.mapContract(d))));
+  }
+
+  createContract(dto: {
+    reference: string;
+    contractType: string;
+    status: string;
+    startDate: string;
+    endDate?: string | null;
+    baseSalary: number;
+    workingHoursWeek: number;
+    workingDaysWeek: number;
+    createdAt: string;
+    employee: { id: number };
+  }): Observable<Contract> {
+    return this.http.post<any>('/api/contracts', dto).pipe(map(d => this.mapContract(d)));
+  }
+
+  private mapContract(d: any): Contract {
+    return {
+      id: d.id,
+      reference: d.reference ?? '',
+      contractType: d.contractType ?? 'CDI',
+      status: d.status ?? 'DRAFT',
+      startDate: d.startDate ?? '',
+      endDate: d.endDate ?? null,
+      signedDate: d.signedDate ?? null,
+      baseSalary: +(d.baseSalary ?? 0),
+      jobTitle: d.jobTitle ?? null,
+      workingHoursWeek: d.workingHoursWeek ?? 40,
+      workingDaysWeek: d.workingDaysWeek ?? 5,
+      conventionCollective: d.conventionCollective ?? null,
+      trialPeriodMonths: d.trialPeriodMonths ?? null,
+      renewalCount: d.renewalCount ?? null,
+      notes: d.notes ?? null,
+      employeeId: d.employee?.id ?? 0,
+    };
   }
 
   private mapEmployee(d: any): Employee {
@@ -228,16 +373,28 @@ export class ApiService {
           : 'ACTIVE';
     return {
       id: d.id,
-      name: d.name ?? '',
-      tradeName: d.tradeName ?? d.name ?? '',
+      name: d.name || '',
+      tradeName: d.tradeName || '',
       taxId: d.taxId ?? '',
+      cnssId: d.cnssId ?? '',
       city: d.city ?? '',
+      gouvernorat: d.gouvernorat ?? '',
+      address: d.address ?? '',
+      postalCode: d.postalCode ?? '',
+      email: d.email ?? '',
+      phone: d.phone ?? '',
+      website: d.website ?? '',
+      legalForm: d.legalForm ?? '',
+      capitalSocial: d.capitalSocial != null ? +d.capitalSocial : null,
+      mainActivity: d.mainActivity ?? '',
       employees: 0,
       plan: sub?.plan ?? 'STARTER',
       status,
       priceHT: +(sub?.priceHT ?? 0),
+      maxEmployees: sub?.maxEmployees != null ? +sub.maxEmployees : null,
       renewal: sub?.renewalDate ?? '',
       schema: d.tenantSchema ?? '',
+      createdAt: d.createdAt ?? '',
       mrr: status === 'ACTIVE' ? +(sub?.priceHT ?? 0) : 0,
     };
   }
@@ -275,6 +432,88 @@ export class ApiService {
       submitted: d.requestDate ?? '',
       status: (statusMap[d.status] ?? 'pending') as any,
       repayment: d.deductionMonth ? `${d.deductionMonth} mois` : '',
+    };
+  }
+
+  private mapJobPosition(d: any): JobPosition {
+    return {
+      id: d.id,
+      code: d.code ?? '',
+      title: d.title ?? '',
+      description: d.description ?? '',
+      minSalary: d.minSalary != null ? +d.minSalary : null,
+      maxSalary: d.maxSalary != null ? +d.maxSalary : null,
+      active: d.active ?? true,
+    };
+  }
+
+  private mapBonus(d: any): Bonus {
+    return {
+      id: d.id,
+      bonusType: d.bonusType ?? 'OTHER',
+      label: d.label ?? '',
+      amount: +(d.amount ?? 0),
+      taxable: d.taxable ?? false,
+      month: d.month ?? 1,
+      year: d.year ?? new Date().getFullYear(),
+      notes: d.notes ?? '',
+      employeeId: d.employeeId ?? 0,
+      paySlipId: d.paySlipId ?? null,
+    };
+  }
+
+  private mapRubrique(d: any): Rubrique {
+    return {
+      id: d.id,
+      code: d.code ?? '',
+      label: d.label ?? '',
+      rubriqueType: d.rubriqueType ?? 'GAIN',
+      base: d.base ?? 'FIXED',
+      rate: d.rate != null ? +d.rate : null,
+      fixedAmount: d.fixedAmount != null ? +d.fixedAmount : null,
+      taxable: d.taxable ?? false,
+      cnssSalary: d.cnssSalary ?? false,
+      sortOrder: d.sortOrder ?? 0,
+      active: d.active ?? true,
+    };
+  }
+
+  private mapPaySlip(d: any): PaySlip {
+    return {
+      id: d.id,
+      month: d.month ?? 1,
+      year: d.year ?? new Date().getFullYear(),
+      baseSalary: +(d.baseSalary ?? 0),
+      grossSalary: +(d.grossSalary ?? 0),
+      netSalary: +(d.netSalary ?? 0),
+      totalGains: +(d.totalGains ?? 0),
+      totalDeductions: +(d.totalDeductions ?? 0),
+      cnssSalaryAmount: +(d.cnssSalaryAmount ?? 0),
+      cavisAmount: d.cavisAmount != null ? +d.cavisAmount : null,
+      cssAmount: d.cssAmount != null ? +d.cssAmount : null,
+      irppAmount: +(d.irppAmount ?? 0),
+      totalEmployerCost: +(d.totalEmployerCost ?? 0),
+      bonusTotal: d.bonusTotal != null ? +d.bonusTotal : null,
+      advanceDeduction: d.advanceDeduction != null ? +d.advanceDeduction : null,
+      status: d.status ?? 'DRAFT',
+      employeeId: d.employeeId ?? 0,
+      payrollPeriodId: d.payrollPeriodId ?? 0,
+    };
+  }
+
+  private mapHrDocument(d: any): HrDocument {
+    return {
+      id: d.id,
+      documentType: d.documentType ?? 'OTHER',
+      title: d.title ?? '',
+      description: d.description ?? '',
+      fileUrl: d.fileUrl ?? '',
+      fileSize: d.fileSize ?? null,
+      mimeType: d.mimeType ?? '',
+      uploadedAt: d.uploadedAt ?? '',
+      expiryDate: d.expiryDate ?? null,
+      active: d.active ?? true,
+      employeeId: d.employee?.id ?? 0,
     };
   }
 

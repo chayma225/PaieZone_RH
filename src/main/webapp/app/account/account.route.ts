@@ -6,6 +6,8 @@ import passwordResetFinishRoute from './password-reset/finish/password-reset-fin
 import passwordResetInitRoute from './password-reset/init/password-reset-init.route';
 import registerRoute from './register/register.route';
 import settingsRoute from './settings/settings.route';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { Authority } from 'app/shared/jhipster/constants';
 
 const accountRoutes: Routes = [
   activateRoute,
@@ -23,6 +25,13 @@ const accountRoutes: Routes = [
     path: '2fa-login',
     loadComponent: () => import('./two-factor/two-factor-login.component').then(m => m.TwoFactorLoginComponent),
     title: 'Vérification 2FA',
+  },
+  {
+    path: 'company-setup',
+    loadComponent: () => import('./company-setup/company-setup'),
+    title: "Configuration de l'entreprise",
+    data: { authorities: [Authority.ADMIN] },
+    canActivate: [UserRouteAccessService],
   },
 ];
 

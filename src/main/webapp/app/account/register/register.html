@@ -3,12 +3,15 @@
     margin: 0;
     font-family: 'Inter', system-ui, sans-serif;
   }
+
   .pz-auth-shell {
     min-height: 100vh;
     display: flex;
     align-items: stretch;
     background: #f5f4ff;
   }
+
+  /* ── Panneau gauche ── */
   .pz-auth-brand {
     width: 420px;
     background: linear-gradient(145deg, #4f46e5 0%, #7c3aed 100%);
@@ -71,18 +74,21 @@
     font-size: 11.5px;
     opacity: 0.5;
   }
+
+  /* ── Zone formulaire ── */
   .pz-auth-form {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 48px 24px;
     overflow-y: auto;
   }
   .pz-auth-box {
     width: 100%;
-    max-width: 460px;
+    max-width: 520px;
   }
+
   .pz-auth-box h1 {
     font-size: 26px;
     font-weight: 700;
@@ -90,16 +96,51 @@
     margin: 0 0 6px;
     letter-spacing: -0.4px;
   }
-  .pz-auth-box p {
+  .pz-auth-box > p {
     font-size: 14px;
     color: #6b7280;
     margin: 0 0 28px;
   }
+
+  /* ── Sections ── */
+  .pz-section {
+    margin-bottom: 28px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .pz-section-head {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .pz-section-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .pz-section-note {
+    background: #ede9fe;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: #4338ca;
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+
+  /* ── Champs ── */
   .pz-field {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    margin-bottom: 16px;
   }
   .pz-field label {
     font-size: 12px;
@@ -108,21 +149,25 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  .pz-field input {
+  .pz-field input,
+  .pz-field select {
     border: 1.5px solid #e5e7eb;
     border-radius: 10px;
-    padding: 11px 14px;
+    padding: 10px 14px;
     font-size: 14px;
     color: #111827;
     outline: none;
     width: 100%;
     box-sizing: border-box;
     background: #fff;
+    font-family: inherit;
     transition:
       border-color 0.15s,
       box-shadow 0.15s;
+    appearance: none;
   }
-  .pz-field input:focus {
+  .pz-field input:focus,
+  .pz-field select:focus {
     border-color: #4f46e5;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
   }
@@ -136,8 +181,10 @@
   .pz-err-msg {
     font-size: 11.5px;
     color: #b91c1c;
-    margin-top: 3px;
+    margin-top: 2px;
   }
+
+  /* ── Alertes ── */
   .pz-alert {
     border-radius: 10px;
     padding: 12px 16px;
@@ -156,6 +203,8 @@
     color: #b91c1c;
     border-color: #fca5a5;
   }
+
+  /* ── Bouton ── */
   .pz-btn-submit {
     width: 100%;
     padding: 13px;
@@ -166,7 +215,7 @@
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 8px;
+    margin-top: 4px;
     letter-spacing: 0.01em;
     transition: opacity 0.15s;
   }
@@ -177,6 +226,7 @@
     opacity: 0.55;
     cursor: not-allowed;
   }
+
   .pz-link-row {
     text-align: center;
     font-size: 13.5px;
@@ -191,6 +241,7 @@
   .pz-link-row a:hover {
     text-decoration: underline;
   }
+
   @media (max-width: 768px) {
     .pz-auth-brand {
       display: none;
@@ -199,12 +250,10 @@
 </style>
 
 <div class="pz-auth-shell">
+  <!-- Panneau gauche identique au login -->
   <div class="pz-auth-brand">
     <div>
-      <div class="pz-brand-logo">
-        <span>⚡</span>
-        PaieZone RH
-      </div>
+      <div class="pz-brand-logo"><span>⚡</span>PaieZone RH</div>
       <div class="pz-brand-tagline">La paie tunisienne,<br />automatisée et conforme.</div>
       <div class="pz-brand-feat">
         <div>Calcul CNSS 9,18 % · IRPP barème LF 2026</div>
@@ -216,6 +265,7 @@
     <div class="pz-brand-foot">© 2026 PaieZone · Conforme réglementation tunisienne</div>
   </div>
 
+  <!-- Formulaire -->
   <div class="pz-auth-form">
     <div class="pz-auth-box">
       <h1>Créer un compte</h1>
@@ -223,119 +273,276 @@
 
       @if (success()) {
         <div class="pz-alert pz-alert-ok">
-          <strong>Compte créé avec succès !</strong> Vérifiez votre email pour confirmer votre inscription.
+          <strong>Compte créé avec succès !</strong> Vérifiez votre email pour activer votre compte, puis connectez-vous.
         </div>
+        <div class="pz-link-row"><a routerLink="/login">Se connecter →</a></div>
       }
       @if (error()) {
-        <div class="pz-alert pz-alert-err"><strong>Échec de la création.</strong> Veuillez réessayer.</div>
+        <div class="pz-alert pz-alert-err"><strong>Erreur.</strong> Veuillez réessayer.</div>
       }
       @if (errorUserExists()) {
-        <div class="pz-alert pz-alert-err"><strong>Cet identifiant est déjà utilisé.</strong> Choisissez-en un autre.</div>
+        <div class="pz-alert pz-alert-err"><strong>Cet identifiant est déjà utilisé.</strong></div>
       }
       @if (errorEmailExists()) {
-        <div class="pz-alert pz-alert-err">
-          <strong>Cet email est déjà enregistré.</strong> Connectez-vous ou réinitialisez votre mot de passe.
-        </div>
+        <div class="pz-alert pz-alert-err"><strong>Cet email est déjà enregistré.</strong></div>
       }
       @if (doNotMatch()) {
         <div class="pz-alert pz-alert-err">Les mots de passe ne correspondent pas.</div>
       }
+      @if (errorTaxIdExists()) {
+        <div class="pz-alert pz-alert-err"><strong>Ce matricule fiscal est déjà utilisé.</strong> Veuillez en saisir un autre.</div>
+      }
 
       @if (!success()) {
         <form (ngSubmit)="register()" [formGroup]="registerForm">
-          <div class="pz-field">
-            <label for="login">Identifiant *</label>
-            <input
-              #login
-              type="text"
-              id="login"
-              formControlName="login"
-              placeholder="ex: m.ben-ali"
-              data-cy="username"
-              autocomplete="username"
-            />
-            @let loginRef = registerForm.get('login')!;
-            @if (loginRef.invalid && (loginRef.dirty || loginRef.touched)) {
-              @if (loginRef.errors?.['required']) {
-                <span class="pz-err-msg">Identifiant obligatoire.</span>
-              }
-              @if (loginRef.errors?.['minlength']) {
-                <span class="pz-err-msg">Minimum 1 caractère.</span>
-              }
-              @if (loginRef.errors?.['maxlength']) {
-                <span class="pz-err-msg">Maximum 50 caractères.</span>
-              }
-              @if (loginRef.errors?.['pattern']) {
-                <span class="pz-err-msg">Identifiant invalide (caractères non autorisés).</span>
-              }
-            }
-          </div>
+          <!-- ═══════════════════════ SECTION ENTREPRISE ═══════════════════════ -->
+          <div class="pz-section">
+            <div class="pz-section-head">Informations de l'entreprise</div>
+            <div class="pz-section-body">
+              <div class="pz-field">
+                <label for="companyName">Désignation de votre entreprise *</label>
+                <input
+                  #companyNameInput
+                  type="text"
+                  id="companyName"
+                  formControlName="companyName"
+                  placeholder="Désignation de votre entreprise"
+                />
+                @let cn = registerForm.get('companyName')!;
+                @if (cn.invalid && (cn.dirty || cn.touched)) {
+                  <span class="pz-err-msg">Désignation obligatoire.</span>
+                }
+              </div>
 
-          <div class="pz-field">
-            <label for="email">Adresse email *</label>
-            <input type="email" id="email" formControlName="email" placeholder="vous@entreprise.tn" data-cy="email" autocomplete="email" />
-            @let emailRef = registerForm.get('email')!;
-            @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
-              @if (emailRef.errors?.['required']) {
-                <span class="pz-err-msg">Email obligatoire.</span>
-              }
-              @if (emailRef.errors?.['email']) {
-                <span class="pz-err-msg">Format d'email invalide.</span>
-              }
-              @if (emailRef.errors?.['minlength']) {
-                <span class="pz-err-msg">Email trop court.</span>
-              }
-              @if (emailRef.errors?.['maxlength']) {
-                <span class="pz-err-msg">Email trop long (max 254 caractères).</span>
-              }
-            }
-          </div>
+              <div class="pz-field">
+                <label for="taxId">Matricule fiscal de votre entreprise *</label>
+                <input type="text" id="taxId" formControlName="taxId" placeholder="Matricule fiscal de votre entreprise" />
+                @let ti = registerForm.get('taxId')!;
+                @if (ti.invalid && (ti.dirty || ti.touched)) {
+                  <span class="pz-err-msg">Matricule fiscal obligatoire.</span>
+                }
+              </div>
 
-          <div class="pz-field-row">
-            <div class="pz-field">
-              <label for="password">Mot de passe *</label>
-              <input
-                type="password"
-                id="password"
-                formControlName="password"
-                placeholder="Min. 4 caractères"
-                data-cy="firstPassword"
-                autocomplete="new-password"
-              />
-              @let passwordRef = registerForm.get('password')!;
-              @if (passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)) {
-                @if (passwordRef.errors?.['required']) {
-                  <span class="pz-err-msg">Mot de passe obligatoire.</span>
+              <div class="pz-field">
+                <label for="companyPhone">Téléphone entreprise *</label>
+                <input type="tel" id="companyPhone" formControlName="companyPhone" placeholder="Téléphone entreprise" />
+                @let cp = registerForm.get('companyPhone')!;
+                @if (cp.invalid && (cp.dirty || cp.touched)) {
+                  <span class="pz-err-msg">Téléphone obligatoire.</span>
                 }
-                @if (passwordRef.errors?.['minlength']) {
-                  <span class="pz-err-msg">Minimum 4 caractères.</span>
+              </div>
+
+              <div class="pz-field">
+                <label for="companyEmail">Email de contact de l'entreprise *</label>
+                <input type="email" id="companyEmail" formControlName="companyEmail" placeholder="Email de contact de l'entreprise" />
+                @let ce = registerForm.get('companyEmail')!;
+                @if (ce.invalid && (ce.dirty || ce.touched)) {
+                  <span class="pz-err-msg">Email entreprise obligatoire et valide.</span>
                 }
-                @if (passwordRef.errors?.['maxlength']) {
-                  <span class="pz-err-msg">Maximum 50 caractères.</span>
+              </div>
+
+              <div class="pz-field">
+                <label for="address">Adresse de l'entreprise *</label>
+                <input type="text" id="address" formControlName="address" placeholder="Adresse" />
+                @let ad = registerForm.get('address')!;
+                @if (ad.invalid && (ad.dirty || ad.touched)) {
+                  <span class="pz-err-msg">Adresse obligatoire.</span>
                 }
-              }
+              </div>
+
+              <div class="pz-field">
+                <label for="gouvernorat">Gouvernorat *</label>
+                <select id="gouvernorat" formControlName="gouvernorat">
+                  <option value="">Gouvernorat</option>
+                  <option>Ariana</option>
+                  <option>Béja</option>
+                  <option>Ben Arous</option>
+                  <option>Bizerte</option>
+                  <option>Gabès</option>
+                  <option>Gafsa</option>
+                  <option>Jendouba</option>
+                  <option>Kairouan</option>
+                  <option>Kasserine</option>
+                  <option>Kébili</option>
+                  <option>Le Kef</option>
+                  <option>Mahdia</option>
+                  <option>Manouba</option>
+                  <option>Médenine</option>
+                  <option>Monastir</option>
+                  <option>Nabeul</option>
+                  <option>Sfax</option>
+                  <option>Sidi Bouzid</option>
+                  <option>Siliana</option>
+                  <option>Sousse</option>
+                  <option>Tataouine</option>
+                  <option>Tozeur</option>
+                  <option>Tunis</option>
+                  <option>Zaghouan</option>
+                </select>
+                @let gv = registerForm.get('gouvernorat')!;
+                @if (gv.invalid && (gv.dirty || gv.touched)) {
+                  <span class="pz-err-msg">Gouvernorat obligatoire.</span>
+                }
+              </div>
+
+              <div class="pz-field-row">
+                <div class="pz-field">
+                  <label for="city">Ville *</label>
+                  <input type="text" id="city" formControlName="city" placeholder="Ville" />
+                  @let ci = registerForm.get('city')!;
+                  @if (ci.invalid && (ci.dirty || ci.touched)) {
+                    <span class="pz-err-msg">Ville obligatoire.</span>
+                  }
+                </div>
+                <div class="pz-field">
+                  <label for="postalCode">Code postal *</label>
+                  <input type="text" id="postalCode" formControlName="postalCode" placeholder="Code postal" />
+                  @let pc = registerForm.get('postalCode')!;
+                  @if (pc.invalid && (pc.dirty || pc.touched)) {
+                    <span class="pz-err-msg">Code postal obligatoire.</span>
+                  }
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div class="pz-field">
-              <label for="confirmPassword">Confirmer *</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                formControlName="confirmPassword"
-                placeholder="Répétez le mot de passe"
-                data-cy="secondPassword"
-                autocomplete="new-password"
-              />
-              @let confirmRef = registerForm.get('confirmPassword')!;
-              @if (confirmRef.invalid && (confirmRef.dirty || confirmRef.touched)) {
-                @if (confirmRef.errors?.['required']) {
+          <!-- ═══════════════════════ SECTION ADMIN ═══════════════════════ -->
+          <div class="pz-section">
+            <div class="pz-section-head">Compte administrateur</div>
+            <div class="pz-section-body">
+              <div class="pz-section-note">
+                Le compte créé sera le compte administrateur principal de l'entreprise. Assurez-vous de renseigner les informations de la
+                bonne personne.
+              </div>
+
+              <div class="pz-field">
+                <label for="login">Nom utilisateur de l'administrateur *</label>
+                <input
+                  type="text"
+                  id="login"
+                  formControlName="login"
+                  placeholder="Nom utilisateur de l'administrateur"
+                  data-cy="username"
+                  autocomplete="username"
+                />
+                @let lg = registerForm.get('login')!;
+                @if (lg.invalid && (lg.dirty || lg.touched)) {
+                  @if (lg.errors?.['required']) {
+                    <span class="pz-err-msg">Identifiant obligatoire.</span>
+                  }
+                  @if (lg.errors?.['minlength']) {
+                    <span class="pz-err-msg">Minimum 1 caractère.</span>
+                  }
+                  @if (lg.errors?.['maxlength']) {
+                    <span class="pz-err-msg">Maximum 50 caractères.</span>
+                  }
+                  @if (lg.errors?.['pattern']) {
+                    <span class="pz-err-msg">Caractères non autorisés.</span>
+                  }
+                }
+              </div>
+
+              <div class="pz-field-row">
+                <div class="pz-field">
+                  <label for="firstName">Prénom de l'administrateur *</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    formControlName="firstName"
+                    placeholder="Prénom de l'administrateur"
+                    autocomplete="given-name"
+                  />
+                  @let fn = registerForm.get('firstName')!;
+                  @if (fn.invalid && (fn.dirty || fn.touched)) {
+                    <span class="pz-err-msg">Prénom obligatoire.</span>
+                  }
+                </div>
+                <div class="pz-field">
+                  <label for="lastName">Nom de l'administrateur *</label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    formControlName="lastName"
+                    placeholder="Nom de l'administrateur"
+                    autocomplete="family-name"
+                  />
+                  @let ln = registerForm.get('lastName')!;
+                  @if (ln.invalid && (ln.dirty || ln.touched)) {
+                    <span class="pz-err-msg">Nom obligatoire.</span>
+                  }
+                </div>
+              </div>
+
+              <div class="pz-field">
+                <label for="email">Email de l'administrateur *</label>
+                <input
+                  type="email"
+                  id="email"
+                  formControlName="email"
+                  placeholder="Email de l'administrateur"
+                  data-cy="email"
+                  autocomplete="email"
+                />
+                @let em = registerForm.get('email')!;
+                @if (em.invalid && (em.dirty || em.touched)) {
+                  @if (em.errors?.['required']) {
+                    <span class="pz-err-msg">Email obligatoire.</span>
+                  }
+                  @if (em.errors?.['email']) {
+                    <span class="pz-err-msg">Format d'email invalide.</span>
+                  }
+                  @if (em.errors?.['minlength']) {
+                    <span class="pz-err-msg">Email trop court.</span>
+                  }
+                  @if (em.errors?.['maxlength']) {
+                    <span class="pz-err-msg">Email trop long.</span>
+                  }
+                }
+              </div>
+
+              <div class="pz-field">
+                <label for="password">Nouveau mot de passe *</label>
+                <input
+                  type="password"
+                  id="password"
+                  formControlName="password"
+                  placeholder="Nouveau mot de passe"
+                  data-cy="firstPassword"
+                  autocomplete="new-password"
+                />
+                @let pw = registerForm.get('password')!;
+                @if (pw.invalid && (pw.dirty || pw.touched)) {
+                  @if (pw.errors?.['required']) {
+                    <span class="pz-err-msg">Mot de passe obligatoire.</span>
+                  }
+                  @if (pw.errors?.['minlength']) {
+                    <span class="pz-err-msg">Minimum 4 caractères.</span>
+                  }
+                  @if (pw.errors?.['maxlength']) {
+                    <span class="pz-err-msg">Maximum 50 caractères.</span>
+                  }
+                }
+              </div>
+
+              <pz-password-strength-bar [passwordToCheck]="registerForm.get('password')!.value" />
+
+              <div class="pz-field">
+                <label for="confirmPassword">Confirmation du nouveau mot de passe *</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  formControlName="confirmPassword"
+                  placeholder="Confirmation du nouveau mot de passe"
+                  data-cy="secondPassword"
+                  autocomplete="new-password"
+                />
+                @let cp2 = registerForm.get('confirmPassword')!;
+                @if (cp2.invalid && (cp2.dirty || cp2.touched)) {
                   <span class="pz-err-msg">Confirmation obligatoire.</span>
                 }
-              }
+              </div>
             </div>
           </div>
-
-          <pz-password-strength-bar [passwordToCheck]="registerForm.get('password')!.value" />
 
           <button type="submit" class="pz-btn-submit" [disabled]="registerForm.invalid" data-cy="submit">Créer mon compte</button>
         </form>

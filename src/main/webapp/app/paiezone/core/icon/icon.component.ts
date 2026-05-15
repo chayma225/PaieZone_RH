@@ -45,6 +45,12 @@ const ICONS: Record<string, string> = {
   CircleHelp: '<circle cx="8" cy="8" r="6"/><path d="M6.5 6.2c.3-.9 1-1.4 1.9-1.4 1.1 0 1.8.7 1.8 1.6 0 1.5-2.2 1.4-2.2 3.1M8 11.7h.01"/>',
   Beach: '<path d="M8 8v6"/><path d="M3 8c1-3.5 4-5 5-5s4 1.5 5 5z"/><path d="M2 14h12"/>',
   LogOut: '<path d="M6 2.5H3.5A1 1 0 0 0 2.5 3.5v9A1 1 0 0 0 3.5 13.5H6"/><path d="M10.5 11 13.5 8l-3-3"/><path d="M13.5 8H6"/>',
+  Gift: '<path d="M2 6h12v2H2zM8 6V3.5a2 2 0 0 0-4 0V6M8 6V3.5a2 2 0 0 1 4 0V6M2 8v5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8M8 8v6"/>',
+  List: '<path d="M3 4h10M3 8h10M3 12h10"/>',
+  FileText:
+    '<path d="M3.5 2.5h6L12.5 5.5v8a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1z"/><path d="M9.5 2.5v3h3M5.5 7.5h5M5.5 9.5h5M5.5 11.5h3"/>',
+  Trash2:
+    '<path d="M3 4.5h10M6.5 4.5V3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5M4.5 4.5l.5 8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1l.5-8M6.5 7v3.5M9.5 7v3.5"/>',
 };
 
 @Component({

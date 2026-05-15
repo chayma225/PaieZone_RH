@@ -21,7 +21,15 @@
       "PowerShell($ProgressPreference = 'SilentlyContinue'; Invoke-RestMethod -Uri \"http://localhost:8080/actuator/health\" -Method Get -TimeoutSec 5 2>&1)",
       "PowerShell($ProgressPreference = 'SilentlyContinue'; try { $r = Invoke-RestMethod -Uri \"http://localhost:8080/api/authenticate\" -Method POST -ContentType \"application/json\" -Body '{\"username\":\"admin\",\"password\":\"admin\",\"rememberMe\":false}' -TimeoutSec 10; $r } catch { $_.Exception.Message })",
       "PowerShell(Get-Command *)",
-      "Bash(Get-Content \"C:\\\\Users\\\\chayma\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-chayma-PaieZoneRH\\\\fcf4f363-2fea-4c73-bb54-88b2985bab70\\\\tasks\\\\bjfzdmrwb.output\" -Tail 40)"
+      "Bash(Get-Content \"C:\\\\Users\\\\chayma\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-chayma-PaieZoneRH\\\\fcf4f363-2fea-4c73-bb54-88b2985bab70\\\\tasks\\\\bjfzdmrwb.output\" -Tail 40)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/management/health)",
+      "Bash(grep -v \"^--$\")",
+      "PowerShell($env:PGPASSWORD = 'paiezone'; & \"C:\\\\Program Files\\\\PostgreSQL\\\\14\\\\bin\\\\psql.exe\" -U paieZoneRH -d paieZoneRH -c \"UPDATE pz_user SET password_hash = '`$2a`$10`$VEjxo0jq2YG9Rbk2HmX9.OLRFgLRb7E4qkPGzWHMJKOqzK1jYt.Gi' WHERE login = 'mohamed'; SELECT login, activated FROM pz_user WHERE login = 'mohamed';\")",
+      "PowerShell($env:PGPASSWORD = 'paiezone'; & \"C:\\\\Program Files\\\\PostgreSQL\\\\14\\\\bin\\\\psql.exe\" -U paieZoneRH -d paieZoneRH -c \"UPDATE pz_user SET password_hash = '`$2a`$10`$VEjxo0jq2YG9Rbk2HmX9.OLRFgLRb7E4qkPGzWHMJKOqzK1jYt.Gi' WHERE login = 'mohamed';\")",
+      "PowerShell($env:PGPASSWORD = 'paiezone'; & \"C:\\\\Program Files\\\\PostgreSQL\\\\14\\\\bin\\\\psql.exe\" -U paieZoneRH -d paieZoneRH -c \"SELECT login, LEFT\\(password_hash, 30\\) as hash_preview FROM pz_user WHERE login IN \\('admin', 'mohamed'\\);\")",
+      "PowerShell($env:PGPASSWORD = 'paiezone'; & \"C:\\\\Program Files\\\\PostgreSQL\\\\14\\\\bin\\\\psql.exe\" -U paieZoneRH -d paieZoneRH -c \"UPDATE pz_user SET password_hash = \\(SELECT password_hash FROM pz_user WHERE login = 'admin'\\) WHERE login = 'mohamed'; SELECT 'OK' as status;\")",
+      "PowerShell(Stop-Process *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/api/job-positions)"
     ]
   }
 }

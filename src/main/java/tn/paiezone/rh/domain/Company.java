@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Entreprise = Tenant SaaS
@@ -60,6 +59,10 @@ public class Company implements Serializable {
     @Column(name = "postal_code", length = 10)
     private String postalCode;
 
+    @Size(max = 100)
+    @Column(name = "gouvernorat", length = 100)
+    private String gouvernorat;
+
     @Size(max = 20)
     @Column(name = "phone", length = 20)
     private String phone;
@@ -87,6 +90,25 @@ public class Company implements Serializable {
     @NotNull
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    @Size(max = 50)
+    @Column(name = "admin_login", length = 50)
+    private String adminLogin;
+
+    @Size(max = 50)
+    @Column(name = "legal_form", length = 50)
+    private String legalForm;
+
+    @Column(name = "capital_social")
+    private java.math.BigDecimal capitalSocial;
+
+    @Size(max = 255)
+    @Column(name = "main_activity", length = 255)
+    private String mainActivity;
+
+    @Size(max = 255)
+    @Column(name = "website", length = 255)
+    private String website;
 
     @JsonIgnoreProperties(value = { "company" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY)
@@ -199,6 +221,19 @@ public class Company implements Serializable {
         this.postalCode = postalCode;
     }
 
+    public String getGouvernorat() {
+        return this.gouvernorat;
+    }
+
+    public Company gouvernorat(String gouvernorat) {
+        this.setGouvernorat(gouvernorat);
+        return this;
+    }
+
+    public void setGouvernorat(String gouvernorat) {
+        this.gouvernorat = gouvernorat;
+    }
+
     public String getPhone() {
         return this.phone;
     }
@@ -290,6 +325,19 @@ public class Company implements Serializable {
         this.createdAt = createdAt;
     }
 
+    public String getAdminLogin() {
+        return this.adminLogin;
+    }
+
+    public Company adminLogin(String adminLogin) {
+        this.setAdminLogin(adminLogin);
+        return this;
+    }
+
+    public void setAdminLogin(String adminLogin) {
+        this.adminLogin = adminLogin;
+    }
+
     public CompanySubscription getCompanySubscription() {
         return this.companySubscription;
     }
@@ -301,6 +349,38 @@ public class Company implements Serializable {
     public Company companySubscription(CompanySubscription companySubscription) {
         this.setCompanySubscription(companySubscription);
         return this;
+    }
+
+    public String getLegalForm() {
+        return this.legalForm;
+    }
+
+    public void setLegalForm(String legalForm) {
+        this.legalForm = legalForm;
+    }
+
+    public java.math.BigDecimal getCapitalSocial() {
+        return this.capitalSocial;
+    }
+
+    public void setCapitalSocial(java.math.BigDecimal capitalSocial) {
+        this.capitalSocial = capitalSocial;
+    }
+
+    public String getMainActivity() {
+        return this.mainActivity;
+    }
+
+    public void setMainActivity(String mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
+    public String getWebsite() {
+        return this.website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

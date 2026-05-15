@@ -5,15 +5,17 @@ import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
-import type { Employee } from '../../core/types';
+import type { Employee, HrDocument, Contract } from '../../core/types';
 
 interface DocItem {
   id: number;
+  backendId?: number;
   name: string;
   type: string;
   size: string;
   date: string;
   icon: string;
+  fileUrl?: string;
   isNew?: boolean;
 }
 
@@ -84,6 +86,13 @@ export default class RhEmployeesComponent {
     phoneNumber: '',
     city: '',
     cnssNumber: '',
+    contractType: 'CDI',
+    contractRef: '',
+    contractStartDate: '',
+    contractEndDate: '',
+    baseSalary: 0,
+    workingHoursWeek: 40,
+    workingDaysWeek: 5,
   };
 
   protected readonly genders = [
@@ -98,6 +107,15 @@ export default class RhEmployeesComponent {
     { value: 'WIDOWED', label: 'Veuf / Veuve' },
   ];
 
+  protected readonly contractTypes = [
+    { value: 'CDI', label: 'CDI – Durée indéterminée' },
+    { value: 'CDD', label: 'CDD – Durée déterminée' },
+    { value: 'CIVP', label: 'CIVP' },
+    { value: 'KARAMA', label: 'Karama' },
+    { value: 'INTERIMAIRE', label: 'Intérimaire' },
+    { value: 'STAGE', label: 'Stage' },
+  ];
+
   protected readonly categories = [
     { value: 'EMPLOYEE', label: 'Employé' },
     { value: 'WORKER', label: 'Ouvrier' },
@@ -107,6 +125,21 @@ export default class RhEmployeesComponent {
     { value: 'EXECUTIVE', label: 'Cadre supérieur' },
     { value: 'DIRECTOR', label: 'Directeur' },
   ];
+
+  needsEndDate(): boolean {
+    return ['CDD', 'CIVP', 'STAGE', 'KARAMA', 'INTERIMAIRE'].includes(this.createForm.contractType);
+  }
+
+  contractStatusLabel(s: string): string {
+    const m: Record<string, string> = {
+      DRAFT: 'Brouillon',
+      ACTIVE: 'Actif',
+      SUSPENDED: 'Suspendu',
+      TERMINATED: 'Résilié',
+      EXPIRED: 'Expiré',
+    };
+    return m[s] ?? s;
+  }
 
   openCreate(): void {
     this.createForm = {
@@ -127,6 +160,13 @@ export default class RhEmployeesComponent {
       phoneNumber: '',
       city: '',
       cnssNumber: '',
+      contractType: 'CDI',
+      contractRef: '',
+      contractStartDate: '',
+      contractEndDate: '',
+      baseSalary: 0,
+      workingHoursWeek: 40,
+      workingDaysWeek: 5,
     };
     this.errMsg.set('');
     this.showCreate.set(true);
@@ -166,7 +206,22 @@ export default class RhEmployeesComponent {
 
     this.api.createEmployeeSimple(body).subscribe({
       next: emp => {
-        this.data.employees.update(list => [...list, emp]);
+        const f = this.createForm;
+        const ref = f.contractRef.trim() || `CTR-${emp.id}-${Date.now()}`;
+        const contractBody: any = {
+          reference: ref,
+          contractType: f.contractType,
+          status: 'ACTIVE',
+          startDate: f.contractStartDate || f.hireDate,
+          baseSalary: +f.baseSalary || 0,
+          workingHoursWeek: +f.workingHoursWeek || 40,
+          workingDaysWeek: +f.workingDaysWeek || 5,
+          createdAt: new Date().toISOString(),
+          employee: { id: emp.id },
+        };
+        if (this.needsEndDate() && f.contractEndDate) contractBody['endDate'] = f.contractEndDate;
+        this.api.createContract(contractBody).subscribe({ error: () => {} });
+        this.data.reloadEmployees();
         this.closeCreate();
         this.busy.set(false);
       },
@@ -177,15 +232,11 @@ export default class RhEmployeesComponent {
     });
   }
 
+  // ── Contrats ──────────────────────────────────────────────────────────────
+  protected readonly contracts = signal<Contract[]>([]);
+
   // ── Documents ─────────────────────────────────────────────────────────────
-  protected readonly docs = signal<DocItem[]>([
-    { id: 1, name: 'Contrat de travail signé', type: 'Contrat', size: 'PDF · 2.1 Mo', date: '14/04/2024', icon: 'Pdf' },
-    { id: 2, name: "Pièce d'identité (CIN)", type: 'Identité', size: 'PDF · 480 Ko', date: '02/04/2024', icon: 'Pdf' },
-    { id: 3, name: 'RIB bancaire', type: 'Bancaire', size: 'PDF · 220 Ko', date: '02/04/2024', icon: 'Pdf' },
-    { id: 4, name: 'Diplôme', type: 'Diplôme', size: 'PDF · 1.4 Mo', date: '14/04/2024', icon: 'Pdf' },
-    { id: 5, name: 'Certificat médical', type: 'Médical', size: 'PDF · 320 Ko', date: '12/05/2026', icon: 'Pdf' },
-    { id: 6, name: 'Attestation CNSS', type: 'CNSS', size: 'PDF · 180 Ko', date: '03/04/2024', icon: 'Pdf' },
-  ]);
+  protected readonly docs = signal<DocItem[]>([]);
   protected readonly dragOver = signal(false);
   protected readonly uploading = signal<UploadingItem[]>([]);
   protected readonly docCategory = signal('Contrat');
@@ -196,6 +247,39 @@ export default class RhEmployeesComponent {
   openDrawer(e: Employee): void {
     this.selected.set(e);
     this.tab.set('infos');
+    this.docs.set([]);
+    this.contracts.set([]);
+    this.api.contracts(e.id).subscribe({
+      next: list => this.contracts.set(list),
+      error: () => {},
+    });
+    this.api.hrDocuments(e.id).subscribe({
+      next: list => {
+        const docTypes: Record<string, string> = {
+          CONTRACT: 'Contrat',
+          CIN_COPY: 'Identité',
+          DIPLOMA: 'Diplôme',
+          MEDICAL_CERT: 'Médical',
+          DISCIPLINARY: 'Disciplinaire',
+          PAYSLIP: 'Bulletin',
+          ATTESTATION: 'Attestation',
+          OTHER: 'Autre',
+        };
+        this.docs.set(
+          list.map(d => ({
+            id: d.id,
+            backendId: d.id,
+            name: d.title,
+            type: docTypes[d.documentType] ?? d.documentType,
+            size: d.fileSize ? `${Math.round(d.fileSize / 1024)} Ko` : '—',
+            date: d.uploadedAt ? new Date(d.uploadedAt).toLocaleDateString('fr-FR') : '—',
+            icon: 'Pdf',
+            fileUrl: d.fileUrl,
+          })),
+        );
+      },
+      error: () => {},
+    });
   }
   closeDrawer(): void {
     this.selected.set(null);
@@ -228,7 +312,18 @@ export default class RhEmployeesComponent {
   }
 
   private handleFiles(files: FileList): void {
+    const emp = this.selected();
+    if (!emp) return;
     const arr = Array.from(files).slice(0, 5);
+    const catToType: Record<string, string> = {
+      Contrat: 'CONTRACT',
+      Identité: 'CIN_COPY',
+      Diplôme: 'DIPLOMA',
+      Médical: 'MEDICAL_CERT',
+      CNSS: 'ATTESTATION',
+      Attestation: 'ATTESTATION',
+      Autre: 'OTHER',
+    };
     arr.forEach((f, i) => {
       const id = Date.now() + i;
       this.uploading.update(u => [...u, { id, name: f.name, size: f.size, progress: 0 }]);
@@ -239,18 +334,46 @@ export default class RhEmployeesComponent {
         if (p >= 100) {
           clearInterval(tick);
           this.uploading.update(u => u.filter(x => x.id !== id));
-          this.docs.update(d => [
-            {
-              id,
-              name: f.name,
-              type: this.docCategory(),
-              size: `${(f.type.split('/')[1] || 'FILE').toUpperCase()} · ${this.fmtSize(f.size)}`,
-              date: new Date().toLocaleDateString('fr-FR'),
-              icon: f.type === 'application/pdf' ? 'Pdf' : 'Doc',
-              isNew: true,
-            },
-            ...d,
-          ]);
+          const docType = catToType[this.docCategory()] ?? 'OTHER';
+          this.api
+            .createHrDocument({
+              documentType: docType,
+              title: f.name,
+              description: '',
+              active: true,
+              employee: { id: emp.id },
+            })
+            .subscribe({
+              next: doc => {
+                this.docs.update(d => [
+                  {
+                    id: doc.id,
+                    backendId: doc.id,
+                    name: doc.title,
+                    type: this.docCategory(),
+                    size: `${(f.type.split('/')[1] || 'FILE').toUpperCase()} · ${this.fmtSize(f.size)}`,
+                    date: new Date().toLocaleDateString('fr-FR'),
+                    icon: f.type === 'application/pdf' ? 'Pdf' : 'Doc',
+                    isNew: true,
+                  },
+                  ...d,
+                ]);
+              },
+              error: () => {
+                this.docs.update(d => [
+                  {
+                    id,
+                    name: f.name,
+                    type: this.docCategory(),
+                    size: `${(f.type.split('/')[1] || 'FILE').toUpperCase()} · ${this.fmtSize(f.size)}`,
+                    date: new Date().toLocaleDateString('fr-FR'),
+                    icon: f.type === 'application/pdf' ? 'Pdf' : 'Doc',
+                    isNew: true,
+                  },
+                  ...d,
+                ]);
+              },
+            });
         } else {
           this.uploading.update(u => u.map(x => (x.id === id ? { ...x, progress: Math.min(100, p) } : x)));
         }

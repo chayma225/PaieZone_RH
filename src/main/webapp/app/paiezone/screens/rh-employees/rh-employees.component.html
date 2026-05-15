@@ -140,26 +140,65 @@
             </div>
           }
           @case ('contract') {
-            <div class="info-grid">
-              <div>
-                <div class="lbl">Type de contrat</div>
-                <div class="val">
-                  <span class="pz-pill" [class]="contractClass(e.contract)">{{ e.contract }}</span>
+            @if (contracts().length === 0) {
+              <div class="pz-muted" style="padding: 32px; text-align: center">Aucun contrat enregistré pour cet employé.</div>
+            }
+            @for (c of contracts(); track c.id) {
+              <div style="margin-bottom: 20px">
+                <div class="badges" style="margin-bottom: 12px">
+                  <span class="pz-pill" [class]="contractClass(c.contractType)">{{ c.contractType }}</span>
+                  <span class="pz-pill pz-mono small">{{ c.reference }}</span>
+                  <span
+                    class="pz-pill"
+                    [class.pos]="c.status === 'ACTIVE'"
+                    [class.warn]="c.status === 'SUSPENDED' || c.status === 'DRAFT'"
+                    [class.danger]="c.status === 'TERMINATED' || c.status === 'EXPIRED'"
+                  >
+                    {{ contractStatusLabel(c.status) }}
+                  </span>
+                </div>
+                <div class="info-grid">
+                  <div>
+                    <div class="lbl">Date de début</div>
+                    <div class="val">{{ c.startDate }}</div>
+                  </div>
+                  @if (c.endDate) {
+                    <div>
+                      <div class="lbl">Date de fin</div>
+                      <div class="val">{{ c.endDate }}</div>
+                    </div>
+                  }
+                  <div>
+                    <div class="lbl">Salaire de base</div>
+                    <div class="val strong">{{ data.fmtTND(c.baseSalary) }}</div>
+                  </div>
+                  <div>
+                    <div class="lbl">Durée hebdomadaire</div>
+                    <div class="val">{{ c.workingHoursWeek }}h / {{ c.workingDaysWeek }} jours</div>
+                  </div>
+                  @if (c.trialPeriodMonths) {
+                    <div>
+                      <div class="lbl">Période d'essai</div>
+                      <div class="val">{{ c.trialPeriodMonths }} mois</div>
+                    </div>
+                  }
+                  @if (c.conventionCollective) {
+                    <div>
+                      <div class="lbl">Convention collective</div>
+                      <div class="val">{{ c.conventionCollective }}</div>
+                    </div>
+                  }
+                  <div>
+                    <div class="lbl">Date d'embauche</div>
+                    <div class="val">{{ e.hireDate }}</div>
+                  </div>
+                  <div>
+                    <div class="lbl">Catégorie</div>
+                    <div class="val">{{ e.cat }}</div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <div class="lbl">Date d'embauche</div>
-                <div class="val">{{ e.hireDate }}</div>
-              </div>
-              <div>
-                <div class="lbl">Salaire de base</div>
-                <div class="val strong">{{ data.fmtTND(e.salary) }}</div>
-              </div>
-              <div>
-                <div class="lbl">Catégorie</div>
-                <div class="val">{{ e.cat }}</div>
-              </div>
-            </div>
+            }
           }
 
           @case ('docs') {
@@ -363,6 +402,46 @@
           <div class="pz-field">
             <label>Intitulé du poste</label>
             <input type="text" [(ngModel)]="createForm.positionTitle" placeholder="ex: Développeur Senior" />
+          </div>
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Type de contrat *</label>
+            <select [(ngModel)]="createForm.contractType">
+              @for (c of contractTypes; track c.value) {
+                <option [value]="c.value">{{ c.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="pz-field">
+            <label>N° Contrat / Référence *</label>
+            <input type="text" [(ngModel)]="createForm.contractRef" placeholder="ex: CTR-2026-001" />
+          </div>
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Date début contrat *</label>
+            <input type="date" [(ngModel)]="createForm.contractStartDate" />
+          </div>
+          @if (needsEndDate()) {
+            <div class="pz-field">
+              <label>Date fin contrat *</label>
+              <input type="date" [(ngModel)]="createForm.contractEndDate" />
+            </div>
+          }
+        </div>
+        <div class="pz-field-row">
+          <div class="pz-field">
+            <label>Salaire de base (TND) *</label>
+            <input type="number" [(ngModel)]="createForm.baseSalary" min="0" step="1" placeholder="ex: 1800" />
+          </div>
+          <div class="pz-field">
+            <label>Heures / semaine</label>
+            <input type="number" [(ngModel)]="createForm.workingHoursWeek" min="1" max="48" />
+          </div>
+          <div class="pz-field">
+            <label>Jours / semaine</label>
+            <input type="number" [(ngModel)]="createForm.workingDaysWeek" min="1" max="7" />
           </div>
         </div>
 

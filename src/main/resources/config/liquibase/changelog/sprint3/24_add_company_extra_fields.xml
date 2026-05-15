@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="24-add-company-extra-fields" author="chayma">
+    <addColumn tableName="company">
+      <column name="legal_form" type="varchar(50)"/>
+      <column name="capital_social" type="decimal(19,4)"/>
+      <column name="main_activity" type="varchar(255)"/>
+      <column name="website" type="varchar(255)"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.security.AuthoritiesConstants;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.service.mapper.CompanyMapper;
 
@@ -65,6 +67,7 @@ public class CompanyService {
         companyDTO.setTenantSchema(existing.getTenantSchema());
         companyDTO.setCreatedAt(existing.getCreatedAt());
         companyDTO.setTrialEnd(existing.getTrialEnd());
+        companyDTO.setAdminLogin(existing.getAdminLogin());
 
         // ✅ active → on garde la valeur du DTO si elle est fournie
         //    sinon on reprend celle de la base (sécurité)
@@ -89,6 +92,7 @@ public class CompanyService {
                 companyDTO.setTenantSchema(existingCompany.getTenantSchema());
                 companyDTO.setCreatedAt(existingCompany.getCreatedAt());
                 companyDTO.setTrialEnd(existingCompany.getTrialEnd());
+                companyDTO.setAdminLogin(existingCompany.getAdminLogin());
                 if (companyDTO.getActive() == null) {
                     companyDTO.setActive(existingCompany.getActive());
                 }
@@ -100,12 +104,31 @@ public class CompanyService {
     }
 
     /**
-     * Get all the companies.
+     * Get all companies — SUPER_ADMIN sees all, ADMIN sees only their own.
      */
     @Transactional(readOnly = true)
     public List<CompanyDTO> findAll() {
         LOG.debug("Request to get all Companies");
         return companyRepository.findAll().stream().map(companyMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Role-aware company list: SUPER_ADMIN → all; ADMIN → own company only.
+     */
+    @Transactional(readOnly = true)
+    public List<CompanyDTO> findAllForCurrentUser() {
+        if (SecurityUtils.hasCurrentUserAnyOfAuthorities(AuthoritiesConstants.SUPER_ADMIN)) {
+            return findAll();
+        }
+        return SecurityUtils.getCurrentUserLogin()
+            .map(login ->
+                companyRepository
+                    .findByAdminLogin(login)
+                    .stream()
+                    .map(companyMapper::toDto)
+                    .collect(Collectors.toCollection(LinkedList::new))
+            )
+            .orElseGet(LinkedList::new);
     }
 
     /**

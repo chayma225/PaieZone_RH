@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.JobPosition;
 import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.JobPositionRepository;
@@ -25,25 +26,38 @@ public class JobPositionService {
     private final JobPositionRepository jobPositionRepository;
     private final JobPositionMapper jobPositionMapper;
     private final EmployeeRepository employeeRepository;
+    private final TenantContextService tenantContextService;
 
     public JobPositionService(
         JobPositionRepository jobPositionRepository,
         JobPositionMapper jobPositionMapper,
-        EmployeeRepository employeeRepository
+        EmployeeRepository employeeRepository,
+        TenantContextService tenantContextService
     ) {
         this.jobPositionRepository = jobPositionRepository;
         this.jobPositionMapper = jobPositionMapper;
         this.employeeRepository = employeeRepository;
+        this.tenantContextService = tenantContextService;
     }
 
     // ── US-S1-12 : Créer un poste ─────────────────────────────────────────────
     public JobPositionDTO save(JobPositionDTO dto) {
         LOG.debug("Request to save JobPosition : {}", dto);
 
-        // Valider la grille salariale
         validateSalaryGrid(dto);
 
         JobPosition jobPosition = jobPositionMapper.toEntity(dto);
+
+        // Auto-resolve company from tenant context if not provided
+        if (jobPosition.getCompany() == null || jobPosition.getCompany().getId() == null) {
+            Long companyId = tenantContextService.getCurrentCompanyId();
+            if (companyId != null) {
+                Company ref = new Company();
+                ref.setId(companyId);
+                jobPosition.setCompany(ref);
+            }
+        }
+
         jobPosition = jobPositionRepository.save(jobPosition);
         return jobPositionMapper.toDto(jobPosition);
     }

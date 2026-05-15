@@ -33,7 +33,6 @@ public class JobPositionDTO implements Serializable {
     @NotNull
     private Boolean active;
 
-    @NotNull
     private CompanyDTO company;
 
     private DepartmentDTO department;

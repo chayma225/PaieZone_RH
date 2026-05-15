@@ -11,15 +11,16 @@
     </div>
   </div>
 
+  <!-- ── KPI ───────────────────────────────────────────────────────────────── -->
   <div class="stat-grid">
     <div class="pz-card stat">
       <div class="stat-head">
-        <span class="ico"><pz-icon name="Wallet" /></span>MRR — Mai 2026
+        <span class="ico"><pz-icon name="Wallet" /></span>MRR — {{ currentMonth }}
       </div>
       <div class="stat-val">{{ data.fmtTND(kpi().mrr) }}</div>
       <div class="stat-foot">
         <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi().mrrDelta }}%</span>
-        <span class="pz-muted">vs Avril</span>
+        <span class="pz-muted">vs mois précédent</span>
       </div>
     </div>
     <div class="pz-card stat">
@@ -54,6 +55,110 @@
     </div>
   </div>
 
+  <!-- ── Ligne 2 : histogramme + courbe ─────────────────────────────────────── -->
+  <div class="charts-row">
+    <!-- Histogramme répartition par plan -->
+    <div class="pz-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Répartition par plan</div>
+          <div class="card-sub pz-muted">Nombre d'entreprises par offre</div>
+        </div>
+      </div>
+      <div class="card-body chart-body">
+        <svg class="chart-svg" viewBox="0 0 320 140" preserveAspectRatio="none">
+          <!-- axe Y -->
+          <line x1="40" y1="10" x2="40" y2="110" stroke="var(--pz-line)" stroke-width="1" />
+          <!-- axe X -->
+          <line x1="40" y1="110" x2="310" y2="110" stroke="var(--pz-line)" stroke-width="1" />
+          <!-- barres -->
+          @for (p of planDistribution(); track p.plan; let i = $index) {
+            @let barH = maxPlanCount() > 0 ? (p.count / maxPlanCount()) * 90 : 0;
+            @let barX = 52 + i * 65;
+            <rect [attr.x]="barX" [attr.y]="110 - barH" width="36" [attr.height]="barH" [attr.fill]="p.color" rx="4" opacity="0.85" />
+            <text
+              [attr.x]="barX + 18"
+              [attr.y]="108 - barH - 4"
+              text-anchor="middle"
+              font-size="10"
+              fill="var(--pz-ink-3)"
+              font-family="inherit"
+            >
+              {{ p.count }}
+            </text>
+            <text [attr.x]="barX + 18" y="122" text-anchor="middle" font-size="9" fill="var(--pz-muted)" font-family="inherit">
+              {{ p.plan }}
+            </text>
+          }
+          <!-- ligne Y ref -->
+          @if (maxPlanCount() > 0) {
+            <line x1="38" y1="20" x2="310" y2="20" stroke="var(--pz-line)" stroke-width="0.5" stroke-dasharray="3,3" />
+            <text x="2" y="23" font-size="8" fill="var(--pz-muted)" font-family="inherit">{{ maxPlanCount() }}</text>
+          }
+        </svg>
+      </div>
+    </div>
+
+    <!-- Courbe MRR mensuel -->
+    <div class="pz-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Évolution MRR</div>
+          <div class="card-sub pz-muted">6 derniers mois (estimé)</div>
+        </div>
+      </div>
+      <div class="card-body chart-body">
+        <svg class="chart-svg" viewBox="0 0 320 140" preserveAspectRatio="none">
+          <!-- grille -->
+          @for (g of [0, 1, 2, 3]; track g) {
+            <line
+              x1="40"
+              [attr.y1]="110 - g * 30"
+              x2="310"
+              [attr.y2]="110 - g * 30"
+              stroke="var(--pz-line)"
+              stroke-width="0.5"
+              stroke-dasharray="3,3"
+            />
+          }
+          <!-- axe Y -->
+          <line x1="40" y1="10" x2="40" y2="110" stroke="var(--pz-line)" stroke-width="1" />
+          <!-- axe X -->
+          <line x1="40" y1="110" x2="310" y2="110" stroke="var(--pz-line)" stroke-width="1" />
+          <!-- aire remplie -->
+          <polygon [attr.points]="mrrAreaPoints()" fill="url(#mrrGrad)" opacity="0.3" />
+          <!-- dégradé -->
+          <defs>
+            <linearGradient id="mrrGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.6" />
+              <stop offset="100%" stop-color="#4f46e5" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <!-- ligne -->
+          <polyline
+            [attr.points]="mrrLinePoints()"
+            fill="none"
+            stroke="#4f46e5"
+            stroke-width="2"
+            stroke-linejoin="round"
+            stroke-linecap="round"
+          />
+          <!-- points -->
+          @for (p of mrrPoints(); track $index) {
+            <circle [attr.cx]="p.x" [attr.cy]="p.y" r="3.5" fill="#4f46e5" stroke="white" stroke-width="1.5" />
+          }
+          <!-- labels X -->
+          @for (p of mrrPoints(); track $index; let i = $index) {
+            <text [attr.x]="p.x" y="124" text-anchor="middle" font-size="8" fill="var(--pz-muted)" font-family="inherit">
+              {{ mrrLabels()[i] }}
+            </text>
+          }
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Ligne 3 : tableau + état plateforme ────────────────────────────────── -->
   <div class="row-grid">
     <div class="pz-card">
       <div class="card-head">
@@ -73,15 +178,21 @@
           </tr>
         </thead>
         <tbody>
-          @for (c of data.companies().slice(0, 5); track c.id) {
+          @if (data.companies().length === 0) {
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 32px; color: var(--pz-muted)">Aucune entreprise</td>
+            </tr>
+          }
+          @for (c of data.companies().slice(0, 6); track c.id) {
             <tr>
               <td>
                 <div class="ev-name">
                   <div class="pz-avatar sm" [attr.data-bg]="(c.id % 6) + 1">
-                    {{ c.tradeName.split(' ')[0][0] }}{{ c.tradeName.split(' ')[1]?.[0] || '' }}
+                    {{ (c.tradeName || c.name || '?').split(' ')[0][0]?.toUpperCase()
+                    }}{{ (c.tradeName || c.name || '').split(' ')[1]?.[0]?.toUpperCase() || '' }}
                   </div>
                   <div>
-                    <div class="strong">{{ c.tradeName }}</div>
+                    <div class="strong">{{ c.name || c.tradeName || '—' }}</div>
                     <small class="pz-muted">{{ c.city }} · {{ c.taxId }}</small>
                   </div>
                 </div>
@@ -112,9 +223,11 @@
       <div class="card-body">
         @for (s of services; track s.name) {
           <div class="svc-row">
-            <span class="pz-pill" [class.pos]="!s.warn" [class.warn]="s.warn"> <span class="dot"></span>{{ serviceState(s).label }} </span>
+            <span class="pz-pill" [class.pos]="!s.warn && s.up" [class.warn]="s.warn" [class.danger]="!s.up">
+              <span class="dot"></span>{{ serviceState(s).label }}
+            </span>
             <span class="svc-name">{{ s.name }}</span>
-            <span class="pz-mono pz-muted">{{ s.latency }}</span>
+            <span class="pz-mono pz-muted" style="font-size: 11px">{{ s.latency }}</span>
           </div>
         }
       </div>

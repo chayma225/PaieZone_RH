@@ -10,7 +10,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.UserProfile;
+import tn.paiezone.rh.repository.CompanyRepository;
 import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.security.SecurityUtils;
@@ -26,9 +28,11 @@ public class TenantContextService {
     private static final Logger log = LoggerFactory.getLogger(TenantContextService.class);
 
     private final UserProfileRepository userProfileRepository;
+    private final CompanyRepository companyRepository;
 
-    public TenantContextService(UserProfileRepository userProfileRepository) {
+    public TenantContextService(UserProfileRepository userProfileRepository, CompanyRepository companyRepository) {
         this.userProfileRepository = userProfileRepository;
+        this.companyRepository = companyRepository;
     }
 
     /**
@@ -54,6 +58,14 @@ public class TenantContextService {
                 if (profile.getCompany() != null) {
                     companyId = profile.getCompany().getId();
                     tenantSchema = profile.getCompany().getTenantSchema();
+                }
+            }
+            // Fallback : admin inscrit via /register-with-company (pas de UserProfile)
+            if (companyId == null) {
+                Optional<Company> adminCompany = companyRepository.findFirstByAdminLogin(login);
+                if (adminCompany.isPresent()) {
+                    companyId = adminCompany.get().getId();
+                    tenantSchema = adminCompany.get().getTenantSchema();
                 }
             }
         } catch (Exception e) {

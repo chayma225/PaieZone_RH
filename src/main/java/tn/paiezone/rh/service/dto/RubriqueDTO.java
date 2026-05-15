@@ -54,7 +54,6 @@ public class RubriqueDTO implements Serializable {
     @NotNull
     private Boolean active;
 
-    @NotNull
     private CompanyDTO company;
 
     public Long getId() {

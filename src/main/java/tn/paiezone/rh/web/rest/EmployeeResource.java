@@ -132,17 +132,14 @@ public class EmployeeResource {
         if (body.get("cnssNumber") != null) dto.setCnssNumber(body.get("cnssNumber").toString());
         if (body.get("address") != null) dto.setAddress(body.get("address").toString());
 
-        // Société — résolution depuis l'utilisateur courant ou première société
+        // Société — priorité : adminLogin sur la société (admin inscrit) ; fallback : UserProfile (RH rattaché)
         Company company = SecurityUtils.getCurrentUserLogin()
-            .flatMap(userProfileRepository::findByJhiUserId)
-            .map(up -> up.getCompany())
-            .orElseGet(() ->
-                companyRepository
-                    .findAll()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow(() -> new EntityNotFoundException("Aucune société trouvée"))
-            );
+            .flatMap(login -> {
+                Optional<Company> byAdmin = companyRepository.findFirstByAdminLogin(login);
+                if (byAdmin.isPresent()) return byAdmin;
+                return userProfileRepository.findByJhiUserId(login).map(up -> up.getCompany());
+            })
+            .orElseThrow(() -> new EntityNotFoundException("Aucune société trouvée pour l'utilisateur courant"));
         CompanyDTO companyDto = new CompanyDTO();
         companyDto.setId(company.getId());
         dto.setCompany(companyDto);
@@ -180,6 +177,7 @@ public class EmployeeResource {
                     newPos.setCode(posTitle.substring(0, Math.min(posTitle.length(), 18)).toUpperCase().replaceAll("\\s+", "_"));
                     newPos.setTitle(posTitle);
                     newPos.setActive(true);
+                    newPos.setCompany(company);
                     return jobPositionRepository.save(newPos);
                 });
             JobPositionDTO posDto = new JobPositionDTO();

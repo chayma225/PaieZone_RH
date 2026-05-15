@@ -36,6 +36,9 @@ public class CompanyDTO implements Serializable {
     @Size(max = 10)
     private String postalCode;
 
+    @Size(max = 100)
+    private String gouvernorat;
+
     @Size(max = 20)
     private String phone;
 
@@ -56,6 +59,20 @@ public class CompanyDTO implements Serializable {
 
     // ✅ @NotNull supprimé — généré automatiquement par le backend
     private Instant createdAt;
+
+    @Size(max = 50)
+    private String adminLogin;
+
+    @Size(max = 50)
+    private String legalForm;
+
+    private java.math.BigDecimal capitalSocial;
+
+    @Size(max = 255)
+    private String mainActivity;
+
+    @Size(max = 255)
+    private String website;
 
     private CompanySubscriptionDTO companySubscription;
 
@@ -123,6 +140,14 @@ public class CompanyDTO implements Serializable {
         this.postalCode = postalCode;
     }
 
+    public String getGouvernorat() {
+        return gouvernorat;
+    }
+
+    public void setGouvernorat(String gouvernorat) {
+        this.gouvernorat = gouvernorat;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -179,6 +204,46 @@ public class CompanyDTO implements Serializable {
         this.createdAt = createdAt;
     }
 
+    public String getAdminLogin() {
+        return adminLogin;
+    }
+
+    public void setAdminLogin(String adminLogin) {
+        this.adminLogin = adminLogin;
+    }
+
+    public String getLegalForm() {
+        return legalForm;
+    }
+
+    public void setLegalForm(String legalForm) {
+        this.legalForm = legalForm;
+    }
+
+    public java.math.BigDecimal getCapitalSocial() {
+        return capitalSocial;
+    }
+
+    public void setCapitalSocial(java.math.BigDecimal capitalSocial) {
+        this.capitalSocial = capitalSocial;
+    }
+
+    public String getMainActivity() {
+        return mainActivity;
+    }
+
+    public void setMainActivity(String mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
     public CompanySubscriptionDTO getCompanySubscription() {
         return companySubscription;
     }
@@ -203,23 +268,55 @@ public class CompanyDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "CompanyDTO{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", tradeName='" + getTradeName() + "'" +
-            ", taxId='" + getTaxId() + "'" +
-            ", cnssId='" + getCnssId() + "'" +
-            ", address='" + getAddress() + "'" +
-            ", city='" + getCity() + "'" +
-            ", postalCode='" + getPostalCode() + "'" +
-            ", phone='" + getPhone() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", logoUrl='" + getLogoUrl() + "'" +
-            ", tenantSchema='" + getTenantSchema() + "'" +
-            ", active='" + getActive() + "'" +
-            ", trialEnd='" + getTrialEnd() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            ", companySubscription=" + getCompanySubscription() +
-            "}";
+        return (
+            "CompanyDTO{" +
+            "id=" +
+            getId() +
+            ", name='" +
+            getName() +
+            "'" +
+            ", tradeName='" +
+            getTradeName() +
+            "'" +
+            ", taxId='" +
+            getTaxId() +
+            "'" +
+            ", cnssId='" +
+            getCnssId() +
+            "'" +
+            ", address='" +
+            getAddress() +
+            "'" +
+            ", city='" +
+            getCity() +
+            "'" +
+            ", postalCode='" +
+            getPostalCode() +
+            "'" +
+            ", phone='" +
+            getPhone() +
+            "'" +
+            ", email='" +
+            getEmail() +
+            "'" +
+            ", logoUrl='" +
+            getLogoUrl() +
+            "'" +
+            ", tenantSchema='" +
+            getTenantSchema() +
+            "'" +
+            ", active='" +
+            getActive() +
+            "'" +
+            ", trialEnd='" +
+            getTrialEnd() +
+            "'" +
+            ", createdAt='" +
+            getCreatedAt() +
+            "'" +
+            ", companySubscription=" +
+            getCompanySubscription() +
+            "}"
+        );
     }
 }

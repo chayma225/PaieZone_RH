@@ -139,14 +139,17 @@ public class HrDocumentResource {
     }
 
     /**
-     * {@code GET  /hr-documents} : get all the Hr Documents.
-     *
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Hr Documents in body.
+     * {@code GET  /hr-documents} : get all the Hr Documents, optionally filtered by employeeId.
      */
     @GetMapping("")
-    public ResponseEntity<List<HrDocumentDTO>> getAllHrDocuments(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of HrDocuments");
+    public ResponseEntity<List<HrDocumentDTO>> getAllHrDocuments(
+        @RequestParam(name = "employeeId.equals", required = false) Long employeeId,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to get a page of HrDocuments, employeeId={}", employeeId);
+        if (employeeId != null) {
+            return ResponseEntity.ok(hrDocumentService.findByEmployee(employeeId));
+        }
         Page<HrDocumentDTO> page = hrDocumentService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());

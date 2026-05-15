@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SessionStorageService } from 'ngx-webstorage';
@@ -29,14 +29,14 @@ export class LoginService {
     return this.http.post<AuthenticationResponse>(this.applicationConfigService.getEndpointFor('api/authenticate'), credentials).pipe(
       mergeMap(response => {
         if (response.id_token === '2FA_REQUIRED') {
-          // Stocker avec ngx-webstorage pour que TwoFactorLoginComponent puisse le lire
           this.sessionStorageService.store('2fa_login', credentials.username);
           this.sessionStorageService.store('2fa_remember', credentials.rememberMe);
           this.router.navigate(['/account/2fa-login']);
-          return new Observable<void>(subscriber => subscriber.complete());
+          return EMPTY;
         }
-
-        return this.authServerProvider.login(credentials).pipe(mergeMap(() => this.accountService.identity(true)));
+        // Stocker le token du premier appel — pas de second appel à /api/authenticate
+        this.authServerProvider.storeToken(response.id_token, credentials.rememberMe);
+        return this.accountService.identity(true);
       }),
       map(() => {}),
     );

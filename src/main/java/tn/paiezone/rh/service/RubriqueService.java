@@ -1,20 +1,20 @@
 package tn.paiezone.rh.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tn.paiezone.rh.domain.Rubrique;
-import tn.paiezone.rh.repository.RubriqueRepository;
-import tn.paiezone.rh.service.dto.RubriqueDTO;
-import tn.paiezone.rh.service.mapper.RubriqueMapper;
-
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tn.paiezone.rh.domain.Company;
+import tn.paiezone.rh.domain.Rubrique;
+import tn.paiezone.rh.repository.RubriqueRepository;
+import tn.paiezone.rh.service.dto.RubriqueDTO;
+import tn.paiezone.rh.service.mapper.RubriqueMapper;
 
 /**
  * Service Implementation for managing {@link tn.paiezone.rh.domain.Rubrique}.
@@ -27,10 +27,16 @@ public class RubriqueService {
 
     private final RubriqueRepository rubriqueRepository;
     private final RubriqueMapper rubriqueMapper;
+    private final TenantContextService tenantContextService;
 
-    public RubriqueService(RubriqueRepository rubriqueRepository, RubriqueMapper rubriqueMapper) {
+    public RubriqueService(
+        RubriqueRepository rubriqueRepository,
+        RubriqueMapper rubriqueMapper,
+        TenantContextService tenantContextService
+    ) {
         this.rubriqueRepository = rubriqueRepository;
         this.rubriqueMapper = rubriqueMapper;
+        this.tenantContextService = tenantContextService;
     }
 
     /**
@@ -49,8 +55,7 @@ public class RubriqueService {
      */
     public RubriqueDTO deactivate(Long id) {
         LOG.debug("Request to deactivate Rubrique : {}", id);
-        Rubrique r = rubriqueRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Rubrique introuvable : " + id));
+        Rubrique r = rubriqueRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Rubrique introuvable : " + id));
 
         r.setActive(false);
         return rubriqueMapper.toDto(rubriqueRepository.save(r));
@@ -64,6 +69,16 @@ public class RubriqueService {
 
         Rubrique rubrique = rubriqueMapper.toEntity(rubriqueDTO);
 
+        // Auto-resolve company from tenant context if not provided
+        if (rubrique.getCompany() == null || rubrique.getCompany().getId() == null) {
+            Long companyId = tenantContextService.getCurrentCompanyId();
+            if (companyId != null) {
+                Company ref = new Company();
+                ref.setId(companyId);
+                rubrique.setCompany(ref);
+            }
+        }
+
         // Remplissage automatique des champs d'audit
         if (rubrique.getCreatedBy() == null) {
             rubrique.setCreatedBy("admin");
@@ -74,6 +89,7 @@ public class RubriqueService {
 
         return rubriqueMapper.toDto(rubrique);
     }
+
     /**
      * Update a rubrique (NÉCESSAIRE POUR LA COMPILATION).
      */
@@ -106,9 +122,7 @@ public class RubriqueService {
     @Transactional(readOnly = true)
     public List<RubriqueDTO> findAll() {
         LOG.debug("Request to get all Rubriques");
-        return rubriqueRepository.findAll().stream()
-            .map(rubriqueMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
+        return rubriqueRepository.findAll().stream().map(rubriqueMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**

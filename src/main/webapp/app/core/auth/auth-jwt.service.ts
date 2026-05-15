@@ -29,6 +29,10 @@ export class AuthServerProvider {
       .pipe(map(response => this.authenticateSuccess(response, credentials.rememberMe)));
   }
 
+  storeToken(idToken: string, rememberMe: boolean): void {
+    this.stateStorageService.storeAuthenticationToken(idToken, rememberMe);
+  }
+
   logout(): Observable<void> {
     return new Observable(observer => {
       this.stateStorageService.clearAuthenticationToken();

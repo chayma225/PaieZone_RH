@@ -8,6 +8,7 @@ export class DataService {
 
   // Reactive signals — populated from API on init
   readonly companies = signal<Company[]>([]);
+  readonly companiesLoaded = signal(false);
   readonly employees = signal<Employee[]>([]);
   readonly departments = signal<Department[]>([]);
   readonly payrollPeriods = signal<PayrollPeriod[]>([]);
@@ -53,11 +54,24 @@ export class DataService {
     this.api.leaveRequests().subscribe({ next: v => this.leaves.set(v), error: () => {} });
     this.api.advances().subscribe({ next: v => this.advances.set(v), error: () => {} });
     this.api.payrollPeriods().subscribe({ next: v => this.payrollPeriods.set(v), error: () => {} });
-    this.api.companies().subscribe({ next: v => this.companies.set(v), error: () => {} });
+    this.api.companies().subscribe({
+      next: v => {
+        this.companies.set(v);
+        this.companiesLoaded.set(true);
+      },
+      error: () => {
+        this.companiesLoaded.set(true);
+      },
+    });
     this.api.departments().subscribe({ next: v => this.departments.set(v), error: () => {} });
     this.api.dashboardStats().subscribe({ next: v => this.stats.set(v as any), error: () => {} });
     this.api.regulatoryParams().subscribe({ next: v => this.regulatoryParams.set(v), error: () => {} });
     this.api.myEmployee().subscribe({ next: v => this.myEmployee.set(v), error: () => {} });
+  }
+
+  reloadEmployees(): void {
+    this.api.employees().subscribe({ next: v => this.employees.set(v), error: () => {} });
+    this.api.dashboardStats().subscribe({ next: v => this.stats.set(v as any), error: () => {} });
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────

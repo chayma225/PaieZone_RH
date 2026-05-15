@@ -19,6 +19,7 @@ import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.repository.DepartmentRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.service.DepartmentService;
+import tn.paiezone.rh.service.TenantContextService;
 import tn.paiezone.rh.service.dto.DepartmentDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
@@ -34,10 +35,16 @@ public class DepartmentResource {
 
     private final DepartmentService departmentService;
     private final DepartmentRepository departmentRepository;
+    private final TenantContextService tenantContextService;
 
-    public DepartmentResource(DepartmentService departmentService, DepartmentRepository departmentRepository) {
+    public DepartmentResource(
+        DepartmentService departmentService,
+        DepartmentRepository departmentRepository,
+        TenantContextService tenantContextService
+    ) {
         this.departmentService = departmentService;
         this.departmentRepository = departmentRepository;
+        this.tenantContextService = tenantContextService;
     }
 
     @PostMapping("")
@@ -126,8 +133,9 @@ public class DepartmentResource {
     @GetMapping("")
     public List<DepartmentDTO> getAllDepartments(@RequestParam(name = "companyId", required = false) Long companyId) {
         LOG.debug("REST request to get all Departments");
-        if (companyId != null) {
-            return departmentService.findByCompany(companyId);
+        Long effectiveCompanyId = companyId != null ? companyId : tenantContextService.getCurrentCompanyId();
+        if (effectiveCompanyId != null) {
+            return departmentService.findByCompany(effectiveCompanyId);
         }
         return departmentService.findAll();
     }

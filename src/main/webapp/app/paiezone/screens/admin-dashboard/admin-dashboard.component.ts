@@ -1,74 +1,100 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
+import { ApiService } from '../../core/api.service';
 
 @Component({
   selector: 'pz-admin-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink, IconComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="pz-page">
+      <!-- ── En-tête ──────────────────────────────────────────────────────── -->
       <div class="pz-page-head">
         <div>
           <div class="pz-crumbs"><strong>Administration</strong> <span class="sep">/</span> Tableau de bord</div>
-          <h1>Atlas Tech SARL</h1>
-          <div class="pz-muted">Vue administrateur · Mehdi Trabelsi · Mercredi 14 mai 2026</div>
+          <h1>{{ company()?.name ?? 'Mon entreprise' }}</h1>
+          <div class="pz-muted">Vue administrateur · {{ today }}</div>
         </div>
         <div class="pz-page-actions">
-          <a class="pz-btn" routerLink="/paiezone/admin-company"><pz-icon name="Building" /> Mon entreprise</a>
-          <button class="pz-btn pz-primary"><pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Inviter un utilisateur</button>
+          <a class="pz-btn" routerLink="/paiezone/admin-company"> <pz-icon name="Building" [size]="14" /> Mon entreprise </a>
+          <a class="pz-btn pz-primary" routerLink="/paiezone/admin-users">
+            <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Inviter un utilisateur
+          </a>
         </div>
       </div>
 
+      <!-- ── Bannière no-company ──────────────────────────────────────────── -->
+      @if (data.companiesLoaded() && !company()) {
+        <div class="no-company-banner">
+          <pz-icon name="Building" [size]="20" />
+          <div>
+            <strong>Aucune entreprise configurée.</strong>
+            Créez votre entreprise pour commencer à utiliser PaieZone RH.
+          </div>
+          <a class="pz-btn pz-primary" routerLink="/account/company-setup">Configurer mon entreprise</a>
+        </div>
+      }
+
+      <!-- ── KPI cards ─────────────────────────────────────────────────────── -->
       <div class="stat-grid">
         <div class="pz-card stat">
           <div class="stat-head">
             <span class="ico"><pz-icon name="Users" /></span>Utilisateurs actifs
           </div>
           <div class="stat-val">
-            {{ activeUsers() }}<small>/ {{ data.tenantUsers().length }}</small>
+            {{ activeCount() }}<small>/ {{ jhUsers().length }}</small>
           </div>
-          <div class="stat-foot pz-muted">{{ data.tenantUsers().length - activeUsers() }} désactivé(s)</div>
+          <div class="stat-foot pz-muted">{{ jhUsers().length - activeCount() }} désactivé(s)</div>
         </div>
+
         <div class="pz-card stat">
           <div class="stat-head">
             <span class="ico info"><pz-icon name="Briefcase" /></span>Effectif total
           </div>
-          <div class="stat-val">{{ data.stats()['activeEmployees'] ?? data.employees().length }}</div>
-          <div class="stat-foot"><span class="pz-muted">collaborateurs actifs</span></div>
+          <div class="stat-val">{{ data.employees().length }}</div>
+          <div class="stat-foot pz-muted">collaborateurs actifs</div>
         </div>
+
         <div class="pz-card stat">
           <div class="stat-head">
-            <span class="ico warn"><pz-icon name="Shield" /></span>2FA activée
+            <span class="ico warn"><pz-icon name="Calendar" /></span>Congés en attente
           </div>
-          <div class="stat-val">{{ twofaPct() }}<small>%</small></div>
-          <div class="stat-foot pz-muted">Recommandé pour Admin & RH</div>
+          <div class="stat-val">{{ pendingLeaves() }}</div>
+          <div class="stat-foot pz-muted">demandes à valider</div>
         </div>
+
         <div class="pz-card stat">
           <div class="stat-head">
-            <span class="ico pos"><pz-icon name="Wallet" /></span>Plan d'abonnement
+            <span class="ico pos"><pz-icon name="Wallet" /></span>Avances en attente
           </div>
-          <div class="stat-val" style="font-size:20px">Business</div>
-          <div class="stat-foot pz-muted">42/100 employés · 540 TND/mois</div>
+          <div class="stat-val">{{ pendingAdvances() }}</div>
+          <div class="stat-foot pz-muted">à approuver</div>
         </div>
       </div>
 
-      <div class="grid">
+      <!-- ── Grille principale ─────────────────────────────────────────────── -->
+      <div class="main-grid">
+        <!-- Répartition des rôles -->
         <div class="pz-card">
           <div class="card-head">
             <div class="card-title">Répartition des rôles</div>
-            <a class="pz-btn pz-sm pz-ghost" routerLink="/paiezone/admin-users"
-              >Gérer <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6"
-            /></a>
+            <a class="pz-btn pz-sm pz-ghost" routerLink="/paiezone/admin-users">
+              Gérer <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" />
+            </a>
           </div>
           <div class="card-body">
+            @if (jhUsers().length === 0) {
+              <div class="pz-muted" style="text-align:center;padding:24px 0;font-size:13px">Chargement des utilisateurs…</div>
+            }
             @for (r of roleDist(); track r.role) {
               <div class="role-row">
                 <div class="row-top">
-                  <span class="pz-pill" [class.primary]="r.role === 'ADMIN'" [class.info]="r.role === 'RH_COMPTABLE'">{{ r.label }}</span>
+                  <span class="pz-pill" [class.primary]="r.color === 'primary'" [class.info]="r.color === 'info'">{{ r.label }}</span>
                   <span class="pz-muted small">{{ r.desc }}</span>
                   <span class="pz-mono strong">{{ r.count }}</span>
                 </div>
@@ -78,28 +104,102 @@ import { DataService } from '../../core/data.service';
           </div>
         </div>
 
+        <!-- Fiche entreprise -->
         <div class="pz-card">
           <div class="card-head"><div class="card-title">Mon entreprise</div></div>
           <div class="card-body">
             <div class="company-head">
-              <div class="logo">AT</div>
+              <div class="logo">{{ companyInitials() }}</div>
               <div>
-                <div class="strong">Atlas Tech SARL</div>
-                <div class="pz-muted small">Tunis · Création 02/04/2018</div>
+                <div class="strong">{{ company()?.name ?? '—' }}</div>
+                <div class="pz-muted small">{{ company()?.city ?? '—' }}</div>
               </div>
             </div>
             <div class="info-rows">
-              <div class="info-row"><span class="pz-muted small">Matricule fiscal</span><span class="pz-mono small">1234567/A</span></div>
-              <div class="info-row"><span class="pz-muted small">ID CNSS</span><span class="pz-mono small">12500-0001</span></div>
               <div class="info-row">
-                <span class="pz-muted small">Effectif</span
-                ><span class="strong">{{ data.stats()['activeEmployees'] ?? data.employees().length }} collaborateurs</span>
+                <span class="pz-muted small">Matricule fiscal</span>
+                <span class="pz-mono small">{{ company()?.taxId ?? '—' }}</span>
               </div>
-              <div class="info-row"><span class="pz-muted small">Plan</span><span class="pz-pill primary">Business</span></div>
+              <div class="info-row">
+                <span class="pz-muted small">Email</span>
+                <span class="small">{{ company()?.email ?? '—' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="pz-muted small">Effectif</span>
+                <span class="strong">{{ data.employees().length }} collaborateurs</span>
+              </div>
+              <div class="info-row">
+                <span class="pz-muted small">Plan</span>
+                <span class="pz-pill primary">{{ company()?.plan ?? '—' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="pz-muted small">Statut</span>
+                <span
+                  class="pz-pill"
+                  [class.pos]="company()?.status === 'ACTIVE'"
+                  [class.warn]="company()?.status === 'TRIAL'"
+                  [class.danger]="company()?.status === 'SUSPENDED'"
+                  >{{ company()?.status ?? '—' }}</span
+                >
+              </div>
             </div>
-            <a class="pz-btn full" routerLink="/paiezone/admin-company"><pz-icon name="Edit" [size]="14" [strokeWidth]="1.4" /> Modifier</a>
+            <a class="pz-btn" style="width:100%;justify-content:center;margin-top:4px" routerLink="/paiezone/admin-company">
+              <pz-icon name="Edit" [size]="14" [strokeWidth]="1.4" /> Modifier
+            </a>
           </div>
         </div>
+      </div>
+
+      <!-- ── Activité récente ────────────────────────────────────────────────── -->
+      <div class="pz-card">
+        <div class="card-head"><div class="card-title">Utilisateurs récents</div></div>
+        <table class="pz-tbl">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Email</th>
+              <th>Rôle principal</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (jhUsers().length === 0) {
+              <tr>
+                <td colspan="4" style="text-align:center;padding:32px;color:var(--pz-muted)">Chargement…</td>
+              </tr>
+            }
+            @for (u of jhUsers().slice(0, 8); track u.id) {
+              <tr>
+                <td>
+                  <div class="u-cell">
+                    <div class="pz-avatar sm" [attr.data-bg]="(u.id % 6) + 1">
+                      {{ (u.firstName?.[0] ?? u.login?.[0] ?? '?').toUpperCase() }}{{ (u.lastName?.[0] ?? '').toUpperCase() }}
+                    </div>
+                    <div>
+                      <div class="strong">{{ u.firstName ?? '' }} {{ u.lastName ?? '' }}</div>
+                      <div class="pz-muted small">{{ u.login }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="pz-muted small">{{ u.email }}</td>
+                <td>
+                  @if (u.authorities?.includes('ROLE_ADMIN')) {
+                    <span class="pz-pill primary">Admin</span>
+                  } @else if (u.authorities?.includes('ROLE_RH_COMPTABLE')) {
+                    <span class="pz-pill info">RH</span>
+                  } @else {
+                    <span class="pz-pill">Employé</span>
+                  }
+                </td>
+                <td>
+                  <span class="pz-pill" [class.pos]="u.activated" [class.danger]="!u.activated">
+                    <span class="dot"></span>{{ u.activated ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   `,
@@ -164,13 +264,11 @@ import { DataService } from '../../core/data.service';
         margin-left: 3px;
       }
       .stat-foot {
-        display: flex;
-        gap: 8px;
         margin-top: 10px;
         font-size: 12px;
-        align-items: center;
       }
-      .grid {
+
+      .main-grid {
         display: grid;
         gap: var(--pz-gap);
         grid-template-columns: 2fr 1fr;
@@ -183,13 +281,12 @@ import { DataService } from '../../core/data.service';
       .card-title {
         font-size: 14px;
         font-weight: 600;
-      }
-      .card-head .pz-btn {
-        margin-left: auto;
+        flex: 1;
       }
       .card-body {
         padding: 4px 20px 20px;
       }
+
       .role-row {
         margin-bottom: 14px;
       }
@@ -203,12 +300,6 @@ import { DataService } from '../../core/data.service';
         margin-left: auto;
         font-size: 13px;
       }
-      .small {
-        font-size: 12px;
-      }
-      .strong {
-        font-weight: 500;
-      }
       .progress {
         height: 4px;
         background: var(--pz-surface-3);
@@ -220,14 +311,22 @@ import { DataService } from '../../core/data.service';
         height: 100%;
         background: var(--pz-primary);
         border-radius: 999px;
+        transition: width 0.4s;
       }
+      .small {
+        font-size: 12px;
+      }
+      .strong {
+        font-weight: 500;
+      }
+
       .company-head {
         display: flex;
         gap: 14px;
         align-items: center;
         margin-bottom: 14px;
       }
-      .company-head .logo {
+      .logo {
         width: 56px;
         height: 56px;
         border-radius: 12px;
@@ -239,47 +338,111 @@ import { DataService } from '../../core/data.service';
         font-size: 18px;
       }
       .info-rows {
-        margin-bottom: 14px;
+        margin-bottom: 4px;
       }
       .info-row {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         padding: 6px 0;
         border-bottom: 1px solid var(--pz-line);
+        font-size: 12.5px;
       }
       .info-row:last-child {
         border-bottom: 0;
       }
-      .pz-btn.full {
+
+      .pz-tbl {
         width: 100%;
+        border-collapse: collapse;
+      }
+      .pz-tbl thead th {
+        text-align: left;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        color: var(--pz-muted);
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--pz-line);
+        background: var(--pz-surface-2);
+      }
+      .pz-tbl tbody td {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--pz-line);
+        font-size: 13px;
+        color: var(--pz-ink-2);
+        vertical-align: middle;
+      }
+      .pz-tbl tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      .pz-tbl tbody tr:hover {
+        background: var(--pz-surface-2);
+      }
+      .u-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .no-company-banner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #ede9fe;
+        border: 1px solid #c4b5fd;
+        border-radius: var(--pz-radius-lg);
+        padding: 16px 20px;
+        color: #4338ca;
+        font-size: 13.5px;
+      }
+      .no-company-banner div {
+        flex: 1;
       }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class AdminDashboardComponent {
+export default class AdminDashboardComponent implements OnInit {
   protected readonly data = inject(DataService);
+  private readonly api = inject(ApiService);
 
-  protected activeUsers() {
-    return this.data.tenantUsers().filter(u => u.active).length;
-  }
+  readonly jhUsers = signal<any[]>([]);
 
-  protected twofaPct() {
-    const users = this.data.tenantUsers();
-    if (!users.length) return 0;
-    return Math.round((users.filter(u => u.twofa).length / users.length) * 100);
-  }
+  readonly today = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
 
-  protected roleDist() {
-    const total = this.data.tenantUsers().length;
-    const meta = {
-      ADMIN: { label: 'Administrateur', desc: 'Accès complet' },
-      RH_COMPTABLE: { label: 'RH / Comptable', desc: 'Paie, congés, employés' },
-      EMPLOYE: { label: 'Employé', desc: 'Self-service' },
-    } as const;
-    return (['ADMIN', 'RH_COMPTABLE', 'EMPLOYE'] as const).map(r => {
-      const count = this.data.tenantUsers().filter(u => u.role === r).length;
-      return { role: r, ...meta[r], count, pct: (count / total) * 100 };
+  readonly company = computed(() => this.data.companies()[0]);
+
+  readonly companyInitials = computed(() => {
+    const n = this.company()?.name ?? '';
+    return (
+      n
+        .split(' ')
+        .slice(0, 2)
+        .map(w => w[0] ?? '')
+        .join('')
+        .toUpperCase() || 'CO'
+    );
+  });
+
+  readonly activeCount = computed(() => this.jhUsers().filter(u => u.activated).length);
+  readonly pendingLeaves = computed(() => this.data.leaves().filter(l => l.status === 'pending').length);
+  readonly pendingAdvances = computed(() => this.data.advances().filter(a => a.status === 'pending').length);
+
+  readonly roleDist = computed(() => {
+    const users = this.jhUsers();
+    const total = users.length || 1;
+    const defs = [
+      { role: 'ROLE_ADMIN', label: 'Administrateur', desc: 'Accès complet', color: 'primary' },
+      { role: 'ROLE_RH_COMPTABLE', label: 'RH / Comptable', desc: 'Paie, congés, employés', color: 'info' },
+      { role: 'ROLE_EMPLOYE', label: 'Employé', desc: 'Self-service', color: '' },
+    ];
+    return defs.map(d => {
+      const count = users.filter(u => u.authorities?.includes(d.role)).length;
+      return { ...d, count, pct: Math.round((count / total) * 100) };
     });
+  });
+
+  ngOnInit(): void {
+    this.api.myCompanyUsers().subscribe({ next: u => this.jhUsers.set(u), error: () => {} });
   }
 }

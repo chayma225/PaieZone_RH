@@ -275,6 +275,12 @@
   color: var(--pz-muted);
 }
 
+.two-col {
+  display: grid;
+  gap: var(--pz-gap);
+  grid-template-columns: 1fr 1fr;
+}
+
 .leave-row {
   display: flex;
   align-items: center;
@@ -294,4 +300,136 @@
     font-size: 11.5px;
     margin-top: 1px;
   }
+}
+
+.pos-btn {
+  background: var(--pz-pos);
+  color: #fff;
+  border-color: var(--pz-pos);
+}
+.danger-btn {
+  color: var(--pz-danger-ink);
+}
+
+// ── Calendrier ──────────────────────────────────────────────────────────────
+.card-head .cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.cal-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pz-ink-3);
+  white-space: nowrap;
+  min-width: 110px;
+  text-align: center;
+}
+
+.cal-body {
+  padding: 0 16px 16px;
+}
+
+.cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 11.5px;
+  color: var(--pz-muted);
+}
+.dot-legend {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  &.approved {
+    background: var(--pz-pos);
+  }
+  &.pending {
+    background: var(--pz-warn);
+  }
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-dow {
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--pz-muted);
+  padding: 4px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cal-cell {
+  min-height: 36px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px 2px;
+  position: relative;
+  transition: background 0.12s;
+
+  &.today .cal-num {
+    background: var(--pz-primary);
+    color: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background: var(--pz-surface-2);
+  }
+}
+
+.cal-num {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--pz-ink-3);
+  line-height: 20px;
+}
+
+.cal-dots {
+  display: flex;
+  gap: 2px;
+  margin-top: 1px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  &.approved {
+    background: var(--pz-pos);
+  }
+  &.pending {
+    background: var(--pz-warn);
+  }
+}
+
+// ── Modal ────────────────────────────────────────────────────────────────────
+.rej-ta {
+  resize: vertical;
+  font: inherit;
+  font-size: 13px;
+  border: 1px solid var(--pz-line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: var(--pz-surface);
+  color: var(--pz-ink);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }

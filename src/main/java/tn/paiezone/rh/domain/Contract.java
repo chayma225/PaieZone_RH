@@ -6,19 +6,15 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import tn.paiezone.rh.domain.enumeration.ContractStatus;
-import tn.paiezone.rh.domain.enumeration.ContractType;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import tn.paiezone.rh.domain.enumeration.ContractStatus;
+import tn.paiezone.rh.domain.enumeration.ContractType;
 
 /**
  * Contrat de travail
@@ -140,7 +136,6 @@ public class Contract implements Serializable {
         this.setReference(reference);
         return this;
     }
-
 
     public void setReference(String reference) {
         this.reference = reference;
@@ -383,30 +378,54 @@ public class Contract implements Serializable {
 
     @Override
     public String toString() {
-        return "Contract{" +
-            "id=" + getId() +
-            ", reference='" + getReference() + "'" +
-            ", contractType='" + getContractType() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", startDate='" + getStartDate() + "'" +
-            ", endDate='" + getEndDate() + "'" +
-            ", signedDate='" + getSignedDate() + "'" +
-            ", baseSalary=" + getBaseSalary() +
-            ", jobTitle='" + getJobTitle() + "'" +
-            ", workingHoursWeek=" + getWorkingHoursWeek() +
-            ", workingDaysWeek=" + getWorkingDaysWeek() +
-            ", conventionCollective='" + getConventionCollective() + "'" +
-            ", trialPeriodMonths=" + getTrialPeriodMonths() +
-            ", renewalCount=" + getRenewalCount() +
-            ", documentUrl='" + getDocumentUrl() + "'" +
-            ", notes='" + getNotes() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            "}";
-    }
-    @Repository
-    public interface ContractRepository extends JpaRepository<Contract, Long> {
-
-        // Récupère les contrats actifs pour générer les fiches de paie
-        List<Contract> findAllByStatus(ContractStatus status);
+        return (
+            "Contract{" +
+            "id=" +
+            getId() +
+            ", reference='" +
+            getReference() +
+            "'" +
+            ", contractType='" +
+            getContractType() +
+            "'" +
+            ", status='" +
+            getStatus() +
+            "'" +
+            ", startDate='" +
+            getStartDate() +
+            "'" +
+            ", endDate='" +
+            getEndDate() +
+            "'" +
+            ", signedDate='" +
+            getSignedDate() +
+            "'" +
+            ", baseSalary=" +
+            getBaseSalary() +
+            ", jobTitle='" +
+            getJobTitle() +
+            "'" +
+            ", workingHoursWeek=" +
+            getWorkingHoursWeek() +
+            ", workingDaysWeek=" +
+            getWorkingDaysWeek() +
+            ", conventionCollective='" +
+            getConventionCollective() +
+            "'" +
+            ", trialPeriodMonths=" +
+            getTrialPeriodMonths() +
+            ", renewalCount=" +
+            getRenewalCount() +
+            ", documentUrl='" +
+            getDocumentUrl() +
+            "'" +
+            ", notes='" +
+            getNotes() +
+            "'" +
+            ", createdAt='" +
+            getCreatedAt() +
+            "'" +
+            "}"
+        );
     }
 }

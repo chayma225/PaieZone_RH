@@ -83,6 +83,8 @@ public class SecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/api/register")
                     .permitAll()
+                    .requestMatchers("/api/register-with-company")
+                    .permitAll()
                     .requestMatchers("/api/activate")
                     .permitAll()
                     .requestMatchers("/api/account/reset-password/init")
