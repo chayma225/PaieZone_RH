@@ -26,6 +26,12 @@ const roleRedirect: CanActivateFn = () => {
 };
 
 const routes: Routes = [
+  // Page publique — pas d'authentification requise
+  {
+    path: 'welcome',
+    loadComponent: () => import('./screens/welcome/welcome.component'),
+    title: 'PaieZone RH — Paie tunisienne automatisée',
+  },
   {
     path: '',
     component: LayoutComponent,
