@@ -41,6 +41,7 @@ export interface Company {
   schema: string;
   createdAt: string;
   mrr: number;
+  logoUrl: string | null;
 }
 
 export interface Employee {
@@ -52,7 +53,7 @@ export interface Employee {
   role: string;
   dept: string;
   salary: number;
-  contract: 'CDI' | 'CDD' | 'CIVP' | 'KARAMA';
+  contract: 'CDI' | 'CDD' | 'CIVP' | 'KARAMA' | 'INTERIMAIRE' | 'STAGE';
   hireDate: string;
   city: string;
   cnss: string;
@@ -61,6 +62,7 @@ export interface Employee {
   cat: string;
   gender: 'M' | 'F';
   children: number;
+  manager?: string;
 }
 
 export interface Department {
@@ -166,6 +168,7 @@ export interface Rubrique {
   fixedAmount: number | null;
   taxable: boolean;
   cnssSalary: boolean;
+  cnssEmployer?: boolean;
   sortOrder: number;
   active: boolean;
 }

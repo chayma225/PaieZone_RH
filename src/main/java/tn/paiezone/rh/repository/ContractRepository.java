@@ -28,9 +28,13 @@ public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSp
 
     @Query(
         "SELECT c FROM Contract c WHERE c.employee.id = :employeeId " +
-            "AND c.startDate <= :date AND (c.endDate IS NULL OR c.endDate >= :date)"
+            "AND c.startDate <= :periodEnd AND (c.endDate IS NULL OR c.endDate >= :periodStart)"
     )
-    Optional<Contract> findActiveContractByEmployee(@Param("employeeId") Long employeeId, @Param("date") LocalDate date);
+    Optional<Contract> findActiveContractByEmployee(
+        @Param("employeeId") Long employeeId,
+        @Param("periodStart") LocalDate periodStart,
+        @Param("periodEnd") LocalDate periodEnd
+    );
 
     long countByStatus(ContractStatus status);
 

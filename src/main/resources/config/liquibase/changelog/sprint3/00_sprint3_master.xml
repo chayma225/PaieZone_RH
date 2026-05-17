@@ -55,4 +55,6 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/sprint3/24_add_company_extra_fields.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/25_fix_audit_columns.xml"
+           relativeToChangelogFile="false"/>
 </databaseChangeLog>

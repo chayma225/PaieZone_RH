@@ -1,6 +1,17 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { ApiService } from './api.service';
-import type { Company, Employee, Department, PayrollPeriod, LeaveRequest, Advance, AuditEntry, TenantUser, RegulatoryParam } from './types';
+import type {
+  Company,
+  Employee,
+  Contract,
+  Department,
+  PayrollPeriod,
+  LeaveRequest,
+  Advance,
+  AuditEntry,
+  TenantUser,
+  RegulatoryParam,
+} from './types';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -49,8 +60,28 @@ export class DataService {
     this.loadAll();
   }
 
+  private mergeContracts(emps: Employee[], contracts: Contract[]): Employee[] {
+    const best = new Map<number, Contract>();
+    for (const c of contracts) {
+      const prev = best.get(c.employeeId);
+      if (!prev || c.status === 'ACTIVE') best.set(c.employeeId, c);
+    }
+    return emps.map(e => {
+      const c = best.get(e.id);
+      return c ? { ...e, salary: c.baseSalary, contract: c.contractType as Employee['contract'] } : e;
+    });
+  }
+
   private loadAll(): void {
-    this.api.employees().subscribe({ next: v => this.employees.set(v), error: () => {} });
+    this.api.employees().subscribe({
+      next: emps => {
+        this.api.contracts().subscribe({
+          next: contracts => this.employees.set(this.mergeContracts(emps, contracts)),
+          error: () => this.employees.set(emps),
+        });
+      },
+      error: () => {},
+    });
     this.api.leaveRequests().subscribe({ next: v => this.leaves.set(v), error: () => {} });
     this.api.advances().subscribe({ next: v => this.advances.set(v), error: () => {} });
     this.api.payrollPeriods().subscribe({ next: v => this.payrollPeriods.set(v), error: () => {} });
@@ -69,8 +100,20 @@ export class DataService {
     this.api.myEmployee().subscribe({ next: v => this.myEmployee.set(v), error: () => {} });
   }
 
+  loadAudit(): void {
+    this.api.auditLogs().subscribe({ next: v => this.audit.set(v), error: () => {} });
+  }
+
   reloadEmployees(): void {
-    this.api.employees().subscribe({ next: v => this.employees.set(v), error: () => {} });
+    this.api.employees().subscribe({
+      next: emps => {
+        this.api.contracts().subscribe({
+          next: contracts => this.employees.set(this.mergeContracts(emps, contracts)),
+          error: () => this.employees.set(emps),
+        });
+      },
+      error: () => {},
+    });
     this.api.dashboardStats().subscribe({ next: v => this.stats.set(v as any), error: () => {} });
   }
 

@@ -32,16 +32,22 @@ public interface EmployeeMapper extends EntityMapper<EmployeeDTO, Employee> {
     @Named("departmentId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "code", source = "code")
     DepartmentDTO toDtoDepartmentId(Department department);
 
     @Named("jobPositionId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "title", source = "title")
+    @Mapping(target = "code", source = "code")
     JobPositionDTO toDtoJobPositionId(JobPosition jobPosition);
 
     @Named("employeeId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "firstName", source = "firstName")
+    @Mapping(target = "lastName", source = "lastName")
     EmployeeDTO toDtoEmployeeId(Employee employee);
 
     @Named("userProfileId")

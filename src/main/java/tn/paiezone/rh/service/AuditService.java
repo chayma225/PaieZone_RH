@@ -55,9 +55,23 @@ public class AuditService {
             AuditLog auditLog = new AuditLog();
             auditLog.setAction(action);
             auditLog.setEntityType(entityType);
+
+            // Extraction de l'entityId depuis le DTO résultat via reflection
+            if (result != null) {
+                try {
+                    java.lang.reflect.Method getIdMethod = result.getClass().getMethod("getId");
+                    Object id = getIdMethod.invoke(result);
+                    if (id instanceof Long longId) {
+                        auditLog.setEntityId(longId);
+                    }
+                } catch (Exception ignored) {
+                    // Certains résultats n'ont pas de getId()
+                }
+            }
+
             auditLog.setOldValue(oldValue);
             auditLog.setNewValue(newValue);
-            auditLog.setIpAddress(ipAddress);
+            auditLog.setIpAddress(ipAddress != null && !ipAddress.isBlank() ? ipAddress : "127.0.0.1");
             auditLog.setUserAgent(userAgent);
             auditLog.setOccurredAt(Instant.now());
 

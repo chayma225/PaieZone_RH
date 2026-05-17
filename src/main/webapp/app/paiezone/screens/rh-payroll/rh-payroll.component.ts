@@ -1090,6 +1090,7 @@ export default class RhPayrollComponent {
         rate: this.rubForm.rate,
         taxable: this.rubForm.taxable,
         cnssSalary: this.rubForm.cnssSalary,
+        cnssEmployer: false,
         sortOrder: this.rubForm.sortOrder,
         active: true,
       })

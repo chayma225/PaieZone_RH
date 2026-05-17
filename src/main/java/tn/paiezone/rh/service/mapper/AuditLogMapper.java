@@ -20,6 +20,8 @@ public interface AuditLogMapper extends EntityMapper<AuditLogDTO, AuditLog> {
     @Named("userProfileId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "jhiUserId", source = "jhiUserId")
+    @Mapping(target = "role", source = "role")
     UserProfileDTO toDtoUserProfileId(UserProfile userProfile);
 
     @Named("companyId")

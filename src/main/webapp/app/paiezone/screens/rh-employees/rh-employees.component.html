@@ -70,13 +70,13 @@
 </div>
 
 @if (selected(); as e) {
-  <div class="modal-back" (click)="closeDrawer()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal-head">
+  <div class="pz-emp-back" (click)="onBackdropClick($event)">
+    <div class="pz-emp-card">
+      <div class="pz-emp-head">
         <div class="row">
           <div class="pz-avatar lg" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
           <div>
-            <div class="modal-title">
+            <div class="pz-emp-title">
               {{ data.fullName(e) }}
               <span class="ar" dir="rtl">{{ e.ar }}</span>
             </div>
@@ -88,7 +88,7 @@
             </div>
           </div>
         </div>
-        <button class="pz-btn pz-ghost modal-x" (click)="closeDrawer()">
+        <button class="pz-btn pz-ghost pz-emp-x" (click)="closeDrawer()">
           <pz-icon name="X" [size]="14" [strokeWidth]="1.6" />
         </button>
       </div>
@@ -109,7 +109,7 @@
         }
       </div>
 
-      <div class="modal-body">
+      <div class="pz-emp-body">
         @switch (tab()) {
           @case ('infos') {
             <div class="info-grid">
@@ -143,60 +143,50 @@
             @if (contracts().length === 0) {
               <div class="pz-muted" style="padding: 32px; text-align: center">Aucun contrat enregistré pour cet employé.</div>
             }
-            @for (c of contracts(); track c.id) {
-              <div style="margin-bottom: 20px">
-                <div class="badges" style="margin-bottom: 12px">
-                  <span class="pz-pill" [class]="contractClass(c.contractType)">{{ c.contractType }}</span>
-                  <span class="pz-pill pz-mono small">{{ c.reference }}</span>
-                  <span
-                    class="pz-pill"
-                    [class.pos]="c.status === 'ACTIVE'"
-                    [class.warn]="c.status === 'SUSPENDED' || c.status === 'DRAFT'"
-                    [class.danger]="c.status === 'TERMINATED' || c.status === 'EXPIRED'"
-                  >
-                    {{ contractStatusLabel(c.status) }}
-                  </span>
+            @if (activeContract(); as c) {
+              <div class="info-grid">
+                <div>
+                  <div class="lbl">Type de contrat</div>
+                  <div class="val">
+                    <span class="pz-pill" [class]="contractClass(c.contractType)">{{ c.contractType }}</span>
+                  </div>
                 </div>
-                <div class="info-grid">
+                <div>
+                  <div class="lbl">Date d'embauche</div>
+                  <div class="val">{{ fmtDateLong(e.hireDate) }}</div>
+                </div>
+                <div>
+                  <div class="lbl">Salaire de base</div>
+                  <div class="val strong">{{ data.fmtTND(c.baseSalary) }}</div>
+                </div>
+                <div>
+                  <div class="lbl">Catégorie</div>
+                  <div class="val">{{ e.cat }}</div>
+                </div>
+                @if (e.dept) {
                   <div>
-                    <div class="lbl">Date de début</div>
-                    <div class="val">{{ c.startDate }}</div>
+                    <div class="lbl">Département</div>
+                    <div class="val">{{ e.dept }}</div>
                   </div>
-                  @if (c.endDate) {
-                    <div>
-                      <div class="lbl">Date de fin</div>
-                      <div class="val">{{ c.endDate }}</div>
-                    </div>
-                  }
+                }
+                @if (e.manager) {
                   <div>
-                    <div class="lbl">Salaire de base</div>
-                    <div class="val strong">{{ data.fmtTND(c.baseSalary) }}</div>
+                    <div class="lbl">Manager</div>
+                    <div class="val">{{ e.manager }}</div>
                   </div>
+                }
+                @if (c.endDate) {
+                  <div>
+                    <div class="lbl">Date de fin</div>
+                    <div class="val">{{ fmtDateLong(c.endDate) }}</div>
+                  </div>
+                }
+                @if (c.workingHoursWeek) {
                   <div>
                     <div class="lbl">Durée hebdomadaire</div>
                     <div class="val">{{ c.workingHoursWeek }}h / {{ c.workingDaysWeek }} jours</div>
                   </div>
-                  @if (c.trialPeriodMonths) {
-                    <div>
-                      <div class="lbl">Période d'essai</div>
-                      <div class="val">{{ c.trialPeriodMonths }} mois</div>
-                    </div>
-                  }
-                  @if (c.conventionCollective) {
-                    <div>
-                      <div class="lbl">Convention collective</div>
-                      <div class="val">{{ c.conventionCollective }}</div>
-                    </div>
-                  }
-                  <div>
-                    <div class="lbl">Date d'embauche</div>
-                    <div class="val">{{ e.hireDate }}</div>
-                  </div>
-                  <div>
-                    <div class="lbl">Catégorie</div>
-                    <div class="val">{{ e.cat }}</div>
-                  </div>
-                </div>
+                }
               </div>
             }
           }
@@ -289,9 +279,13 @@
                     <td class="num">{{ data.fmtTND(e.salary * 1.15) }}</td>
                     <td class="num">{{ data.fmtTND(e.salary * 0.78) }}</td>
                     <td>
-                      <span class="pz-pill" [class.pos]="p.status === 'VALIDATED'" [class.primary]="p.status === 'LOCKED'">{{
-                        p.status
-                      }}</span>
+                      <span
+                        class="pz-pill"
+                        [class.pos]="p.status === 'VALIDATED' || p.status === 'EXPORTED'"
+                        [class.primary]="p.status === 'LOCKED'"
+                        [class.warn]="p.status === 'DRAFT' || p.status === 'CALCULATED'"
+                        >{{ periodStatusLabel(p.status) }}</span
+                      >
                     </td>
                   </tr>
                 }
@@ -301,7 +295,7 @@
         }
       </div>
 
-      <div class="modal-foot">
+      <div class="pz-emp-foot">
         <button class="pz-btn" (click)="closeDrawer()">Fermer</button>
         <button class="pz-btn pz-primary"><pz-icon name="Edit" [size]="14" [strokeWidth]="1.4" /> Modifier</button>
       </div>

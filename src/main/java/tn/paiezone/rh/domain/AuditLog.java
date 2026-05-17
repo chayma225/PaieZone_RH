@@ -39,12 +39,10 @@ public class AuditLog implements Serializable {
     @Column(name = "entity_id")
     private Long entityId;
 
-    @Lob
-    @Column(name = "old_value")
+    @Column(name = "old_value", columnDefinition = "TEXT")
     private String oldValue;
 
-    @Lob
-    @Column(name = "new_value")
+    @Column(name = "new_value", columnDefinition = "TEXT")
     private String newValue;
 
     @Size(max = 45)

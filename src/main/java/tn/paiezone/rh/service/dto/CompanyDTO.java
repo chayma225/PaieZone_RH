@@ -45,7 +45,6 @@ public class CompanyDTO implements Serializable {
     @Size(max = 100)
     private String email;
 
-    @Size(max = 500)
     private String logoUrl;
 
     // ✅ @NotNull supprimé — généré automatiquement par le backend

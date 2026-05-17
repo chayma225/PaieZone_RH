@@ -2,8 +2,10 @@ package tn.paiezone.rh.web.rest;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -11,11 +13,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 import tn.paiezone.rh.aop.logging.audit.Auditable;
+import tn.paiezone.rh.domain.enumeration.CompanySubscriptionStatus;
+import tn.paiezone.rh.domain.enumeration.PlanType;
 import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.CompanySubscriptionRepository;
 import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
@@ -35,8 +41,22 @@ public class CompanyResource {
     @Value("${jhipster.clientApp.name:paieZoneRH}")
     private String applicationName;
 
+    private static final Map<PlanType, int[]> PLAN_LIMITS = Map.of(
+        PlanType.STARTER,
+        new int[] { 10, 0 },
+        PlanType.PME,
+        new int[] { 30, 290 },
+        PlanType.BUSINESS,
+        new int[] { 100, 720 },
+        PlanType.ENTERPRISE,
+        new int[] { 500, 1480 },
+        PlanType.CUSTOM,
+        new int[] { 9999, 0 }
+    );
+
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
+    private final CompanySubscriptionRepository subscriptionRepository;
     private final UserProfileRepository userProfileRepository;
     private final UserRepository userRepository;
     private final TenantContextService tenantContextService;
@@ -44,12 +64,14 @@ public class CompanyResource {
     public CompanyResource(
         CompanyService companyService,
         CompanyRepository companyRepository,
+        CompanySubscriptionRepository subscriptionRepository,
         UserProfileRepository userProfileRepository,
         UserRepository userRepository,
         TenantContextService tenantContextService
     ) {
         this.companyService = companyService;
         this.companyRepository = companyRepository;
+        this.subscriptionRepository = subscriptionRepository;
         this.userProfileRepository = userProfileRepository;
         this.userRepository = userRepository;
         this.tenantContextService = tenantContextService;
@@ -127,16 +149,24 @@ public class CompanyResource {
         if (companyId == null) return List.of();
 
         Set<String> logins = new HashSet<>();
+
+        // 1. Admin principal inscrit via /register-with-company
         companyRepository
             .findById(companyId)
             .ifPresent(c -> {
                 if (c.getAdminLogin() != null) logins.add(c.getAdminLogin());
             });
+
+        // 2. Tous les utilisateurs ayant un UserProfile lié à cette entreprise
         userProfileRepository
             .findByCompanyId(companyId)
             .forEach(up -> {
                 if (up.getJhiUserId() != null) logins.add(up.getJhiUserId());
             });
+
+        // 3. Utilisateurs créés par l'un des admins de cette entreprise mais sans UserProfile
+        //    (cas des invitations faites avant le fix de création automatique du UserProfile)
+        new HashSet<>(logins).forEach(adminLogin -> userRepository.findAllByCreatedBy(adminLogin).forEach(u -> logins.add(u.getLogin())));
 
         return logins
             .stream()
@@ -160,6 +190,53 @@ public class CompanyResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /** Change le plan d'abonnement de l'entreprise. */
+    @PostMapping("/{id}/change-plan")
+    @PreAuthorize("hasAnyAuthority('" + AuthoritiesConstants.ADMIN + "', '" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    @Transactional
+    public ResponseEntity<CompanyDTO> changePlan(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        Long currentCompanyId = tenantContextService.getCurrentCompanyId();
+        if (currentCompanyId != null && !currentCompanyId.equals(id)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        String planName = body.get("plan");
+        PlanType plan;
+        try {
+            plan = PlanType.valueOf(planName);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestAlertException("Plan invalide : " + planName, ENTITY_NAME, "invalidPlan");
+        }
+
+        var company = companyRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entreprise introuvable", ENTITY_NAME, "idnotfound"));
+
+        var sub = company.getCompanySubscription();
+        boolean isNew = (sub == null);
+        if (isNew) {
+            sub = new tn.paiezone.rh.domain.CompanySubscription();
+            sub.setStartDate(LocalDate.now());
+            sub.setBillingDay(LocalDate.now().getDayOfMonth());
+        }
+
+        int[] limits = PLAN_LIMITS.getOrDefault(plan, new int[] { 10, 0 });
+        sub.setPlan(plan);
+        sub.setMaxEmployees(limits[0]);
+        sub.setPriceHT(BigDecimal.valueOf(limits[1]));
+        sub.setStatus(CompanySubscriptionStatus.ACTIVE);
+        sub.setRenewalDate(LocalDate.now().plusMonths(1));
+        sub = subscriptionRepository.save(sub);
+
+        if (isNew) {
+            company.setCompanySubscription(sub);
+            companyRepository.save(company);
+        }
+
+        CompanyDTO dto = companyService.findOne(id).orElseThrow();
+        return ResponseEntity.ok().body(dto);
     }
 
     @PatchMapping("/{id}/toggle-status")

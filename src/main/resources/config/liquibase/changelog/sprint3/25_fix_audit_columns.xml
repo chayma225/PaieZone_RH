@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- ══════════════════════════════════════════════════════════
+       RUBRIQUE — colonnes d'audit manquantes
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-audit-rubrique-created-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="rubrique"/>
+      <not><columnExists tableName="rubrique" columnName="created_by"/></not>
+    </preConditions>
+    <addColumn tableName="rubrique">
+      <column name="created_by" type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-rubrique-created-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="rubrique"/>
+      <not><columnExists tableName="rubrique" columnName="created_date"/></not>
+    </preConditions>
+    <addColumn tableName="rubrique">
+      <column name="created_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-rubrique-last-modified-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="rubrique"/>
+      <not><columnExists tableName="rubrique" columnName="last_modified_by"/></not>
+    </preConditions>
+    <addColumn tableName="rubrique">
+      <column name="last_modified_by" type="varchar(50)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-rubrique-last-modified-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="rubrique"/>
+      <not><columnExists tableName="rubrique" columnName="last_modified_date"/></not>
+    </preConditions>
+    <addColumn tableName="rubrique">
+      <column name="last_modified_date" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       BONUS — colonnes d'audit manquantes
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-audit-bonus-created-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="bonus"/>
+      <not><columnExists tableName="bonus" columnName="created_by"/></not>
+    </preConditions>
+    <addColumn tableName="bonus">
+      <column name="created_by" type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-bonus-created-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="bonus"/>
+      <not><columnExists tableName="bonus" columnName="created_date"/></not>
+    </preConditions>
+    <addColumn tableName="bonus">
+      <column name="created_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-bonus-last-modified-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="bonus"/>
+      <not><columnExists tableName="bonus" columnName="last_modified_by"/></not>
+    </preConditions>
+    <addColumn tableName="bonus">
+      <column name="last_modified_by" type="varchar(50)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-bonus-last-modified-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="bonus"/>
+      <not><columnExists tableName="bonus" columnName="last_modified_date"/></not>
+    </preConditions>
+    <addColumn tableName="bonus">
+      <column name="last_modified_date" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAYROLL_PERIOD — colonnes d'audit manquantes
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-audit-payroll-period-closed-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="payroll_period"/>
+      <not><columnExists tableName="payroll_period" columnName="closed_by"/></not>
+    </preConditions>
+    <addColumn tableName="payroll_period">
+      <column name="closed_by" type="varchar(100)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-payroll-period-created-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="payroll_period"/>
+      <not><columnExists tableName="payroll_period" columnName="created_by"/></not>
+    </preConditions>
+    <addColumn tableName="payroll_period">
+      <column name="created_by" type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-payroll-period-created-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="payroll_period"/>
+      <not><columnExists tableName="payroll_period" columnName="created_date"/></not>
+    </preConditions>
+    <addColumn tableName="payroll_period">
+      <column name="created_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-payroll-period-last-modified-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="payroll_period"/>
+      <not><columnExists tableName="payroll_period" columnName="last_modified_by"/></not>
+    </preConditions>
+    <addColumn tableName="payroll_period">
+      <column name="last_modified_by" type="varchar(50)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-audit-payroll-period-last-modified-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="payroll_period"/>
+      <not><columnExists tableName="payroll_period" columnName="last_modified_date"/></not>
+    </preConditions>
+    <addColumn tableName="payroll_period">
+      <column name="last_modified_date" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAYROLL_PERIOD — validated_at (peut manquer selon la migration 11)
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-payroll-period-validated-at" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="payroll_period"/>
+      <not><columnExists tableName="payroll_period" columnName="validated_at"/></not>
+    </preConditions>
+    <addColumn tableName="payroll_period">
+      <column name="validated_at" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       EMPLOYEE — colonnes salary manquantes (master.xml oubli)
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-employee-salary-brut" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="employee"/>
+      <not><columnExists tableName="employee" columnName="salary_brut"/></not>
+    </preConditions>
+    <addColumn tableName="employee">
+      <column name="salary_brut"   type="numeric(15,3)" defaultValueNumeric="0"/>
+      <column name="salary_net"    type="numeric(15,3)" defaultValueNumeric="0"/>
+      <column name="balance_conge" type="integer"       defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAY_SLIP — colonnes audit manquantes
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-pay-slip-created-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="created_by"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="created_by" type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-pay-slip-created-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="created_date"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="created_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-pay-slip-last-modified-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="last_modified_by"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="last_modified_by" type="varchar(50)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-pay-slip-last-modified-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="last_modified_date"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="last_modified_date" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAY_SLIP — colonnes calcul paie manquantes (migration 17)
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-pay-slip-css-amount" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="css_amount"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="css_amount" type="decimal(15,3)" defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-pay-slip-tfp-amount" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="tfp_amount"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="tfp_amount" type="decimal(15,3)" defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-pay-slip-unpaid-leave-deduction" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="unpaid_leave_deduction"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="unpaid_leave_deduction" type="decimal(15,3)" defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-pay-slip-overtime-amount" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="overtime_amount"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="overtime_amount" type="decimal(15,3)" defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAY_SLIP — colonnes absentes du DDL JHipster original
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-pay-slip-advance-deduction" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="advance_deduction"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="advance_deduction" type="decimal(15,3)" defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-pay-slip-bonus-total" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip"/>
+      <not><columnExists tableName="pay_slip" columnName="bonus_total"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip">
+      <column name="bonus_total" type="decimal(15,3)" defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAY_SLIP_LINE — rubrique_id absent du DDL JHipster original
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-pay-slip-line-rubrique-id" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="pay_slip_line"/>
+      <not><columnExists tableName="pay_slip_line" columnName="rubrique_id"/></not>
+    </preConditions>
+    <addColumn tableName="pay_slip_line">
+      <column name="rubrique_id" type="bigint"/>
+    </addColumn>
+    <addForeignKeyConstraint
+      baseTableName="pay_slip_line" baseColumnNames="rubrique_id"
+      referencedTableName="rubrique" referencedColumnNames="id"
+      constraintName="fk_pay_slip_line_rubrique_fix"/>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ADVANCE — colonnes audit manquantes
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-advance-created-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="created_by"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="created_by" type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-advance-created-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="created_date"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="created_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-advance-last-modified-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="last_modified_by"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="last_modified_by" type="varchar(50)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-advance-last-modified-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="last_modified_date"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="last_modified_date" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ADVANCE — pay_slip_id et approved_at absents du DDL JHipster
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-advance-pay-slip-id" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="advance"/>
+      <not><columnExists tableName="advance" columnName="pay_slip_id"/></not>
+    </preConditions>
+    <addColumn tableName="advance">
+      <column name="pay_slip_id" type="bigint"/>
+      <column name="approved_at" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CONTRACT — job_title absent du DDL JHipster original
+       (présent dans l'entité Contract.java → cause SQL error
+       lors du findActiveContractByEmployee pendant le calcul paie)
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-contract-job-title" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="contract"/>
+      <not><columnExists tableName="contract" columnName="job_title"/></not>
+    </preConditions>
+    <addColumn tableName="contract">
+      <column name="job_title" type="varchar(150)"/>
+    </addColumn>
+  </changeSet>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TIME_ENTRY — colonnes audit + notes manquantes
+       Le DDL JHipster avait déjà "source" donc migration 13
+       (guard: not columnExists source) était MARK_RAN → notes,
+       created_by, created_date, last_modified_by/date non ajoutés.
+  ══════════════════════════════════════════════════════════ -->
+  <changeSet id="fix-time-entry-notes" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="time_entry"/>
+      <not><columnExists tableName="time_entry" columnName="notes"/></not>
+    </preConditions>
+    <addColumn tableName="time_entry">
+      <column name="notes" type="varchar(500)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-time-entry-created-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="time_entry"/>
+      <not><columnExists tableName="time_entry" columnName="created_by"/></not>
+    </preConditions>
+    <addColumn tableName="time_entry">
+      <column name="created_by" type="varchar(50)" defaultValue="system">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-time-entry-created-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="time_entry"/>
+      <not><columnExists tableName="time_entry" columnName="created_date"/></not>
+    </preConditions>
+    <addColumn tableName="time_entry">
+      <column name="created_date" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-time-entry-last-modified-by" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="time_entry"/>
+      <not><columnExists tableName="time_entry" columnName="last_modified_by"/></not>
+    </preConditions>
+    <addColumn tableName="time_entry">
+      <column name="last_modified_by" type="varchar(50)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="fix-time-entry-last-modified-date" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="time_entry"/>
+      <not><columnExists tableName="time_entry" columnName="last_modified_date"/></not>
+    </preConditions>
+    <addColumn tableName="time_entry">
+      <column name="last_modified_date" type="timestamp"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

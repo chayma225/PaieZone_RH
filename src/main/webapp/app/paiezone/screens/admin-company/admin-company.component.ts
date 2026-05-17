@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
@@ -124,13 +124,31 @@ import { ApiService } from '../../core/api.service';
         <div class="col-right">
           <!-- Logo -->
           <div class="pz-card logo-card">
-            <div class="logo-avatar">{{ initials() }}</div>
+            @if (company()?.logoUrl) {
+              <img class="logo-img" [src]="company()!.logoUrl!" alt="Logo entreprise" />
+            } @else {
+              <div class="logo-avatar">{{ initials() }}</div>
+            }
             <div class="logo-info">
               <div class="co-name">{{ company()?.name ?? '—' }}</div>
               <div class="co-trade pz-muted">{{ company()?.tradeName || '—' }}</div>
             </div>
-            <button class="pz-btn pz-sm upload-btn" disabled><pz-icon name="Upload" [size]="13" /> Changer le logo</button>
-            <div class="pz-muted" style="font-size:11px;margin-top:4px">PNG, JPG ou SVG — max 2 Mo</div>
+            <input
+              #fileInput
+              type="file"
+              accept="image/png,image/jpeg,image/svg+xml,image/webp"
+              style="display:none"
+              (change)="onLogoSelected($event)"
+            />
+            <button class="pz-btn pz-sm upload-btn" [disabled]="logoUploading()" (click)="fileInput.click()">
+              <pz-icon name="Upload" [size]="13" />
+              {{ logoUploading() ? 'Envoi…' : 'Changer le logo' }}
+            </button>
+            @if (logoErr()) {
+              <div style="color:#b91c1c;font-size:11px">{{ logoErr() }}</div>
+            } @else {
+              <div class="pz-muted" style="font-size:11px">PNG, JPG, SVG ou WebP — max 2 Mo</div>
+            }
           </div>
 
           <!-- Abonnement -->
@@ -138,32 +156,45 @@ import { ApiService } from '../../core/api.service';
             <div class="section-head">
               <pz-icon name="Wallet" [size]="15" class="section-ico" />
               <span class="section-title">Abonnement</span>
+              <button class="pz-btn pz-sm pz-ghost" style="margin-left:auto" (click)="openPlanModal()">Changer</button>
             </div>
             <div class="section-body">
               @if (company()) {
-                <div class="sub-badges">
-                  <span class="pz-pill primary">{{ company()!.plan }}</span>
+                <!-- Alerte dépassement -->
+                @if (isOverLimit()) {
+                  <div class="over-limit-banner">
+                    <pz-icon name="AlertTriangle" [size]="14" />
+                    <span>
+                      Limite atteinte ({{ data.employees().length }}/{{ company()!.maxEmployees }}). Passez au plan
+                      <strong>{{ suggestedPlan() }}</strong
+                      >.
+                    </span>
+                    <button class="pz-btn pz-sm pz-primary" (click)="openPlanModal()">Mettre à niveau</button>
+                  </div>
+                }
+                <!-- Plan actuel -->
+                <div class="current-plan">
+                  <div class="plan-name">{{ planLabel(company()!.plan) }}</div>
                   <span
                     class="pz-pill"
                     [class.pos]="company()!.status === 'ACTIVE'"
                     [class.warn]="company()!.status === 'TRIAL'"
                     [class.danger]="company()!.status === 'SUSPENDED'"
+                    >{{ statusLabel(company()!.status) }}</span
                   >
-                    {{ statusLabel(company()!.status) }}
-                  </span>
                 </div>
-                <div class="info-rows" style="margin-top:14px">
+                <div class="info-rows" style="margin-top:10px">
                   <div class="info-row">
                     <span class="lbl">Prix mensuel HT</span>
                     <strong class="pz-mono">{{ data.fmtTND(company()!.priceHT) }}</strong>
                   </div>
                   <div class="info-row">
-                    <span class="lbl">Renouvellement</span>
-                    <span>{{ company()!.renewal || '—' }}</span>
+                    <span class="lbl">Collaborateurs</span>
+                    <span [class.over]="isOverLimit()"> {{ data.employees().length }} / {{ company()!.maxEmployees ?? '∞' }} </span>
                   </div>
                   <div class="info-row">
-                    <span class="lbl">Collaborateurs</span>
-                    <span>{{ data.employees().length }} / {{ company()!.maxEmployees ?? '∞' }}</span>
+                    <span class="lbl">Renouvellement</span>
+                    <span>{{ company()!.renewal || '—' }}</span>
                   </div>
                 </div>
               } @else {
@@ -180,10 +211,6 @@ import { ApiService } from '../../core/api.service';
             </div>
             <div class="section-body">
               <div class="info-rows">
-                <div class="info-row">
-                  <span class="lbl">Schéma BD</span>
-                  <span class="pz-mono small">{{ company()?.schema || '—' }}</span>
-                </div>
                 <div class="info-row">
                   <span class="lbl">Région</span>
                   <span>Tunisie</span>
@@ -202,6 +229,70 @@ import { ApiService } from '../../core/api.service';
         </div>
       </div>
     </div>
+
+    <!-- ── Modal Plan ──────────────────────────────────────────────── -->
+    @if (showPlanModal()) {
+      <div class="pz-overlay" (click)="closePlanModal()">
+        <div class="pz-modal plan-modal" (click)="$event.stopPropagation()">
+          <div class="pz-modal-head">
+            <span>Choisir un plan d'abonnement</span>
+            <button class="pz-modal-close" (click)="closePlanModal()"><pz-icon name="X" [size]="16" /></button>
+          </div>
+          <div class="pz-modal-body">
+            <p class="plan-intro pz-muted">
+              Votre effectif actuel : <strong>{{ data.employees().length }} collaborateur(s)</strong>. Choisissez le plan adapté.
+            </p>
+            <div class="plan-cards">
+              @for (p of plans; track p.key) {
+                <div
+                  class="plan-card"
+                  [class.current]="company()?.plan === p.key"
+                  [class.recommended]="p.key === suggestedPlan()"
+                  [class.insufficient]="data.employees().length > p.maxEmp"
+                  (click)="selectPlan(p.key)"
+                >
+                  @if (p.key === suggestedPlan() && p.key !== company()?.plan) {
+                    <div class="plan-badge">Recommandé</div>
+                  }
+                  @if (company()?.plan === p.key) {
+                    <div class="plan-badge current-badge">Plan actuel</div>
+                  }
+                  <div class="plan-card-name">{{ p.label }}</div>
+                  <div class="plan-card-price">
+                    @if (p.price === 0) {
+                      <span class="price-free">Gratuit</span>
+                    } @else {
+                      <span class="price-val">{{ p.price }}</span>
+                      <span class="price-unit"> TND / mois</span>
+                    }
+                  </div>
+                  <div class="plan-card-limit">
+                    <pz-icon name="Users" [size]="12" />
+                    Jusqu'à <strong>{{ p.maxEmp }}</strong> collaborateurs
+                  </div>
+                  @if (data.employees().length > p.maxEmp) {
+                    <div class="plan-card-warn"><pz-icon name="AlertTriangle" [size]="12" /> Effectif insuffisant</div>
+                  }
+                </div>
+              }
+            </div>
+            @if (planErr()) {
+              <div class="pz-err">{{ planErr() }}</div>
+            }
+          </div>
+          <div class="pz-modal-foot">
+            <button class="pz-btn" (click)="closePlanModal()">Annuler</button>
+            <button
+              class="pz-btn pz-primary"
+              [disabled]="planBusy() || !selectedPlan() || selectedPlan() === company()?.plan"
+              (click)="confirmPlan()"
+            >
+              {{ planBusy() ? 'Enregistrement…' : 'Confirmer' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
 
     <!-- ── Modal Modifier ──────────────────────────────────────────── -->
     @if (showEdit()) {
@@ -344,6 +435,14 @@ import { ApiService } from '../../core/api.service';
         font-weight: 700;
         font-size: 22px;
       }
+      .logo-img {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+        object-fit: contain;
+        background: var(--pz-surface-2);
+        border: 1px solid var(--pz-line);
+      }
       .co-name {
         font-size: 15px;
         font-weight: 600;
@@ -406,10 +505,126 @@ import { ApiService } from '../../core/api.service';
       }
 
       /* Subscription */
-      .sub-badges {
+      .over-limit-banner {
         display: flex;
+        align-items: center;
         gap: 8px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 12.5px;
+        color: #9a3412;
+        margin-bottom: 12px;
         flex-wrap: wrap;
+      }
+      .over-limit-banner span {
+        flex: 1;
+      }
+      .current-plan {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .plan-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--pz-primary);
+      }
+      .over {
+        color: #b91c1c;
+        font-weight: 600;
+      }
+
+      /* Plan modal */
+      .plan-modal {
+        width: 680px;
+      }
+      .plan-intro {
+        font-size: 13px;
+        margin-bottom: 16px;
+      }
+      .plan-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .plan-card {
+        position: relative;
+        border: 2px solid var(--pz-line);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      .plan-card:hover {
+        border-color: var(--pz-primary);
+      }
+      .plan-card.current {
+        border-color: var(--pz-primary);
+        background: var(--pz-primary-soft);
+      }
+      .plan-card.recommended {
+        border-color: #16a34a;
+      }
+      .plan-card.insufficient {
+        opacity: 0.55;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+      .plan-badge {
+        position: absolute;
+        top: -10px;
+        left: 12px;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+        background: #16a34a;
+        color: #fff;
+      }
+      .current-badge {
+        background: var(--pz-primary);
+      }
+      .plan-card-name {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .plan-card-price {
+        margin-bottom: 8px;
+      }
+      .price-free {
+        font-size: 18px;
+        font-weight: 700;
+        color: #16a34a;
+      }
+      .price-val {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--pz-ink);
+      }
+      .price-unit {
+        font-size: 12px;
+        color: var(--pz-muted);
+      }
+      .plan-card-limit {
+        font-size: 12px;
+        color: var(--pz-muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .plan-card-warn {
+        font-size: 11px;
+        color: #b91c1c;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
       }
 
       /* Modal */
@@ -522,6 +737,36 @@ export default class AdminCompanyComponent {
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
   protected readonly showEdit = signal(false);
+  protected readonly logoUploading = signal(false);
+  protected readonly logoErr = signal('');
+
+  // ── Plan modal ──────────────────────────────────────────────────
+  protected readonly showPlanModal = signal(false);
+  protected readonly selectedPlan = signal<string>('');
+  protected readonly planBusy = signal(false);
+  protected readonly planErr = signal('');
+
+  protected readonly plans = [
+    { key: 'STARTER', label: 'Starter', maxEmp: 10, price: 0 },
+    { key: 'PME', label: 'PME', maxEmp: 30, price: 290 },
+    { key: 'BUSINESS', label: 'Business', maxEmp: 100, price: 720 },
+    { key: 'ENTERPRISE', label: 'Enterprise', maxEmp: 500, price: 1480 },
+  ];
+
+  protected readonly isOverLimit = computed(() => {
+    const c = this.company();
+    if (!c || c.maxEmployees == null) return false;
+    return this.data.employees().length > c.maxEmployees;
+  });
+
+  protected readonly suggestedPlan = computed(() => {
+    const emp = this.data.employees().length;
+    if (emp <= 10) return 'STARTER';
+    if (emp <= 30) return 'PME';
+    if (emp <= 100) return 'BUSINESS';
+    if (emp <= 500) return 'ENTERPRISE';
+    return 'CUSTOM';
+  });
 
   protected readonly company = computed(() => this.data.companies()[0]);
 
@@ -558,6 +803,43 @@ export default class AdminCompanyComponent {
     return s === 'ACTIVE' ? 'Actif' : s === 'TRIAL' ? 'Essai' : s === 'SUSPENDED' ? 'Suspendu' : s;
   }
 
+  planLabel(key: string): string {
+    return this.plans.find(p => p.key === key)?.label ?? key;
+  }
+
+  openPlanModal(): void {
+    this.selectedPlan.set(this.company()?.plan ?? '');
+    this.planErr.set('');
+    this.showPlanModal.set(true);
+  }
+
+  closePlanModal(): void {
+    this.showPlanModal.set(false);
+  }
+
+  selectPlan(key: string): void {
+    this.selectedPlan.set(key);
+  }
+
+  confirmPlan(): void {
+    const c = this.company();
+    const plan = this.selectedPlan();
+    if (!c || !plan || plan === c.plan) return;
+    this.planBusy.set(true);
+    this.planErr.set('');
+    this.api.changePlan(c.id, plan).subscribe({
+      next: updated => {
+        this.data.companies.update(list => list.map(co => (co.id === c.id ? updated : co)));
+        this.closePlanModal();
+        this.planBusy.set(false);
+      },
+      error: () => {
+        this.planErr.set('Erreur lors du changement de plan.');
+        this.planBusy.set(false);
+      },
+    });
+  }
+
   fmtDate(iso: string | undefined): string {
     if (!iso) return '—';
     try {
@@ -565,6 +847,49 @@ export default class AdminCompanyComponent {
     } catch {
       return iso;
     }
+  }
+
+  onLogoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    const MAX = 2 * 1024 * 1024;
+    if (file.size > MAX) {
+      this.logoErr.set('Fichier trop volumineux (max 2 Mo).');
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      this.logoErr.set('Format non supporté. Utilisez PNG, JPG, SVG ou WebP.');
+      return;
+    }
+
+    const c = this.company();
+    if (!c) return;
+
+    this.logoErr.set('');
+    this.logoUploading.set(true);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      this.api.patchCompany(c.id, { logoUrl: base64 }).subscribe({
+        next: updated => {
+          this.data.companies.update(list => list.map(co => (co.id === c.id ? updated : co)));
+          this.logoUploading.set(false);
+        },
+        error: () => {
+          this.logoErr.set("Erreur lors de l'enregistrement du logo.");
+          this.logoUploading.set(false);
+        },
+      });
+    };
+    reader.onerror = () => {
+      this.logoErr.set('Impossible de lire le fichier.');
+      this.logoUploading.set(false);
+    };
+    reader.readAsDataURL(file);
   }
 
   openEdit() {

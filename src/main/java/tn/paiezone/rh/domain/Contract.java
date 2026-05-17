@@ -96,8 +96,7 @@ public class Contract implements Serializable {
     @Column(name = "document_url", length = 500)
     private String documentUrl;
 
-    @Lob
-    @Column(name = "notes")
+    @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
     @NotNull

@@ -22,9 +22,14 @@ import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 import tn.paiezone.rh.config.Constants;
 import tn.paiezone.rh.domain.User;
+import tn.paiezone.rh.domain.UserProfile;
+import tn.paiezone.rh.domain.enumeration.AppRole;
+import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.service.MailService;
+import tn.paiezone.rh.service.TenantContextService;
 import tn.paiezone.rh.service.UserService;
 import tn.paiezone.rh.service.dto.AdminUserDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
@@ -86,10 +91,36 @@ public class UserResource {
 
     private final MailService mailService;
 
-    public UserResource(UserService userService, UserRepository userRepository, MailService mailService) {
+    private final TenantContextService tenantContextService;
+
+    private final CompanyRepository companyRepository;
+
+    private final UserProfileRepository userProfileRepository;
+
+    public UserResource(
+        UserService userService,
+        UserRepository userRepository,
+        MailService mailService,
+        TenantContextService tenantContextService,
+        CompanyRepository companyRepository,
+        UserProfileRepository userProfileRepository
+    ) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.mailService = mailService;
+        this.tenantContextService = tenantContextService;
+        this.companyRepository = companyRepository;
+        this.userProfileRepository = userProfileRepository;
+    }
+
+    /** Converts a JHipster authority string to the matching AppRole. */
+    private AppRole resolveAppRole(Set<String> authorities) {
+        if (authorities == null) return AppRole.EMPLOYE;
+        if (authorities.contains(AuthoritiesConstants.SUPER_ADMIN)) return AppRole.SUPER_ADMIN;
+        if (authorities.contains(AuthoritiesConstants.ADMIN)) return AppRole.ADMIN;
+        if (authorities.contains(AuthoritiesConstants.RH_COMPTABLE)) return AppRole.RH_COMPTABLE;
+        if (authorities.contains(AuthoritiesConstants.MANAGER)) return AppRole.MANAGER;
+        return AppRole.EMPLOYE;
     }
 
     /**
@@ -119,6 +150,23 @@ public class UserResource {
         } else {
             User newUser = userService.createUser(userDTO);
             mailService.sendCreationEmail(newUser);
+
+            // Lier le nouvel utilisateur à l'entreprise de l'admin connecté
+            Long companyId = tenantContextService.getCurrentCompanyId();
+            if (companyId != null && !userProfileRepository.existsByJhiUserId(newUser.getLogin())) {
+                companyRepository
+                    .findById(companyId)
+                    .ifPresent(company -> {
+                        UserProfile profile = new UserProfile();
+                        profile.setJhiUserId(newUser.getLogin());
+                        profile.setRole(resolveAppRole(userDTO.getAuthorities()));
+                        profile.setActive(true);
+                        profile.setCompany(company);
+                        userProfileRepository.save(profile);
+                        LOG.debug("UserProfile créé pour {} lié à la compagnie {}", newUser.getLogin(), companyId);
+                    });
+            }
+
             return ResponseEntity.created(new URI("/api/admin/users/" + newUser.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUser.getLogin()))
                 .body(newUser);

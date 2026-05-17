@@ -8,6 +8,7 @@ import type {
   PayrollPeriod,
   LeaveRequest,
   Advance,
+  AuditEntry,
   RegulatoryParam,
   JobPosition,
   Bonus,
@@ -180,6 +181,14 @@ export class ApiService {
     return this.http.put<any>(`/api/companies/${id}`, { ...dto, id }).pipe(map(d => this.mapCompany(d)));
   }
 
+  patchCompany(id: number, patch: Record<string, any>): Observable<Company> {
+    return this.http.patch<any>(`/api/companies/${id}`, { ...patch, id }).pipe(map(d => this.mapCompany(d)));
+  }
+
+  changePlan(companyId: number, plan: string): Observable<Company> {
+    return this.http.post<any>(`/api/companies/${companyId}/change-plan`, { plan }).pipe(map(d => this.mapCompany(d)));
+  }
+
   patchEmployee(id: number, patch: Record<string, any>): Observable<any> {
     return this.http.patch<any>(`/api/employees/${id}`, patch);
   }
@@ -290,6 +299,28 @@ export class ApiService {
     return this.http.delete<void>(`/api/hr-documents/${id}`);
   }
 
+  auditLogs(size = 500): Observable<AuditEntry[]> {
+    const params = new HttpParams().set('page', 0).set('size', size).set('sort', 'occurredAt,desc');
+    return this.http.get<any[]>('/api/audit-logs', { params }).pipe(
+      map(list =>
+        list.map(
+          d =>
+            ({
+              id: d.id,
+              user: d.user?.jhiUserId ?? 'system',
+              role: d.user?.role ?? '',
+              action: d.action ?? '',
+              entity: d.entityType ?? '',
+              entityId: String(d.entityId ?? ''),
+              ip: d.ipAddress ?? '',
+              date: d.occurredAt ? new Date(d.occurredAt).toLocaleString('fr-FR') : '',
+              detail: d.newValue ?? '',
+            }) as AuditEntry,
+        ),
+      ),
+    );
+  }
+
   myEmployee(): Observable<Employee> {
     return this.http.get<any>('/api/employees/me').pipe(map(d => this.mapEmployee(d)));
   }
@@ -298,8 +329,9 @@ export class ApiService {
     return this.http.post<any>('/api/employees/create-simple', body).pipe(map(d => this.mapEmployee(d)));
   }
 
-  contracts(employeeId: number): Observable<Contract[]> {
-    const params = new HttpParams().set('employeeId.equals', employeeId).set('page', 0).set('size', 20);
+  contracts(employeeId?: number, size = 500): Observable<Contract[]> {
+    let params = new HttpParams().set('page', 0).set('size', size);
+    if (employeeId != null) params = params.set('employeeId.equals', employeeId);
     return this.http.get<any[]>('/api/contracts', { params }).pipe(map(list => list.map(d => this.mapContract(d))));
   }
 
@@ -358,6 +390,7 @@ export class ApiService {
       cat: d.category ?? '',
       gender: d.gender === 'FEMALE' ? 'F' : 'M',
       children: d.numberOfChildren ?? 0,
+      manager: d.manager ? `${d.manager.firstName ?? ''} ${d.manager.lastName ?? ''}`.trim() : undefined,
     };
   }
 
@@ -396,6 +429,7 @@ export class ApiService {
       schema: d.tenantSchema ?? '',
       createdAt: d.createdAt ?? '',
       mrr: status === 'ACTIVE' ? +(sub?.priceHT ?? 0) : 0,
+      logoUrl: d.logoUrl ?? null,
     };
   }
 

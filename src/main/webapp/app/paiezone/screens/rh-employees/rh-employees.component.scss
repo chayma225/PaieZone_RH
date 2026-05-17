@@ -146,12 +146,12 @@
   align-items: center;
 }
 
-.modal-back {
+.pz-emp-back {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.4);
   backdrop-filter: blur(4px);
-  z-index: 50;
+  z-index: 200;
   display: grid;
   place-items: center;
   padding: 20px;
@@ -167,18 +167,18 @@
   }
 }
 
-.modal {
-  background: var(--pz-surface);
-  border-radius: var(--pz-radius-xl);
-  box-shadow: var(--pz-shadow-xl);
+.pz-emp-card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.25);
   width: 100%;
   max-width: 720px;
   max-height: calc(100vh - 40px);
   overflow: auto;
-  animation: modalIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: empCardIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@keyframes modalIn {
+@keyframes empCardIn {
   from {
     opacity: 0;
     transform: translateY(6px) scale(0.985);
@@ -189,13 +189,13 @@
   }
 }
 
-.modal-head {
+.pz-emp-head {
   padding: 20px 24px 8px;
   display: flex;
   align-items: flex-start;
   gap: 12px;
 
-  .modal-title {
+  .pz-emp-title {
     font-size: 17px;
     font-weight: 600;
     letter-spacing: -0.015em;
@@ -215,7 +215,7 @@
     flex-wrap: wrap;
   }
 
-  .modal-x {
+  .pz-emp-x {
     margin-left: auto;
   }
 }
@@ -245,7 +245,7 @@
   }
 }
 
-.modal-body {
+.pz-emp-body {
   padding: 18px 24px 12px;
 }
 
@@ -269,7 +269,7 @@
   }
 }
 
-.modal-foot {
+.pz-emp-foot {
   padding: 16px 24px 20px;
   display: flex;
   justify-content: flex-end;

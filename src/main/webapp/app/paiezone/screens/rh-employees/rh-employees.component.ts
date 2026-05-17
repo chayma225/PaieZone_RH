@@ -234,6 +234,10 @@ export default class RhEmployeesComponent {
 
   // ── Contrats ──────────────────────────────────────────────────────────────
   protected readonly contracts = signal<Contract[]>([]);
+  protected readonly activeContract = computed(() => {
+    const list = this.contracts();
+    return list.find(c => c.status === 'ACTIVE') ?? list[0] ?? null;
+  });
 
   // ── Documents ─────────────────────────────────────────────────────────────
   protected readonly docs = signal<DocItem[]>([]);
@@ -250,7 +254,13 @@ export default class RhEmployeesComponent {
     this.docs.set([]);
     this.contracts.set([]);
     this.api.contracts(e.id).subscribe({
-      next: list => this.contracts.set(list),
+      next: list => {
+        this.contracts.set(list);
+        const active = list.find(c => c.status === 'ACTIVE') ?? list[0];
+        if (active) {
+          this.selected.update(emp => (emp ? { ...emp, salary: active.baseSalary, contract: active.contractType as any } : null));
+        }
+      },
       error: () => {},
     });
     this.api.hrDocuments(e.id).subscribe({
@@ -283,6 +293,10 @@ export default class RhEmployeesComponent {
   }
   closeDrawer(): void {
     this.selected.set(null);
+  }
+
+  onBackdropClick(ev: MouseEvent): void {
+    if (ev.target === ev.currentTarget) this.closeDrawer();
   }
 
   onDragOver(ev: DragEvent): void {
@@ -385,7 +399,23 @@ export default class RhEmployeesComponent {
     return b < 1024 * 1024 ? `${Math.round(b / 1024)} Ko` : `${(b / 1024 / 1024).toFixed(1)} Mo`;
   }
 
+  fmtDateLong(date: string): string {
+    if (!date) return '—';
+    return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  periodStatusLabel(s: string): string {
+    const m: Record<string, string> = {
+      DRAFT: 'Brouillon',
+      CALCULATED: 'Calculée',
+      VALIDATED: 'Validée',
+      LOCKED: 'Verrouillée',
+      EXPORTED: 'Exportée',
+    };
+    return m[s] ?? s;
+  }
+
   contractClass(c: string): string {
-    return c === 'CDI' ? 'pos' : c === 'CDD' ? 'info' : c === 'CIVP' ? 'warn' : '';
+    return c === 'CDI' ? 'pos' : c === 'CDD' ? 'info' : c === 'CIVP' ? 'warn' : c === 'STAGE' ? 'warn' : c === 'KARAMA' ? 'warn' : '';
   }
 }
