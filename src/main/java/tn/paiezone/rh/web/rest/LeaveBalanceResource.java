@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,10 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.LeaveBalanceRepository;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.LeaveBalanceService;
 import tn.paiezone.rh.service.dto.LeaveBalanceDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
@@ -37,9 +41,16 @@ public class LeaveBalanceResource {
 
     private final LeaveBalanceRepository leaveBalanceRepository;
 
-    public LeaveBalanceResource(LeaveBalanceService leaveBalanceService, LeaveBalanceRepository leaveBalanceRepository) {
+    private final EmployeeRepository employeeRepository;
+
+    public LeaveBalanceResource(
+        LeaveBalanceService leaveBalanceService,
+        LeaveBalanceRepository leaveBalanceRepository,
+        EmployeeRepository employeeRepository
+    ) {
         this.leaveBalanceService = leaveBalanceService;
         this.leaveBalanceRepository = leaveBalanceRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     /**
@@ -129,6 +140,16 @@ public class LeaveBalanceResource {
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, leaveBalanceDTO.getId().toString())
         );
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("isAuthenticated()")
+    public List<LeaveBalanceDTO> getMyLeaveBalances() {
+        int year = LocalDate.now().getYear();
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(login -> employeeRepository.findByUserProfile_JhiUserId(login))
+            .map(emp -> leaveBalanceService.findByEmployeeAndYear(emp.getId(), year))
+            .orElse(List.of());
     }
 
     /**

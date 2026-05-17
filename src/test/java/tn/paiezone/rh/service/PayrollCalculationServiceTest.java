@@ -108,7 +108,7 @@ class PayrollCalculationServiceTest {
         // Arrange
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(periodRepository.findById(1L)).thenReturn(Optional.of(period));
-        when(contractRepository.findActiveContractByEmployee(eq(10L), any())).thenReturn(Optional.of(contract));
+        when(contractRepository.findActiveContractByEmployee(eq(10L), any(), any())).thenReturn(Optional.of(contract));
         when(rubriqueRepository.findByCompanyIdAndActiveTrueOrderBySortOrderAsc(1L)).thenReturn(List.of()); // pas de rubriques variables
         when(timeEntryRepository.findValidatedByEmployeeAndMonth(10L, 1, 2026)).thenReturn(List.of()); // pas d'heures sup
         when(bonusRepository.findByEmployeeIdAndMonthAndYear(10L, 1, 2026)).thenReturn(List.of()); // pas de primes
@@ -162,7 +162,7 @@ class PayrollCalculationServiceTest {
     void calculatePaySlip_sansContratActif_doitLeverException() {
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(periodRepository.findById(1L)).thenReturn(Optional.of(period));
-        when(contractRepository.findActiveContractByEmployee(eq(10L), any())).thenReturn(Optional.empty());
+        when(contractRepository.findActiveContractByEmployee(eq(10L), any(), any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> calculationService.calculatePaySlip(10L, 1L))
             .isInstanceOf(IllegalStateException.class)
@@ -177,7 +177,7 @@ class PayrollCalculationServiceTest {
 
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(periodRepository.findById(1L)).thenReturn(Optional.of(period));
-        when(contractRepository.findActiveContractByEmployee(eq(10L), any())).thenReturn(Optional.of(contract));
+        when(contractRepository.findActiveContractByEmployee(eq(10L), any(), any())).thenReturn(Optional.of(contract));
         when(rubriqueRepository.findByCompanyIdAndActiveTrueOrderBySortOrderAsc(1L)).thenReturn(List.of());
         when(timeEntryRepository.findValidatedByEmployeeAndMonth(10L, 1, 2026)).thenReturn(List.of());
         when(bonusRepository.findByEmployeeIdAndMonthAndYear(10L, 1, 2026)).thenReturn(List.of(prime)); // ← prime de 200 DT

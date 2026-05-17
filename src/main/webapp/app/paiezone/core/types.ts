@@ -227,6 +227,17 @@ export interface Contract {
   employeeId: number;
 }
 
+export interface LeaveBalance {
+  id: number;
+  year: number;
+  entitled: number;
+  taken: number;
+  pending: number;
+  carryOver: number;
+  remaining: number;
+  leaveTypeName: string;
+}
+
 export interface RegulatoryParam {
   id: number;
   paramKey: string;

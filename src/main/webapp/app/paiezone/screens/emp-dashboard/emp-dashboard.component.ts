@@ -1,9 +1,31 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
+import { ApiService } from '../../core/api.service';
+import type { PaySlip, LeaveBalance } from '../../core/types';
+
+const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+const LEAVE_COLORS: Record<string, string> = {
+  ANNUEL: '#4f46e5',
+  MALADIE: '#f59e0b',
+  RTT: '#0ea5e9',
+  MATERNITE: '#ec4899',
+  PATERNITE: '#14b8a6',
+  SANS_SOLDE: '#6b7280',
+};
+
+const LEAVE_LABELS: Record<string, string> = {
+  ANNUEL: 'Congés payés',
+  MALADIE: 'Congé maladie',
+  RTT: 'RTT',
+  MATERNITE: 'Maternité',
+  PATERNITE: 'Paternité',
+  SANS_SOLDE: 'Sans solde',
+};
 
 @Component({
   selector: 'pz-emp-dashboard',
@@ -14,8 +36,16 @@ import { DataService } from '../../core/data.service';
       <div class="pz-page-head">
         <div>
           <div class="pz-crumbs"><strong>Mon espace</strong> <span class="sep">/</span> Tableau de bord</div>
-          <h1>Bonjour Mehdi 👋</h1>
-          <div class="pz-muted">Mercredi 14 mai 2026 · Lead Développeur · matricule <span class="pz-mono">A12-018</span></div>
+          <h1>Bonjour {{ data.myEmployee()?.first || 'collaborateur' }} 👋</h1>
+          <div class="pz-muted">
+            {{ today }}
+            @if (data.myEmployee(); as emp) {
+              @if (emp.role) {
+                · {{ emp.role }}
+              }
+              · matricule <span class="pz-mono">{{ emp.matricule }}</span>
+            }
+          </div>
         </div>
         <div class="pz-page-actions">
           <button class="pz-btn" routerLink="/paiezone/emp-leaves"><pz-icon name="Calendar" /> Demander un congé</button>
@@ -24,33 +54,50 @@ import { DataService } from '../../core/data.service';
       </div>
 
       <div class="grid-21">
+        <!-- Dernier bulletin de paie -->
         <div class="pz-card hero">
-          <div class="hero-head">
-            <div>
-              <div class="hero-title">Dernier bulletin de paie</div>
-              <div class="hero-sub">Avril 2026 · disponible depuis le 03/05/2026</div>
+          @if (lastSlip(); as slip) {
+            <div class="hero-head">
+              <div>
+                <div class="hero-title">Dernier bulletin de paie</div>
+                <div class="hero-sub">{{ slipLabel() }}</div>
+              </div>
+              <span class="pz-pill" [ngClass]="slipPillClass(slip.status)">
+                <span class="dot"></span>{{ slipStatusLabel(slip.status) }}
+              </span>
             </div>
-            <span class="pz-pill pos"><span class="dot"></span>Validé</span>
-          </div>
-          <div class="hero-body">
-            <div>
-              <div class="amount-label">Net à payer</div>
-              <div class="amount">{{ data.fmtTNDdec(2783.05) }}</div>
-              <div class="amount-detail pz-muted">
-                Brut <span class="pz-mono">3 680,000</span> · Cotisations <span class="pz-mono">−896,950</span>
+            <div class="hero-body">
+              <div>
+                <div class="amount-label">Net à payer</div>
+                <div class="amount">{{ data.fmtTNDdec(slip.netSalary) }}</div>
+                <div class="amount-detail pz-muted">
+                  Brut <span class="pz-mono">{{ data.fmtTNDdec(slip.grossSalary) }}</span> · Cotisations
+                  <span class="pz-mono">−{{ data.fmtTNDdec(deductions()) }}</span>
+                </div>
+              </div>
+              <div class="hero-actions">
+                <button class="pz-btn"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /> Voir détail</button>
+                <button class="pz-btn pz-primary"><pz-icon name="Download" [size]="14" [strokeWidth]="1.5" /> Télécharger PDF</button>
               </div>
             </div>
-            <div class="hero-actions">
-              <button class="pz-btn"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /> Voir détail</button>
-              <button class="pz-btn pz-primary"><pz-icon name="Download" [size]="14" [strokeWidth]="1.5" /> Télécharger PDF</button>
+          } @else {
+            <div class="hero-head">
+              <div>
+                <div class="hero-title">Dernier bulletin de paie</div>
+                <div class="hero-sub pz-muted">Aucun bulletin disponible</div>
+              </div>
             </div>
-          </div>
+            <div class="hero-body">
+              <div class="pz-muted" style="font-size:13px">Votre premier bulletin apparaîtra ici après la clôture de paie.</div>
+            </div>
+          }
         </div>
 
+        <!-- Notifications -->
         <div class="pz-card">
           <div class="card-head"><div class="card-title">Notifications</div></div>
           <div class="card-body">
-            @for (n of notifs; track n.title) {
+            @for (n of notifications(); track n.title) {
               <div class="notif">
                 <div class="notif-ico" [class]="n.tone"><pz-icon [name]="n.icon" /></div>
                 <div class="grow">
@@ -64,19 +111,30 @@ import { DataService } from '../../core/data.service';
         </div>
       </div>
 
+      <!-- Soldes de congés -->
       <div class="pz-card">
-        <div class="card-head"><div class="card-title">Mes soldes de congés — 2026</div></div>
+        <div class="card-head">
+          <div class="card-title">Mes soldes de congés — {{ currentYear }}</div>
+        </div>
         <div class="card-body">
-          @for (b of balances; track b.label) {
-            <div class="bal">
-              <div class="bal-head">
-                <span class="strong">{{ b.label }}</span>
-                <span
-                  ><strong class="pz-mono">{{ b.total - b.used }}</strong>
-                  <span class="pz-muted small">/ {{ b.total }}j restants</span></span
-                >
+          @if (leaveBalances().length) {
+            @for (b of leaveBalances(); track b.id) {
+              <div class="bal">
+                <div class="bal-head">
+                  <span class="strong">{{ leaveLabel(b.leaveTypeName) }}</span>
+                  <span>
+                    <strong class="pz-mono">{{ b.remaining | number: '1.0-1' }}</strong>
+                    <span class="pz-muted small"> / {{ b.entitled | number: '1.0-1' }}j restants</span>
+                  </span>
+                </div>
+                <div class="progress">
+                  <i [style.width.%]="usedPct(b)" [style.background]="leaveColor(b.leaveTypeName)"></i>
+                </div>
               </div>
-              <div class="progress"><i [style.width.%]="(b.used / b.total) * 100" [style.background]="b.color"></i></div>
+            }
+          } @else {
+            <div class="pz-muted" style="font-size:13px;padding:16px 0;text-align:center">
+              Aucun solde de congés disponible pour cette année.
             </div>
           }
         </div>
@@ -231,18 +289,117 @@ import { DataService } from '../../core/data.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class EmpDashboardComponent {
+export default class EmpDashboardComponent implements OnInit {
   protected readonly data = inject(DataService);
+  private readonly api = inject(ApiService);
 
-  protected readonly notifs = [
-    { icon: 'Cash', tone: 'primary', title: "Bulletin d'avril disponible", sub: 'Téléchargeable depuis Mes documents', time: 'il y a 1 j' },
-    { icon: 'Check', tone: 'pos', title: 'Avance approuvée', sub: '800 TND — remboursement sur 3 mois', time: 'il y a 3 j' },
-    { icon: 'Calendar', tone: 'warn', title: 'Solde CP : 20 jours restants', sub: 'À utiliser avant le 31/12/2026', time: 'il y a 1 sem.' },
-  ];
+  protected readonly paySlips = signal<PaySlip[]>([]);
+  protected readonly leaveBalances = signal<LeaveBalance[]>([]);
 
-  protected readonly balances = [
-    { label: 'Congés payés', used: 4, total: 24, color: '#4f46e5' },
-    { label: 'RTT', used: 2, total: 11, color: '#0ea5e9' },
-    { label: 'Maladie', used: 0, total: 15, color: '#f59e0b' },
-  ];
+  protected readonly currentYear = new Date().getFullYear();
+
+  protected readonly today = new Date().toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  protected readonly lastSlip = computed(() => {
+    const slips = this.paySlips();
+    if (!slips.length) return null;
+    return [...slips].sort((a, b) => (b.year !== a.year ? b.year - a.year : b.month - a.month))[0];
+  });
+
+  protected readonly slipLabel = computed(() => {
+    const s = this.lastSlip();
+    return s ? `${MONTHS_FR[s.month - 1]} ${s.year}` : '';
+  });
+
+  protected readonly deductions = computed(() => {
+    const s = this.lastSlip();
+    if (!s) return 0;
+    return s.cnssSalaryAmount + (s.cavisAmount ?? 0) + (s.cssAmount ?? 0) + s.irppAmount;
+  });
+
+  protected readonly notifications = computed(() => {
+    const notifs: { icon: string; tone: string; title: string; sub: string; time: string }[] = [];
+    const slip = this.lastSlip();
+    if (slip) {
+      notifs.push({
+        icon: 'Cash',
+        tone: 'primary',
+        title: `Bulletin de ${MONTHS_FR[slip.month - 1]} disponible`,
+        sub: 'Téléchargeable depuis Mes documents',
+        time: 'Ce mois',
+      });
+    }
+    const balances = this.leaveBalances();
+    const annual = balances.find(b => b.leaveTypeName === 'ANNUEL');
+    if (annual && annual.entitled > 0 && annual.remaining < 5) {
+      notifs.push({
+        icon: 'Calendar',
+        tone: 'warn',
+        title: `Solde CP : ${annual.remaining.toFixed(0)} jours restants`,
+        sub: `À utiliser avant le 31/12/${annual.year}`,
+        time: "Aujourd'hui",
+      });
+    }
+    if (!notifs.length) {
+      notifs.push({
+        icon: 'Check',
+        tone: 'pos',
+        title: 'Tout est à jour',
+        sub: 'Aucune notification pour le moment',
+        time: "Aujourd'hui",
+      });
+    }
+    return notifs;
+  });
+
+  ngOnInit(): void {
+    this.api.myPaySlips().subscribe({
+      next: slips => this.paySlips.set(slips),
+      error: () => {},
+    });
+    this.api.myLeaveBalances().subscribe({
+      next: bal => this.leaveBalances.set(bal),
+      error: () => {},
+    });
+  }
+
+  protected slipPillClass(status: string): string {
+    const map: Record<string, string> = {
+      VALIDATED: 'pos',
+      LOCKED: 'pos',
+      EXPORTED: 'pos',
+      CALCULATED: 'info',
+      DRAFT: 'warn',
+    };
+    return `pz-pill ${map[status] ?? 'info'}`;
+  }
+
+  protected slipStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      VALIDATED: 'Validé',
+      LOCKED: 'Clôturé',
+      EXPORTED: 'Exporté',
+      CALCULATED: 'Calculé',
+      DRAFT: 'Brouillon',
+    };
+    return labels[status] ?? status;
+  }
+
+  protected leaveColor(typeName: string): string {
+    return LEAVE_COLORS[typeName] ?? '#6b7280';
+  }
+
+  protected leaveLabel(typeName: string): string {
+    return LEAVE_LABELS[typeName] ?? typeName;
+  }
+
+  protected usedPct(b: LeaveBalance): number {
+    if (!b.entitled) return 0;
+    return Math.min(100, ((b.entitled - b.remaining) / b.entitled) * 100);
+  }
 }

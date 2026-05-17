@@ -16,6 +16,7 @@ import type {
   PaySlip,
   HrDocument,
   Contract,
+  LeaveBalance,
 } from './types';
 
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -279,6 +280,10 @@ export class ApiService {
     return this.http.get<any[]>('/api/pay-slips/my', { params }).pipe(map(list => list.map(d => this.mapPaySlip(d))));
   }
 
+  myLeaveBalances(): Observable<LeaveBalance[]> {
+    return this.http.get<any[]>('/api/leave-balances/my').pipe(map(list => list.map(d => this.mapLeaveBalance(d))));
+  }
+
   paySlipsByEmployee(employeeId: number): Observable<PaySlip[]> {
     const params = new HttpParams().set('employeeId.equals', employeeId).set('page', 0).set('size', 24);
     return this.http.get<any[]>('/api/pay-slips', { params }).pipe(map(list => list.map(d => this.mapPaySlip(d))));
@@ -537,6 +542,19 @@ export class ApiService {
       status: d.status ?? 'DRAFT',
       employeeId: d.employeeId ?? 0,
       payrollPeriodId: d.payrollPeriodId ?? 0,
+    };
+  }
+
+  private mapLeaveBalance(d: any): LeaveBalance {
+    return {
+      id: d.id,
+      year: d.year ?? new Date().getFullYear(),
+      entitled: +(d.entitled ?? 0),
+      taken: +(d.taken ?? 0),
+      pending: +(d.pending ?? 0),
+      carryOver: +(d.carryOver ?? 0),
+      remaining: +(d.remaining ?? 0),
+      leaveTypeName: d.leaveType?.name ?? d.leaveType?.code ?? 'Congé',
     };
   }
 

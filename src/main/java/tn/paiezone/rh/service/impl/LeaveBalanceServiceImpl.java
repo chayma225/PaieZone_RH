@@ -1,5 +1,11 @@
 package tn.paiezone.rh.service.impl;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,13 +20,6 @@ import tn.paiezone.rh.repository.LeaveTypeRepository;
 import tn.paiezone.rh.service.LeaveBalanceService;
 import tn.paiezone.rh.service.dto.LeaveBalanceDTO;
 import tn.paiezone.rh.service.mapper.LeaveBalanceMapper;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -39,7 +38,8 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
         int currentYear = LocalDate.now().getYear();
         BigDecimal monthlyAccrual = new BigDecimal("1.5");
 
-        LeaveType annual = leaveTypeRepository.findByName(LeaveTypeName.ANNUEL)
+        LeaveType annual = leaveTypeRepository
+            .findByName(LeaveTypeName.ANNUEL)
             .orElseThrow(() -> new IllegalStateException("Type ANNUAL manquant en base"));
 
         List<Employee> employees = employeeRepository.findAll(); // Adapté selon votre logique active/non-active
@@ -86,9 +86,7 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
         BigDecimal taken = balance.getTaken() != null ? balance.getTaken() : BigDecimal.ZERO;
         BigDecimal pending = balance.getPending() != null ? balance.getPending() : BigDecimal.ZERO;
 
-        balance.setRemaining(
-            balance.getEntitled().subtract(taken).subtract(pending).max(BigDecimal.ZERO)
-        );
+        balance.setRemaining(balance.getEntitled().subtract(taken).subtract(pending).max(BigDecimal.ZERO));
     }
 
     private LeaveBalance createInitialBalance(Employee emp, LeaveType lt, int year) {
@@ -121,7 +119,8 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
 
     @Override
     public Optional<LeaveBalanceDTO> partialUpdate(LeaveBalanceDTO leaveBalanceDTO) {
-        return leaveBalanceRepository.findById(leaveBalanceDTO.getId())
+        return leaveBalanceRepository
+            .findById(leaveBalanceDTO.getId())
             .map(existing -> {
                 leaveBalanceMapper.partialUpdate(existing, leaveBalanceDTO);
                 return existing;
@@ -133,7 +132,15 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
     @Override
     @Transactional(readOnly = true)
     public List<LeaveBalanceDTO> findAll() {
-        return leaveBalanceRepository.findAll().stream()
+        return leaveBalanceRepository.findAll().stream().map(leaveBalanceMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LeaveBalanceDTO> findByEmployeeAndYear(Long employeeId, int year) {
+        return leaveBalanceRepository
+            .findByEmployeeIdAndYear(employeeId, year)
+            .stream()
             .map(leaveBalanceMapper::toDto)
             .collect(Collectors.toList());
     }
