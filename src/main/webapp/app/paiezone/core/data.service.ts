@@ -1,5 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { ApiService } from './api.service';
+import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
 import type {
   Company,
   Employee,
@@ -57,7 +58,9 @@ export class DataService {
   };
 
   constructor() {
-    this.loadAll();
+    if (inject(AuthServerProvider).getToken()) {
+      this.loadAll();
+    }
   }
 
   private mergeContracts(emps: Employee[], contracts: Contract[]): Employee[] {

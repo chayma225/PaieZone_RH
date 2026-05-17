@@ -1,0 +1,74 @@
+<div class="auth-card">
+  <h1>Connexion à PaieZone</h1>
+  <p class="sub">Bienvenue — Connectez-vous pour accéder à votre espace.</p>
+
+  @if (error()) {
+    <div class="alert">
+      <pz-icon name="CircleHelp" [size]="14" />
+      {{ error() }}
+    </div>
+  }
+
+  <form (submit)="$event.preventDefault(); submit()" class="form">
+    <div class="field">
+      <label for="login">Identifiant</label>
+      <div class="input-wrap" [class.error]="emailError()">
+        <pz-icon name="Mail" [size]="14" [strokeWidth]="1.4" />
+        <input
+          id="login"
+          type="text"
+          placeholder="votre.identifiant"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          name="username"
+          required
+          autocomplete="username"
+          autofocus
+        />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="pwd">Mot de passe</label>
+      <div class="input-wrap" [class.error]="pwdError()">
+        <pz-icon name="Lock" [size]="14" [strokeWidth]="1.4" />
+        <input
+          id="pwd"
+          [type]="showPwd() ? 'text' : 'password'"
+          placeholder="••••••••••"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          name="password"
+          required
+          autocomplete="current-password"
+        />
+        <button type="button" class="reveal" (click)="showPwd.set(!showPwd())" [attr.aria-label]="showPwd() ? 'Masquer' : 'Afficher'">
+          <pz-icon [name]="showPwd() ? 'X' : 'Eye'" [size]="14" [strokeWidth]="1.4" />
+        </button>
+      </div>
+    </div>
+
+    <div class="row-between">
+      <label class="checkbox">
+        <input type="checkbox" [ngModel]="remember()" (ngModelChange)="remember.set($event)" name="remember" />
+        <span class="check-box"><pz-icon name="Check" [size]="10" [strokeWidth]="2" /></span>
+        <span>Rester connecté</span>
+      </label>
+      <a class="link" routerLink="/account/reset/request">Mot de passe oublié ?</a>
+    </div>
+
+    <button type="submit" class="pz-btn pz-primary full lg" [disabled]="busy()">
+      @if (busy()) {
+        <span class="spinner"></span>
+        Connexion en cours…
+      } @else {
+        Se connecter <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6" />
+      }
+    </button>
+  </form>
+
+  <div class="footer-link">
+    Pas encore de compte ?
+    <a routerLink="/account/register">Créer un compte</a>
+  </div>
+</div>

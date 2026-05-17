@@ -1,0 +1,53 @@
+<div class="auth-card">
+  <div class="ico-circle">
+    <pz-icon name="Shield" [size]="26" [strokeWidth]="1.4" />
+  </div>
+  <h1>Vérification en deux étapes</h1>
+  <p class="sub">
+    Saisissez le code à 6 chiffres généré par votre application d'authentification ({{
+      method() === 'app' ? 'Google Authenticator, Authy…' : 'envoyé par SMS'
+    }}).
+    @if (email()) {
+      <br />
+      Compte&nbsp;: <strong>{{ email() }}</strong>
+    }
+  </p>
+
+  @if (error()) {
+    <div class="alert"><pz-icon name="CircleHelp" [size]="14" />{{ error() }}</div>
+  }
+
+  <div class="otp-row" [class.error]="!!error()" [class.success]="verified()">
+    @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+      <input
+        #cell
+        type="text"
+        inputmode="numeric"
+        maxlength="1"
+        [value]="digits()[i]"
+        (input)="onInput(i, $event)"
+        (keydown)="onKey(i, $event)"
+        (paste)="onPaste($event)"
+        [disabled]="busy() || verified()"
+      />
+    }
+  </div>
+
+  <div class="method-row">
+    <span class="muted">Vous n'avez pas reçu de code ?</span>
+    @if (canResend()) {
+      <button class="link" type="button" (click)="resend()">Renvoyer</button>
+    } @else {
+      <span class="muted">Renvoyer dans {{ resendCooldown() }}s</span>
+    }
+  </div>
+
+  <div class="method-switch">
+    <button type="button" [class.active]="method() === 'app'" (click)="setMethod('app')">
+      <pz-icon name="Bot" [size]="14" /> Application
+    </button>
+    <button type="button" [class.active]="method() === 'sms'" (click)="setMethod('sms')"><pz-icon name="Phone" [size]="14" /> SMS</button>
+  </div>
+
+  <a class="back" routerLink="/paiezone/login">← Revenir à la connexion</a>
+</div>

@@ -5,6 +5,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
 import { AccountService } from 'app/core/auth/account.service';
 import LayoutComponent from './shell/layout/layout.component';
+import AuthLayoutComponent from './shell/auth-layout/auth-layout.component';
 
 const SUPER_ADMIN = ['ROLE_SUPER_ADMIN'];
 const ADMIN_UP = ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
@@ -26,11 +27,27 @@ const roleRedirect: CanActivateFn = () => {
 };
 
 const routes: Routes = [
-  // Page publique — pas d'authentification requise
+  // ── Pages publiques (auth-layout) ──────────────────────────────────────────
   {
     path: 'welcome',
     loadComponent: () => import('./screens/welcome/welcome.component'),
     title: 'PaieZone RH — Paie tunisienne automatisée',
+  },
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./screens/login/login.component'),
+        title: 'Connexion — PaieZone',
+      },
+      {
+        path: '2fa',
+        loadComponent: () => import('./screens/twofa/twofa.component'),
+        title: 'Vérification 2FA — PaieZone',
+      },
+    ],
   },
   {
     path: '',
