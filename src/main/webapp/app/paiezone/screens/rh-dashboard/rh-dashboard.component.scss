@@ -8,6 +8,7 @@
   flex-wrap: wrap;
 }
 
+// ── Hero paie ────────────────────────────────────────────────────────────────
 .hero {
   background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
   color: #fff !important;
@@ -17,7 +18,6 @@
   overflow: hidden;
   border: none;
 
-  // Force white on ALL children — Bootstrap et JHipster peuvent écraser `color`
   * {
     color: #fff;
   }
@@ -136,6 +136,7 @@
   }
 }
 
+// ── KPI grid ─────────────────────────────────────────────────────────────────
 .stat-grid {
   display: grid;
   gap: var(--pz-gap);
@@ -199,6 +200,7 @@
   }
 }
 
+// ── Card communs ──────────────────────────────────────────────────────────────
 .card-head {
   display: flex;
   align-items: center;
@@ -210,69 +212,20 @@
   font-weight: 600;
   color: var(--pz-ink);
 }
+.card-sub {
+  font-size: 11.5px;
+  color: var(--pz-muted);
+  margin-top: 2px;
+}
 .card-body {
   padding: 0 12px 12px;
 }
 
-.pz-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.pz-modal {
-  background: var(--pz-surface);
-  border-radius: 14px;
-  width: 440px;
-  max-width: 95vw;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
-  display: flex;
-  flex-direction: column;
-}
-.pz-modal-sm {
-  width: 340px;
-}
-.pz-modal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px 14px;
-  font-weight: 600;
-  font-size: 15px;
-  border-bottom: 1px solid var(--pz-line);
-}
-.pz-modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--pz-muted);
-  display: flex;
-}
-.pz-modal-body {
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.pz-modal-foot {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 14px 20px;
-  border-top: 1px solid var(--pz-line);
-}
-.pz-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.pz-field label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--pz-muted);
+// ── Layouts ───────────────────────────────────────────────────────────────────
+.grid-c2-1 {
+  display: grid;
+  gap: var(--pz-gap);
+  grid-template-columns: 2fr 1fr;
 }
 
 .two-col {
@@ -281,6 +234,44 @@
   grid-template-columns: 1fr 1fr;
 }
 
+// ── Histogramme ───────────────────────────────────────────────────────────────
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+
+  &.brut {
+    background: var(--pz-primary);
+  }
+  &.charges {
+    background: var(--pz-primary-soft);
+    border: 1px solid var(--pz-primary-soft);
+    filter: brightness(0.9);
+  }
+}
+
+.leg-label {
+  font-size: 11.5px;
+  color: var(--pz-muted);
+  margin-right: 6px;
+}
+
+.chart-wrap {
+  padding: 0 16px 16px;
+  overflow: hidden;
+}
+
+// ── Demandes ──────────────────────────────────────────────────────────────────
 .leave-row {
   display: flex;
   align-items: center;
@@ -311,7 +302,7 @@
   color: var(--pz-danger-ink);
 }
 
-// ── Calendrier ──────────────────────────────────────────────────────────────
+// ── Calendrier ────────────────────────────────────────────────────────────────
 .card-head .cal-nav {
   display: flex;
   align-items: center;
@@ -419,7 +410,119 @@
   }
 }
 
-// ── Modal ────────────────────────────────────────────────────────────────────
+// ── Activité récente (timeline) ───────────────────────────────────────────────
+.tl-body {
+  padding: 0 16px 12px;
+}
+
+.tl-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  position: relative;
+
+  &:not(.last)::before {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 32px;
+    bottom: -12px;
+    width: 1px;
+    background: var(--pz-line);
+  }
+}
+
+.tl-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--pz-surface);
+  border: 1px solid var(--pz-line);
+  display: grid;
+  place-items: center;
+  color: var(--pz-muted);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.tl-text {
+  font-size: 13px;
+  color: var(--pz-ink-2);
+  line-height: 1.5;
+
+  strong {
+    font-weight: 600;
+    color: var(--pz-ink);
+  }
+}
+
+.tl-time {
+  font-size: 11.5px;
+  color: var(--pz-muted-2);
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+.pz-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.pz-modal {
+  background: var(--pz-surface);
+  border-radius: var(--pz-radius-lg);
+  width: 440px;
+  max-width: 95vw;
+  box-shadow: var(--pz-shadow-xl);
+  display: flex;
+  flex-direction: column;
+}
+.pz-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  font-weight: 600;
+  font-size: 15px;
+  border-bottom: 1px solid var(--pz-line);
+}
+.pz-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--pz-muted);
+  display: flex;
+}
+.pz-modal-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pz-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--pz-line);
+}
+.pz-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pz-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pz-muted);
+}
 .rej-ta {
   resize: vertical;
   font: inherit;
