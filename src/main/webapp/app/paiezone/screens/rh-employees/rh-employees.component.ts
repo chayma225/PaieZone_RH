@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
-import type { Employee, HrDocument, Contract } from '../../core/types';
+import type { Employee, HrDocument, Contract, PaySlip } from '../../core/types';
 
 interface DocItem {
   id: number;
@@ -93,6 +93,24 @@ export default class RhEmployeesComponent {
     baseSalary: 0,
     workingHoursWeek: 40,
     workingDaysWeek: 5,
+  };
+
+  // ── Modifier employé modal ────────────────────────────────────────────────
+  protected readonly showEdit = signal(false);
+  protected readonly editBusy = signal(false);
+  protected readonly editErr = signal('');
+
+  protected editForm = {
+    firstName: '',
+    lastName: '',
+    professionalEmail: '',
+    phoneNumber: '',
+    city: '',
+    cnssNumber: '',
+    numberOfChildren: 0,
+    category: 'EMPLOYEE',
+    departmentId: '',
+    positionTitle: '',
   };
 
   protected readonly genders = [
@@ -232,12 +250,77 @@ export default class RhEmployeesComponent {
     });
   }
 
+  openEdit(): void {
+    const e = this.selected();
+    if (!e) return;
+    const dept = this.data.departments().find(d => d.name === e.dept);
+    this.editForm = {
+      firstName: e.first,
+      lastName: e.last,
+      professionalEmail: e.email,
+      phoneNumber: e.phone,
+      city: e.city,
+      cnssNumber: e.cnss,
+      numberOfChildren: e.children,
+      category: e.cat || 'EMPLOYEE',
+      departmentId: dept ? String(dept.id) : '',
+      positionTitle: e.role,
+    };
+    this.editErr.set('');
+    this.showEdit.set(true);
+  }
+
+  closeEdit(): void {
+    this.showEdit.set(false);
+  }
+
+  submitEdit(): void {
+    const e = this.selected();
+    if (!e) return;
+    const f = this.editForm;
+    if (!f.firstName.trim() || !f.lastName.trim()) {
+      this.editErr.set('Le prénom et le nom sont obligatoires.');
+      return;
+    }
+    this.editBusy.set(true);
+    this.editErr.set('');
+
+    const patch: Record<string, any> = {
+      firstName: f.firstName.trim(),
+      lastName: f.lastName.trim(),
+      numberOfChildren: f.numberOfChildren,
+      category: f.category,
+    };
+    if (f.professionalEmail.trim()) patch['professionalEmail'] = f.professionalEmail.trim();
+    if (f.phoneNumber.trim()) patch['phoneNumber'] = f.phoneNumber.trim();
+    if (f.city.trim()) patch['city'] = f.city.trim();
+    if (f.cnssNumber.trim()) patch['cnssNumber'] = f.cnssNumber.trim();
+    if (f.departmentId) patch['departmentId'] = +f.departmentId;
+    if (f.positionTitle.trim()) patch['positionTitle'] = f.positionTitle.trim();
+
+    this.api.patchEmployee(e.id, patch).subscribe({
+      next: () => {
+        this.data.reloadEmployees();
+        this.closeEdit();
+        this.closeDrawer();
+        this.editBusy.set(false);
+      },
+      error: err => {
+        this.editErr.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la mise à jour.');
+        this.editBusy.set(false);
+      },
+    });
+  }
+
   // ── Contrats ──────────────────────────────────────────────────────────────
   protected readonly contracts = signal<Contract[]>([]);
   protected readonly activeContract = computed(() => {
     const list = this.contracts();
     return list.find(c => c.status === 'ACTIVE') ?? list[0] ?? null;
   });
+
+  // ── Bulletins ─────────────────────────────────────────────────────────────
+  protected readonly paySlips = signal<PaySlip[]>([]);
 
   // ── Documents ─────────────────────────────────────────────────────────────
   protected readonly docs = signal<DocItem[]>([]);
@@ -253,6 +336,8 @@ export default class RhEmployeesComponent {
     this.tab.set('infos');
     this.docs.set([]);
     this.contracts.set([]);
+    this.paySlips.set([]);
+
     this.api.contracts(e.id).subscribe({
       next: list => {
         this.contracts.set(list);
@@ -263,6 +348,7 @@ export default class RhEmployeesComponent {
       },
       error: () => {},
     });
+
     this.api.hrDocuments(e.id).subscribe({
       next: list => {
         const docTypes: Record<string, string> = {
@@ -290,13 +376,30 @@ export default class RhEmployeesComponent {
       },
       error: () => {},
     });
+
+    this.api.paySlipsByEmployee(e.id).subscribe({
+      next: list => this.paySlips.set(list.sort((a, b) => b.year - a.year || b.month - a.month)),
+      error: () => {},
+    });
   }
+
   closeDrawer(): void {
     this.selected.set(null);
   }
 
   onBackdropClick(ev: MouseEvent): void {
     if (ev.target === ev.currentTarget) this.closeDrawer();
+  }
+
+  deleteDoc(id: number): void {
+    this.api.deleteHrDocument(id).subscribe({
+      next: () => this.docs.update(d => d.filter(x => x.id !== id)),
+      error: () => {},
+    });
+  }
+
+  openFile(url: string | undefined): void {
+    if (url) window.open(url, '_blank');
   }
 
   onDragOver(ev: DragEvent): void {
@@ -404,6 +507,11 @@ export default class RhEmployeesComponent {
     return new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
+  fmtMonthYear(month: number, year: number): string {
+    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+    return `${months[(month ?? 1) - 1] ?? ''} ${year}`;
+  }
+
   periodStatusLabel(s: string): string {
     const m: Record<string, string> = {
       DRAFT: 'Brouillon',
@@ -417,5 +525,11 @@ export default class RhEmployeesComponent {
 
   contractClass(c: string): string {
     return c === 'CDI' ? 'pos' : c === 'CDD' ? 'info' : c === 'CIVP' ? 'warn' : c === 'STAGE' ? 'warn' : c === 'KARAMA' ? 'warn' : '';
+  }
+
+  slipStatusClass(s: string): string {
+    if (s === 'VALIDATED' || s === 'EXPORTED') return 'pos';
+    if (s === 'LOCKED') return 'primary';
+    return 'warn';
   }
 }

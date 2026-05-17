@@ -432,6 +432,29 @@
   }
 }
 
+.empty-tab {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--pz-muted);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  small {
+    font-size: 12px;
+  }
+}
+
+.del-btn {
+  &:hover {
+    color: #b91c1c !important;
+    border-color: #fca5a5 !important;
+    background: #fee2e2 !important;
+  }
+}
+
 .docs-header {
   display: flex;
   justify-content: space-between;
