@@ -12,8 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.security.RandomUtil;
 import tn.paiezone.rh.domain.Authority;
+import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.User;
+import tn.paiezone.rh.domain.UserProfile;
+import tn.paiezone.rh.domain.enumeration.AppRole;
 import tn.paiezone.rh.repository.AuthorityRepository;
+import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.service.dto.AdminUserDTO;
@@ -33,11 +38,24 @@ public class InvitationService {
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
     private final MailService mailService;
+    private final UserProfileRepository userProfileRepository;
+    private final CompanyRepository companyRepository;
+    private final TenantContextService tenantContextService;
 
-    public InvitationService(UserRepository userRepository, AuthorityRepository authorityRepository, MailService mailService) {
+    public InvitationService(
+        UserRepository userRepository,
+        AuthorityRepository authorityRepository,
+        MailService mailService,
+        UserProfileRepository userProfileRepository,
+        CompanyRepository companyRepository,
+        TenantContextService tenantContextService
+    ) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.mailService = mailService;
+        this.userProfileRepository = userProfileRepository;
+        this.companyRepository = companyRepository;
+        this.tenantContextService = tenantContextService;
     }
 
     /**
@@ -94,10 +112,41 @@ public class InvitationService {
         userRepository.save(user);
         log.info("[Invitation] Utilisateur créé (non-activé) : {}", user.getLogin());
 
+        // Créer le UserProfile pour que l'employé puisse soumettre des demandes
+        // une fois son dossier employé lié par l'admin RH.
+        if (!userProfileRepository.existsByJhiUserId(user.getLogin())) {
+            Long companyId = tenantContextService.getCurrentCompanyId();
+            if (companyId != null) {
+                Optional<Company> companyOpt = companyRepository.findById(companyId);
+                if (companyOpt.isPresent()) {
+                    AppRole appRole = resolveAppRole(userDTO.getAuthorities());
+                    UserProfile profile = new UserProfile();
+                    profile.setJhiUserId(user.getLogin());
+                    profile.setRole(appRole);
+                    profile.setActive(false);
+                    profile.setCompany(companyOpt.get());
+                    userProfileRepository.save(profile);
+                    log.info("[Invitation] UserProfile créé pour : {}", user.getLogin());
+                } else {
+                    log.warn("[Invitation] Company introuvable (id={}) — UserProfile non créé", companyId);
+                }
+            } else {
+                log.warn("[Invitation] Aucun tenant courant — UserProfile non créé pour {}", user.getLogin());
+            }
+        }
+
         // Envoi email asynchrone
         sendInvitationEmail(user, baseUrl);
 
         return user;
+    }
+
+    private AppRole resolveAppRole(Set<String> authorities) {
+        if (authorities == null) return AppRole.EMPLOYE;
+        if (authorities.contains(AuthoritiesConstants.SUPER_ADMIN)) return AppRole.SUPER_ADMIN;
+        if (authorities.contains(AuthoritiesConstants.ADMIN)) return AppRole.ADMIN;
+        if (authorities.contains(AuthoritiesConstants.RH_COMPTABLE)) return AppRole.RH_COMPTABLE;
+        return AppRole.EMPLOYE;
     }
 
     /**
@@ -124,6 +173,13 @@ public class InvitationService {
                 user.setActivated(true);
                 user.setResetKey(null);
                 user.setResetDate(null);
+                // Activer aussi le UserProfile associé
+                userProfileRepository
+                    .findByJhiUserId(user.getLogin())
+                    .ifPresent(p -> {
+                        p.setActive(true);
+                        userProfileRepository.save(p);
+                    });
                 log.info("[Invitation] Compte activé : {}", user.getLogin());
                 return user;
             });

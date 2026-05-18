@@ -63,6 +63,10 @@ export interface Employee {
   gender: 'M' | 'F';
   children: number;
   manager?: string;
+  birthDate?: string;
+  nationalId?: string;
+  maritalStatus?: string;
+  chefDeFamille?: boolean;
 }
 
 export interface Department {
@@ -252,4 +256,29 @@ export interface RegulatoryParam {
   active: boolean;
   updatedAt: string | null;
   updatedBy: string | null;
+}
+
+export interface ActivityItem {
+  icon: string;
+  userLogin: string;
+  message: string;
+  dateLabel: string;
+  timeHm: string;
+}
+
+export interface PayrollChartPoint {
+  month: number;
+  year: number;
+  label: string;
+  brut: number;
+  charges: number;
+}
+
+export interface ContractAlert {
+  id: number;
+  reference: string;
+  contractType: string;
+  endDate: string;
+  daysLeft: number;
+  employeeName: string;
 }

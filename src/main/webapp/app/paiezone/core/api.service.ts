@@ -17,6 +17,9 @@ import type {
   HrDocument,
   Contract,
   LeaveBalance,
+  ActivityItem,
+  PayrollChartPoint,
+  ContractAlert,
 } from './types';
 
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -27,6 +30,18 @@ export class ApiService {
 
   dashboardStats(): Observable<Record<string, number>> {
     return this.http.get<Record<string, number>>('/api/dashboard/stats');
+  }
+
+  activityFeed(): Observable<ActivityItem[]> {
+    return this.http.get<ActivityItem[]>('/api/dashboard/activity');
+  }
+
+  payrollChart(): Observable<PayrollChartPoint[]> {
+    return this.http.get<PayrollChartPoint[]>('/api/dashboard/payroll-chart');
+  }
+
+  contractAlerts(): Observable<ContractAlert[]> {
+    return this.http.get<ContractAlert[]>('/api/dashboard/contract-alerts');
   }
 
   employees(size = 200): Observable<Employee[]> {
@@ -91,10 +106,9 @@ export class ApiService {
   }
 
   leaveTypes(): Observable<{ id: number; name: string; maxDays: number }[]> {
-    const params = new HttpParams().set('page', 0).set('size', 50);
     return this.http
-      .get<any[]>('/api/leave-types', { params })
-      .pipe(map(list => list.map(d => ({ id: d.id, name: d.name ?? d.code ?? 'Congé', maxDays: d.maxDaysPerYear ?? 30 }))));
+      .get<any[]>('/api/leave-types')
+      .pipe(map(list => list.map(d => ({ id: d.id, name: d.label ?? d.name ?? 'Congé', maxDays: d.maxDaysPerYear ?? 30 }))));
   }
 
   approveLeave(id: number): Observable<LeaveRequest> {
@@ -191,7 +205,23 @@ export class ApiService {
   }
 
   patchEmployee(id: number, patch: Record<string, any>): Observable<any> {
-    return this.http.patch<any>(`/api/employees/${id}`, patch);
+    return this.http.patch<any>(`/api/employees/${id}`, { ...patch, id });
+  }
+
+  updateEmployeeFields(id: number, body: Record<string, any>): Observable<any> {
+    return this.http.patch<any>(`/api/employees/${id}/update`, body);
+  }
+
+  admin2faStatus(login: string): Observable<{ twoFactorEnabled: boolean }> {
+    return this.http.get<any>(`/api/admin/2fa/status/${login}`);
+  }
+
+  admin2faEnable(login: string): Observable<any> {
+    return this.http.post<any>(`/api/admin/2fa/enable/${login}`, {});
+  }
+
+  admin2faDisable(login: string): Observable<any> {
+    return this.http.delete<any>(`/api/admin/2fa/disable/${login}`);
   }
 
   inviteUser(login: string, email: string, firstName: string, lastName: string, role: string): Observable<any> {
@@ -209,6 +239,26 @@ export class ApiService {
   adminUsers(): Observable<any[]> {
     const params = new HttpParams().set('page', 0).set('size', 200);
     return this.http.get<any[]>('/api/admin/users', { params });
+  }
+
+  updateUserAuthorities(
+    login: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+    authorities: string[],
+    id?: number,
+  ): Observable<any> {
+    return this.http.put<any>('/api/admin/users', {
+      id,
+      login,
+      email,
+      firstName,
+      lastName,
+      activated: true,
+      langKey: 'fr',
+      authorities,
+    });
   }
 
   myCompanyUsers(): Observable<any[]> {
@@ -309,6 +359,34 @@ export class ApiService {
     return this.http.delete<void>(`/api/hr-documents/${id}`);
   }
 
+  downloadBulletin(paySlipId: number): Observable<Blob> {
+    return this.http.get(`/api/export/bulletin/${paySlipId}`, { responseType: 'blob' });
+  }
+
+  downloadBulkBulletin(periodId: number): Observable<Blob> {
+    return this.http.get(`/api/export/bulletin-bulk/${periodId}`, { responseType: 'blob' });
+  }
+
+  downloadAttestationTravail(employeeId: number): Observable<Blob> {
+    return this.http.get(`/api/export/attestation/${employeeId}`, { responseType: 'blob' });
+  }
+
+  downloadJournalPaie(periodId: number): Observable<Blob> {
+    return this.http.get(`/api/export/journal/${periodId}`, { responseType: 'blob' });
+  }
+
+  downloadCnssRecap(periodId: number): Observable<Blob> {
+    return this.http.get(`/api/export/cnss-recap/${periodId}`, { responseType: 'blob' });
+  }
+
+  downloadDeclarationTrimestrielle(periodId: number): Observable<Blob> {
+    return this.http.get(`/api/export/declaration-trimestrielle/${periodId}`, { responseType: 'blob' });
+  }
+
+  downloadCertificatRI(employeeId: number, year: number): Observable<Blob> {
+    return this.http.get(`/api/export/certificat-ri/${employeeId}?year=${year}`, { responseType: 'blob' });
+  }
+
   auditLogs(size = 500): Observable<AuditEntry[]> {
     const params = new HttpParams().set('page', 0).set('size', size).set('sort', 'occurredAt,desc');
     return this.http.get<any[]>('/api/audit-logs', { params }).pipe(
@@ -381,6 +459,14 @@ export class ApiService {
     };
   }
 
+  deleteEmployee(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/employees/${id}`);
+  }
+
+  updateContract(id: number, dto: Record<string, any>): Observable<Contract> {
+    return this.http.put<any>(`/api/contracts/${id}`, { ...dto, id }).pipe(map(d => this.mapContract(d)));
+  }
+
   private mapEmployee(d: any): Employee {
     return {
       id: d.id,
@@ -401,6 +487,10 @@ export class ApiService {
       gender: d.gender === 'FEMALE' ? 'F' : 'M',
       children: d.numberOfChildren ?? 0,
       manager: d.manager ? `${d.manager.firstName ?? ''} ${d.manager.lastName ?? ''}`.trim() : undefined,
+      birthDate: d.birthDate ?? undefined,
+      nationalId: d.nationalId ?? undefined,
+      maritalStatus: d.maritalStatus ?? undefined,
+      chefDeFamille: d.chefDeFamille ?? false,
     };
   }
 
@@ -452,7 +542,7 @@ export class ApiService {
     return {
       id: String(d.id),
       empId: d.employee?.id ?? 0,
-      type: d.leaveType?.name ?? 'Congé',
+      type: d.leaveType?.label ?? d.leaveType?.name ?? 'Congé',
       days: d.numberOfDays ?? 0,
       from: d.startDate ?? '',
       to: d.endDate ?? '',
@@ -467,12 +557,14 @@ export class ApiService {
       REQUESTED: 'pending',
       APPROVED: 'approved',
       REJECTED: 'rejected',
+      DEDUCTED: 'approved',
     };
+    const empId = d.employeeId ?? d.employee?.id ?? 0;
     return {
       id: String(d.id),
-      empId: d.employeeId ?? 0,
+      empId,
       amount: +(d.amount ?? 0),
-      reason: d.reason ?? '',
+      reason: d.reason ?? d.notes ?? '',
       submitted: d.requestDate ?? '',
       status: (statusMap[d.status] ?? 'pending') as any,
       repayment: d.deductionMonth ? `${d.deductionMonth} mois` : '',
@@ -554,7 +646,7 @@ export class ApiService {
       pending: +(d.pending ?? 0),
       carryOver: +(d.carryOver ?? 0),
       remaining: +(d.remaining ?? 0),
-      leaveTypeName: d.leaveType?.name ?? d.leaveType?.code ?? 'Congé',
+      leaveTypeName: d.leaveType?.label ?? d.leaveType?.name ?? d.leaveType?.code ?? 'Congé',
     };
   }
 

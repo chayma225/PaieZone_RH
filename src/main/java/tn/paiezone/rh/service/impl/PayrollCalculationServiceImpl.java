@@ -13,11 +13,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.*;
 import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
+import tn.paiezone.rh.domain.enumeration.ContractStatus;
 import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 import tn.paiezone.rh.domain.enumeration.RubriqueType;
 import tn.paiezone.rh.repository.*;
@@ -33,6 +36,11 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
 
     private static final BigDecimal ZERO = BigDecimal.ZERO;
     private static final RoundingMode RM = RoundingMode.HALF_UP;
+
+    // Self-proxy pour que @Transactional(REQUIRES_NEW) fonctionne en self-invocation
+    @Lazy
+    @Autowired
+    private PayrollCalculationService self;
 
     private final TunisianTaxService taxService;
     private final EmployeeRepository employeeRepository;
@@ -74,9 +82,12 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
 
         Contract contract = contractRepository
             .findActiveContractByEmployee(employeeId, periodStart, periodEnd)
-            .orElseThrow(() ->
-                new IllegalStateException("Aucun contrat actif pour " + employee.getMatricule() + " en " + month + "/" + year)
-            );
+            .or(() -> contractRepository.findFirstByEmployeeIdAndStatusOrderByStartDateDesc(employeeId, ContractStatus.ACTIVE))
+            .or(() -> {
+                log.warn("⚠ Aucun contrat ACTIVE pour {} — utilisation du contrat le plus récent (tous statuts)", employee.getMatricule());
+                return contractRepository.findFirstByEmployeeIdOrderByStartDateDesc(employeeId);
+            })
+            .orElseThrow(() -> new IllegalStateException("Aucun contrat trouvé pour " + employee.getMatricule()));
 
         log.info("▶ Calcul bulletin | {} {}/{}", employee.getMatricule(), month, year);
 
@@ -355,9 +366,22 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
         BigDecimal totalNet = ZERO,
             totalGross = ZERO;
 
+        int skipped = 0;
+        LocalDate periodStart = LocalDate.of(period.getYear(), period.getMonth(), 1);
+        LocalDate periodEnd = periodStart.withDayOfMonth(periodStart.lengthOfMonth());
+
         for (Employee emp : employees) {
+            // Pré-check : employé sans aucun contrat (même DRAFT) → ignorer silencieusement
+            boolean hasContract = contractRepository.findFirstByEmployeeIdOrderByStartDateDesc(emp.getId()).isPresent();
+
+            if (!hasContract) {
+                log.info("⏭ Employé {} ignoré — aucun contrat enregistré", emp.getMatricule());
+                skipped++;
+                continue;
+            }
+
             try {
-                PaySlip ps = calculatePaySlip(emp.getId(), periodId);
+                PaySlip ps = self.calculatePaySlip(emp.getId(), periodId);
                 totalNet = totalNet.add(ps.getNetSalary());
                 totalGross = totalGross.add(ps.getGrossSalary());
                 calculated++;
@@ -368,14 +392,16 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
             }
         }
 
-        // Met à jour le statut de la période
-        if (errors.isEmpty()) {
+        // Met à jour le statut de la période (seulement si au moins 1 bulletin calculé)
+        if (calculated > 0) {
             period.setStatus(PayrollStatus.CALCULATED);
-            log.info("✅ Tous les bulletins calculés ({}/{})", calculated, employees.size());
+            if (errors.isEmpty()) {
+                log.info("✅ Bulletins calculés : {}/{} (ignorés : {})", calculated, employees.size(), skipped);
+            } else {
+                log.warn("⚠️ Calcul partiel : {}/{} ok, {} ignoré(s), {} erreur(s)", calculated, employees.size(), skipped, errors.size());
+            }
         } else {
-            // Même avec des erreurs, si au moins un bulletin est calculé → CALCULATED
-            if (calculated > 0) period.setStatus(PayrollStatus.CALCULATED);
-            log.warn("⚠️ Calcul partiel : {}/{} ok, {} erreur(s)", calculated, employees.size(), errors.size());
+            log.warn("⚠️ Aucun bulletin calculé — {} employé(s) ignoré(s), {} erreur(s)", skipped, errors.size());
         }
         period.setCalculatedAt(Instant.now());
         periodRepository.save(period);
@@ -405,7 +431,7 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
             existing.getYear()
         );
 
-        return calculatePaySlip(existing.getEmployee().getId(), existing.getPayrollPeriod().getId());
+        return self.calculatePaySlip(existing.getEmployee().getId(), existing.getPayrollPeriod().getId());
     }
 
     @Override

@@ -12,7 +12,7 @@
     </nav>
     <div class="actions">
       <a class="pz-btn pz-ghost" routerLink="/paiezone/login">Se connecter</a>
-      <a class="pz-btn pz-primary" routerLink="/paiezone/signup">
+      <a class="pz-btn pz-primary" routerLink="/account/register">
         Commencer gratuitement <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" />
       </a>
     </div>
@@ -35,7 +35,7 @@
         lois.
       </p>
       <div class="hero-actions">
-        <a class="pz-btn pz-primary lg" routerLink="/paiezone/signup">
+        <a class="pz-btn pz-primary lg" routerLink="/account/register">
           Essayer 14 jours gratuits <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6" />
         </a>
         <a class="pz-btn lg" routerLink="/paiezone/rh-dash"> Voir la démo </a>
@@ -139,7 +139,7 @@
               <li><pz-icon name="Check" [size]="14" [strokeWidth]="1.8" /> {{ feat }}</li>
             }
           </ul>
-          <a class="pz-btn full" [class.pz-primary]="p.popular" [routerLink]="['/paiezone/signup']" [queryParams]="{ plan: p.code }">
+          <a class="pz-btn full" [class.pz-primary]="p.popular" [routerLink]="['/account/register']" [queryParams]="{ plan: p.code }">
             Choisir {{ p.label }}
           </a>
         </div>
@@ -153,7 +153,7 @@
       <h2>Prêt à passer à PaieZone ?</h2>
       <p>Mise en service en 10 minutes. Importez vos employés via Excel, lancez votre première paie le jour même.</p>
       <div class="cta-actions">
-        <a class="pz-btn pz-primary lg" routerLink="/paiezone/signup">
+        <a class="pz-btn pz-primary lg" routerLink="/account/register">
           Créer mon compte <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6" />
         </a>
         <a class="pz-btn lg" href="mailto:contact@paiezone.tn"> <pz-icon name="Mail" [size]="14" [strokeWidth]="1.4" /> Nous contacter </a>

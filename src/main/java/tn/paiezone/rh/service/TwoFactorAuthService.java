@@ -1,12 +1,12 @@
 package tn.paiezone.rh.service;
 
-import java.security.SecureRandom;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tn.paiezone.rh.domain.UserProfile;
 import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
@@ -17,6 +17,7 @@ public class TwoFactorAuthService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthService.class);
     private static final String ENTITY_NAME = "twoFactorAuth";
+    private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator();
 
     private final UserProfileRepository userProfileRepository;
     private final UserRepository userRepository;
@@ -28,8 +29,23 @@ public class TwoFactorAuthService {
         this.mailService = mailService;
     }
 
-    // ── Vérifier si 2FA est activé + envoyer le code par email ──────────────
-    public boolean checkAndSendCode(String login) {
+    /**
+     * Résout le login réel depuis ce qui a été saisi (email ou login).
+     * JHipster accepte les deux → on doit normaliser avant de chercher le UserProfile.
+     */
+    private String resolveLogin(String usernameOrEmail) {
+        if (EMAIL_VALIDATOR.isValid(usernameOrEmail, null)) {
+            return userRepository
+                .findOneByEmailIgnoreCase(usernameOrEmail)
+                .map(u -> u.getLogin())
+                .orElse(usernameOrEmail);
+        }
+        return usernameOrEmail.toLowerCase(java.util.Locale.ENGLISH);
+    }
+
+    // ── Vérifier si 2FA est activé + envoyer le code par email ────────���─────
+    public boolean checkAndSendCode(String usernameOrEmail) {
+        String login = resolveLogin(usernameOrEmail);
         return userProfileRepository
             .findByJhiUserId(login)
             .map(userProfile -> {
@@ -41,7 +57,6 @@ public class TwoFactorAuthService {
                 if (stored != null && stored.contains("|")) {
                     long expiry = Long.parseLong(stored.split("\\|")[1]);
                     long now = Instant.now().toEpochMilli();
-                    // Code encore valide → ne pas renvoyer un nouveau mail
                     if (expiry > now) {
                         return true;
                     }
@@ -49,14 +64,9 @@ public class TwoFactorAuthService {
 
                 String code = String.format("%06d", new java.util.Random().nextInt(1000000));
                 userProfile.setTwoFactorSecret(code + "|" + Instant.now().plus(5, java.time.temporal.ChronoUnit.MINUTES).toEpochMilli());
+                userProfileRepository.saveAndFlush(userProfile);
 
-                userProfileRepository.saveAndFlush(userProfile); // On force l'enregistrement immédiat
-
-                userRepository
-                    .findOneByLogin(login)
-                    .ifPresent(user -> {
-                        mailService.send2FACode(user, code);
-                    });
+                userRepository.findOneByLogin(login).ifPresent(user -> mailService.send2FACode(user, code));
 
                 return true;
             })
@@ -64,7 +74,8 @@ public class TwoFactorAuthService {
     }
 
     // ── Vérifier le code saisi ────────────────────────────────────────────────
-    public boolean verifyCode(String login, String code) {
+    public boolean verifyCode(String usernameOrEmail, String code) {
+        String login = resolveLogin(usernameOrEmail);
         return userProfileRepository
             .findByJhiUserId(login)
             .map(userProfile -> {
@@ -103,22 +114,26 @@ public class TwoFactorAuthService {
 
     // ── Activer/Désactiver 2FA ────────────────────────────────────────────────
     public void enable(String login) {
-        userProfileRepository
+        UserProfile profile = userProfileRepository
             .findByJhiUserId(login)
-            .ifPresent(userProfile -> {
-                userProfile.setTwoFactorEnabled(true);
-                userProfileRepository.save(userProfile);
-            });
+            .orElseThrow(() ->
+                new BadRequestAlertException(
+                    "Aucun profil trouvé pour « " + login + " ». L'utilisateur doit d'abord être invité via le menu Inviter.",
+                    ENTITY_NAME,
+                    "noprofile"
+                )
+            );
+        profile.setTwoFactorEnabled(true);
+        userProfileRepository.save(profile);
     }
 
     public void disable(String login) {
-        userProfileRepository
+        UserProfile profile = userProfileRepository
             .findByJhiUserId(login)
-            .ifPresent(userProfile -> {
-                userProfile.setTwoFactorEnabled(false);
-                userProfile.setTwoFactorSecret(null);
-                userProfileRepository.save(userProfile);
-            });
+            .orElseThrow(() -> new BadRequestAlertException("Aucun profil trouvé pour « " + login + " ».", ENTITY_NAME, "noprofile"));
+        profile.setTwoFactorEnabled(false);
+        profile.setTwoFactorSecret(null);
+        userProfileRepository.save(profile);
     }
 
     public boolean getStatusByLogin(String login) {

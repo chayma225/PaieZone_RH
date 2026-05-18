@@ -2,7 +2,7 @@
      PaieBot — Widget chatbot flottant (bas-droite)
      À inclure dans app.component.html : <jhi-chatbot />
 =================================================================== -->
-<div class="pz-chatbot">
+<div class="pz-chatbot" style="position: fixed; bottom: 24px; right: 24px; left: auto; z-index: 10000">
   <!-- ── Bouton flottant ── -->
   <button
     class="pz-chatbot__toggle"
@@ -17,7 +17,26 @@
   </button>
 
   <!-- ── Panneau principal ── -->
-  <div class="pz-chatbot__panel" [class.pz-chatbot__panel--open]="isOpen" role="dialog" aria-label="PaieBot">
+  <div
+    class="pz-chatbot__panel"
+    [class.pz-chatbot__panel--open]="isOpen"
+    style="
+      position: fixed;
+      bottom: 92px;
+      right: 24px;
+      left: auto;
+      width: 390px;
+      height: 560px;
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    "
+    [style.opacity]="isOpen ? '1' : '0'"
+    [style.pointerEvents]="isOpen ? 'all' : 'none'"
+    [style.transform]="isOpen ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.97)'"
+    role="dialog"
+    aria-label="PaieBot"
+  >
     <!-- En-tête -->
     <div class="pz-chatbot__header">
       <div class="pz-chatbot__header-info">

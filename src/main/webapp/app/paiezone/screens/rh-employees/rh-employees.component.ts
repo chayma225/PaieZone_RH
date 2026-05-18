@@ -101,17 +101,37 @@ export default class RhEmployeesComponent {
   protected readonly editErr = signal('');
 
   protected editForm = {
+    // Identité
     firstName: '',
     lastName: '',
+    birthDate: '',
+    gender: 'MALE',
+    maritalStatus: 'SINGLE',
+    nationalId: '',
+    numberOfChildren: 0,
+    chefDeFamille: false,
+    // Poste
+    hireDate: '',
+    category: 'EMPLOYEE',
+    departmentId: '',
+    positionTitle: '',
+    // Contact
     professionalEmail: '',
     phoneNumber: '',
     city: '',
     cnssNumber: '',
-    numberOfChildren: 0,
-    category: 'EMPLOYEE',
-    departmentId: '',
-    positionTitle: '',
+    // Contrat
+    contractType: 'CDI',
+    baseSalary: 0,
+    contractStartDate: '',
+    contractEndDate: '',
+    workingHoursWeek: 40,
+    workingDaysWeek: 5,
   };
+
+  // ── Supprimer employé ─────────────────────────────────────────────────────
+  protected readonly showDeleteConfirm = signal(false);
+  protected readonly deleteBusy = signal(false);
 
   protected readonly genders = [
     { value: 'MALE', label: 'Homme' },
@@ -146,6 +166,33 @@ export default class RhEmployeesComponent {
 
   needsEndDate(): boolean {
     return ['CDD', 'CIVP', 'STAGE', 'KARAMA', 'INTERIMAIRE'].includes(this.createForm.contractType);
+  }
+
+  // LF 2026 — retourne un message d'erreur si le salaire est sous le SMIG, '' sinon
+  private validateSmig(contractType: string, salary: number): string {
+    const SMIG_48H = 524.954;
+    const STAGE_MIN = 262.477; // 50% SMIG
+    const INTERIM_MIN = 577.449; // SMIG + 10% précarité
+
+    if (!salary || salary <= 0) {
+      return 'Le salaire de base est obligatoire et doit être positif.';
+    }
+
+    if (contractType === 'STAGE') {
+      if (salary < STAGE_MIN) {
+        return `❌ La gratification d'un stage doit être ≥ ${STAGE_MIN.toFixed(3)} TND (50 % du SMIG 2026). Montant saisi : ${salary.toFixed(3)} TND.`;
+      }
+    } else if (contractType === 'INTERIMAIRE') {
+      if (salary < INTERIM_MIN) {
+        return `❌ Le salaire d'un contrat intérimaire doit être ≥ ${INTERIM_MIN.toFixed(3)} TND (SMIG + 10 % précarité). Salaire saisi : ${salary.toFixed(3)} TND.`;
+      }
+    } else {
+      if (salary < SMIG_48H) {
+        return `❌ Le salaire d'un ${contractType} doit être ≥ ${SMIG_48H.toFixed(3)} TND (SMIG 48h — LF 2026). Salaire saisi : ${salary.toFixed(3)} TND.`;
+      }
+    }
+
+    return '';
   }
 
   contractStatusLabel(s: string): string {
@@ -200,6 +247,14 @@ export default class RhEmployeesComponent {
       this.errMsg.set('Veuillez remplir tous les champs obligatoires (*).');
       return;
     }
+
+    // Validation SMIG avant appel API
+    const smigErr = this.validateSmig(f.contractType, +f.baseSalary);
+    if (smigErr) {
+      this.errMsg.set(smigErr);
+      return;
+    }
+
     this.busy.set(true);
     this.errMsg.set('');
     const body: Record<string, any> = {
@@ -238,10 +293,20 @@ export default class RhEmployeesComponent {
           employee: { id: emp.id },
         };
         if (this.needsEndDate() && f.contractEndDate) contractBody['endDate'] = f.contractEndDate;
-        this.api.createContract(contractBody).subscribe({ error: () => {} });
-        this.data.reloadEmployees();
-        this.closeCreate();
-        this.busy.set(false);
+
+        this.api.createContract(contractBody).subscribe({
+          next: () => {
+            this.data.reloadEmployees();
+            this.closeCreate();
+            this.busy.set(false);
+          },
+          error: err => {
+            // L'employé est créé, le contrat a échoué → afficher l'erreur
+            this.errMsg.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la création du contrat.');
+            this.data.reloadEmployees();
+            this.busy.set(false);
+          },
+        });
       },
       error: err => {
         this.errMsg.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la création.');
@@ -254,17 +319,35 @@ export default class RhEmployeesComponent {
     const e = this.selected();
     if (!e) return;
     const dept = this.data.departments().find(d => d.name === e.dept);
+    const c = this.activeContract();
+    const genderMap: Record<string, string> = { M: 'MALE', F: 'FEMALE' };
     this.editForm = {
+      // Identité
       firstName: e.first,
       lastName: e.last,
+      birthDate: e.birthDate ?? '',
+      gender: genderMap[e.gender] ?? 'MALE',
+      maritalStatus: e.maritalStatus ?? 'SINGLE',
+      nationalId: e.nationalId ?? '',
+      numberOfChildren: e.children,
+      chefDeFamille: e.chefDeFamille ?? false,
+      // Poste
+      hireDate: e.hireDate ?? '',
+      category: e.cat || 'EMPLOYEE',
+      departmentId: dept ? String(dept.id) : '',
+      positionTitle: e.role,
+      // Contact
       professionalEmail: e.email,
       phoneNumber: e.phone,
       city: e.city,
       cnssNumber: e.cnss,
-      numberOfChildren: e.children,
-      category: e.cat || 'EMPLOYEE',
-      departmentId: dept ? String(dept.id) : '',
-      positionTitle: e.role,
+      // Contrat
+      contractType: c?.contractType ?? 'CDI',
+      baseSalary: c?.baseSalary ?? 0,
+      contractStartDate: c?.startDate ?? '',
+      contractEndDate: c?.endDate ?? '',
+      workingHoursWeek: c?.workingHoursWeek ?? 40,
+      workingDaysWeek: c?.workingDaysWeek ?? 5,
     };
     this.editErr.set('');
     this.showEdit.set(true);
@@ -282,6 +365,16 @@ export default class RhEmployeesComponent {
       this.editErr.set('Le prénom et le nom sont obligatoires.');
       return;
     }
+
+    // Validation SMIG si un contrat existe
+    if (this.activeContract()) {
+      const smigErr = this.validateSmig(f.contractType, +f.baseSalary);
+      if (smigErr) {
+        this.editErr.set(smigErr);
+        return;
+      }
+    }
+
     this.editBusy.set(true);
     this.editErr.set('');
 
@@ -289,8 +382,14 @@ export default class RhEmployeesComponent {
       firstName: f.firstName.trim(),
       lastName: f.lastName.trim(),
       numberOfChildren: f.numberOfChildren,
+      chefDeFamille: f.chefDeFamille,
+      gender: f.gender,
+      maritalStatus: f.maritalStatus,
       category: f.category,
     };
+    if (f.birthDate) patch['birthDate'] = f.birthDate;
+    if (f.nationalId.trim()) patch['nationalId'] = f.nationalId.trim();
+    if (f.hireDate) patch['hireDate'] = f.hireDate;
     if (f.professionalEmail.trim()) patch['professionalEmail'] = f.professionalEmail.trim();
     if (f.phoneNumber.trim()) patch['phoneNumber'] = f.phoneNumber.trim();
     if (f.city.trim()) patch['city'] = f.city.trim();
@@ -298,16 +397,73 @@ export default class RhEmployeesComponent {
     if (f.departmentId) patch['departmentId'] = +f.departmentId;
     if (f.positionTitle.trim()) patch['positionTitle'] = f.positionTitle.trim();
 
-    this.api.patchEmployee(e.id, patch).subscribe({
+    this.api.updateEmployeeFields(e.id, patch).subscribe({
       next: () => {
-        this.data.reloadEmployees();
-        this.closeEdit();
-        this.closeDrawer();
-        this.editBusy.set(false);
+        // Mise à jour du contrat si on en a un
+        const contract = this.activeContract();
+        if (contract) {
+          const needsEnd = ['CDD', 'CIVP', 'STAGE', 'KARAMA', 'INTERIMAIRE'].includes(f.contractType);
+          const contractPatch: Record<string, any> = {
+            reference: contract.reference,
+            contractType: f.contractType,
+            status: contract.status,
+            startDate: f.contractStartDate || contract.startDate,
+            baseSalary: +f.baseSalary,
+            workingHoursWeek: +f.workingHoursWeek,
+            workingDaysWeek: +f.workingDaysWeek,
+            employee: { id: e.id },
+          };
+          if (needsEnd && f.contractEndDate) contractPatch['endDate'] = f.contractEndDate;
+          this.api.updateContract(contract.id, contractPatch).subscribe({
+            next: () => {
+              this.data.reloadEmployees();
+              this.closeEdit();
+              this.closeDrawer();
+              this.editBusy.set(false);
+            },
+            error: err => {
+              this.editErr.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la mise à jour du contrat.');
+              this.data.reloadEmployees();
+              this.editBusy.set(false);
+            },
+          });
+        } else {
+          this.data.reloadEmployees();
+          this.closeEdit();
+          this.closeDrawer();
+          this.editBusy.set(false);
+        }
       },
       error: err => {
         this.editErr.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la mise à jour.');
         this.editBusy.set(false);
+      },
+    });
+  }
+
+  openDeleteConfirm(): void {
+    this.showDeleteConfirm.set(true);
+  }
+
+  closeDeleteConfirm(): void {
+    this.showDeleteConfirm.set(false);
+  }
+
+  confirmDelete(): void {
+    const e = this.selected();
+    if (!e) return;
+    this.deleteBusy.set(true);
+    this.api.deleteEmployee(e.id).subscribe({
+      next: () => {
+        this.deleteBusy.set(false);
+        this.closeDeleteConfirm();
+        this.closeDrawer();
+        this.data.reloadEmployees();
+      },
+      error: err => {
+        this.deleteBusy.set(false);
+        this.editErr.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la suppression.');
+        this.closeDeleteConfirm();
       },
     });
   }
@@ -531,5 +687,27 @@ export default class RhEmployeesComponent {
     if (s === 'VALIDATED' || s === 'EXPORTED') return 'pos';
     if (s === 'LOCKED') return 'primary';
     return 'warn';
+  }
+
+  dlBulletin(paySlipId: number): void {
+    this.api.downloadBulletin(paySlipId).subscribe(blob => this.saveBlob(blob, `bulletin-${paySlipId}.pdf`));
+  }
+
+  dlAttestation(employeeId: number): void {
+    this.api.downloadAttestationTravail(employeeId).subscribe(blob => this.saveBlob(blob, `attestation-${employeeId}.pdf`));
+  }
+
+  dlCertificatRI(employeeId: number): void {
+    const year = new Date().getFullYear() - 1;
+    this.api.downloadCertificatRI(employeeId, year).subscribe(blob => this.saveBlob(blob, `certificat-ri-${employeeId}-${year}.pdf`));
+  }
+
+  private saveBlob(blob: Blob, filename: string): void {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }

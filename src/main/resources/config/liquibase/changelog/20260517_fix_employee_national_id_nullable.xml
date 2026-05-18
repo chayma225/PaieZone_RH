@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+    Rend national_id nullable pour permettre la création automatique d'un
+    profil employé lors du flux d'invitation (les données CIN sont complétées
+    ultérieurement par l'admin RH).
+  -->
+  <changeSet id="20260517-employee-national-id-nullable" author="paiezone">
+    <sql>ALTER TABLE employee ALTER COLUMN national_id DROP NOT NULL</sql>
+  </changeSet>
+
+</databaseChangeLog>

@@ -1,27 +1,30 @@
 package tn.paiezone.rh.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tn.paiezone.rh.domain.LeaveBalance;
-import tn.paiezone.rh.domain.LeaveRequest;
-import tn.paiezone.rh.domain.PublicHoliday;
-import tn.paiezone.rh.domain.enumeration.LeaveStatus;
-import tn.paiezone.rh.repository.LeaveBalanceRepository;
-import tn.paiezone.rh.repository.LeaveRequestRepository;
-import tn.paiezone.rh.repository.PublicHolidayRepository;
-import tn.paiezone.rh.service.LeaveRequestService;
-import tn.paiezone.rh.service.dto.LeaveRequestDTO;
-import tn.paiezone.rh.service.mapper.LeaveRequestMapper;
-
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tn.paiezone.rh.domain.Employee;
+import tn.paiezone.rh.domain.LeaveBalance;
+import tn.paiezone.rh.domain.LeaveRequest;
+import tn.paiezone.rh.domain.LeaveType;
+import tn.paiezone.rh.domain.PublicHoliday;
+import tn.paiezone.rh.domain.enumeration.LeaveStatus;
+import tn.paiezone.rh.repository.EmployeeRepository;
+import tn.paiezone.rh.repository.LeaveBalanceRepository;
+import tn.paiezone.rh.repository.LeaveRequestRepository;
+import tn.paiezone.rh.repository.LeaveTypeRepository;
+import tn.paiezone.rh.repository.PublicHolidayRepository;
+import tn.paiezone.rh.service.LeaveRequestService;
+import tn.paiezone.rh.service.dto.LeaveRequestDTO;
+import tn.paiezone.rh.service.mapper.LeaveRequestMapper;
 
 @Service
 @Transactional
@@ -33,6 +36,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final LeaveRequestMapper leaveRequestMapper;
     private final PublicHolidayRepository publicHolidayRepository;
+    private final LeaveTypeRepository leaveTypeRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public LeaveRequestDTO submit(LeaveRequestDTO dto) {
@@ -42,14 +47,28 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         }
 
         int year = dto.getStartDate().getYear();
+        Long empId = dto.getEmployee().getId();
+        Long ltId = dto.getLeaveType().getId();
 
-        // 1. Vérifier le solde
-        // Note: Ajustez les getters selon votre DTO (ex: getEmployee().getId() ou getEmployeeId())
+        // 1. Obtenir ou créer automatiquement le solde pour cette année
         LeaveBalance balance = leaveBalanceRepository
-            .findByEmployeeIdAndLeaveTypeIdAndYear(
-                dto.getEmployee().getId(), dto.getLeaveType().getId(), year)
-            .orElseThrow(() -> new IllegalStateException(
-                "Aucun solde trouvé pour ce type de congé en " + year));
+            .findByEmployeeIdAndLeaveTypeIdAndYear(empId, ltId, year)
+            .orElseGet(() -> {
+                LeaveType lt = leaveTypeRepository.findById(ltId).orElseThrow(() -> new IllegalStateException("Type de congé introuvable"));
+                Employee emp = employeeRepository.findById(empId).orElseThrow(() -> new IllegalStateException("Employé introuvable"));
+                BigDecimal entitled = BigDecimal.valueOf(lt.getMaxDaysPerYear());
+                LeaveBalance b = new LeaveBalance();
+                b.setYear(year);
+                b.setEmployee(emp);
+                b.setLeaveType(lt);
+                b.setEntitled(entitled);
+                b.setTaken(BigDecimal.ZERO);
+                b.setPending(BigDecimal.ZERO);
+                b.setCarryOver(BigDecimal.ZERO);
+                b.setRemaining(entitled);
+                b.setLastUpdatedAt(Instant.now());
+                return leaveBalanceRepository.save(b);
+            });
 
         int workingDays = countWorkingDays(dto.getStartDate(), dto.getEndDate(), year);
 
@@ -59,8 +78,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         if (balance.getRemaining().compareTo(BigDecimal.valueOf(workingDays)) < 0) {
             throw new IllegalStateException(
-                "Solde insuffisant : " + balance.getRemaining() +
-                    " j disponibles, " + workingDays + " j demandés");
+                "Solde insuffisant : " + balance.getRemaining() + " j disponibles, " + workingDays + " j demandés"
+            );
         }
 
         // 2. Bloquer les jours (pending)
@@ -75,8 +94,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         leaveRequest.setRequestedAt(Instant.now());
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
-        log.info("📋 Congé demandé : emp#{} {} → {} ({} j)",
-            dto.getEmployee().getId(), dto.getStartDate(), dto.getEndDate(), workingDays);
+        log.info("📋 Congé demandé : emp#{} {} → {} ({} j)", dto.getEmployee().getId(), dto.getStartDate(), dto.getEndDate(), workingDays);
 
         return leaveRequestMapper.toDto(saved);
     }
@@ -124,19 +142,14 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     }
 
     public int countWorkingDays(LocalDate from, LocalDate to, int year) {
-        List<LocalDate> holidays = publicHolidayRepository
-            .findByYear(year).stream()
-            .map(PublicHoliday::getHolidayDate)
-            .toList();
+        List<LocalDate> holidays = publicHolidayRepository.findByYear(year).stream().map(PublicHoliday::getHolidayDate).toList();
 
         int count = 0;
         LocalDate current = from;
         while (!current.isAfter(to)) {
             DayOfWeek dow = current.getDayOfWeek();
             // Logique standard : Samedi et Dimanche sont non-ouvrables
-            if (dow != DayOfWeek.SATURDAY &&
-                dow != DayOfWeek.SUNDAY  &&
-                !holidays.contains(current)) {
+            if (dow != DayOfWeek.SATURDAY && dow != DayOfWeek.SUNDAY && !holidays.contains(current)) {
                 count++;
             }
             current = current.plusDays(1);
@@ -145,23 +158,18 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     }
 
     private LeaveRequest getOrThrow(Long id) {
-        return leaveRequestRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Congé introuvable : " + id));
+        return leaveRequestRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Congé introuvable : " + id));
     }
 
     private LeaveBalance getBalance(LeaveRequest lr) {
         return leaveBalanceRepository
-            .findByEmployeeIdAndLeaveTypeIdAndYear(
-                lr.getEmployee().getId(),
-                lr.getLeaveType().getId(),
-                lr.getStartDate().getYear())
+            .findByEmployeeIdAndLeaveTypeIdAndYear(lr.getEmployee().getId(), lr.getLeaveType().getId(), lr.getStartDate().getYear())
             .orElseThrow(() -> new IllegalStateException("Solde introuvable"));
     }
 
     private void assertStatus(LeaveRequest lr, LeaveStatus expected) {
         if (lr.getStatus() != expected) {
-            throw new IllegalStateException(
-                "Statut incorrect. Attendu : " + expected + ", Actuel : " + lr.getStatus());
+            throw new IllegalStateException("Statut incorrect. Attendu : " + expected + ", Actuel : " + lr.getStatus());
         }
     }
 

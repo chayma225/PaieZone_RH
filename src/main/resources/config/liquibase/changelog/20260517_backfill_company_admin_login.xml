@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+    Backfill admin_login sur les entreprises créées avant que ce champ existait.
+    On cherche dans user_profile le profil ADMIN lié à chaque company.
+  -->
+  <changeSet id="20260517-backfill-company-admin-login" author="paiezone" dbms="postgresql">
+    <sql>
+      UPDATE company c
+      SET admin_login = up.jhi_user_id
+      FROM user_profile up
+      WHERE up.company_id = c.id
+        AND up.role = 'ADMIN'
+        AND (c.admin_login IS NULL OR c.admin_login = '')
+      ;
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

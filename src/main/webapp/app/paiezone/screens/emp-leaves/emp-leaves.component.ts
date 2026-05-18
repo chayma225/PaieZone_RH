@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
+import type { LeaveBalance } from '../../core/types';
 
 @Component({
   selector: 'pz-emp-leaves',
@@ -24,16 +25,24 @@ import { ApiService } from '../../core/api.service';
       </div>
 
       <div class="balances">
-        @for (b of balances; track b.label) {
+        @if (loadingBalances()) {
+          <div class="pz-card bal-card" style="color:var(--pz-muted);font-size:13px;padding:24px">Chargement des soldes…</div>
+        }
+        @for (b of balances(); track b.label) {
           <div class="pz-card bal-card">
             <div class="bal-label">{{ b.label }}</div>
             <div class="bal-val">
               <span class="big">{{ b.remaining }}</span
               ><span class="pz-muted"> / {{ b.total }} j</span>
             </div>
-            <div class="progress"><i [style.width.%]="(b.used / b.total) * 100" [style.background]="b.color"></i></div>
-            <div class="bal-foot pz-muted">{{ b.used }} j utilisés</div>
+            <div class="progress">
+              <i [style.width.%]="b.total > 0 ? (b.used / b.total) * 100 : 0" [style.background]="b.color"></i>
+            </div>
+            <div class="bal-foot pz-muted">{{ b.used }} j utilisés · {{ b.pending }} en attente</div>
           </div>
+        }
+        @if (!loadingBalances() && balances().length === 0) {
+          <div class="pz-card bal-card" style="color:var(--pz-muted);font-size:13px;padding:24px">Aucun solde de congé configuré</div>
         }
       </div>
 
@@ -96,10 +105,9 @@ import { ApiService } from '../../core/api.service';
             <div class="pz-field">
               <label>Type de congé</label>
               <select [(ngModel)]="form.leaveTypeId">
-                <option [value]="1">Congé payé</option>
-                <option [value]="2">RTT</option>
-                <option [value]="3">Congé maladie</option>
-                <option [value]="4">Congé sans solde</option>
+                @for (lt of leaveTypes(); track lt.id) {
+                  <option [ngValue]="lt.id">{{ lt.name }}</option>
+                }
               </select>
             </div>
             <div class="pz-field-row">
@@ -307,23 +315,57 @@ import { ApiService } from '../../core/api.service';
     `,
   ],
 })
-export default class EmpLeavesComponent {
+export default class EmpLeavesComponent implements OnInit {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
-  protected readonly myLeaves = computed(() => this.data.leaves().slice(0, 10));
+
+  protected readonly leaveBalancesRaw = signal<LeaveBalance[]>([]);
+  protected readonly leaveTypes = signal<{ id: number; name: string; maxDays: number }[]>([]);
+  protected readonly loadingBalances = signal(true);
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
   protected readonly showCreate = signal(false);
-  protected form = { leaveTypeId: 1, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
+  protected form = { leaveTypeId: 0, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
 
-  protected readonly balances = [
-    { label: 'Congés payés', used: 4, total: 24, remaining: 20, color: '#4f46e5' },
-    { label: 'RTT', used: 2, total: 11, remaining: 9, color: '#0ea5e9' },
-    { label: 'Congé maladie', used: 0, total: 15, remaining: 15, color: '#f59e0b' },
-  ];
+  private readonly BALANCE_COLORS = ['#4f46e5', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444'];
+
+  protected readonly balances = computed(() =>
+    this.leaveBalancesRaw().map((b, i) => ({
+      label: b.leaveTypeName,
+      total: b.entitled + b.carryOver,
+      used: b.taken,
+      pending: b.pending,
+      remaining: b.remaining,
+      color: this.BALANCE_COLORS[i % this.BALANCE_COLORS.length],
+    })),
+  );
+
+  protected readonly myLeaves = computed(() => {
+    const empId = this.data.myEmployee()?.id;
+    const all = this.data.leaves();
+    return empId != null ? all.filter(l => l.empId === empId) : all;
+  });
+
+  ngOnInit(): void {
+    this.api.myLeaveBalances().subscribe({
+      next: v => {
+        this.leaveBalancesRaw.set(v);
+        this.loadingBalances.set(false);
+      },
+      error: () => this.loadingBalances.set(false),
+    });
+    this.api.leaveTypes().subscribe({
+      next: v => {
+        this.leaveTypes.set(v);
+        if (v.length) this.form.leaveTypeId = v[0].id;
+      },
+      error: () => {},
+    });
+  }
 
   openCreate() {
-    this.form = { leaveTypeId: 1, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
+    const firstType = this.leaveTypes()[0]?.id ?? 0;
+    this.form = { leaveTypeId: firstType, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
     this.errMsg.set('');
     this.showCreate.set(true);
   }
@@ -350,11 +392,20 @@ export default class EmpLeavesComponent {
       .subscribe({
         next: leave => {
           this.data.leaves.update(list => [leave, ...list]);
+          this.loadingBalances.set(true);
+          this.api.myLeaveBalances().subscribe({
+            next: v => {
+              this.leaveBalancesRaw.set(v);
+              this.loadingBalances.set(false);
+            },
+            error: () => this.loadingBalances.set(false),
+          });
           this.busy.set(false);
           this.showCreate.set(false);
         },
-        error: () => {
-          this.errMsg.set('Erreur lors de la soumission.');
+        error: err => {
+          const detail = err?.error?.detail ?? err?.error?.message ?? err?.error?.title ?? 'Erreur lors de la soumission.';
+          this.errMsg.set(detail);
           this.busy.set(false);
         },
       });

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.LeaveType;
 import tn.paiezone.rh.repository.LeaveTypeRepository;
+import tn.paiezone.rh.security.AuthoritiesConstants;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.dto.LeaveTypeDTO;
 import tn.paiezone.rh.service.mapper.LeaveTypeMapper;
 
@@ -26,9 +28,16 @@ public class LeaveTypeService {
 
     private final LeaveTypeMapper leaveTypeMapper;
 
-    public LeaveTypeService(LeaveTypeRepository leaveTypeRepository, LeaveTypeMapper leaveTypeMapper) {
+    private final TenantContextService tenantContextService;
+
+    public LeaveTypeService(
+        LeaveTypeRepository leaveTypeRepository,
+        LeaveTypeMapper leaveTypeMapper,
+        TenantContextService tenantContextService
+    ) {
         this.leaveTypeRepository = leaveTypeRepository;
         this.leaveTypeMapper = leaveTypeMapper;
+        this.tenantContextService = tenantContextService;
     }
 
     /**
@@ -85,7 +94,21 @@ public class LeaveTypeService {
     @Transactional(readOnly = true)
     public List<LeaveTypeDTO> findAll() {
         LOG.debug("Request to get all LeaveTypes");
-        return leaveTypeRepository.findAll().stream().map(leaveTypeMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
+        if (SecurityUtils.hasCurrentUserAnyOfAuthorities(AuthoritiesConstants.SUPER_ADMIN)) {
+            return leaveTypeRepository.findAll().stream().map(leaveTypeMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
+        }
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId == null) {
+            LOG.warn("[LeaveTypeService] companyId null pour l'utilisateur courant — aucun type retourné");
+            return new LinkedList<>();
+        }
+        List<LeaveTypeDTO> result = leaveTypeRepository
+            .findByCompanyIdAndActiveTrueOrderByNameAsc(companyId)
+            .stream()
+            .map(leaveTypeMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+        LOG.debug("[LeaveTypeService] {} types trouvés pour company #{}", result.size(), companyId);
+        return result;
     }
 
     /**

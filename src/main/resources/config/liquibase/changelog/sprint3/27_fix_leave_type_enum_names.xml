@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!--
+    Corrige les valeurs d'enum insérées en anglais par la migration 26 originale.
+    L'enum Java LeaveTypeName utilise des valeurs françaises.
+    Idempotent : chaque UPDATE ne fait rien si la valeur anglaise n'existe pas.
+  -->
+  <changeSet id="sprint3-fix-leave-type-enum-names-v1" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+    <sql>UPDATE leave_type SET name = 'ANNUEL'       WHERE name = 'ANNUAL';</sql>
+    <sql>UPDATE leave_type SET name = 'MALADIE'      WHERE name = 'SICK';</sql>
+    <sql>UPDATE leave_type SET name = 'MATERNITE'    WHERE name = 'MATERNITY';</sql>
+    <sql>UPDATE leave_type SET name = 'PATERNITE'    WHERE name = 'PATERNITY';</sql>
+    <sql>UPDATE leave_type SET name = 'MARIAGE'      WHERE name = 'MARRIAGE';</sql>
+    <sql>UPDATE leave_type SET name = 'DECES'        WHERE name = 'BEREAVEMENT';</sql>
+    <sql>UPDATE leave_type SET name = 'SANS_SOLDE'   WHERE name = 'UNPAID';</sql>
+    <sql>UPDATE leave_type SET name = 'EXCEPTIONNEL' WHERE name = 'EXCEPTIONAL';</sql>
+  </changeSet>
+
+  <!--
+    Insère les types manquants pour les entreprises qui n'en ont aucun
+    après la correction des noms (cas installation fraîche après le bug).
+  -->
+  <changeSet id="sprint3-leave-types-missing-after-fix-v1" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'ANNUEL', 'Congé Annuel Payé', 18, 6, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'ANNUEL');
+    </sql>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'MALADIE', 'Congé Maladie', 365, 0, true, true, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'MALADIE');
+    </sql>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'MATERNITE', 'Congé Maternité (98 jours)', 98, 0, true, true, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'MATERNITE');
+    </sql>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'PATERNITE', 'Congé Paternité (7 jours)', 7, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'PATERNITE');
+    </sql>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'MARIAGE', 'Congé Mariage', 3, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'MARIAGE');
+    </sql>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'DECES', 'Congé Décès (Proche)', 3, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'DECES');
+    </sql>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'SANS_SOLDE', 'Congé sans solde', 90, 0, false, false, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'SANS_SOLDE');
+    </sql>
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'EXCEPTIONNEL', 'Congé Exceptionnel', 2, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'EXCEPTIONNEL');
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

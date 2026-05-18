@@ -84,7 +84,15 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/20260517_alter_company_logo_url_to_text.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260517_fix_employee_national_id_nullable.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260517_link_employee_user_profile.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260517_add_missing_advance_columns.xml"
+           relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/20260512000002 add employee salary columns.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260517_backfill_company_admin_login.xml"
            relativeToChangelogFile="false"/>
   <!-- SPRINT 3 — Paie & Congés -->
   <include file="config/liquibase/changelog/sprint3/00_sprint3_master.xml"

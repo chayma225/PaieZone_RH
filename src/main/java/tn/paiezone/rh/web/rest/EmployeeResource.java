@@ -239,6 +239,64 @@ public class EmployeeResource {
             .body(employeeDTO);
     }
 
+    /**
+     * PATCH /api/employees/{id}/update — mise à jour "champs plats" (département, poste par titre, etc.)
+     * Utilisé par rh-employees pour éviter le problème MapStruct partial-update sur les FK.
+     */
+    @PatchMapping("/{id}/update")
+    @PreAuthorize(
+        "hasAnyAuthority('" +
+            AuthoritiesConstants.ADMIN +
+            "', '" +
+            AuthoritiesConstants.SUPER_ADMIN +
+            "', '" +
+            AuthoritiesConstants.RH_COMPTABLE +
+            "')"
+    )
+    public ResponseEntity<EmployeeDTO> quickUpdateEmployee(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        final tn.paiezone.rh.domain.Employee emp = employeeRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Employé introuvable.", ENTITY_NAME, "idnotfound"));
+
+        if (body.get("firstName") != null) emp.setFirstName(body.get("firstName").toString());
+        if (body.get("lastName") != null) emp.setLastName(body.get("lastName").toString());
+        if (body.get("professionalEmail") != null) emp.setProfessionalEmail(body.get("professionalEmail").toString());
+        if (body.get("phoneNumber") != null) emp.setPhoneNumber(body.get("phoneNumber").toString());
+        if (body.get("city") != null) emp.setCity(body.get("city").toString());
+        if (body.get("cnssNumber") != null) emp.setCnssNumber(body.get("cnssNumber").toString());
+        if (body.get("numberOfChildren") != null) emp.setNumberOfChildren(Integer.valueOf(body.get("numberOfChildren").toString()));
+        if (body.get("category") != null) emp.setCategory(EmployeeCategory.valueOf(body.get("category").toString()));
+        if (body.get("active") != null) emp.setActive(Boolean.valueOf(body.get("active").toString()));
+
+        if (body.get("departmentId") != null) {
+            departmentRepository.findById(Long.valueOf(body.get("departmentId").toString())).ifPresent(emp::setDepartment);
+        }
+
+        if (body.get("positionTitle") != null) {
+            String title = body.get("positionTitle").toString().trim();
+            if (!title.isEmpty()) {
+                final tn.paiezone.rh.domain.Company empCompany = emp.getCompany();
+                tn.paiezone.rh.domain.JobPosition pos = jobPositionRepository
+                    .findAll()
+                    .stream()
+                    .filter(p -> p.getTitle().equalsIgnoreCase(title))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        tn.paiezone.rh.domain.JobPosition np = new tn.paiezone.rh.domain.JobPosition();
+                        np.setCode(title.substring(0, Math.min(title.length(), 18)).toUpperCase().replaceAll("\\s+", "_"));
+                        np.setTitle(title);
+                        np.setActive(true);
+                        np.setCompany(empCompany);
+                        return jobPositionRepository.save(np);
+                    });
+                emp.setPosition(pos);
+            }
+        }
+
+        tn.paiezone.rh.domain.Employee saved = employeeRepository.save(emp);
+        return ResponseEntity.ok(employeeService.findOne(saved.getId()).orElseThrow());
+    }
+
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     @PreAuthorize(
         "hasAnyAuthority('" +

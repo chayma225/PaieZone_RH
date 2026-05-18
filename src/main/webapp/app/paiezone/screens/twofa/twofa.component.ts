@@ -116,7 +116,7 @@ export default class TwoFaComponent implements OnInit, OnDestroy {
     const login = this.email() ?? this.session.retrieve('2fa_login');
     const rememberMe = this.session.retrieve('2fa_remember') ?? false;
 
-    this.http.post<{ id_token: string }>(this.appConfig.getEndpointFor('api/verify-2fa'), { login, code }).subscribe({
+    this.http.post<{ id_token: string }>(this.appConfig.getEndpointFor('api/verify-2fa'), { login, code, rememberMe }).subscribe({
       next: res => {
         const token = res?.id_token;
         if (!token) {

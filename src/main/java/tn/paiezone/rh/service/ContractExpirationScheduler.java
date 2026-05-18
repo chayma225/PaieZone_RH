@@ -123,12 +123,7 @@ public class ContractExpirationScheduler {
                 u
                     .getAuthorities()
                     .stream()
-                    .anyMatch(
-                        a ->
-                            a.getName().equals("ROLE_ADMIN") ||
-                            a.getName().equals("ROLE_RH_COMPTABLE") ||
-                            a.getName().equals("ROLE_SUPER_ADMIN")
-                    )
+                    .anyMatch(a -> a.getName().equals("ROLE_ADMIN") || a.getName().equals("ROLE_RH_COMPTABLE"))
             )
             .forEach(u -> {
                 try {

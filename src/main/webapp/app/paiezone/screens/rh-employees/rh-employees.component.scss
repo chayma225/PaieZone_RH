@@ -272,10 +272,15 @@
 .pz-emp-foot {
   padding: 16px 24px 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   gap: 8px;
   border-top: 1px solid var(--pz-line);
   margin-top: 12px;
+
+  .pz-btn.pz-danger {
+    margin-right: auto;
+  }
 }
 
 .docs-pane {

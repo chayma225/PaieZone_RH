@@ -1,0 +1,305 @@
+// ── Outer shell (same as AuthLayoutComponent) ─────────────────────────
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.auth-page {
+  min-height: 100vh;
+  background: var(--pz-surface-2);
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(79, 70, 229, 0.05), transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(124, 58, 237, 0.04), transparent 50%);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.auth-top {
+  height: 64px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  color: var(--pz-ink);
+}
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--pz-primary), #7c3aed);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+.brand-name span {
+  color: var(--pz-primary);
+  font-weight: 700;
+}
+
+.legal {
+  font-size: 12.5px;
+  color: var(--pz-muted);
+}
+
+.auth-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px 48px;
+}
+
+// ── Card (same as login) ───────────────────────────────────────────────
+.auth-card {
+  width: 100%;
+  max-width: 540px;
+  background: var(--pz-surface);
+  border-radius: 18px;
+  box-shadow: var(--pz-shadow-xl);
+  border: 1px solid var(--pz-line);
+  padding: 40px 36px;
+  animation: cardIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 8px;
+  color: var(--pz-ink);
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--pz-muted);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+// ── Alerts ────────────────────────────────────────────────────────────
+.alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+
+  &.success {
+    background: var(--pz-pos-soft);
+    color: var(--pz-pos-ink);
+  }
+
+  &.error {
+    background: var(--pz-danger-soft);
+    color: var(--pz-danger-ink);
+  }
+}
+
+// ── Section label + separator ─────────────────────────────────────────
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--pz-muted);
+  margin-bottom: 16px;
+
+  pz-icon {
+    color: var(--pz-primary);
+  }
+}
+
+.sep {
+  border: none;
+  border-top: 1px solid var(--pz-line);
+  margin: 24px 0;
+}
+
+.note {
+  background: var(--pz-primary-soft);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: var(--pz-primary);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+// ── Form & fields (same as login) ─────────────────────────────────────
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--pz-ink-3);
+  }
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+
+  .field {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--pz-line);
+  border-radius: 10px;
+  background: var(--pz-surface);
+  gap: 10px;
+  transition: all 0.12s;
+
+  &:focus-within {
+    border-color: var(--pz-primary);
+    box-shadow: 0 0 0 3px var(--pz-primary-soft);
+  }
+
+  pz-icon {
+    color: var(--pz-muted);
+    flex-shrink: 0;
+  }
+
+  .chevron {
+    pointer-events: none;
+  }
+
+  input,
+  select {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 14px;
+    color: var(--pz-ink);
+    font-family: inherit;
+    appearance: none;
+
+    &::placeholder {
+      color: var(--pz-muted-2);
+    }
+  }
+
+  select {
+    cursor: pointer;
+  }
+}
+
+.err {
+  font-size: 11.5px;
+  color: var(--pz-danger);
+}
+
+// ── Button (same as login) ────────────────────────────────────────────
+.pz-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--pz-line);
+  background: var(--pz-surface);
+  color: var(--pz-ink-2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: inherit;
+  margin-top: 8px;
+
+  &.full {
+    width: 100%;
+  }
+
+  &.lg {
+    height: 46px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &.pz-primary {
+    background: var(--pz-primary);
+    color: #fff;
+    border-color: var(--pz-primary);
+    box-shadow: 0 1px 2px rgba(79, 70, 229, 0.15);
+
+    &:hover {
+      background: var(--pz-primary-2);
+    }
+  }
+
+  &[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// ── Footer link (same as login) ───────────────────────────────────────
+.footer-link {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13.5px;
+  color: var(--pz-muted);
+
+  a {
+    color: var(--pz-primary);
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

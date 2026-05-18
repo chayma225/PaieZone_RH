@@ -6,15 +6,14 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 
 /**
  * Une avance sur salaire demandée par un employé.
@@ -42,8 +41,7 @@ public class Advance implements Serializable {
     @Column(name = "amount", precision = 21, scale = 2, nullable = false)
     private BigDecimal amount;
 
-    @Size(max = 500)
-    @Column(name = "reason", length = 500)
+    @jakarta.persistence.Transient
     private String reason;
 
     @Min(value = 1)
@@ -93,65 +91,193 @@ public class Advance implements Serializable {
 
     // ── Getters / Setters Standard ──────────────────────────────────
 
-    public Long getId() { return this.id; }
-    public void setId(Long id) { this.id = id; }
-    public Advance id(Long id) { this.id = id; return this; }
+    public Long getId() {
+        return this.id;
+    }
 
-    public LocalDate getRequestDate() { return this.requestDate; }
-    public void setRequestDate(LocalDate requestDate) { this.requestDate = requestDate; }
-    public Advance requestDate(LocalDate requestDate) { this.requestDate = requestDate; return this; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public BigDecimal getAmount() { return this.amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
-    public Advance amount(BigDecimal amount) { this.amount = amount; return this; }
+    public Advance id(Long id) {
+        this.id = id;
+        return this;
+    }
 
-    public String getReason() { return this.reason; }
-    public void setReason(String reason) { this.reason = reason; }
-    public Advance reason(String reason) { this.reason = reason; return this; }
+    public LocalDate getRequestDate() {
+        return this.requestDate;
+    }
 
-    public Integer getDeductionMonth() { return this.deductionMonth; }
-    public void setDeductionMonth(Integer deductionMonth) { this.deductionMonth = deductionMonth; }
-    public Advance deductionMonth(Integer deductionMonth) { this.deductionMonth = deductionMonth; return this; }
+    public void setRequestDate(LocalDate requestDate) {
+        this.requestDate = requestDate;
+    }
 
-    public Integer getDeductionYear() { return this.deductionYear; }
-    public void setDeductionYear(Integer deductionYear) { this.deductionYear = deductionYear; }
-    public Advance deductionYear(Integer deductionYear) { this.deductionYear = deductionYear; return this; }
+    public Advance requestDate(LocalDate requestDate) {
+        this.requestDate = requestDate;
+        return this;
+    }
 
-    public AdvanceStatus getStatus() { return this.status; }
-    public void setStatus(AdvanceStatus status) { this.status = status; }
-    public Advance status(AdvanceStatus status) { this.status = status; return this; }
+    public BigDecimal getAmount() {
+        return this.amount;
+    }
 
-    public String getApprovedBy() { return this.approvedBy; }
-    public void setApprovedBy(String approvedBy) { this.approvedBy = approvedBy; }
-    public Advance approvedBy(String approvedBy) { this.approvedBy = approvedBy; return this; }
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-    public Instant getApprovedAt() { return this.approvedAt; }
-    public void setApprovedAt(Instant approvedAt) { this.approvedAt = approvedAt; }
-    public Advance approvedAt(Instant approvedAt) { this.approvedAt = approvedAt; return this; }
+    public Advance amount(BigDecimal amount) {
+        this.amount = amount;
+        return this;
+    }
 
-    public String getNotes() { return this.notes; }
-    public void setNotes(String notes) { this.notes = notes; }
-    public Advance notes(String notes) { this.notes = notes; return this; }
+    public String getReason() {
+        return this.reason;
+    }
 
-    public String getCreatedBy() { return createdBy; }
-    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
 
-    public Instant getCreatedDate() { return createdDate; }
-    public void setCreatedDate(Instant createdDate) { this.createdDate = createdDate; }
+    public Advance reason(String reason) {
+        this.reason = reason;
+        return this;
+    }
 
-    public String getLastModifiedBy() { return lastModifiedBy; }
-    public void setLastModifiedBy(String lastModifiedBy) { this.lastModifiedBy = lastModifiedBy; }
+    public Integer getDeductionMonth() {
+        return this.deductionMonth;
+    }
 
-    public Instant getLastModifiedDate() { return lastModifiedDate; }
-    public void setLastModifiedDate(Instant lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
+    public void setDeductionMonth(Integer deductionMonth) {
+        this.deductionMonth = deductionMonth;
+    }
 
-    public Employee getEmployee() { return this.employee; }
-    public void setEmployee(Employee employee) { this.employee = employee; }
-    public Advance employee(Employee employee) { this.employee = employee; return this; }
+    public Advance deductionMonth(Integer deductionMonth) {
+        this.deductionMonth = deductionMonth;
+        return this;
+    }
 
-    public PaySlip getPaySlip() { return this.paySlip; }
-    public void setPaySlip(PaySlip paySlip) { this.paySlip = paySlip; }
-    public Advance paySlip(PaySlip paySlip) { this.paySlip = paySlip; return this; }
+    public Integer getDeductionYear() {
+        return this.deductionYear;
+    }
+
+    public void setDeductionYear(Integer deductionYear) {
+        this.deductionYear = deductionYear;
+    }
+
+    public Advance deductionYear(Integer deductionYear) {
+        this.deductionYear = deductionYear;
+        return this;
+    }
+
+    public AdvanceStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(AdvanceStatus status) {
+        this.status = status;
+    }
+
+    public Advance status(AdvanceStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public String getApprovedBy() {
+        return this.approvedBy;
+    }
+
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public Advance approvedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
+        return this;
+    }
+
+    public Instant getApprovedAt() {
+        return this.approvedAt;
+    }
+
+    public void setApprovedAt(Instant approvedAt) {
+        this.approvedAt = approvedAt;
+    }
+
+    public Advance approvedAt(Instant approvedAt) {
+        this.approvedAt = approvedAt;
+        return this;
+    }
+
+    public String getNotes() {
+        return this.notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Advance notes(String notes) {
+        this.notes = notes;
+        return this;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Instant getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Instant lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Employee getEmployee() {
+        return this.employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Advance employee(Employee employee) {
+        this.employee = employee;
+        return this;
+    }
+
+    public PaySlip getPaySlip() {
+        return this.paySlip;
+    }
+
+    public void setPaySlip(PaySlip paySlip) {
+        this.paySlip = paySlip;
+    }
+
+    public Advance paySlip(PaySlip paySlip) {
+        this.paySlip = paySlip;
+        return this;
+    }
 
     // ── Overrides ──────────────────────────────────────────────────
 
@@ -163,24 +289,41 @@ public class Advance implements Serializable {
     }
 
     @Override
-    public int hashCode() { return getClass().hashCode(); }
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
     @Override
     public String toString() {
-        return "Advance{" +
-            "id=" + getId() +
-            ", requestDate='" + getRequestDate() + "'" +
-            ", amount=" + getAmount() +
-            ", status='" + getStatus() + "'" +
-            ", approvedBy='" + getApprovedBy() + "'" +
-            "}";
+        return (
+            "Advance{" +
+            "id=" +
+            getId() +
+            ", requestDate='" +
+            getRequestDate() +
+            "'" +
+            ", amount=" +
+            getAmount() +
+            ", status='" +
+            getStatus() +
+            "'" +
+            ", approvedBy='" +
+            getApprovedBy() +
+            "'" +
+            "}"
+        );
     }
-    @Deprecated
-    public Object getApprovedByUser() { return null; }
 
     @Deprecated
-    public void setApprovedByUser(Object userProfile) { }
+    public Object getApprovedByUser() {
+        return null;
+    }
 
     @Deprecated
-    public Advance approvedByUser(Object userProfile) { return this; }
+    public void setApprovedByUser(Object userProfile) {}
+
+    @Deprecated
+    public Advance approvedByUser(Object userProfile) {
+        return this;
+    }
 }

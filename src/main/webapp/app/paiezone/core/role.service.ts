@@ -25,6 +25,7 @@ const ROLES: Record<Role, RoleConfig> = {
       { id: 'rh-employees', label: 'Employés', icon: 'Users' },
       { id: 'rh-structure', label: 'Structure', icon: 'Briefcase' },
       { id: 'rh-payroll', label: 'Paie', icon: 'Cash' },
+      { id: 'rh-finances', label: 'Avances', icon: 'Wallet' },
       { id: 'rh-leaves', label: 'Congés', icon: 'Calendar' },
       { id: 'admin-company', label: 'Mon entreprise', icon: 'Building' },
       { id: 'admin-users', label: 'Utilisateurs', icon: 'Shield' },

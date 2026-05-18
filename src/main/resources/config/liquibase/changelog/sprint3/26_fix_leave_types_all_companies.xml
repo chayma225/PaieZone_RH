@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!--
+    Seeds the 8 standard Tunisian leave types for EVERY company.
+    Enum values match LeaveTypeName: ANNUEL, MALADIE, MATERNITE, PATERNITE,
+    MARIAGE, DECES, SANS_SOLDE, EXCEPTIONNEL.
+  -->
+  <changeSet id="sprint3-leave-types-all-companies-v1" author="dev">
+    <validCheckSum>ANY</validCheckSum>
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM company</sqlCheck>
+    </preConditions>
+
+    <!-- ANNUEL -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'ANNUEL', 'Congé Annuel Payé', 18, 6, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'ANNUEL'
+      );
+    </sql>
+
+    <!-- MALADIE -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'MALADIE', 'Congé Maladie', 365, 0, true, true, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'MALADIE'
+      );
+    </sql>
+
+    <!-- MATERNITE -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'MATERNITE', 'Congé Maternité (98 jours)', 98, 0, true, true, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'MATERNITE'
+      );
+    </sql>
+
+    <!-- PATERNITE -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'PATERNITE', 'Congé Paternité (7 jours)', 7, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'PATERNITE'
+      );
+    </sql>
+
+    <!-- MARIAGE -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'MARIAGE', 'Congé Mariage', 3, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'MARIAGE'
+      );
+    </sql>
+
+    <!-- DECES -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'DECES', 'Congé Décès (Proche)', 3, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'DECES'
+      );
+    </sql>
+
+    <!-- SANS_SOLDE -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'SANS_SOLDE', 'Congé sans solde', 90, 0, false, false, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'SANS_SOLDE'
+      );
+    </sql>
+
+    <!-- EXCEPTIONNEL -->
+    <sql>
+      INSERT INTO leave_type (id, company_id, name, label, max_days_per_year, carry_over_days, paid, requires_medical, active)
+      SELECT nextval('sequence_generator'), c.id, 'EXCEPTIONNEL', 'Congé Exceptionnel', 2, 0, true, false, true
+      FROM company c
+      WHERE NOT EXISTS (
+        SELECT 1 FROM leave_type lt WHERE lt.company_id = c.id AND lt.name = 'EXCEPTIONNEL'
+      );
+    </sql>
+
+  </changeSet>
+
+</databaseChangeLog>

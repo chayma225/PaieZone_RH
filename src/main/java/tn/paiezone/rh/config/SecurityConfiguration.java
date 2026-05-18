@@ -125,8 +125,10 @@ public class SecurityConfiguration {
                     .hasAnyAuthority(AuthoritiesConstants.RH_COMPTABLE, AuthoritiesConstants.ADMIN)
                     // ═══════════════════════════════════════════════════════════════════
                     // SPRINT 3 — PAIE : AVANCES
-                    // POST ouvert à tous les authentifiés (employé peut demander)
+                    // POST /request et POST / ouverts à tous les authentifiés (employé peut demander)
                     // ═══════════════════════════════════════════════════════════════════
+                    .requestMatchers(HttpMethod.POST, "/api/advances/request")
+                    .authenticated()
                     .requestMatchers(HttpMethod.POST, "/api/advances")
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/advances/employee/**")
@@ -157,6 +159,8 @@ public class SecurityConfiguration {
                     // ═══════════════════════════════════════════════════════════════════
                     // SPRINT 3 — CONGÉS : DEMANDES
                     // ═══════════════════════════════════════════════════════════════════
+                    .requestMatchers(HttpMethod.POST, "/api/leave-requests/submit")
+                    .authenticated()
                     .requestMatchers(HttpMethod.POST, "/api/leave-requests")
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/leave-requests/my")

@@ -3,13 +3,12 @@ package tn.paiezone.rh.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "leave_balance")
@@ -20,9 +19,9 @@ public class LeaveBalance implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    // ✅ DDL utilise autoIncrement → IDENTITY (pas sequenceGenerator)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
     private Long id;
 
@@ -66,45 +65,135 @@ public class LeaveBalance implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() { return this.id; }
-    public LeaveBalance id(Long id) { this.id = id; return this; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return this.id;
+    }
 
-    public Integer getYear() { return this.year; }
-    public LeaveBalance year(Integer year) { this.year = year; return this; }
-    public void setYear(Integer year) { this.year = year; }
+    public LeaveBalance id(Long id) {
+        this.id = id;
+        return this;
+    }
 
-    public BigDecimal getEntitled() { return this.entitled; }
-    public LeaveBalance entitled(BigDecimal entitled) { this.entitled = entitled; return this; }
-    public void setEntitled(BigDecimal entitled) { this.entitled = entitled; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public BigDecimal getTaken() { return this.taken; }
-    public LeaveBalance taken(BigDecimal taken) { this.taken = taken; return this; }
-    public void setTaken(BigDecimal taken) { this.taken = taken; }
+    public Integer getYear() {
+        return this.year;
+    }
 
-    public BigDecimal getPending() { return this.pending; }
-    public LeaveBalance pending(BigDecimal pending) { this.pending = pending; return this; }
-    public void setPending(BigDecimal pending) { this.pending = pending; }
+    public LeaveBalance year(Integer year) {
+        this.year = year;
+        return this;
+    }
 
-    public BigDecimal getCarryOver() { return this.carryOver; }
-    public LeaveBalance carryOver(BigDecimal carryOver) { this.carryOver = carryOver; return this; }
-    public void setCarryOver(BigDecimal carryOver) { this.carryOver = carryOver; }
+    public void setYear(Integer year) {
+        this.year = year;
+    }
 
-    public BigDecimal getRemaining() { return this.remaining; }
-    public LeaveBalance remaining(BigDecimal remaining) { this.remaining = remaining; return this; }
-    public void setRemaining(BigDecimal remaining) { this.remaining = remaining; }
+    public BigDecimal getEntitled() {
+        return this.entitled;
+    }
 
-    public Instant getLastUpdatedAt() { return this.lastUpdatedAt; }
-    public LeaveBalance lastUpdatedAt(Instant lastUpdatedAt) { this.lastUpdatedAt = lastUpdatedAt; return this; }
-    public void setLastUpdatedAt(Instant lastUpdatedAt) { this.lastUpdatedAt = lastUpdatedAt; }
+    public LeaveBalance entitled(BigDecimal entitled) {
+        this.entitled = entitled;
+        return this;
+    }
 
-    public Employee getEmployee() { return this.employee; }
-    public void setEmployee(Employee employee) { this.employee = employee; }
-    public LeaveBalance employee(Employee employee) { this.employee = employee; return this; }
+    public void setEntitled(BigDecimal entitled) {
+        this.entitled = entitled;
+    }
 
-    public LeaveType getLeaveType() { return this.leaveType; }
-    public void setLeaveType(LeaveType leaveType) { this.leaveType = leaveType; }
-    public LeaveBalance leaveType(LeaveType leaveType) { this.leaveType = leaveType; return this; }
+    public BigDecimal getTaken() {
+        return this.taken;
+    }
+
+    public LeaveBalance taken(BigDecimal taken) {
+        this.taken = taken;
+        return this;
+    }
+
+    public void setTaken(BigDecimal taken) {
+        this.taken = taken;
+    }
+
+    public BigDecimal getPending() {
+        return this.pending;
+    }
+
+    public LeaveBalance pending(BigDecimal pending) {
+        this.pending = pending;
+        return this;
+    }
+
+    public void setPending(BigDecimal pending) {
+        this.pending = pending;
+    }
+
+    public BigDecimal getCarryOver() {
+        return this.carryOver;
+    }
+
+    public LeaveBalance carryOver(BigDecimal carryOver) {
+        this.carryOver = carryOver;
+        return this;
+    }
+
+    public void setCarryOver(BigDecimal carryOver) {
+        this.carryOver = carryOver;
+    }
+
+    public BigDecimal getRemaining() {
+        return this.remaining;
+    }
+
+    public LeaveBalance remaining(BigDecimal remaining) {
+        this.remaining = remaining;
+        return this;
+    }
+
+    public void setRemaining(BigDecimal remaining) {
+        this.remaining = remaining;
+    }
+
+    public Instant getLastUpdatedAt() {
+        return this.lastUpdatedAt;
+    }
+
+    public LeaveBalance lastUpdatedAt(Instant lastUpdatedAt) {
+        this.lastUpdatedAt = lastUpdatedAt;
+        return this;
+    }
+
+    public void setLastUpdatedAt(Instant lastUpdatedAt) {
+        this.lastUpdatedAt = lastUpdatedAt;
+    }
+
+    public Employee getEmployee() {
+        return this.employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public LeaveBalance employee(Employee employee) {
+        this.employee = employee;
+        return this;
+    }
+
+    public LeaveType getLeaveType() {
+        return this.leaveType;
+    }
+
+    public void setLeaveType(LeaveType leaveType) {
+        this.leaveType = leaveType;
+    }
+
+    public LeaveBalance leaveType(LeaveType leaveType) {
+        this.leaveType = leaveType;
+        return this;
+    }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
@@ -116,20 +205,32 @@ public class LeaveBalance implements Serializable {
     }
 
     @Override
-    public int hashCode() { return getClass().hashCode(); }
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 
     @Override
     public String toString() {
-        return "LeaveBalance{" +
-            "id=" + getId() +
-            ", year=" + getYear() +
-            ", entitled=" + getEntitled() +
-            ", taken=" + getTaken() +
-            ", pending=" + getPending() +
-            ", carryOver=" + getCarryOver() +
-            ", remaining=" + getRemaining() +
-            ", lastUpdatedAt='" + getLastUpdatedAt() + "'" +
-            "}";
+        return (
+            "LeaveBalance{" +
+            "id=" +
+            getId() +
+            ", year=" +
+            getYear() +
+            ", entitled=" +
+            getEntitled() +
+            ", taken=" +
+            getTaken() +
+            ", pending=" +
+            getPending() +
+            ", carryOver=" +
+            getCarryOver() +
+            ", remaining=" +
+            getRemaining() +
+            ", lastUpdatedAt='" +
+            getLastUpdatedAt() +
+            "'" +
+            "}"
+        );
     }
 }
-

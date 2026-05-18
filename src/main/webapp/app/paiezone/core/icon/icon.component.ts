@@ -51,6 +51,13 @@ const ICONS: Record<string, string> = {
     '<path d="M3.5 2.5h6L12.5 5.5v8a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1z"/><path d="M9.5 2.5v3h3M5.5 7.5h5M5.5 9.5h5M5.5 11.5h3"/>',
   Trash2:
     '<path d="M3 4.5h10M6.5 4.5V3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5M4.5 4.5l.5 8a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1l.5-8M6.5 7v3.5M9.5 7v3.5"/>',
+  FileCheck:
+    '<path d="M3.5 2.5h6L12.5 5.5v8a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1z"/><path d="M9.5 2.5v3h3M5.5 9.5l1.5 1.5 3-3"/>',
+  Receipt:
+    '<rect x="3" y="2" width="10" height="13" rx="1"/><path d="M3 15V2l1.5 1L6 2l1.5 1L9 2l1.5 1L12 2v13"/><path d="M5.5 7h5M5.5 9.5h5M5.5 12h3"/>',
+  BookOpen:
+    '<path d="M2 4.5C2 4 2.5 3.5 3 3.5h4.5v9H3c-.5 0-1-.5-1-1V4.5z"/><path d="M14 4.5C14 4 13.5 3.5 13 3.5H8.5v9H13c.5 0 1-.5 1-1V4.5z"/><path d="M7.5 3.5v9M8.5 3.5v9"/>',
+  ClipboardList: '<rect x="4" y="3" width="8" height="11" rx="1"/><path d="M6 3V2h4v1M5.5 7h5M5.5 9h5M5.5 11h3"/><path d="M8 1.5h0"/>',
 };
 
 @Component({

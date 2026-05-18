@@ -10,6 +10,7 @@ import tn.paiezone.rh.service.dto.AdvanceDTO;
 public interface AdvanceMapper extends EntityMapper<AdvanceDTO, Advance> {
     @Mapping(source = "employee.id", target = "employeeId")
     @Mapping(source = "paySlip.id", target = "paySlipId")
+    @Mapping(source = "notes", target = "reason")
     AdvanceDTO toDto(Advance s);
 
     @Mapping(source = "employeeId", target = "employee", qualifiedByName = "employeeFromId")
@@ -18,6 +19,7 @@ public interface AdvanceMapper extends EntityMapper<AdvanceDTO, Advance> {
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "reason", ignore = true)
     Advance toEntity(AdvanceDTO dto);
 
     @Mapping(source = "employeeId", target = "employee", qualifiedByName = "employeeFromId")
@@ -26,6 +28,7 @@ public interface AdvanceMapper extends EntityMapper<AdvanceDTO, Advance> {
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "reason", ignore = true)
     void partialUpdate(@MappingTarget Advance entity, AdvanceDTO dto);
 
     @Named("employeeFromId")

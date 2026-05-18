@@ -1,9 +1,10 @@
 package tn.paiezone.rh.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.Advance;
 import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 import tn.paiezone.rh.repository.AdvanceRepository;
-import tn.paiezone.rh.repository.PaySlipRepository; // Ajouté pour markAsDeducted
+import tn.paiezone.rh.repository.PaySlipRepository;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.AdvanceService;
 import tn.paiezone.rh.service.dto.AdvanceDTO;
 import tn.paiezone.rh.service.mapper.AdvanceMapper;
@@ -29,11 +31,7 @@ public class AdvanceServiceImpl implements AdvanceService {
     private final AdvanceMapper advanceMapper;
     private final PaySlipRepository paySlipRepository; // Ajouté
 
-    public AdvanceServiceImpl(
-        AdvanceRepository advanceRepository,
-        AdvanceMapper advanceMapper,
-        PaySlipRepository paySlipRepository
-    ) {
+    public AdvanceServiceImpl(AdvanceRepository advanceRepository, AdvanceMapper advanceMapper, PaySlipRepository paySlipRepository) {
         this.advanceRepository = advanceRepository;
         this.advanceMapper = advanceMapper;
         this.paySlipRepository = paySlipRepository;
@@ -43,6 +41,14 @@ public class AdvanceServiceImpl implements AdvanceService {
     public AdvanceDTO save(AdvanceDTO advanceDTO) {
         LOG.debug("Request to save Advance : {}", advanceDTO);
         Advance advance = advanceMapper.toEntity(advanceDTO);
+        String login = SecurityUtils.getCurrentUserLogin().orElse("system");
+        Instant now = Instant.now();
+        if (advance.getId() == null) {
+            advance.setCreatedBy(login);
+            advance.setCreatedDate(now);
+        }
+        advance.setLastModifiedBy(login);
+        advance.setLastModifiedDate(now);
         advance = advanceRepository.save(advance);
         return advanceMapper.toDto(advance);
     }
@@ -51,6 +57,9 @@ public class AdvanceServiceImpl implements AdvanceService {
     public AdvanceDTO update(AdvanceDTO advanceDTO) {
         LOG.debug("Request to update Advance : {}", advanceDTO);
         Advance advance = advanceMapper.toEntity(advanceDTO);
+        String login = SecurityUtils.getCurrentUserLogin().orElse("system");
+        advance.setLastModifiedBy(login);
+        advance.setLastModifiedDate(Instant.now());
         advance = advanceRepository.save(advance);
         return advanceMapper.toDto(advance);
     }
@@ -91,6 +100,12 @@ public class AdvanceServiceImpl implements AdvanceService {
         dto.setStatus(AdvanceStatus.REQUESTED);
         dto.setRequestDate(LocalDate.now());
         Advance advance = advanceMapper.toEntity(dto);
+        String login = SecurityUtils.getCurrentUserLogin().orElse("system");
+        Instant now = Instant.now();
+        advance.setCreatedBy(login);
+        advance.setCreatedDate(now);
+        advance.setLastModifiedBy(login);
+        advance.setLastModifiedDate(now);
         return advanceMapper.toDto(advanceRepository.save(advance));
     }
 
@@ -100,8 +115,7 @@ public class AdvanceServiceImpl implements AdvanceService {
     @Override
     public AdvanceDTO approveAdvance(Long id, String approvedBy) {
         LOG.debug("Approving advance : {}", id);
-        Advance advance = advanceRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Avance introuvable : " + id));
+        Advance advance = advanceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Avance introuvable : " + id));
 
         if (advance.getStatus() != AdvanceStatus.REQUESTED) {
             throw new IllegalStateException("L'avance est déjà au statut : " + advance.getStatus());
@@ -116,6 +130,9 @@ public class AdvanceServiceImpl implements AdvanceService {
 
         advance.setStatus(AdvanceStatus.APPROVED);
         advance.setApprovedBy(approvedBy);
+        advance.setApprovedAt(Instant.now());
+        advance.setLastModifiedBy(approvedBy);
+        advance.setLastModifiedDate(Instant.now());
 
         return advanceMapper.toDto(advanceRepository.save(advance));
     }
@@ -126,8 +143,7 @@ public class AdvanceServiceImpl implements AdvanceService {
     @Override
     public AdvanceDTO rejectAdvance(Long id, String reason) {
         LOG.debug("Rejecting advance : {}", id);
-        Advance advance = advanceRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Avance introuvable : " + id));
+        Advance advance = advanceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Avance introuvable : " + id));
 
         if (advance.getStatus() != AdvanceStatus.REQUESTED) {
             throw new IllegalStateException("Seules les avances REQUESTED peuvent être rejetées.");
@@ -135,6 +151,8 @@ public class AdvanceServiceImpl implements AdvanceService {
 
         advance.setStatus(AdvanceStatus.REJECTED);
         advance.setNotes(reason);
+        advance.setLastModifiedBy(SecurityUtils.getCurrentUserLogin().orElse("system"));
+        advance.setLastModifiedDate(Instant.now());
         return advanceMapper.toDto(advanceRepository.save(advance));
     }
 

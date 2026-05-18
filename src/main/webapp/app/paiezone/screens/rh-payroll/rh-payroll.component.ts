@@ -96,10 +96,21 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
                   <td style="color:var(--pz-muted);font-size:12px">{{ p.validatedAt ?? '—' }}</td>
                   <td style="color:var(--pz-muted);font-size:12px">{{ p.lockedAt ?? '—' }}</td>
                   <td>
-                    <div style="display:flex;gap:6px;align-items:center">
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
                       <button class="pz-btn pz-sm" (click)="viewBulletins(p.id, p.label)">
                         <pz-icon name="FileText" [size]="13" /> Bulletins
                       </button>
+                      @if (p.status !== 'DRAFT') {
+                        <button class="pz-btn pz-sm" title="Journal de paie" (click)="dlJournal(p.id, p.label)">
+                          <pz-icon name="BookOpen" [size]="13" /> Journal
+                        </button>
+                        <button class="pz-btn pz-sm" title="Récapitulatif CNSS" (click)="dlCnss(p.id, p.label)">
+                          <pz-icon name="Shield" [size]="13" /> CNSS
+                        </button>
+                        <button class="pz-btn pz-sm" title="Déclaration trimestrielle" (click)="dlDecl(p.id, p.label)">
+                          <pz-icon name="ClipboardList" [size]="13" /> Décl. Trim.
+                        </button>
+                      }
                       @if (p.status === 'DRAFT') {
                         <button class="pz-btn pz-sm pz-primary" [disabled]="busy()" (click)="calculate(p.id)">
                           @if (busy()) {
@@ -366,9 +377,7 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
                         <span class="pz-pill" [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
                       </td>
                       <td>
-                        <a class="pz-btn pz-sm" [href]="'/api/pay-slips/' + b.id + '/pdf'" target="_blank">
-                          <pz-icon name="Download" [size]="13" /> PDF
-                        </a>
+                        <button class="pz-btn pz-sm" (click)="dlBulletin(b.id)"><pz-icon name="Download" [size]="13" /> PDF</button>
                       </td>
                     </tr>
                   }
@@ -378,9 +387,9 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
           </div>
           <div class="pz-modal-foot">
             @if (bulletins().length > 0) {
-              <a class="pz-btn pz-primary" [href]="'/api/pay-slips/bulk-pdf/' + currentPeriodId()" target="_blank">
+              <button class="pz-btn pz-primary" (click)="dlBulkBulletin(currentPeriodId())">
                 <pz-icon name="Download" [size]="14" /> Télécharger tous (PDF)
-              </a>
+              </button>
             }
             <button class="pz-btn" (click)="closeBulletins()">Fermer</button>
           </div>
@@ -1110,5 +1119,35 @@ export default class RhPayrollComponent {
   deleteRubrique(id: number) {
     if (!confirm('Désactiver cette rubrique ?')) return;
     this.api.deleteRubrique(id).subscribe({ next: () => this.rubriques.update(list => list.filter(r => r.id !== id)) });
+  }
+
+  // PDF exports
+  dlBulletin(paySlipId: number) {
+    this.api.downloadBulletin(paySlipId).subscribe(blob => this.saveBlob(blob, `bulletin-${paySlipId}.pdf`));
+  }
+
+  dlBulkBulletin(periodId: number) {
+    this.api.downloadBulkBulletin(periodId).subscribe(blob => this.saveBlob(blob, `bulletins-periode-${periodId}.pdf`));
+  }
+
+  dlJournal(periodId: number, label: string) {
+    this.api.downloadJournalPaie(periodId).subscribe(blob => this.saveBlob(blob, `journal-paie-${label}.pdf`));
+  }
+
+  dlCnss(periodId: number, label: string) {
+    this.api.downloadCnssRecap(periodId).subscribe(blob => this.saveBlob(blob, `cnss-recap-${label}.pdf`));
+  }
+
+  dlDecl(periodId: number, label: string) {
+    this.api.downloadDeclarationTrimestrielle(periodId).subscribe(blob => this.saveBlob(blob, `decl-trim-${label}.pdf`));
+  }
+
+  private saveBlob(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }

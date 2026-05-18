@@ -47,6 +47,16 @@ const routes: Routes = [
         loadComponent: () => import('./screens/twofa/twofa.component'),
         title: 'Vérification 2FA — PaieZone',
       },
+      {
+        path: 'forgot-password',
+        loadComponent: () => import('./screens/forgot-password/forgot-password.component'),
+        title: 'Mot de passe oublié — PaieZone',
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./screens/reset-password/reset-password.component'),
+        title: 'Réinitialisation — PaieZone',
+      },
     ],
   },
   {

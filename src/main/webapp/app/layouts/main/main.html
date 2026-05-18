@@ -1,15 +1,7 @@
-<pz-page-ribbon />
-
 <div>
   <router-outlet name="navbar" />
 </div>
 
-<div class="container-fluid">
-  <div class="card jh-card">
-    <router-outlet />
-  </div>
-
-  <pz-footer />
+<div class="pz-outlet">
+  <router-outlet />
 </div>
-<!-- PaieBot — Widget flottant -->
-<jhi-chatbot *ngIf="isAuthenticated()"></jhi-chatbot>

@@ -18,7 +18,13 @@ import tn.paiezone.rh.domain.enumeration.ContractStatus;
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSpecificationExecutor<Contract> {
     boolean existsByReference(String reference);
-    List<Contract> findByStatusAndEndDateBetween(ContractStatus status, LocalDate start, LocalDate end);
+
+    @Query("SELECT c FROM Contract c JOIN FETCH c.employee WHERE c.status = :status AND c.endDate BETWEEN :start AND :end")
+    List<Contract> findByStatusAndEndDateBetween(
+        @Param("status") ContractStatus status,
+        @Param("start") LocalDate start,
+        @Param("end") LocalDate end
+    );
 
     List<Contract> findByEmployeeIdAndStatus(Long employeeId, ContractStatus status);
 
@@ -37,6 +43,10 @@ public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSp
     );
 
     long countByStatus(ContractStatus status);
+
+    java.util.Optional<Contract> findFirstByEmployeeIdAndStatusOrderByStartDateDesc(Long employeeId, ContractStatus status);
+
+    java.util.Optional<Contract> findFirstByEmployeeIdOrderByStartDateDesc(Long employeeId);
 
     @Query("SELECT count(c) FROM Contract c WHERE c.endDate <= :date AND c.status = 'ACTIVE'")
     long countExpiringWithin30Days(@Param("date") LocalDate date);

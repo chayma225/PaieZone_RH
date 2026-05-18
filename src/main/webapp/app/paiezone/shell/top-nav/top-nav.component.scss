@@ -184,16 +184,35 @@
     color: var(--pz-ink);
   }
 
-  .dot {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--pz-danger);
-    border: 1.5px solid var(--pz-surface);
+  &.notif-active {
+    background: var(--pz-primary-soft);
+    color: var(--pz-primary);
   }
+
+  .notif-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: var(--pz-danger);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--pz-surface);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+}
+
+/* styles .pz-notif-panel et .notif-* déplacés dans global.scss */
+
+.notif-anchor {
+  position: relative;
 }
 
 .pz-role-pill {
@@ -242,109 +261,7 @@
   }
 }
 
-.pz-role-menu {
-  position: absolute;
-  right: var(--pz-pad);
-  top: 60px;
-  width: 280px;
-  background: var(--pz-surface);
-  border: 1px solid var(--pz-line);
-  border-radius: var(--pz-radius-lg);
-  box-shadow: var(--pz-shadow-xl);
-  padding: 6px;
-  z-index: 40;
-  animation: pzFadeIn 0.12s ease-out;
-
-  .menu-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px 12px;
-  }
-
-  .menu-user-name {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--pz-ink);
-  }
-
-  .menu-user-email {
-    font-size: 11.5px;
-    color: var(--pz-muted);
-    margin-top: 1px;
-  }
-
-  .menu-sep {
-    height: 1px;
-    background: var(--pz-line);
-    margin: 0 0 4px;
-  }
-
-  .menu-title {
-    padding: 10px 12px 6px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--pz-muted);
-  }
-
-  .menu-note {
-    padding: 8px 12px 6px;
-    font-size: 11.5px;
-    color: var(--pz-muted);
-    line-height: 1.5;
-  }
-}
-
-.logout-opt .role-title {
-  color: var(--pz-danger);
-}
-
-.role-opt {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: left;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  font: inherit;
-  color: inherit;
-
-  &:hover {
-    background: var(--pz-surface-3);
-  }
-  &.active {
-    background: var(--pz-primary-soft);
-  }
-
-  .role-title {
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--pz-ink);
-  }
-
-  .role-sub {
-    font-size: 11.5px;
-    color: var(--pz-muted);
-    margin-top: 1px;
-  }
-
-  .role-check {
-    margin-left: auto;
-    color: var(--pz-primary);
-  }
-}
-
-.role-opt-sep {
-  height: 1px;
-  background: var(--pz-line);
-  margin: 4px 0;
-}
+/* styles .pz-role-menu et .role-opt déplacés dans global.scss */
 
 @keyframes pzFadeIn {
   from {

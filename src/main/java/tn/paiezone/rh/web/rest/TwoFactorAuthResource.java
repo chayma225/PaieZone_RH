@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.service.TwoFactorAuthService;
 
 @RestController
@@ -41,13 +43,15 @@ public class TwoFactorAuthResource {
     }
 
     @PostMapping("/verify-2fa")
-    public ResponseEntity<?> verify(@RequestBody Map<String, String> body) {
-        // On vérifie les deux clés possibles
-        String login = body.get("login") != null ? body.get("login") : body.get("username");
-        String code = body.get("code");
+    public ResponseEntity<?> verify(@RequestBody Map<String, Object> body) {
+        Object loginObj = body.get("login") != null ? body.get("login") : body.get("username");
+        String login = loginObj != null ? loginObj.toString() : null;
+        Object codeObj = body.get("code");
+        String code = codeObj != null ? codeObj.toString() : null;
+        Object rememberMeObj = body.get("rememberMe");
+        boolean rememberMe = rememberMeObj != null && Boolean.parseBoolean(rememberMeObj.toString());
 
-        // LOG CRITIQUE : Regarde ta console Java après avoir cliqué !
-        LOG.info("VÉRIFICATION : Login reçu = [{}], Code reçu = [{}]", login, code);
+        LOG.info("VÉRIFICATION : Login reçu = [{}], Code reçu = [{}], RememberMe = [{}]", login, code, rememberMe);
 
         if (login == null || code == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Données manquantes"));
@@ -56,7 +60,7 @@ public class TwoFactorAuthResource {
         if (twoFactorAuthService.verifyCode(login, code)) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(login);
             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            String jwt = authenticateController.createToken(authentication, false);
+            String jwt = authenticateController.createToken(authentication, rememberMe);
             return ResponseEntity.ok(new AuthenticateController.JWTToken(jwt));
         }
 
@@ -80,5 +84,29 @@ public class TwoFactorAuthResource {
     public ResponseEntity<Map<String, String>> disable(@AuthenticationPrincipal Jwt jwt) {
         twoFactorAuthService.disable(jwt.getSubject());
         return ResponseEntity.ok(Map.of("message", "2FA désactivé"));
+    }
+
+    /** Admin : lit le statut 2FA d'un utilisateur */
+    @GetMapping("/admin/2fa/status/{login}")
+    @PreAuthorize("hasAnyAuthority('" + AuthoritiesConstants.ADMIN + "', '" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    public ResponseEntity<Map<String, Object>> adminStatus(@PathVariable String login) {
+        boolean enabled = twoFactorAuthService.getStatusByLogin(login);
+        return ResponseEntity.ok(Map.of("login", login, "twoFactorEnabled", enabled));
+    }
+
+    /** Admin : active la 2FA pour un utilisateur */
+    @PostMapping("/admin/2fa/enable/{login}")
+    @PreAuthorize("hasAnyAuthority('" + AuthoritiesConstants.ADMIN + "', '" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    public ResponseEntity<Map<String, String>> adminEnable(@PathVariable String login) {
+        twoFactorAuthService.enable(login);
+        return ResponseEntity.ok(Map.of("message", "2FA activé pour " + login));
+    }
+
+    /** Admin : désactive et réinitialise la 2FA d'un utilisateur */
+    @DeleteMapping("/admin/2fa/disable/{login}")
+    @PreAuthorize("hasAnyAuthority('" + AuthoritiesConstants.ADMIN + "', '" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    public ResponseEntity<Map<String, String>> adminDisable(@PathVariable String login) {
+        twoFactorAuthService.disable(login);
+        return ResponseEntity.ok(Map.of("message", "2FA désactivé pour " + login));
     }
 }

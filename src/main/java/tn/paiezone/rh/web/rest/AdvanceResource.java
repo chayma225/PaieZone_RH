@@ -86,7 +86,8 @@ public class AdvanceResource {
         AdvanceDTO dto = new AdvanceDTO();
         dto.setRequestDate(LocalDate.now());
         dto.setAmount(new BigDecimal(body.get("amount").toString()));
-        dto.setReason(body.get("reason") != null ? body.get("reason").toString() : "");
+        String reasonText = body.get("reason") != null ? body.get("reason").toString() : "";
+        dto.setNotes(reasonText);
         dto.setDeductionMonth(body.get("deductionMonth") != null ? Integer.valueOf(body.get("deductionMonth").toString()) : null);
         dto.setStatus(AdvanceStatus.REQUESTED);
         dto.setEmployeeId(empId);

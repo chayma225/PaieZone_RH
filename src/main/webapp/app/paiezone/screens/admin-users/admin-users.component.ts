@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
@@ -11,6 +11,14 @@ const ROLES = [
   { value: 'ROLE_RH_COMPTABLE', label: 'RH / Comptable' },
   { value: 'ROLE_ADMIN', label: 'Administrateur' },
 ];
+
+const ROLE_LABELS: Record<string, string> = {
+  ROLE_EMPLOYE: 'Employé',
+  ROLE_RH_COMPTABLE: 'RH / Comptable',
+  ROLE_ADMIN: 'Administrateur',
+  ROLE_SUPER_ADMIN: 'Super Admin',
+  ROLE_USER: 'Utilisateur',
+};
 
 @Component({
   selector: 'pz-admin-users',
@@ -36,6 +44,8 @@ const ROLES = [
             <tr>
               <th>Collaborateur</th>
               <th>Email</th>
+              <th>Téléphone</th>
+              <th>Rôle système</th>
               <th>Département</th>
               <th>Contrat</th>
               <th>Date d'entrée</th>
@@ -45,21 +55,32 @@ const ROLES = [
           <tbody>
             @if (data.employees().length === 0) {
               <tr>
-                <td colspan="6" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucun utilisateur enregistré</td>
+                <td colspan="8" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucun utilisateur enregistré</td>
               </tr>
             }
             @for (e of data.employees(); track e.id) {
+              @let sysRole = getSystemRole(e.email);
               <tr>
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
                     <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
                     <div>
                       <div style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</div>
-                      <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.role }}</div>
+                      <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.role || e.dept }}</div>
                     </div>
                   </div>
                 </td>
                 <td style="font-size:12.5px;color:var(--pz-ink-2)">{{ e.email || '—' }}</td>
+                <td style="font-size:12.5px;color:var(--pz-ink-2)">{{ e.phone || '—' }}</td>
+                <td>
+                  @if (sysRole) {
+                    <span class="pz-pill" [class.info]="sysRole === 'ROLE_ADMIN'" [class.warn]="sysRole === 'ROLE_RH_COMPTABLE'">
+                      {{ roleLabel(sysRole) }}
+                    </span>
+                  } @else {
+                    <span class="pz-muted" style="font-size:12px">—</span>
+                  }
+                </td>
                 <td style="font-size:12.5px">{{ e.dept || '—' }}</td>
                 <td>
                   <span class="pz-pill" [class.info]="e.contract === 'CDI'" [class.warn]="e.contract === 'CDD'">{{ e.contract }}</span>
@@ -163,10 +184,48 @@ const ROLES = [
             </div>
             <div class="pz-field">
               <label>Téléphone</label>
-              <input type="text" [(ngModel)]="editForm.phone" />
+              <input type="text" [(ngModel)]="editForm.phone" placeholder="ex: +216 XX XXX XXX" />
             </div>
+            <div class="pz-field">
+              <label>Rôle système</label>
+              @if (editForm.login) {
+                <select [(ngModel)]="editForm.role">
+                  @for (r of roles; track r.value) {
+                    <option [value]="r.value">{{ r.label }}</option>
+                  }
+                </select>
+              } @else {
+                <input type="text" disabled value="Aucun compte utilisateur associé" style="color:var(--pz-muted)" />
+              }
+            </div>
+            @if (editForm.login) {
+              <div class="twofa-row">
+                <div>
+                  <div class="twofa-label">Double authentification (2FA)</div>
+                  <div class="twofa-sub">
+                    @if (twoFaEnabled()) {
+                      <span style="color:var(--pz-pos)">Activée — code email à chaque connexion</span>
+                    } @else {
+                      <span style="color:var(--pz-muted)">Désactivée</span>
+                    }
+                  </div>
+                </div>
+                <button
+                  class="pz-btn pz-sm"
+                  [class.pz-danger]="twoFaEnabled()"
+                  [class.pz-primary]="!twoFaEnabled()"
+                  [disabled]="twoFaBusy()"
+                  (click)="toggle2fa()"
+                >
+                  {{ twoFaBusy() ? '…' : twoFaEnabled() ? 'Désactiver' : 'Activer' }}
+                </button>
+              </div>
+            }
             @if (errMsg()) {
               <div class="pz-err">{{ errMsg() }}</div>
+            }
+            @if (successMsg()) {
+              <div class="pz-ok">{{ successMsg() }}</div>
             }
           </div>
           <div class="pz-modal-foot">
@@ -336,6 +395,33 @@ const ROLES = [
         border-radius: 8px;
         padding: 8px 12px;
       }
+      .twofa-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 14px;
+        border: 1px solid var(--pz-line);
+        border-radius: 8px;
+        background: var(--pz-surface-2);
+      }
+      .twofa-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--pz-ink);
+      }
+      .twofa-sub {
+        font-size: 11.5px;
+        margin-top: 2px;
+      }
+      .pz-btn.pz-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+        &:hover {
+          background: #fecaca;
+        }
+      }
       .pz-ok {
         color: #166534;
         font-size: 12.5px;
@@ -346,7 +432,7 @@ const ROLES = [
     `,
   ],
 })
-export default class AdminUsersComponent {
+export default class AdminUsersComponent implements OnInit {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
   protected readonly busy = signal(false);
@@ -359,7 +445,42 @@ export default class AdminUsersComponent {
   protected readonly roles = ROLES;
 
   protected inviteForm = { firstName: '', lastName: '', email: '', login: '', role: 'ROLE_EMPLOYE' };
-  protected editForm = { first: '', last: '', email: '', phone: '' };
+  protected editForm = { first: '', last: '', email: '', phone: '', role: 'ROLE_EMPLOYE', login: '', origRole: '' };
+
+  protected readonly twoFaEnabled = signal(false);
+  protected readonly twoFaBusy = signal(false);
+
+  // Map email → { login, role, id } pour les utilisateurs qui ont un compte
+  private userMap = new Map<string, { login: string; firstName: string; lastName: string; role: string; id?: number }>();
+
+  ngOnInit(): void {
+    this.api.myCompanyUsers().subscribe({
+      next: users => {
+        this.userMap.clear();
+        for (const u of users) {
+          const email = (u.email ?? '').toLowerCase();
+          const role = this.primaryRole(u.authorities ?? []);
+          if (email) this.userMap.set(email, { id: u.id, login: u.login, firstName: u.firstName, lastName: u.lastName, role });
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  private primaryRole(authorities: string[]): string {
+    if (authorities.includes('ROLE_SUPER_ADMIN')) return 'ROLE_SUPER_ADMIN';
+    if (authorities.includes('ROLE_ADMIN')) return 'ROLE_ADMIN';
+    if (authorities.includes('ROLE_RH_COMPTABLE')) return 'ROLE_RH_COMPTABLE';
+    return 'ROLE_EMPLOYE';
+  }
+
+  protected roleLabel(role: string): string {
+    return ROLE_LABELS[role] ?? role;
+  }
+
+  protected getSystemRole(email: string): string {
+    return this.userMap.get((email ?? '').toLowerCase())?.role ?? '';
+  }
 
   autoFillLogin() {
     if (!this.inviteForm.login && this.inviteForm.email) {
@@ -401,9 +522,46 @@ export default class AdminUsersComponent {
   }
 
   openEdit(e: Employee) {
-    this.editForm = { first: e.first, last: e.last, email: e.email, phone: e.phone };
+    const userEntry = this.userMap.get((e.email ?? '').toLowerCase());
+    this.editForm = {
+      first: e.first,
+      last: e.last,
+      email: e.email,
+      phone: e.phone,
+      role: userEntry?.role ?? 'ROLE_EMPLOYE',
+      login: userEntry?.login ?? '',
+      origRole: userEntry?.role ?? '',
+    };
     this.errMsg.set('');
+    this.successMsg.set('');
+    this.twoFaEnabled.set(false);
+    this.twoFaBusy.set(false);
+    if (userEntry?.login) {
+      this.api.admin2faStatus(userEntry.login).subscribe({
+        next: res => this.twoFaEnabled.set(res.twoFactorEnabled),
+        error: () => {},
+      });
+    }
     this.editTarget.set(e);
+  }
+
+  toggle2fa(): void {
+    const login = this.editForm.login;
+    if (!login) return;
+    this.twoFaBusy.set(true);
+    this.errMsg.set('');
+    const call = this.twoFaEnabled() ? this.api.admin2faDisable(login) : this.api.admin2faEnable(login);
+    call.subscribe({
+      next: () => {
+        this.twoFaEnabled.set(!this.twoFaEnabled());
+        this.twoFaBusy.set(false);
+      },
+      error: err => {
+        this.twoFaBusy.set(false);
+        const detail = err?.error?.detail ?? err?.error?.message ?? 'Erreur lors de la modification du 2FA.';
+        this.errMsg.set(detail);
+      },
+    });
   }
 
   closeEdit() {
@@ -415,31 +573,65 @@ export default class AdminUsersComponent {
     if (!e) return;
     this.busy.set(true);
     this.errMsg.set('');
-    this.api
-      .patchEmployee(e.id, {
-        id: e.id,
-        firstName: this.editForm.first,
-        lastName: this.editForm.last,
-        professionalEmail: this.editForm.email,
-        phoneNumber: this.editForm.phone,
-      })
-      .subscribe({
-        next: () => {
-          this.data.employees.update(list =>
-            list.map(emp =>
-              emp.id === e.id
-                ? { ...emp, first: this.editForm.first, last: this.editForm.last, email: this.editForm.email, phone: this.editForm.phone }
-                : emp,
-            ),
-          );
-          this.closeEdit();
+
+    const empPatch = this.api.patchEmployee(e.id, {
+      id: e.id,
+      firstName: this.editForm.first,
+      lastName: this.editForm.last,
+      professionalEmail: this.editForm.email,
+      phoneNumber: this.editForm.phone,
+    });
+
+    empPatch.subscribe({
+      next: () => {
+        this.data.employees.update(list =>
+          list.map(emp =>
+            emp.id === e.id
+              ? { ...emp, first: this.editForm.first, last: this.editForm.last, email: this.editForm.email, phone: this.editForm.phone }
+              : emp,
+          ),
+        );
+
+        // Mettre à jour le rôle si un compte utilisateur existe et que le rôle a changé
+        const login = this.editForm.login;
+        if (login && this.editForm.role !== this.editForm.origRole) {
+          const userEntry = this.userMap.get((this.editForm.email ?? '').toLowerCase());
+          this.api
+            .updateUserAuthorities(
+              login,
+              this.editForm.email,
+              this.editForm.first,
+              this.editForm.last,
+              [this.editForm.role, 'ROLE_USER'],
+              userEntry?.id,
+            )
+            .subscribe({
+              next: () => {
+                this.userMap.set((this.editForm.email ?? '').toLowerCase(), {
+                  login,
+                  firstName: this.editForm.first,
+                  lastName: this.editForm.last,
+                  role: this.editForm.role,
+                });
+                this.successMsg.set('Modifications enregistrées.');
+                this.busy.set(false);
+                this.editTarget.set(null);
+              },
+              error: () => {
+                this.successMsg.set('Informations mises à jour. Erreur lors du changement de rôle.');
+                this.busy.set(false);
+              },
+            });
+        } else {
           this.busy.set(false);
-        },
-        error: () => {
-          this.errMsg.set('Erreur lors de la modification.');
-          this.busy.set(false);
-        },
-      });
+          this.editTarget.set(null);
+        }
+      },
+      error: () => {
+        this.errMsg.set('Erreur lors de la modification.');
+        this.busy.set(false);
+      },
+    });
   }
 
   confirmLock(e: Employee) {

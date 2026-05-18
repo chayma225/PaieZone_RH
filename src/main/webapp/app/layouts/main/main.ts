@@ -7,16 +7,13 @@ import { CommonModule } from '@angular/common';
 import { AppPageTitleStrategy } from 'app/app-page-title-strategy';
 import { AccountService } from 'app/core/auth/account.service';
 import FindLanguageFromKeyPipe from 'app/shared/language/find-language-from-key.pipe';
-import Footer from '../footer/footer';
-import PageRibbon from '../profiles/page-ribbon';
-import { ChatbotComponent } from '../../chatbot/chatbot.component';
 
 @Component({
   standalone: true,
   selector: 'pz-main',
   templateUrl: './main.html',
   providers: [AppPageTitleStrategy],
-  imports: [CommonModule, RouterOutlet, Footer, PageRibbon, ChatbotComponent],
+  imports: [CommonModule, RouterOutlet],
 })
 export default class Main implements OnInit {
   private readonly renderer: Renderer2;

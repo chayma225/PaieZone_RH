@@ -1,7 +1,6 @@
-<button class="chat-tab" (click)="toggleOpen()" aria-label="PaieBot — Assistant IA" [class.is-open]="open()">
-  <pz-icon [name]="open() ? 'X' : 'Sparkles'" [size]="18" />
+<button class="chat-fab" (click)="toggleOpen()" aria-label="PaieBot — Assistant IA" [class.is-open]="open()">
+  <pz-icon [name]="open() ? 'X' : 'Sparkles'" [size]="22" />
   @if (!open()) {
-    <span class="chat-tab-label">PaieBot</span>
     <span class="pulse"></span>
   }
 </button>

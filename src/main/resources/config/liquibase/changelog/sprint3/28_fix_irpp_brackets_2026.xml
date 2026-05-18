@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- Insère les tranches IRPP 2026 (LF 2026) si elles sont absentes.
+       La seed initiale (05_tax_brackets_seed.xml) utilise COUNT(*)=0 comme
+       précondition — elle est donc ignorée quand 2024/2025 existent déjà. -->
+  <changeSet id="sprint3-irpp-brackets-2026-fix" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="tax_bracket"/>
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM tax_bracket WHERE year = 2026
+      </sqlCheck>
+    </preConditions>
+
+    <!-- Tranche 1 : 0 – 5 000 TND → 0 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="0.000"/>
+      <column name="max_income"      valueNumeric="5000.000"/>
+      <column name="rate"            valueNumeric="0.0000"/>
+      <column name="fixed_deduction" valueNumeric="0.000"/>
+      <column name="sort_order"      valueNumeric="1"/>
+    </insert>
+
+    <!-- Tranche 2 : 5 000 – 10 000 TND → 15 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="5000.000"/>
+      <column name="max_income"      valueNumeric="10000.000"/>
+      <column name="rate"            valueNumeric="0.1500"/>
+      <column name="fixed_deduction" valueNumeric="750.000"/>
+      <column name="sort_order"      valueNumeric="2"/>
+    </insert>
+
+    <!-- Tranche 3 : 10 000 – 20 000 TND → 25 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="10000.000"/>
+      <column name="max_income"      valueNumeric="20000.000"/>
+      <column name="rate"            valueNumeric="0.2500"/>
+      <column name="fixed_deduction" valueNumeric="1750.000"/>
+      <column name="sort_order"      valueNumeric="3"/>
+    </insert>
+
+    <!-- Tranche 4 : 20 000 – 30 000 TND → 30 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="20000.000"/>
+      <column name="max_income"      valueNumeric="30000.000"/>
+      <column name="rate"            valueNumeric="0.3000"/>
+      <column name="fixed_deduction" valueNumeric="2750.000"/>
+      <column name="sort_order"      valueNumeric="4"/>
+    </insert>
+
+    <!-- Tranche 5 : 30 000 – 50 000 TND → 33 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="30000.000"/>
+      <column name="max_income"      valueNumeric="50000.000"/>
+      <column name="rate"            valueNumeric="0.3300"/>
+      <column name="fixed_deduction" valueNumeric="3650.000"/>
+      <column name="sort_order"      valueNumeric="5"/>
+    </insert>
+
+    <!-- Tranche 6 : 50 000 – 100 000 TND → 36 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="50000.000"/>
+      <column name="max_income"      valueNumeric="100000.000"/>
+      <column name="rate"            valueNumeric="0.3600"/>
+      <column name="fixed_deduction" valueNumeric="5150.000"/>
+      <column name="sort_order"      valueNumeric="6"/>
+    </insert>
+
+    <!-- Tranche 7 : 100 000 – 200 000 TND → 38 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="100000.000"/>
+      <column name="max_income"      valueNumeric="200000.000"/>
+      <column name="rate"            valueNumeric="0.3800"/>
+      <column name="fixed_deduction" valueNumeric="7150.000"/>
+      <column name="sort_order"      valueNumeric="7"/>
+    </insert>
+
+    <!-- Tranche 8 : > 200 000 TND → 40 % -->
+    <insert tableName="tax_bracket">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="year"            valueNumeric="2026"/>
+      <column name="min_income"      valueNumeric="200000.000"/>
+      <column name="rate"            valueNumeric="0.4000"/>
+      <column name="fixed_deduction" valueNumeric="11150.000"/>
+      <column name="sort_order"      valueNumeric="8"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

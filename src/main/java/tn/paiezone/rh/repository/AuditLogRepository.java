@@ -14,6 +14,8 @@ import tn.paiezone.rh.domain.AuditLog;
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long>, JpaSpecificationExecutor<AuditLog> {
     List<AuditLog> findTop5ByOrderByOccurredAtDesc();
 
+    List<AuditLog> findTop10ByOrderByOccurredAtDesc();
+
     @Query("SELECT COUNT(a) FROM AuditLog a WHERE a.occurredAt >= :since")
     long countSince(Instant since);
 }

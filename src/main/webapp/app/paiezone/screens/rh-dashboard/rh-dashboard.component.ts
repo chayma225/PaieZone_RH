@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, computed, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
-import type { PayrollPeriod } from '../../core/types';
+import type { PayrollPeriod, ActivityItem, PayrollChartPoint } from '../../core/types';
 
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -22,17 +22,9 @@ const EMPTY_PERIOD: PayrollPeriod = {
   lockedAt: null,
 };
 
-// ── Histogramme données ──────────────────────────────────────────────────────
-const PAYROLL_SERIES = [
-  { m: 'Nov', brut: 88200, charges: 30400 },
-  { m: 'Déc', brut: 89400, charges: 30900 },
-  { m: 'Jan', brut: 91200, charges: 31600 },
-  { m: 'Fév', brut: 92100, charges: 31900 },
-  { m: 'Mars', brut: 94800, charges: 32700 },
-  { m: 'Avr', brut: 96400, charges: 33200 },
-];
+// ── Histogramme helpers ─────────────────────────────────────────────────────
 
-function buildChartBars() {
+function buildChartBarsFromData(series: { label: string; brut: number; charges: number }[]) {
   const W = 600,
     H = 180,
     PAD_T = 10,
@@ -40,19 +32,19 @@ function buildChartBars() {
     PAD_H = 8;
   const chartH = H - PAD_T - PAD_B;
   const chartW = W - PAD_H * 2;
-  const n = PAYROLL_SERIES.length;
+  const n = series.length || 1;
   const groupW = chartW / n;
   const barW = groupW * 0.5;
-  const maxTotal = Math.max(...PAYROLL_SERIES.map(d => d.brut + d.charges));
+  const maxTotal = Math.max(...series.map(d => d.brut + d.charges), 1);
   const scale = chartH / maxTotal;
   const baseY = PAD_T + chartH;
 
-  return PAYROLL_SERIES.map((d, i) => {
+  return series.map((d, i) => {
     const totalH = (d.brut + d.charges) * scale;
     const chargesH = d.charges * scale;
     const cx = PAD_H + groupW * i + groupW / 2;
     return {
-      m: d.m,
+      m: d.label,
       cx: +cx.toFixed(1),
       x: +(cx - barW / 2).toFixed(1),
       barW: +barW.toFixed(1),
@@ -73,53 +65,7 @@ function buildGridLines() {
   }));
 }
 
-const CHART_BARS = buildChartBars();
 const GRID_LINES = buildGridLines();
-
-// ── Activité récente ─────────────────────────────────────────────────────────
-interface ActivityPart {
-  text: string;
-  bold?: boolean;
-}
-interface ActivityItem {
-  icon: string;
-  parts: ActivityPart[];
-  time: string;
-  date: string;
-}
-
-const ACTIVITY: ActivityItem[] = [
-  {
-    icon: 'Cash',
-    parts: [{ text: 'Salma Bouzidi', bold: true }, { text: " a clôturé la pré-paie d'avril 2026." }],
-    time: '14:22',
-    date: "Aujourd'hui",
-  },
-  {
-    icon: 'Calendar',
-    parts: [{ text: 'Amal Trabelsi', bold: true }, { text: ' a déposé une demande de 5 jours de congés.' }],
-    time: '11:08',
-    date: "Aujourd'hui",
-  },
-  {
-    icon: 'Doc',
-    parts: [{ text: 'Le contrat de ' }, { text: 'Oussama Romdhane', bold: true }, { text: ' a été signé électroniquement.' }],
-    time: '09:45',
-    date: "Aujourd'hui",
-  },
-  {
-    icon: 'Send',
-    parts: [{ text: "Bulletins d'avril envoyés à 42 collaborateurs." }],
-    time: '17:30',
-    date: 'Hier',
-  },
-  {
-    icon: 'User',
-    parts: [{ text: 'Karim Mejri', bold: true }, { text: ' a mis à jour son RIB.' }],
-    time: '16:02',
-    date: 'Hier',
-  },
-];
 
 interface CalDay {
   date: number | null;
@@ -222,38 +168,42 @@ interface CalDay {
               ><span class="leg-label">Charges</span>
             </div>
           </div>
-          <div class="chart-wrap">
-            <svg viewBox="0 0 600 180" preserveAspectRatio="none" width="100%" height="180">
-              <!-- Gridlines -->
-              @for (g of GRID_LINES; track g.y) {
-                <line
-                  [attr.x1]="8"
-                  [attr.y1]="g.y"
-                  [attr.x2]="592"
-                  [attr.y2]="g.y"
-                  style="stroke: var(--pz-line)"
-                  stroke-width="1"
-                  stroke-dasharray="2 3"
-                />
-              }
-              <!-- Barres empilées -->
-              @for (b of CHART_BARS; track b.m) {
-                <!-- Charges (bas) — #c7d2fe autorisé dans SVG -->
-                <rect [attr.x]="b.x" [attr.y]="b.chargesY" [attr.width]="b.barW" [attr.height]="b.chargesH" fill="#c7d2fe" rx="3" />
-                <!-- Brut (haut) — #4f46e5 autorisé dans SVG -->
-                <rect [attr.x]="b.x" [attr.y]="b.brutY" [attr.width]="b.barW" [attr.height]="b.brutH" fill="#4f46e5" rx="3" />
-                <!-- Label mois -->
-                <text
-                  [attr.x]="b.cx"
-                  [attr.y]="b.labelY"
-                  text-anchor="middle"
-                  style="fill: var(--pz-muted-2); font-family: 'JetBrains Mono', monospace; font-size: 10.5px"
-                >
-                  {{ b.m }}
-                </text>
-              }
-            </svg>
-          </div>
+          @if (chartData().length === 0) {
+            <div class="pz-muted" style="padding:32px;text-align:center;font-size:13px">Aucune donnée de paie disponible</div>
+          } @else {
+            <div class="chart-wrap">
+              <svg viewBox="0 0 600 180" preserveAspectRatio="none" width="100%" height="180">
+                <!-- Gridlines -->
+                @for (g of GRID_LINES; track g.y) {
+                  <line
+                    [attr.x1]="8"
+                    [attr.y1]="g.y"
+                    [attr.x2]="592"
+                    [attr.y2]="g.y"
+                    style="stroke: var(--pz-line)"
+                    stroke-width="1"
+                    stroke-dasharray="2 3"
+                  />
+                }
+                <!-- Barres empilées -->
+                @for (b of chartBars(); track b.m) {
+                  <!-- Charges (bas) — #c7d2fe autorisé dans SVG -->
+                  <rect [attr.x]="b.x" [attr.y]="b.chargesY" [attr.width]="b.barW" [attr.height]="b.chargesH" fill="#c7d2fe" rx="3" />
+                  <!-- Brut (haut) — #4f46e5 autorisé dans SVG -->
+                  <rect [attr.x]="b.x" [attr.y]="b.brutY" [attr.width]="b.barW" [attr.height]="b.brutH" fill="#4f46e5" rx="3" />
+                  <!-- Label mois -->
+                  <text
+                    [attr.x]="b.cx"
+                    [attr.y]="b.labelY"
+                    text-anchor="middle"
+                    style="fill: var(--pz-muted-2); font-family: 'JetBrains Mono', monospace; font-size: 10.5px"
+                  >
+                    {{ b.m }}
+                  </text>
+                }
+              </svg>
+            </div>
+          }
         </div>
 
         <!-- Demandes en attente -->
@@ -354,22 +304,20 @@ interface CalDay {
             <button class="pz-btn pz-sm pz-ghost" style="margin-left:auto">Tout voir →</button>
           </div>
           <div class="card-body tl-body">
-            @for (a of ACTIVITY; track $index; let last = $last) {
-              <div class="tl-item" [class.last]="last">
-                <div class="tl-dot"><pz-icon [name]="a.icon" [size]="13" /></div>
-                <div>
-                  <div class="tl-text">
-                    @for (p of a.parts; track $index) {
-                      @if (p.bold) {
-                        <strong>{{ p.text }}</strong>
-                      } @else {
-                        {{ p.text }}
-                      }
-                    }
+            @if (activityLoading()) {
+              <div class="pz-muted" style="padding:20px 0;text-align:center;font-size:13px">Chargement…</div>
+            } @else if (activity().length === 0) {
+              <div class="pz-muted" style="padding:20px 0;text-align:center;font-size:13px">Aucune activité récente</div>
+            } @else {
+              @for (a of activity(); track $index; let last = $last) {
+                <div class="tl-item" [class.last]="last">
+                  <div class="tl-dot"><pz-icon [name]="a.icon" [size]="13" /></div>
+                  <div>
+                    <div class="tl-text">{{ a.message }}</div>
+                    <div class="tl-time">{{ a.dateLabel }} · {{ a.timeHm }}</div>
                   </div>
-                  <div class="tl-time">{{ a.date }} · {{ a.time }}</div>
                 </div>
-              </div>
+              }
             }
           </div>
         </div>
@@ -407,17 +355,39 @@ interface CalDay {
   styleUrl: './rh-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class RhDashboardComponent {
+export default class RhDashboardComponent implements OnInit {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
   protected readonly busy = signal(false);
   protected readonly rejectTarget = signal<{ type: 'leave' | 'advance'; id: string } | null>(null);
   protected rejectComment = '';
 
+  // ── Activité récente (dynamique) ─────────────────────────────────────────
+  protected readonly activity = signal<ActivityItem[]>([]);
+  protected readonly activityLoading = signal(true);
+
+  // ── Histogramme masse salariale (dynamique) ──────────────────────────────
+  protected readonly chartData = signal<PayrollChartPoint[]>([]);
+  protected readonly chartBars = computed(() => buildChartBarsFromData(this.chartData()));
+
   protected readonly DAYS_FR = DAYS_FR;
-  protected readonly CHART_BARS = CHART_BARS;
   protected readonly GRID_LINES = GRID_LINES;
-  protected readonly ACTIVITY = ACTIVITY;
+
+  ngOnInit(): void {
+    this.api.activityFeed().subscribe({
+      next: items => {
+        this.activity.set(items);
+        this.activityLoading.set(false);
+      },
+      error: () => this.activityLoading.set(false),
+    });
+    this.api.payrollChart().subscribe({
+      next: pts => this.chartData.set(pts),
+      error: () => {
+        /* garde les barres vides */
+      },
+    });
+  }
 
   private readonly now = new Date();
   protected readonly todayDay = this.now.getDate();

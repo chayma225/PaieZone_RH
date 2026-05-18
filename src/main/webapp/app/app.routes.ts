@@ -8,7 +8,7 @@ import { errorRoute } from './layouts/error/error.route';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'paiezone',
+    redirectTo: 'paiezone/welcome',
     pathMatch: 'full',
   },
   {

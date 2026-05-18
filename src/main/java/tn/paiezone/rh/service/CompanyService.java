@@ -89,21 +89,28 @@ public class CompanyService {
             .findById(companyDTO.getId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entreprise introuvable."));
 
-        // ✅ Champs vraiment immuables → toujours protégés
-        companyDTO.setTenantSchema(existing.getTenantSchema());
-        companyDTO.setCreatedAt(existing.getCreatedAt());
-        companyDTO.setTrialEnd(existing.getTrialEnd());
-        companyDTO.setAdminLogin(existing.getAdminLogin());
+        // Update mutable fields directly on the managed entity — never create a new detached object
+        if (companyDTO.getName() != null) existing.setName(companyDTO.getName());
+        if (companyDTO.getTradeName() != null) existing.setTradeName(companyDTO.getTradeName());
+        if (companyDTO.getTaxId() != null) existing.setTaxId(companyDTO.getTaxId());
+        if (companyDTO.getCnssId() != null) existing.setCnssId(companyDTO.getCnssId());
+        if (companyDTO.getAddress() != null) existing.setAddress(companyDTO.getAddress());
+        if (companyDTO.getCity() != null) existing.setCity(companyDTO.getCity());
+        if (companyDTO.getPostalCode() != null) existing.setPostalCode(companyDTO.getPostalCode());
+        if (companyDTO.getGouvernorat() != null) existing.setGouvernorat(companyDTO.getGouvernorat());
+        if (companyDTO.getPhone() != null) existing.setPhone(companyDTO.getPhone());
+        if (companyDTO.getEmail() != null) existing.setEmail(companyDTO.getEmail());
+        if (companyDTO.getLogoUrl() != null) existing.setLogoUrl(companyDTO.getLogoUrl());
+        if (companyDTO.getLegalForm() != null) existing.setLegalForm(companyDTO.getLegalForm());
+        if (companyDTO.getCapitalSocial() != null) existing.setCapitalSocial(companyDTO.getCapitalSocial());
+        if (companyDTO.getMainActivity() != null) existing.setMainActivity(companyDTO.getMainActivity());
+        if (companyDTO.getWebsite() != null) existing.setWebsite(companyDTO.getWebsite());
+        if (companyDTO.getActive() != null) existing.setActive(companyDTO.getActive());
 
-        // ✅ active → on garde la valeur du DTO si elle est fournie
-        //    sinon on reprend celle de la base (sécurité)
-        if (companyDTO.getActive() == null) {
-            companyDTO.setActive(existing.getActive());
-        }
+        // Immutable fields (tenantSchema, createdAt, trialEnd, adminLogin, companySubscription) are never touched
 
-        Company company = companyMapper.toEntity(companyDTO);
-        company = companyRepository.save(company);
-        return companyMapper.toDto(company);
+        Company saved = companyRepository.save(existing);
+        return companyMapper.toDto(saved);
     }
 
     /**
@@ -140,6 +147,7 @@ public class CompanyService {
 
     /**
      * Role-aware company list: SUPER_ADMIN → all; ADMIN → own company only.
+     * Uses a combined query: admin_login match OR UserProfile with ADMIN role.
      */
     @Transactional(readOnly = true)
     public List<CompanyDTO> findAllForCurrentUser() {
@@ -149,7 +157,7 @@ public class CompanyService {
         return SecurityUtils.getCurrentUserLogin()
             .map(login ->
                 companyRepository
-                    .findByAdminLogin(login)
+                    .findByAdminLoginOrAdminProfile(login, tn.paiezone.rh.domain.enumeration.AppRole.ADMIN)
                     .stream()
                     .map(companyMapper::toDto)
                     .collect(Collectors.toCollection(LinkedList::new))

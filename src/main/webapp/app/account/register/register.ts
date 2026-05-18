@@ -10,11 +10,13 @@ import { TranslateDirective } from 'app/shared/language';
 import PasswordStrengthBar from '../password/password-strength-bar/password-strength-bar';
 
 import { RegisterService } from './register.service';
+import IconComponent from 'app/paiezone/core/icon/icon.component';
 
 @Component({
   selector: 'pz-register',
-  imports: [TranslateDirective, TranslateModule, RouterLink, ReactiveFormsModule, PasswordStrengthBar],
+  imports: [TranslateDirective, TranslateModule, RouterLink, ReactiveFormsModule, PasswordStrengthBar, IconComponent],
   templateUrl: './register.html',
+  styleUrl: './register.scss',
 })
 export default class Register implements AfterViewInit {
   companyNameInput = viewChild.required<ElementRef>('companyNameInput');

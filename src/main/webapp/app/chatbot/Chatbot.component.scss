@@ -16,9 +16,10 @@ $font: 'Segoe UI', system-ui, sans-serif;
 
 // ─── Conteneur principal ───────────────────────────
 .pz-chatbot {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  left: auto !important;
   z-index: 10000;
   font-family: $font;
 }
@@ -84,9 +85,10 @@ $font: 'Segoe UI', system-ui, sans-serif;
 
 // ─── Panneau ──────────────────────────────────────
 .pz-chatbot__panel {
-  position: absolute;
-  bottom: 72px;
-  right: 0;
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  left: auto;
   width: 390px;
   height: 560px;
   background: #f4f6fb;
@@ -490,14 +492,14 @@ $font: 'Segoe UI', system-ui, sans-serif;
 // ─── Responsive mobile ────────────────────────────
 @media (max-width: 480px) {
   .pz-chatbot {
-    bottom: 16px;
-    right: 16px;
+    bottom: 16px !important;
+    right: 16px !important;
   }
 
   .pz-chatbot__panel {
     width: calc(100vw - 32px);
     height: calc(100vh - 110px);
-    bottom: 72px;
-    right: 0;
+    bottom: 92px;
+    right: 16px;
   }
 }

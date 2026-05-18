@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatbotService } from './chatbot.service';
@@ -7,14 +7,7 @@ import { ChatSession, ChatMessage } from './chatbot.model';
 @Component({
   selector: 'jhi-chatbot',
   standalone: true,
-  // ─── FIX NG0100 définitif ────────────────────────────────────────────────
-  // OnPush : Angular ne re-vérifie ce composant QUE quand :
-  //   - une @Input() change
-  //   - un événement part du composant
-  //   - cd.markForCheck() est appelé explicitement
-  // → La clock de home.ts ne peut plus déclencher de vérification ici
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // ─────────────────────────────────────────────────────────────────────────
   imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './chatbot.component.html',
   styleUrls: ['./chatbot.component.scss'],
@@ -40,8 +33,6 @@ export class ChatbotComponent implements OnInit {
     this.loadSessions();
     this.checkHealth();
   }
-
-  // ── Public actions ────────────────────────────────────────────
 
   toggleChat(): void {
     this.isOpen = !this.isOpen;
@@ -107,7 +98,6 @@ export class ChatbotComponent implements OnInit {
     this.currentMessage = '';
     this.isLoading = true;
 
-    // Message optimiste immédiat
     this.messages = [
       ...this.messages,
       {
@@ -170,8 +160,6 @@ export class ChatbotComponent implements OnInit {
     return msg.id;
   }
 
-  // ── Privés ───────────────────────────────────────────────────
-
   private showWelcomeMessage(): void {
     this.messages = [
       {
@@ -191,13 +179,11 @@ export class ChatbotComponent implements OnInit {
     ];
   }
 
-  /** Informe Angular qu'un re-rendu est nécessaire (OnPush) */
   private mark(): void {
     this.cd.markForCheck();
   }
 
   private scrollToBottom(): void {
-    // ngZone.runOutsideAngular pour ne pas déclencher de détection supplémentaire
     this.ngZone.runOutsideAngular(() => {
       setTimeout(() => {
         try {
