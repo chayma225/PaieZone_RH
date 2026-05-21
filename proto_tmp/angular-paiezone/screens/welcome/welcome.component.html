@@ -1,0 +1,197 @@
+<div class="pz-app welcome">
+  <!-- ── Top bar ────────────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">PZ</div>
+      <div class="brand-name">paie<span>zone</span> RH</div>
+    </div>
+    <nav class="nav-links">
+      <a href="#features">Fonctionnalités</a>
+      <a href="#plans">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="actions">
+      <a class="pz-btn pz-ghost" routerLink="/paiezone/login">Se connecter</a>
+      <a class="pz-btn pz-primary" routerLink="/paiezone/signup">
+        Commencer gratuitement <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6"/>
+      </a>
+    </div>
+  </header>
+
+  <!-- ── Hero ──────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="badge">
+        <span class="dot"></span>
+        Nouvelle version 2026 — Loi de Finances intégrée
+      </div>
+      <h1>
+        La paie en Tunisie,<br/>
+        <span class="grad">enfin sans douleur.</span>
+      </h1>
+      <p class="lead">
+        PaieZone RH automatise vos bulletins, vos déclarations CNSS et vos congés.
+        Conçu pour les PME tunisiennes, conforme aux dernières lois.
+      </p>
+      <div class="hero-actions">
+        <a class="pz-btn pz-primary lg" routerLink="/paiezone/signup">
+          Essayer 14 jours gratuits <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6"/>
+        </a>
+        <a class="pz-btn lg" routerLink="/paiezone/rh-dash">
+          Voir la démo
+        </a>
+      </div>
+      <div class="hero-trust">
+        Aucune carte bancaire requise · Mise en service en 10 minutes · Données hébergées en Tunisie
+      </div>
+    </div>
+    <!-- Decorative dashboard preview -->
+    <div class="hero-preview">
+      <div class="prev-card prev-1">
+        <div class="prev-head">
+          <span class="prev-dot"></span>
+          <span>Mai 2026 — Bulletins de paie</span>
+        </div>
+        <div class="prev-row"><span>Mehdi Ben Salah</span><span class="pz-mono">3 245,150 TND</span></div>
+        <div class="prev-row"><span>Leila Chaâbane</span><span class="pz-mono">3 680,000 TND</span></div>
+        <div class="prev-row"><span>Amal Trabelsi</span><span class="pz-mono">2 140,200 TND</span></div>
+        <div class="prev-row faded"><span>Yassine Khelifi</span><span class="pz-mono">1 895,000 TND</span></div>
+      </div>
+      <div class="prev-card prev-2">
+        <div class="prev-stat">
+          <div class="prev-lbl">Masse salariale</div>
+          <div class="prev-val">96 400 <small>TND</small></div>
+          <div class="prev-delta">+1.7% vs Avril</div>
+        </div>
+      </div>
+      <div class="prev-card prev-3">
+        <pz-icon name="Sparkles" [size]="14"/>
+        <div>Calcul CNSS automatique</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Logos / trust band ───────────────────────────────────── -->
+  <section class="trust-band">
+    <div class="trust-label">Déjà adopté par des PME tunisiennes innovantes</div>
+    <div class="trust-logos">
+      <div>Atlas Tech</div>
+      <div>Sahel Media</div>
+      <div>Carthago Industries</div>
+      <div>Olea Pharma</div>
+      <div>Djerba Agro</div>
+      <div>Kairouan Log.</div>
+    </div>
+  </section>
+
+  <!-- ── Features ─────────────────────────────────────────────── -->
+  <section id="features" class="features">
+    <div class="section-head">
+      <div class="eyebrow">Fonctionnalités</div>
+      <h2>Tout ce qu'il faut pour gérer la paie tunisienne</h2>
+      <p>De la création du dossier employé au virement bancaire, en passant par l'IRPP et les congés payés.</p>
+    </div>
+    <div class="features-grid">
+      @for (f of features; track f.title) {
+        <div class="feature">
+          <div class="f-ico"><pz-icon [name]="f.icon"/></div>
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.desc }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ── Plans ────────────────────────────────────────────────── -->
+  <section id="plans" class="plans">
+    <div class="section-head">
+      <div class="eyebrow">Tarifs</div>
+      <h2>Une formule pour chaque taille d'équipe</h2>
+      <p>14 jours d'essai sur toutes les formules. Sans carte bancaire, sans engagement.</p>
+    </div>
+    <div class="plans-grid">
+      @for (p of plans; track p.code) {
+        <div class="plan" [class.popular]="p.popular">
+          @if (p.popular) { <div class="popular-badge">Le plus choisi</div> }
+          <div class="plan-head" [style.--plan-color]="p.color">
+            <div class="plan-name">{{ p.label }}</div>
+            <div class="plan-price">
+              @if (p.price === 0) {
+                <span class="price">Gratuit</span>
+                <span class="period">· {{ p.period }}</span>
+              } @else {
+                <span class="price">{{ p.price }} <small>TND</small></span>
+                <span class="period">/ {{ p.period }}</span>
+              }
+            </div>
+            <div class="plan-max">Jusqu'à {{ p.max }} employés</div>
+          </div>
+          <ul class="plan-features">
+            @for (feat of p.features; track feat) {
+              <li><pz-icon name="Check" [size]="14" [strokeWidth]="1.8"/> {{ feat }}</li>
+            }
+          </ul>
+          <a class="pz-btn full" [class.pz-primary]="p.popular"
+             [routerLink]="['/paiezone/signup']" [queryParams]="{ plan: p.code }">
+            Choisir {{ p.label }}
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ── CTA ──────────────────────────────────────────────────── -->
+  <section class="cta">
+    <div class="cta-inner">
+      <h2>Prêt à passer à PaieZone ?</h2>
+      <p>Mise en service en 10 minutes. Importez vos employés via Excel, lancez votre première paie le jour même.</p>
+      <div class="cta-actions">
+        <a class="pz-btn pz-primary lg" routerLink="/paiezone/signup">
+          Créer mon compte <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6"/>
+        </a>
+        <a class="pz-btn lg" href="mailto:contact@paiezone.tn">
+          <pz-icon name="Mail" [size]="14" [strokeWidth]="1.4"/> Nous contacter
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="foot-cols">
+      <div>
+        <div class="brand">
+          <div class="brand-mark">PZ</div>
+          <div class="brand-name">paie<span>zone</span> RH</div>
+        </div>
+        <p class="foot-tagline">La paie tunisienne, simplifiée.</p>
+      </div>
+      <div>
+        <div class="foot-title">Produit</div>
+        <a href="#features">Fonctionnalités</a>
+        <a href="#plans">Tarifs</a>
+        <a>Sécurité</a>
+        <a>API</a>
+      </div>
+      <div>
+        <div class="foot-title">Ressources</div>
+        <a>Centre d'aide</a>
+        <a>Blog RH</a>
+        <a>Guide LF 2026</a>
+        <a>Statut</a>
+      </div>
+      <div>
+        <div class="foot-title">Légal</div>
+        <a>CGU</a>
+        <a>Politique de confidentialité</a>
+        <a>Mentions légales</a>
+        <a>RGPD</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 PaieZone. Tous droits réservés.</span>
+      <span>🇹🇳 Hébergé en Tunisie</span>
+    </div>
+  </footer>
+</div>

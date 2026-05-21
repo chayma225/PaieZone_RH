@@ -33,7 +33,22 @@ export class ApiService {
   }
 
   activityFeed(): Observable<ActivityItem[]> {
-    return this.http.get<ActivityItem[]>('/api/dashboard/activity');
+    return this.http.get<any[]>('/api/dashboard/activity').pipe(
+      map(list =>
+        list.map(
+          d =>
+            ({
+              icon: d.icon ?? 'History',
+              userLogin: d.userLogin ?? '',
+              message: d.message ?? '',
+              dateLabel: d.dateLabel ?? '',
+              timeHm: d.timeHm ?? '',
+              entityType: (d.entityType ?? '').toUpperCase(),
+              entityId: d.entityId ? Number(d.entityId) : null,
+            }) as ActivityItem,
+        ),
+      ),
+    );
   }
 
   payrollChart(): Observable<PayrollChartPoint[]> {
@@ -385,6 +400,10 @@ export class ApiService {
 
   downloadCertificatRI(employeeId: number, year: number): Observable<Blob> {
     return this.http.get(`/api/export/certificat-ri/${employeeId}?year=${year}`, { responseType: 'blob' });
+  }
+
+  downloadCnssTrimestriel(year: number, trimestre: number): Observable<Blob> {
+    return this.http.get(`/api/export/cnss/trimestre?year=${year}&trimestre=${trimestre}`, { responseType: 'blob' });
   }
 
   auditLogs(size = 500): Observable<AuditEntry[]> {

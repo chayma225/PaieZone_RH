@@ -78,13 +78,18 @@ interface CalDay {
   standalone: true,
   imports: [CommonModule, FormsModule, IconComponent],
   template: `
-    <div class="pz-page">
+    <div class="pz-page" style="color:#0f172a;font-weight:400;">
       <!-- ── En-tête ──────────────────────────────────────────────────────── -->
       <div class="pz-page-head">
         <div>
-          <div class="pz-crumbs"><strong>RH</strong> <span class="sep">/</span> Tableau de bord</div>
-          <h1>Tableau de bord RH</h1>
-          <div class="pz-muted">{{ data.employees().length }} collaborateurs · {{ pendingCount() }} demandes en attente</div>
+          <div class="pz-crumbs" style="color:#64748b;font-size:12px;font-weight:400;">
+            <strong style="color:#334155;font-weight:500;">RH</strong>
+            <span class="sep" style="color:#94a3b8;margin:0 6px;">/</span> Tableau de bord
+          </div>
+          <h1 style="font-size:24px;font-weight:600;color:#0f172a;margin:0 0 4px;letter-spacing:-0.02em;">Tableau de bord RH</h1>
+          <div style="font-size:13px;color:#64748b;font-weight:400;">
+            {{ data.employees().length }} collaborateurs · {{ pendingCount() }} demandes en attente
+          </div>
         </div>
         <div class="pz-page-actions">
           <button class="pz-btn"><pz-icon name="Download" [size]="14" /> Exporter</button>
@@ -92,65 +97,142 @@ interface CalDay {
       </div>
 
       <!-- ── Hero paie ─────────────────────────────────────────────────────── -->
-      <div class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-inner">
+      <div
+        class="hero"
+        style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 100%);color:#fff;border-radius:14px;padding:24px;position:relative;overflow:hidden;border:none;"
+      >
+        <div
+          class="hero-bg"
+          style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.35),transparent 70%);pointer-events:none;"
+        ></div>
+        <div class="hero-inner" style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;">
           <div>
-            <div class="hero-eyebrow">Période de paie en cours</div>
-            <h2>{{ currentPeriod().label }}</h2>
-            <div class="hero-meta">
+            <div
+              class="hero-eyebrow"
+              style="color:#fff;opacity:0.7;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;font-weight:500;margin-bottom:8px;"
+            >
+              Période de paie en cours
+            </div>
+            <h2 style="color:#fff;font-size:24px;font-weight:600;margin:0 0 6px;">{{ currentPeriod().label }}</h2>
+            <div class="hero-meta" style="color:rgba(255,255,255,0.8);font-size:13.5px;font-weight:400;">
               @if (currentPeriod().employees > 0) {
-                {{ currentPeriod().employees }} bulletins · Brut <strong>{{ data.fmtTND(currentPeriod().gross) }}</strong> · Net
-                <strong>{{ data.fmtTND(currentPeriod().net) }}</strong>
+                {{ currentPeriod().employees }} bulletins · Brut
+                <strong style="color:#fff;font-weight:600;">{{ data.fmtTND(currentPeriod().gross) }}</strong> · Net
+                <strong style="color:#fff;font-weight:600;">{{ data.fmtTND(currentPeriod().net) }}</strong>
               } @else {
-                Statut : <strong>{{ currentPeriod().status }}</strong>
+                Statut : <strong style="color:#fff;font-weight:600;">{{ currentPeriod().status }}</strong>
               }
             </div>
           </div>
-          <button class="pz-btn hero-btn">Ouvrir la paie <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" /></button>
+          <button
+            class="pz-btn hero-btn"
+            style="background:rgba(255,255,255,0.95);color:#312e81;border-color:transparent;height:42px;padding:0 18px;font-size:14px;font-weight:600;flex-shrink:0;"
+          >
+            Ouvrir la paie <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" />
+          </button>
         </div>
-        <div class="hero-steps">
+        <div class="hero-steps" style="display:flex;gap:8px;margin-top:20px;position:relative;z-index:1;">
           @for (s of payrollSteps; track s.label; let i = $index) {
-            <div class="hero-step" [class.active]="i === activeStep()" [class.done]="i < activeStep()">
-              <div class="step-num">{{ i < activeStep() ? '✓' : i + 1 }}</div>
+            <div
+              class="hero-step"
+              [style.background]="
+                i < activeStep() ? 'rgba(255,255,255,0.18)' : i === activeStep() ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.06)'
+              "
+              [style.border]="i === activeStep() ? '1px solid rgba(255,255,255,0.45)' : '1px solid transparent'"
+              style="flex:1;padding:10px 14px;border-radius:8px;display:flex;gap:10px;align-items:center;"
+            >
+              <div
+                class="step-num"
+                style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.18);display:grid;place-items:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;"
+              >
+                {{ i < activeStep() ? '✓' : i + 1 }}
+              </div>
               <div>
-                <div class="step-label">{{ s.label }}</div>
-                <small>{{ s.sub }}</small>
+                <div class="step-label" style="color:#fff;font-size:13.5px;font-weight:500;">{{ s.label }}</div>
+                <small style="color:rgba(255,255,255,0.7);font-size:11px;display:block;">{{ s.sub }}</small>
               </div>
             </div>
           }
         </div>
       </div>
 
+      <!-- ── Déclarations CNSS ────────────────────────────────────────────── -->
+      <div class="pz-card" style="padding:18px 20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#0f172a;margin-bottom:3px;">Déclarations CNSS trimestrielles</div>
+            <div style="font-size:12.5px;color:#64748b;font-weight:400;">
+              Télécharger le journal de déclaration trimestrielle à déposer sur le portail CNSS.
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <select
+              class="pz-select-inline"
+              [(ngModel)]="cnssYear"
+              style="height:34px;padding:0 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;background:#fff;color:#0f172a;"
+            >
+              @for (y of cnssYears; track y) {
+                <option [value]="y">{{ y }}</option>
+              }
+            </select>
+            @for (t of [1, 2, 3, 4]; track t) {
+              <button
+                class="pz-btn pz-sm"
+                [disabled]="cnssLoading()"
+                (click)="downloadCnss(t)"
+                style="font-size:12.5px;font-weight:500;gap:5px;"
+              >
+                <pz-icon name="Download" [size]="13" /> T{{ t }}
+              </button>
+            }
+          </div>
+        </div>
+        @if (cnssErr()) {
+          <div style="margin-top:8px;font-size:12px;color:#b91c1c;">{{ cnssErr() }}</div>
+        }
+      </div>
+
       <!-- ── KPI cards ─────────────────────────────────────────────────────── -->
       <div class="stat-grid">
         <div class="pz-card stat">
-          <div class="stat-head">
+          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
             <span class="ico"><pz-icon name="Users" /></span>Effectifs
           </div>
-          <div class="stat-val">{{ data.employees().length }}</div>
-          <div class="stat-foot pz-muted">collaborateurs actifs</div>
+          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
+            {{ data.employees().length }}
+          </div>
+          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">collaborateurs actifs</div>
         </div>
         <div class="pz-card stat">
-          <div class="stat-head">
+          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
             <span class="ico info"><pz-icon name="Wallet" /></span>Masse salariale
           </div>
-          <div class="stat-val">{{ currentPeriod().gross > 0 ? data.fmtTND(currentPeriod().gross) : '—' }}</div>
-          <div class="stat-foot pz-muted">brut période en cours</div>
+          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
+            {{ currentPeriod().gross > 0 ? data.fmtTND(currentPeriod().gross) : '—' }}
+          </div>
+          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">brut période en cours</div>
         </div>
         <div class="pz-card stat">
-          <div class="stat-head">
+          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
             <span class="ico warn"><pz-icon name="Calendar" /></span>Congés à valider
           </div>
-          <div class="stat-val">{{ pendingLeaves().length }}</div>
-          <div class="stat-foot pz-muted">{{ pendingDays() }} jours au total</div>
+          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
+            {{ pendingLeaves().length }}
+          </div>
+          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">
+            {{ pendingDays() }} jours au total
+          </div>
         </div>
         <div class="pz-card stat">
-          <div class="stat-head">
+          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
             <span class="ico danger"><pz-icon name="Cash" /></span>Avances en attente
           </div>
-          <div class="stat-val">{{ pendingAdvances().length }}</div>
-          <div class="stat-foot pz-muted">{{ pendingAdvAmt() > 0 ? data.fmtTND(pendingAdvAmt()) + ' à valider' : '—' }}</div>
+          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
+            {{ pendingAdvances().length }}
+          </div>
+          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">
+            {{ pendingAdvAmt() > 0 ? data.fmtTND(pendingAdvAmt()) + ' à valider' : '—' }}
+          </div>
         </div>
       </div>
 
@@ -160,16 +242,19 @@ interface CalDay {
         <div class="pz-card">
           <div class="card-head">
             <div>
-              <div class="card-title">Masse salariale — 6 mois</div>
-              <div class="card-sub">Salaires bruts + charges patronales</div>
+              <div class="card-title" style="font-size:14px;font-weight:600;color:#0f172a;">Masse salariale — 6 mois</div>
+              <div class="card-sub" style="font-size:11.5px;color:#64748b;font-weight:400;margin-top:2px;">
+                Salaires bruts + charges patronales
+              </div>
             </div>
             <div class="chart-legend">
-              <span class="swatch brut"></span><span class="leg-label">Brut</span> <span class="swatch charges"></span
-              ><span class="leg-label">Charges</span>
+              <span class="swatch brut"></span><span class="leg-label" style="font-size:11.5px;color:#64748b;font-weight:400;">Brut</span>
+              <span class="swatch charges"></span
+              ><span class="leg-label" style="font-size:11.5px;color:#64748b;font-weight:400;">Charges</span>
             </div>
           </div>
           @if (chartData().length === 0) {
-            <div class="pz-muted" style="padding:32px;text-align:center;font-size:13px">Aucune donnée de paie disponible</div>
+            <div style="padding:32px;text-align:center;font-size:13px;color:#64748b;font-weight:400;">Aucune donnée de paie disponible</div>
           } @else {
             <div class="chart-wrap">
               <svg viewBox="0 0 600 180" preserveAspectRatio="none" width="100%" height="180">
@@ -208,10 +293,12 @@ interface CalDay {
 
         <!-- Demandes en attente -->
         <div class="pz-card">
-          <div class="card-head"><div class="card-title">Demandes en attente</div></div>
+          <div class="card-head">
+            <div class="card-title" style="font-size:14px;font-weight:600;color:#0f172a;">Demandes en attente</div>
+          </div>
           <div class="card-body">
             @if (pendingLeaves().length === 0 && pendingAdvances().length === 0) {
-              <div class="pz-muted" style="padding:20px 0;text-align:center;font-size:13px">Aucune demande en attente</div>
+              <div style="padding:20px 0;text-align:center;font-size:13px;color:#64748b;font-weight:400;">Aucune demande en attente</div>
             }
             @for (l of pendingLeaves(); track l.id) {
               @let e = data.empById(l.empId);
@@ -258,12 +345,12 @@ interface CalDay {
         <!-- Calendrier des congés -->
         <div class="pz-card">
           <div class="card-head">
-            <div class="card-title">Calendrier des congés</div>
+            <div class="card-title" style="font-size:14px;font-weight:600;color:#0f172a;">Calendrier des congés</div>
             <div class="cal-nav">
               <button class="pz-btn pz-sm pz-ghost" (click)="prevMonth()">
                 <pz-icon name="Caret" [size]="14" style="transform:rotate(90deg)" />
               </button>
-              <span class="cal-label">{{ calMonthLabel() }}</span>
+              <span class="cal-label" style="font-size:12px;font-weight:600;color:#334155;">{{ calMonthLabel() }}</span>
               <button class="pz-btn pz-sm pz-ghost" (click)="nextMonth()">
                 <pz-icon name="Caret" [size]="14" style="transform:rotate(-90deg)" />
               </button>
@@ -271,8 +358,8 @@ interface CalDay {
           </div>
           <div class="card-body cal-body">
             <div class="cal-legend">
-              <span class="dot-legend approved"></span><span class="pz-muted">Approuvé</span> <span class="dot-legend pending"></span
-              ><span class="pz-muted">En attente</span>
+              <span class="dot-legend approved"></span><span style="color:#64748b;font-size:11.5px;font-weight:400;">Approuvé</span>
+              <span class="dot-legend pending"></span><span style="color:#64748b;font-size:11.5px;font-weight:400;">En attente</span>
             </div>
             <div class="cal-grid">
               @for (d of DAYS_FR; track d) {
@@ -300,22 +387,58 @@ interface CalDay {
         <!-- Activité récente -->
         <div class="pz-card">
           <div class="card-head">
-            <div class="card-title">Activité récente</div>
-            <button class="pz-btn pz-sm pz-ghost" style="margin-left:auto">Tout voir →</button>
+            <div class="card-title" style="font-size:14px;font-weight:600;color:#0f172a;">Activité récente</div>
+            <span style="margin-left:auto;font-size:11px;color:#94a3b8;font-weight:400;"
+              >{{ activity().length }} entrée{{ activity().length > 1 ? 's' : '' }}</span
+            >
           </div>
-          <div class="card-body tl-body">
+          <div class="card-body tl-body" style="padding-bottom:0;">
             @if (activityLoading()) {
-              <div class="pz-muted" style="padding:20px 0;text-align:center;font-size:13px">Chargement…</div>
+              <div style="padding:20px 0;text-align:center;font-size:13px;color:#64748b;font-weight:400;">Chargement…</div>
             } @else if (activity().length === 0) {
-              <div class="pz-muted" style="padding:20px 0;text-align:center;font-size:13px">Aucune activité récente</div>
+              <div style="padding:20px 0;text-align:center;font-size:13px;color:#64748b;font-weight:400;">Aucune activité récente</div>
             } @else {
-              @for (a of activity(); track $index; let last = $last) {
-                <div class="tl-item" [class.last]="last">
+              @for (a of visibleActivity(); track $index; let last = $last) {
+                <div class="tl-item" [class.last]="last && !canShowMore()">
                   <div class="tl-dot"><pz-icon [name]="a.icon" [size]="13" /></div>
-                  <div>
-                    <div class="tl-text">{{ a.message }}</div>
-                    <div class="tl-time">{{ a.dateLabel }} · {{ a.timeHm }}</div>
+                  <div style="flex:1;min-width:0;">
+                    <div class="tl-text" style="font-size:13px;color:#1e293b;font-weight:400;line-height:1.5;">{{ a.message }}</div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:3px;">
+                      <div class="tl-time" style="font-size:11.5px;color:#94a3b8;font-weight:400;">{{ a.dateLabel }} · {{ a.timeHm }}</div>
+                      @if (isDownloadable(a)) {
+                        <button
+                          class="pz-btn pz-sm"
+                          style="height:22px;padding:0 8px;font-size:11px;font-weight:500;gap:4px;display:inline-flex;align-items:center;border-radius:5px;"
+                          [disabled]="dlLoading()[a.entityType + '_' + a.entityId]"
+                          (click)="downloadActivity(a); $event.stopPropagation()"
+                          [title]="downloadLabel(a)"
+                        >
+                          @if (dlLoading()[a.entityType + '_' + a.entityId]) {
+                            <span style="font-size:10px;">…</span>
+                          } @else {
+                            <pz-icon name="Download" [size]="11" />
+                          }
+                          {{ downloadLabel(a) }}
+                        </button>
+                      }
+                    </div>
                   </div>
+                </div>
+              }
+              <!-- Voir plus / Voir moins -->
+              @if (canShowMore() || activityExpanded()) {
+                <div style="text-align:center;padding:10px 0 14px;border-top:1px solid #f1f5f9;margin-top:4px;">
+                  <button
+                    class="pz-btn pz-sm pz-ghost"
+                    style="font-size:12px;font-weight:500;color:#4f46e5;"
+                    (click)="toggleActivityExpand()"
+                  >
+                    @if (activityExpanded()) {
+                      Réduire ↑
+                    } @else {
+                      Voir les {{ activity().length - activityLimit }} autres →
+                    }
+                  </button>
                 </div>
               }
             }
@@ -365,10 +488,59 @@ export default class RhDashboardComponent implements OnInit {
   // ── Activité récente (dynamique) ─────────────────────────────────────────
   protected readonly activity = signal<ActivityItem[]>([]);
   protected readonly activityLoading = signal(true);
+  protected readonly activityLimit = 10;
+  protected readonly activityExpanded = signal(false);
+  protected readonly dlLoading = signal<Record<string, boolean>>({});
+
+  protected readonly visibleActivity = computed(() =>
+    this.activityExpanded() ? this.activity() : this.activity().slice(0, this.activityLimit),
+  );
+
+  protected readonly canShowMore = computed(() => !this.activityExpanded() && this.activity().length > this.activityLimit);
+
+  protected toggleActivityExpand(): void {
+    this.activityExpanded.update(v => !v);
+  }
+
+  protected isDownloadable(a: ActivityItem): boolean {
+    return !!a.entityId && ['PAYSLIP', 'PAYROLLPERIOD'].includes(a.entityType);
+  }
+
+  protected downloadLabel(a: ActivityItem): string {
+    if (a.entityType === 'PAYSLIP') return 'Bulletin';
+    if (a.entityType === 'PAYROLLPERIOD') return 'Bulletins';
+    return 'Télécharger';
+  }
+
+  protected downloadActivity(a: ActivityItem): void {
+    if (!a.entityId) return;
+    const key = `${a.entityType}_${a.entityId}`;
+    this.dlLoading.update(m => ({ ...m, [key]: true }));
+    const obs$ = a.entityType === 'PAYSLIP' ? this.api.downloadBulletin(a.entityId) : this.api.downloadBulkBulletin(a.entityId);
+    const filename = a.entityType === 'PAYSLIP' ? `bulletin_${a.entityId}.pdf` : `bulletins_periode_${a.entityId}.pdf`;
+    obs$.subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+        this.dlLoading.update(m => ({ ...m, [key]: false }));
+      },
+      error: () => this.dlLoading.update(m => ({ ...m, [key]: false })),
+    });
+  }
 
   // ── Histogramme masse salariale (dynamique) ──────────────────────────────
   protected readonly chartData = signal<PayrollChartPoint[]>([]);
   protected readonly chartBars = computed(() => buildChartBarsFromData(this.chartData()));
+
+  // ── CNSS export ──────────────────────────────────────────────────────────
+  protected readonly cnssLoading = signal(false);
+  protected readonly cnssErr = signal('');
+  protected cnssYear = new Date().getFullYear();
+  protected readonly cnssYears = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
   protected readonly DAYS_FR = DAYS_FR;
   protected readonly GRID_LINES = GRID_LINES;
@@ -451,6 +623,28 @@ export default class RhDashboardComponent implements OnInit {
     { label: 'Validation', sub: 'À faire' },
     { label: 'Verrouillage', sub: 'À faire' },
   ];
+
+  downloadCnss(trimestre: number): void {
+    this.cnssLoading.set(true);
+    this.cnssErr.set('');
+    this.api.downloadCnssTrimestriel(this.cnssYear, trimestre).subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `CNSS_T${trimestre}_${this.cnssYear}.xlsx`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.cnssLoading.set(false);
+      },
+      error: () => {
+        this.cnssErr.set(
+          `Impossible de générer la déclaration T${trimestre} ${this.cnssYear}. Vérifiez que la paie du trimestre est validée.`,
+        );
+        this.cnssLoading.set(false);
+      },
+    });
+  }
 
   protected pendingLeaves() {
     return this.data.leaves().filter(l => l.status === 'pending');

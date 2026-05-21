@@ -187,10 +187,25 @@
             <tr>
               <td>
                 <div class="ev-name">
-                  <div class="pz-avatar sm" [attr.data-bg]="(c.id % 6) + 1">
-                    {{ (c.tradeName || c.name || '?').split(' ')[0][0]?.toUpperCase()
-                    }}{{ (c.tradeName || c.name || '').split(' ')[1]?.[0]?.toUpperCase() || '' }}
-                  </div>
+                  @if (c.logoUrl) {
+                    <img
+                      [src]="c.logoUrl"
+                      alt=""
+                      style="
+                        width: 28px;
+                        height: 28px;
+                        border-radius: 8px;
+                        object-fit: cover;
+                        border: 1px solid var(--pz-line);
+                        flex-shrink: 0;
+                      "
+                    />
+                  } @else {
+                    <div class="pz-avatar sm" [attr.data-bg]="(c.id % 6) + 1">
+                      {{ (c.tradeName || c.name || '?').split(' ')[0][0]?.toUpperCase()
+                      }}{{ (c.tradeName || c.name || '').split(' ')[1]?.[0]?.toUpperCase() || '' }}
+                    </div>
+                  }
                   <div>
                     <div class="strong">{{ c.name || c.tradeName || '—' }}</div>
                     <small class="pz-muted">{{ c.city }} · {{ c.taxId }}</small>

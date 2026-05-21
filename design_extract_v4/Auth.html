@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PaieZone — Authentification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100vh; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #fafaf7;
+    background: #1a0735;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  :root {
+    --bg-dark:    #1a0735;
+    --bg-deeper:  #0e0420;
+    --primary:    #7c3aed;
+    --primary-2:  #6d28d9;
+    --primary-3:  #5b21b6;
+    --mauve-pale: #c4b5fd;
+    --mauve-soft: #ddd6fe;
+    --lavender:   #a78bfa;
+    --pos:        #34d399;
+    --danger:     #fb7185;
+    --ink-light:  rgba(250,250,247,0.95);
+    --ink-mid:    rgba(250,250,247,0.7);
+    --ink-faint:  rgba(250,250,247,0.5);
+    --line-faint: rgba(255,255,255,0.1);
+    --line-soft:  rgba(255,255,255,0.18);
+  }
+  ::selection { background: var(--mauve-pale); color: var(--bg-deeper); }
+  button { font: inherit; cursor: pointer; background: transparent; border: 0; padding: 0; color: inherit; }
+  input, select { font: inherit; color: inherit; }
+  a { color: inherit; text-decoration: none; }
+  .serif { font-family: 'Instrument Serif', serif; font-weight: 400; font-style: italic; letter-spacing: -0.005em; }
+  .mono  { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+  /* ═══════════ Animated mesh background ═══════════ */
+  .mesh-bg {
+    position: fixed; inset: 0;
+    z-index: -2;
+    background: var(--bg-dark);
+    overflow: hidden;
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    will-change: transform;
+  }
+  .blob.b1 {
+    top: -10%; left: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, #7c3aed, transparent 70%);
+    animation: blob1 24s ease-in-out infinite;
+  }
+  .blob.b2 {
+    top: 30%; right: -10%;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, #c084fc, transparent 70%);
+    animation: blob2 28s ease-in-out infinite;
+  }
+  .blob.b3 {
+    bottom: -10%; left: 20%;
+    width: 550px; height: 550px;
+    background: radial-gradient(circle, #4f46e5, transparent 70%);
+    animation: blob3 32s ease-in-out infinite;
+  }
+  .blob.b4 {
+    top: 60%; left: 50%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, #ec4899, transparent 70%);
+    opacity: 0.35;
+    animation: blob4 36s ease-in-out infinite;
+  }
+  @keyframes blob1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40vw, 20vh) scale(1.15); }
+    66% { transform: translate(20vw, 50vh) scale(0.9); }
+  }
+  @keyframes blob2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-40vw, -10vh) scale(1.2); }
+  }
+  @keyframes blob3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30vw, -40vh) scale(1.1); }
+  }
+  @keyframes blob4 {
+    0%, 100% { transform: translate(0, 0) scale(0.9); }
+    50% { transform: translate(-25vw, -25vh) scale(1.2); }
+  }
+
+  /* Grid noise overlay */
+  .grid-overlay {
+    position: fixed; inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
+  /* Floating decorative orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    background: var(--mauve-pale);
+    box-shadow: 0 0 16px 2px var(--mauve-pale);
+    opacity: 0.7;
+    z-index: -1;
+    pointer-events: none;
+    animation: float 8s ease-in-out infinite;
+  }
+  .orb.o1 { top: 15%; left: 8%; width: 6px; height: 6px; animation-delay: 0s; }
+  .orb.o2 { top: 25%; right: 12%; width: 4px; height: 4px; animation-delay: 1.5s; }
+  .orb.o3 { bottom: 25%; left: 15%; width: 5px; height: 5px; animation-delay: 3s; }
+  .orb.o4 { bottom: 18%; right: 10%; width: 7px; height: 7px; animation-delay: 0.7s; }
+  .orb.o5 { top: 45%; left: 5%; width: 3px; height: 3px; animation-delay: 2.2s; }
+  .orb.o6 { top: 60%; right: 6%; width: 5px; height: 5px; animation-delay: 4s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+    50% { transform: translateY(-20px) scale(1.3); opacity: 0.9; }
+  }
+
+  /* ═══════════ Demo pills (top right) ═══════════ */
+  .demo-pills {
+    position: fixed; top: 24px; right: 24px;
+    z-index: 50;
+    display: flex; gap: 4px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--line-faint);
+    border-radius: 999px;
+    padding: 5px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  .demo-pills button {
+    height: 32px; padding: 0 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .demo-pills button:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .demo-pills button.active {
+    background: rgba(255,255,255,0.95);
+    color: var(--bg-deeper);
+  }
+
+  /* ═══════════ Header ═══════════ */
+  .top-header {
+    position: relative;
+    z-index: 5;
+    padding: 28px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 17px; letter-spacing: -0.025em; color: #fff; }
+  .brand-mark {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: linear-gradient(135deg, #fff, #ddd6fe);
+    color: var(--bg-deeper);
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 13px;
+    box-shadow: 0 8px 24px rgba(196,181,253,0.3);
+    position: relative; overflow: hidden;
+  }
+  .brand-mark::after {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 14px; height: 14px;
+    background: var(--primary);
+    border-bottom-left-radius: 9px;
+  }
+  .brand-name span.it { color: var(--mauve-pale); font-weight: 800; }
+  .lang-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 16px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--line-faint);
+    border-radius: 999px;
+    color: var(--ink-mid);
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
+  /* ═══════════ Main centered card ═══════════ */
+  .auth-wrap {
+    position: relative;
+    z-index: 3;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 24px 60px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--line-soft);
+    border-radius: 28px;
+    padding: 44px;
+    box-shadow:
+      0 50px 100px -20px rgba(0,0,0,0.5),
+      0 30px 60px -30px rgba(124,58,237,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Subtle inner glow */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg, rgba(196,181,253,0.08) 60deg,
+      transparent 120deg, rgba(167,139,250,0.06) 180deg,
+      transparent 240deg, rgba(124,58,237,0.08) 300deg,
+      transparent 360deg
+    );
+    animation: rotate-glow 20s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+  @keyframes rotate-glow {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Eyebrow */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 22px;
+    padding: 5px 14px 5px 5px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--line-faint);
+    border-radius: 999px;
+  }
+  .eyebrow-num {
+    background: var(--mauve-pale); color: var(--bg-deeper);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: inline-grid; place-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  h1 {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    margin: 0 0 14px;
+    color: #fff;
+  }
+  h1 .serif { color: var(--mauve-pale); }
+  .lead {
+    font-size: 15px;
+    color: var(--ink-mid);
+    line-height: 1.55;
+    margin: 0 0 32px;
+  }
+  .lead strong { color: #fff; font-weight: 600; }
+
+  /* ═══════════ Form ═══════════ */
+  .form { display: flex; flex-direction: column; gap: 16px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .field .req { color: var(--mauve-pale); margin-left: 2px; }
+  .field .hint { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+
+  .input, .input-wrap {
+    height: 50px;
+    border: 1px solid var(--line-soft);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    font-size: 14.5px;
+    color: #fff;
+    transition: all 0.2s ease;
+  }
+  .input { padding: 0 18px; outline: 0; }
+  .input::placeholder { color: var(--ink-faint); }
+  .input:focus {
+    border-color: var(--mauve-pale);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 4px rgba(196,181,253,0.15);
+  }
+
+  .input-wrap {
+    display: flex; align-items: center;
+    padding: 0 18px;
+    gap: 14px;
+  }
+  .input-wrap:focus-within {
+    border-color: var(--mauve-pale);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 4px rgba(196,181,253,0.15);
+  }
+  .input-wrap input {
+    flex: 1; min-width: 0;
+    border: 0; outline: 0; background: transparent;
+    color: #fff;
+    height: 100%;
+  }
+  .input-wrap input::placeholder { color: var(--ink-faint); }
+  .input-wrap .leading-ico, .input-wrap .trailing { color: var(--ink-faint); flex-shrink: 0; display: grid; place-items: center; }
+  .input-wrap .trailing button { color: var(--ink-faint); padding: 6px; border-radius: 8px; display: grid; place-items: center; transition: all 0.15s; }
+  .input-wrap .trailing button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+  select.input {
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path fill='%23ffffff80' d='M0 0h10L5 6z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    padding-right: 40px;
+  }
+
+  /* Row inline */
+  .row-between {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 2px;
+  }
+  .checkbox {
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; user-select: none;
+    font-size: 13px;
+    color: var(--ink-mid);
+  }
+  .checkbox input { position: absolute; opacity: 0; pointer-events: none; }
+  .checkbox .box {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--line-soft);
+    background: rgba(255,255,255,0.05);
+    display: grid; place-items: center;
+    color: transparent;
+    transition: all 0.15s;
+  }
+  .checkbox input:checked + .box {
+    background: var(--mauve-pale);
+    border-color: var(--mauve-pale);
+    color: var(--bg-deeper);
+  }
+  .link-pale {
+    color: var(--mauve-pale);
+    font-weight: 600;
+    font-size: 13px;
+    transition: color 0.15s;
+  }
+  .link-pale:hover { color: #fff; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 52px; padding: 0 24px;
+    border-radius: 999px;
+    border: 1px solid var(--line-soft);
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    font-size: 14.5px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--mauve-pale);
+    transform: translateY(-1px);
+  }
+  .btn.primary {
+    background: linear-gradient(135deg, #fff, #ddd6fe);
+    color: var(--bg-deeper);
+    border-color: transparent;
+    box-shadow: 0 10px 30px rgba(196,181,253,0.3);
+  }
+  .btn.primary:hover {
+    box-shadow: 0 14px 40px rgba(196,181,253,0.5);
+    transform: translateY(-2px);
+  }
+  .btn.primary::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.6s;
+  }
+  .btn.primary:hover::after { left: 100%; }
+  .btn.full { width: 100%; }
+  .btn .arrow { transition: transform 0.2s; }
+  .btn:hover .arrow { transform: translateX(3px); }
+
+  /* Divider */
+  .divider {
+    margin: 26px 0;
+    text-align: center;
+    position: relative;
+    color: var(--ink-faint);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+  .divider::before {
+    content: ''; position: absolute; inset: 50% 0 0;
+    height: 1px; background: var(--line-faint);
+  }
+  .divider span {
+    position: relative;
+    padding: 0 14px;
+    background: rgba(26,7,53,0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  /* SSO row */
+  .sso { display: flex; gap: 10px; }
+  .sso .btn { flex: 1; }
+
+  /* Stepper */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 28px;
+  }
+  .step-dot {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .step-dot .num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid var(--line-faint);
+    color: var(--ink-faint);
+    display: grid; place-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    transition: all 0.3s;
+  }
+  .step-dot.active .num {
+    background: linear-gradient(135deg, #fff, var(--mauve-pale));
+    color: var(--bg-deeper);
+    border-color: var(--mauve-pale);
+    box-shadow: 0 0 16px rgba(196,181,253,0.5);
+  }
+  .step-dot.active { color: #fff; }
+  .step-dot.done .num {
+    background: var(--mauve-pale); color: var(--bg-deeper); border-color: var(--mauve-pale);
+  }
+  .step-dot.done { color: var(--mauve-pale); }
+  .step-line {
+    flex: 1;
+    height: 1.5px;
+    background: var(--line-faint);
+    margin: 0 12px;
+    margin-bottom: 24px;
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .step-line.done { background: var(--mauve-pale); }
+
+  /* OTP row */
+  .otp-row {
+    display: flex; gap: 10px; justify-content: center;
+    margin: 12px 0 24px;
+  }
+  .otp-cell {
+    width: 52px; height: 60px;
+    border: 1.5px solid var(--line-soft);
+    border-radius: 14px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: #fff;
+    background: rgba(255,255,255,0.05);
+    outline: 0;
+    transition: all 0.2s;
+  }
+  .otp-cell:focus {
+    border-color: var(--mauve-pale);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 0 4px rgba(196,181,253,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Password strength */
+  .pwd-meter { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .pwd-bars { display: flex; gap: 4px; flex: 1; }
+  .pwd-bars i {
+    flex: 1; height: 4px; border-radius: 2px;
+    background: var(--line-faint);
+    transition: background 0.2s;
+  }
+  .pwd-bars i.on { background: var(--mauve-pale); box-shadow: 0 0 8px rgba(196,181,253,0.6); }
+  .pwd-label {
+    font-size: 10.5px; font-weight: 700;
+    color: var(--mauve-pale); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Footer */
+  .auth-foot {
+    position: relative;
+    z-index: 3;
+    padding: 20px 36px 30px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--ink-faint);
+    font-size: 12px;
+  }
+  .auth-foot a { color: var(--ink-mid); margin: 0 6px; transition: color 0.15s; }
+  .auth-foot a:hover { color: #fff; }
+
+  /* Screen transitions */
+  .screen { display: none; opacity: 0; transform: translateY(8px); }
+  .screen.active {
+    display: block;
+    animation: screen-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes screen-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Title swap helper */
+  .top-link {
+    color: var(--ink-mid); font-size: 13px; font-weight: 500;
+    display: none;
+  }
+  .top-link.active { display: inline; }
+  .top-link a { color: var(--mauve-pale); font-weight: 600; margin-left: 6px; }
+  .top-link a:hover { color: #fff; }
+
+  /* responsive */
+  @media (max-width: 640px) {
+    .top-header { padding: 20px; }
+    .card { padding: 32px 24px; border-radius: 22px; }
+    h1 { font-size: 30px; }
+    .demo-pills { right: 12px; top: 12px; padding: 3px; }
+    .demo-pills button { height: 28px; padding: 0 10px; font-size: 11px; }
+    .otp-cell { width: 44px; height: 52px; font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ Background ═══════════ -->
+<div class="mesh-bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+</div>
+<div class="grid-overlay"></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div class="orb o4"></div><div class="orb o5"></div><div class="orb o6"></div>
+
+<!-- ═══════════ Demo pills ═══════════ -->
+<div class="demo-pills" role="tablist">
+  <button data-screen="login" class="active">Connexion</button>
+  <button data-screen="signup">Inscription</button>
+  <button data-screen="forgot">Oublié</button>
+  <button data-screen="reset">Réinitialiser</button>
+</div>
+
+<!-- ═══════════ Header ═══════════ -->
+<header class="top-header">
+  <a class="brand" href="#">
+    <div class="brand-mark">PZ</div>
+    <div class="brand-name">paie<span class="it">zone</span></div>
+  </a>
+  <div class="lang-pill">🇹🇳 FR · العربية</div>
+</header>
+
+<!-- ═══════════ Auth card ═══════════ -->
+<main class="auth-wrap">
+  <div class="card">
+
+    <!-- ════ LOGIN ════ -->
+    <div class="screen screen-login active">
+      <div class="eyebrow"><span class="eyebrow-num">01</span> Connexion</div>
+      <h1>Bon retour, <span class="serif">leila.</span></h1>
+      <p class="lead">Connectez-vous pour accéder à votre <strong>tableau de bord PaieZone</strong>.</p>
+
+      <form class="form" onsubmit="event.preventDefault()">
+        <div class="field">
+          <label for="li-email">Email professionnel</label>
+          <div class="input-wrap">
+            <span class="leading-ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="12" height="9" rx="1.4"/><path d="m2 5 6 4 6-4"/></svg></span>
+            <input id="li-email" type="email" placeholder="prenom.nom@entreprise.tn" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="li-pwd">Mot de passe</label>
+          <div class="input-wrap">
+            <span class="leading-ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7.5" width="9" height="6.5" rx="1.2"/><path d="M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2"/></svg></span>
+            <input id="li-pwd" type="password" placeholder="••••••••••" autocomplete="current-password" />
+            <span class="trailing">
+              <button type="button" onclick="togglePwd('li-pwd')" aria-label="Afficher">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>
+              </button>
+            </span>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="checkbox">
+            <input type="checkbox" checked />
+            <span class="box"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 8.5 3 3 6-7"/></svg></span>
+            Rester connectée 30 jours
+          </label>
+          <a href="#" data-goto="forgot" class="link-pale">Mot de passe oublié ?</a>
+        </div>
+
+        <button type="submit" class="btn primary full" style="margin-top:8px">
+          Se connecter
+          <svg class="arrow" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+
+        <div class="divider"><span>ou continuer avec</span></div>
+
+        <div class="sso">
+          <button type="button" class="btn full">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2 3 4v4.5C3 11.5 8 14 8 14s5-2.5 5-5.5V4L8 2z"/></svg>
+            SSO entreprise
+          </button>
+        </div>
+
+        <p style="text-align:center;color:var(--ink-mid);font-size:13px;margin:24px 0 0">
+          Pas encore de compte ?
+          <a href="#" data-goto="signup" class="link-pale">Créer mon entreprise →</a>
+        </p>
+      </form>
+    </div>
+
+    <!-- ════ SIGNUP ════ -->
+    <div class="screen screen-signup">
+      <div class="eyebrow"><span class="eyebrow-num">02</span> Inscription</div>
+      <h1>Créez votre <span class="serif">entreprise.</span></h1>
+      <p class="lead">14 jours d'essai gratuit, sans carte bancaire. <strong>10 minutes</strong> chrono.</p>
+
+      <div class="stepper">
+        <div class="step-dot done"><div class="num">✓</div>Plan</div>
+        <div class="step-line done"></div>
+        <div class="step-dot active"><div class="num">2</div>Entreprise</div>
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="num">3</div>Admin</div>
+        <div class="step-line"></div>
+        <div class="step-dot"><div class="num">4</div>Confirm.</div>
+      </div>
+
+      <form class="form" onsubmit="event.preventDefault()">
+        <div class="field">
+          <label for="su-name">Raison sociale<span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="leading-ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5.5 5h1M9.5 5h1M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></svg></span>
+            <input id="su-name" type="text" placeholder="Atlas Tech SARL" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="field">
+            <label for="su-tax">Matricule fiscal<span class="req">*</span></label>
+            <input id="su-tax" class="input mono" type="text" placeholder="1234567/A" />
+          </div>
+          <div class="field">
+            <label for="su-cnss">ID CNSS</label>
+            <input id="su-cnss" class="input mono" type="text" placeholder="12500-0001" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="field">
+            <label for="su-city">Ville<span class="req">*</span></label>
+            <select id="su-city" class="input">
+              <option value="">Sélectionner…</option>
+              <option>Tunis</option><option>Ariana</option><option>Sousse</option>
+              <option>Sfax</option><option>Bizerte</option><option>Hammamet</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="su-phone">Téléphone</label>
+            <input id="su-phone" class="input" type="tel" placeholder="+216 …" />
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button type="button" class="btn">← Précédent</button>
+          <button type="submit" class="btn primary" style="flex:1">
+            Continuer
+            <svg class="arrow" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </button>
+        </div>
+
+        <p style="text-align:center;color:var(--ink-mid);font-size:13px;margin:18px 0 0">
+          Déjà inscrit ?
+          <a href="#" data-goto="login" class="link-pale">Me connecter</a>
+        </p>
+      </form>
+    </div>
+
+    <!-- ════ FORGOT ════ -->
+    <div class="screen screen-forgot">
+      <div class="eyebrow"><span class="eyebrow-num">03</span> Récupération</div>
+      <h1>Mot de passe <span class="serif">oublié ?</span></h1>
+      <p class="lead">Saisissez votre email — nous envoyons un <strong>lien de réinitialisation</strong> valide 60 minutes.</p>
+
+      <form class="form" onsubmit="event.preventDefault()">
+        <div class="field">
+          <label for="fo-email">Email professionnel</label>
+          <div class="input-wrap">
+            <span class="leading-ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="12" height="9" rx="1.4"/><path d="m2 5 6 4 6-4"/></svg></span>
+            <input id="fo-email" type="email" placeholder="prenom.nom@entreprise.tn" autocomplete="email" />
+          </div>
+          <div class="hint">L'email doit être associé à votre compte PaieZone.</div>
+        </div>
+
+        <button type="submit" class="btn primary full" style="margin-top:8px">
+          Envoyer le lien
+          <svg class="arrow" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+
+        <p style="text-align:center;color:var(--ink-mid);font-size:13px;margin:18px 0 0">
+          Vous vous souvenez ?
+          <a href="#" data-goto="login" class="link-pale">Retour à la connexion</a>
+        </p>
+      </form>
+    </div>
+
+    <!-- ════ RESET ════ -->
+    <div class="screen screen-reset">
+      <div class="eyebrow"><span class="eyebrow-num">04</span> Nouveau mot de passe</div>
+      <h1>Définissez votre <span class="serif">nouveau</span> mot de passe.</h1>
+      <p class="lead">Choisissez un mot de passe <strong>robuste</strong>. Vous serez reconnecté automatiquement.</p>
+
+      <form class="form" onsubmit="event.preventDefault()">
+        <div class="field">
+          <label for="re-pwd">Nouveau mot de passe</label>
+          <div class="input-wrap">
+            <span class="leading-ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7.5" width="9" height="6.5" rx="1.2"/><path d="M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2"/></svg></span>
+            <input id="re-pwd" type="password" placeholder="Au moins 8 caractères" oninput="updatePwdMeter()" />
+            <span class="trailing">
+              <button type="button" onclick="togglePwd('re-pwd')" aria-label="Afficher">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>
+              </button>
+            </span>
+          </div>
+          <div class="pwd-meter">
+            <div class="pwd-bars" id="pwd-bars"><i></i><i></i><i></i><i></i></div>
+            <span class="pwd-label" id="pwd-label">À saisir</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="re-pwd2">Confirmer</label>
+          <div class="input-wrap">
+            <span class="leading-ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 8.5 3 3 6-7"/></svg></span>
+            <input id="re-pwd2" type="password" placeholder="Saisissez à nouveau" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn primary full" style="margin-top:8px">
+          Définir mon mot de passe
+          <svg class="arrow" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </button>
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════════ Footer ═══════════ -->
+<footer class="auth-foot">
+  <span>© 2026 PaieZone SARL · Tunis 🇹🇳</span>
+  <span><a href="#">CGU</a>·<a href="#">Confidentialité</a>·<a href="#">Aide</a></span>
+</footer>
+
+<script>
+  const pills = document.querySelectorAll('.demo-pills button');
+  const setScreen = (name) => {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.screen-' + name).forEach(el => el.classList.add('active'));
+    pills.forEach(b => b.classList.toggle('active', b.dataset.screen === name));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  pills.forEach(b => b.addEventListener('click', () => setScreen(b.dataset.screen)));
+  document.querySelectorAll('[data-goto]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); setScreen(a.dataset.goto); });
+  });
+
+  function togglePwd(id) {
+    const i = document.getElementById(id);
+    i.type = i.type === 'password' ? 'text' : 'password';
+  }
+
+  function updatePwdMeter() {
+    const v = document.getElementById('re-pwd').value;
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+    if (/\d/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    const bars = document.querySelectorAll('#pwd-bars i');
+    bars.forEach((b, i) => b.classList.toggle('on', i < score));
+    const labels = ['À saisir', 'Faible', 'Moyen', 'Fort', 'Très fort'];
+    document.getElementById('pwd-label').textContent = labels[score];
+  }
+</script>
+
+</body>
+</html>

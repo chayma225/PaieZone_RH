@@ -29,7 +29,18 @@
       "PowerShell($env:PGPASSWORD = 'paiezone'; & \"C:\\\\Program Files\\\\PostgreSQL\\\\14\\\\bin\\\\psql.exe\" -U paieZoneRH -d paieZoneRH -c \"SELECT login, LEFT\\(password_hash, 30\\) as hash_preview FROM pz_user WHERE login IN \\('admin', 'mohamed'\\);\")",
       "PowerShell($env:PGPASSWORD = 'paiezone'; & \"C:\\\\Program Files\\\\PostgreSQL\\\\14\\\\bin\\\\psql.exe\" -U paieZoneRH -d paieZoneRH -c \"UPDATE pz_user SET password_hash = \\(SELECT password_hash FROM pz_user WHERE login = 'admin'\\) WHERE login = 'mohamed'; SELECT 'OK' as status;\")",
       "PowerShell(Stop-Process *)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/api/job-positions)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/api/job-positions)",
+      "Bash(netstat -ano)",
+      "Bash(npm run *)",
+      "Bash(mvn compile *)",
+      "Bash(npx ng *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(mvn test-compile *)",
+      "Bash(mkdir -p /tmp/pz3)",
+      "Read(//tmp/**)",
+      "Bash(unzip -o \"/c/Users/chayma/PaieZoneRH/paiezone rh \\(3\\).zip\")",
+      "Bash(./mvnw compile *)"
     ]
   }
 }

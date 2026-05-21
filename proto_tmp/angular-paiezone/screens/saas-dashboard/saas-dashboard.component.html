@@ -1,0 +1,103 @@
+<div class="pz-page">
+  <div class="pz-page-head">
+    <div>
+      <div class="pz-crumbs"><strong>Super Admin</strong> <span class="sep">/</span> Tableau de bord SaaS</div>
+      <h1>Plateforme PaieZone</h1>
+      <div class="pz-muted">Vue consolidée des entreprises clientes, revenus et santé du service.</div>
+    </div>
+    <div class="pz-page-actions">
+      <button class="pz-btn"><pz-icon name="Download" [size]="14" /> Rapport mensuel</button>
+      <button class="pz-btn pz-primary"><pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvelle entreprise</button>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="pz-card stat">
+      <div class="stat-head"><span class="ico"><pz-icon name="Wallet" /></span>MRR — Mai 2026</div>
+      <div class="stat-val">{{ data.fmtTND(kpi.mrr) }}</div>
+      <div class="stat-foot">
+        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi.mrrDelta }}%</span>
+        <span class="pz-muted">vs Avril</span>
+      </div>
+    </div>
+    <div class="pz-card stat">
+      <div class="stat-head"><span class="ico info"><pz-icon name="TrendUp" [size]="14" [strokeWidth]="1.5" /></span>ARR projeté</div>
+      <div class="stat-val">{{ data.fmtTND(kpi.arr) }}</div>
+      <div class="stat-foot">
+        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi.arrDelta }}%</span>
+        <span class="pz-muted">12 derniers mois</span>
+      </div>
+    </div>
+    <div class="pz-card stat">
+      <div class="stat-head"><span class="ico pos"><pz-icon name="Building" /></span>Entreprises clientes</div>
+      <div class="stat-val">{{ kpi.tenants }}</div>
+      <div class="stat-foot">
+        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi.tenantsDelta }}</span>
+        <span class="pz-muted">ce trimestre</span>
+      </div>
+    </div>
+    <div class="pz-card stat">
+      <div class="stat-head"><span class="ico warn"><pz-icon name="Users" /></span>Employés gérés</div>
+      <div class="stat-val">{{ kpi.totalEmployees }}</div>
+      <div class="stat-foot">
+        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi.employeesDelta }}</span>
+        <span class="pz-muted">ce mois-ci</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row-grid">
+    <div class="pz-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Entreprises récentes</div>
+          <div class="card-sub pz-muted">Activité de connexion & paie sur les 7 derniers jours</div>
+        </div>
+      </div>
+      <table class="pz-tbl">
+        <thead><tr><th>Entreprise</th><th>Plan</th><th class="num">Employés</th><th class="num">MRR</th><th>Statut</th></tr></thead>
+        <tbody>
+          @for (c of data.companies().slice(0, 5); track c.id) {
+            <tr>
+              <td>
+                <div class="ev-name">
+                  <div class="pz-avatar sm" [attr.data-bg]="(c.id % 6) + 1">{{ c.tradeName.split(' ')[0][0] }}{{ c.tradeName.split(' ')[1]?.[0] || '' }}</div>
+                  <div>
+                    <div class="strong">{{ c.tradeName }}</div>
+                    <small class="pz-muted">{{ c.city }} · {{ c.taxId }}</small>
+                  </div>
+                </div>
+              </td>
+              <td><span class="pz-pill primary">{{ data.planLabel(c.plan) }}</span></td>
+              <td class="num">{{ c.employees }}</td>
+              <td class="num">{{ c.mrr > 0 ? data.fmtTND(c.mrr) : '—' }}</td>
+              <td>
+                <span class="pz-pill"
+                      [class.pos]="c.status === 'ACTIVE'"
+                      [class.warn]="c.status === 'TRIAL'"
+                      [class.danger]="c.status === 'SUSPENDED'">
+                  <span class="dot"></span>{{ c.status }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pz-card">
+      <div class="card-head"><div class="card-title">État de la plateforme</div></div>
+      <div class="card-body">
+        @for (s of services; track s.name) {
+          <div class="svc-row">
+            <span class="pz-pill" [class.pos]="!s.warn" [class.warn]="s.warn">
+              <span class="dot"></span>{{ serviceState(s).label }}
+            </span>
+            <span class="svc-name">{{ s.name }}</span>
+            <span class="pz-mono pz-muted">{{ s.latency }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

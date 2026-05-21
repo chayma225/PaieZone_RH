@@ -1,201 +1,551 @@
-<div class="pz-app welcome">
-  <!-- ── Top bar ────────────────────────────────────────────────── -->
+<div class="wl-page">
+  <!-- ══════════ TOPBAR ══════════ -->
   <header class="topbar">
     <div class="brand">
       <div class="brand-mark">PZ</div>
-      <div class="brand-name">paie<span>zone</span> RH</div>
+      <div class="brand-name">paie<span class="it">zone</span> RH</div>
     </div>
     <nav class="nav-links">
-      <a href="#features">Fonctionnalités</a>
-      <a href="#plans">Tarifs</a>
-      <a href="#faq">FAQ</a>
+      <a href="#how" (click)="scrollTo('how', $event)">Comment ça marche</a>
+      <a href="#features" (click)="scrollTo('features', $event)">Produit</a>
+      <a href="#plans" (click)="scrollTo('plans', $event)">Tarifs</a>
+      <a href="#faq" (click)="scrollTo('faq', $event)">FAQ</a>
     </nav>
-    <div class="actions">
-      <a class="pz-btn pz-ghost" routerLink="/paiezone/login">Se connecter</a>
-      <a class="pz-btn pz-primary" routerLink="/account/register">
-        Commencer gratuitement <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" />
-      </a>
+    <div class="topbar-actions">
+      <a class="btn ghost" routerLink="/paiezone/login">Se connecter</a>
+      <a class="btn primary" routerLink="/paiezone/register">Démarrer <span class="arrow">→</span></a>
     </div>
   </header>
 
-  <!-- ── Hero ──────────────────────────────────────────────────── -->
+  <!-- ══════════ HERO ══════════ -->
   <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-content">
-      <div class="badge">
-        <span class="dot"></span>
-        Nouvelle version 2026 — Loi de Finances intégrée
-      </div>
-      <h1>
-        La paie en Tunisie,<br />
-        <span class="grad">enfin sans douleur.</span>
-      </h1>
-      <p class="lead">
-        PaieZone RH automatise vos bulletins, vos déclarations CNSS et vos congés. Conçu pour les PME tunisiennes, conforme aux dernières
-        lois.
-      </p>
-      <div class="hero-actions">
-        <a class="pz-btn pz-primary lg" routerLink="/account/register">
-          Essayer 14 jours gratuits <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6" />
-        </a>
-        <a class="pz-btn lg" routerLink="/paiezone/rh-dash"> Voir la démo </a>
-      </div>
-      <div class="hero-trust">Aucune carte bancaire requise · Mise en service en 10 minutes · Données hébergées en Tunisie</div>
-    </div>
-
-    <!-- Decorative dashboard preview -->
-    <div class="hero-preview">
-      <!-- Bulletins card — vrais employés -->
-      <div class="prev-card prev-1">
-        <div class="prev-head">
-          <span class="prev-dot"></span>
-          <span>{{ heroPeriodLabel() }}</span>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-eyebrow">
+          <span class="pin">Nouveau</span>
+          <span class="dot"></span>
+          Loi de Finances 2026 intégrée
         </div>
-        @for (e of heroEmployees(); track e.name) {
-          <div class="prev-row" [class.faded]="e.faded">
-            <span>{{ e.name }}</span>
-            @if (e.salary != null) {
-              <span class="pz-mono">{{ data.fmtTNDdec(e.salary) }}</span>
-            } @else {
-              <span class="pz-mono pz-muted">—</span>
-            }
+        <h1>
+          La paie tunisienne,<br />
+          <span class="serif">enfin</span> <span class="underline">sans douleur.</span>
+        </h1>
+        <p class="hero-lead">
+          PaieZone automatise vos bulletins, vos déclarations CNSS et vos congés. Conçu pour les PME tunisiennes, conforme à la
+          <strong>Loi de Finances 2026</strong>, pensé pour vous faire gagner des heures chaque mois.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary lg" routerLink="/paiezone/register">Essayer 14 jours <span class="arrow">→</span></a>
+          <a class="btn lg" routerLink="/paiezone/login">Voir la démo</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">
+              10<span style="font-family: 'Instrument Serif', serif; font-style: italic; color: #6b7280; font-weight: 400">min</span>
+            </div>
+            <div class="hero-stat-lbl">Mise en service</div>
           </div>
-        }
-      </div>
-
-      <!-- Masse salariale card — données dynamiques -->
-      <div class="prev-card prev-2">
-        <div class="prev-stat">
-          <div class="prev-lbl">Masse salariale</div>
-          <div class="prev-val">{{ heroMasseNum() }} <small>TND</small></div>
-          <div class="prev-delta" [class.neg]="!heroMasseDeltaPos()">{{ heroMasseDelta() }}</div>
+          <div>
+            <div class="hero-stat-num">99,97<span style="color: #6b7280; font-weight: 500">%</span></div>
+            <div class="hero-stat-lbl">Disponibilité 12 mois</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">
+              7<span style="font-family: 'Instrument Serif', serif; font-style: italic; color: #6b7280; font-weight: 400">h</span>
+            </div>
+            <div class="hero-stat-lbl">Économisées / mois</div>
+          </div>
         </div>
       </div>
+      <!-- /hero left col -->
 
-      <!-- Badge IA -->
-      <div class="prev-card prev-3">
-        <pz-icon name="Sparkles" [size]="14" />
-        <div>Calcul CNSS automatique</div>
+      <!-- Right showcase -->
+      <div class="hero-showcase">
+        <!-- Float chip — AI -->
+        <div class="float-ai">
+          <div class="float-ai-ico">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M8 2v3M8 11v3M2 8h3M11 8h3M4.5 4.5l2 2M9.5 9.5l2 2M4.5 11.5l2-2M9.5 6.5l2-2" />
+            </svg>
+          </div>
+          <div>
+            <div class="text">Calcul IRPP automatique</div>
+            <div class="sub">Barème LF 2026 — JORT n°3</div>
+          </div>
+        </div>
+
+        <!-- Main dashboard card -->
+        <div class="showcase-main">
+          <div class="showcase-chrome">
+            <span class="light r"></span><span class="light y"></span><span class="light g"></span>
+            <span class="url">atlas-tech.paiezone.tn</span>
+          </div>
+          <div class="showcase-body">
+            <div class="showcase-title-row">
+              <div class="showcase-title">
+                Période · Mai 2026
+                <small>Calcul en cours · 42 bulletins</small>
+              </div>
+              <span class="showcase-cta">Lancer la paie</span>
+            </div>
+            <div class="showcase-stats">
+              <div class="showcase-stat">
+                <div class="showcase-stat-lbl">Brut</div>
+                <div class="showcase-stat-val">96 400<small>TND</small></div>
+                <div class="showcase-stat-delta">↑ +1,7%</div>
+              </div>
+              <div class="showcase-stat">
+                <div class="showcase-stat-lbl">CNSS Emp.</div>
+                <div class="showcase-stat-val">15 974<small>TND</small></div>
+                <div class="showcase-stat-delta">16,57%</div>
+              </div>
+              <div class="showcase-stat">
+                <div class="showcase-stat-lbl">Net total</div>
+                <div class="showcase-stat-val">71 200<small>TND</small></div>
+                <div class="showcase-stat-delta">↑ +2,1%</div>
+              </div>
+            </div>
+            <div class="showcase-chart">
+              <div class="showcase-chart-h">
+                <span>Masse salariale</span>
+                <strong>6 derniers mois</strong>
+              </div>
+              <svg class="showcase-svg" viewBox="0 0 480 90" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#a78bfa" stop-opacity="0.4" />
+                    <stop offset="1" stop-color="#a78bfa" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 0 70 C 60 65, 100 55, 160 50 S 280 35, 340 30 S 440 14, 480 10 L 480 90 L 0 90 Z" fill="url(#cg)" />
+                <path
+                  d="M 0 70 C 60 65, 100 55, 160 50 S 280 35, 340 30 S 440 14, 480 10"
+                  fill="none"
+                  stroke="#a78bfa"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                />
+                <circle cx="0" cy="70" r="3.5" fill="#a78bfa" />
+                <circle cx="96" cy="56" r="3.5" fill="#a78bfa" />
+                <circle cx="192" cy="44" r="3.5" fill="#a78bfa" />
+                <circle cx="288" cy="36" r="3.5" fill="#a78bfa" />
+                <circle cx="384" cy="22" r="3.5" fill="#a78bfa" />
+                <circle cx="480" cy="10" r="4" fill="#fff" />
+                <circle cx="480" cy="10" r="6" fill="#fff" opacity="0.3" />
+              </svg>
+            </div>
+            <div class="showcase-emps">
+              <div class="showcase-emp">
+                <div class="showcase-emp-av a1">LC</div>
+                <div class="showcase-emp-meta">Leila Chaâbane <small>Directrice RH</small></div>
+                <div class="showcase-emp-amt">3 680,000</div>
+              </div>
+              <div class="showcase-emp">
+                <div class="showcase-emp-av a2">MB</div>
+                <div class="showcase-emp-meta">Mehdi Ben Salah <small>Lead Développeur</small></div>
+                <div class="showcase-emp-amt">3 245,150</div>
+              </div>
+              <div class="showcase-emp">
+                <div class="showcase-emp-av a3">AT</div>
+                <div class="showcase-emp-meta">Amal Trabelsi <small>Designer UX</small></div>
+                <div class="showcase-emp-amt">2 140,200</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Float chip — Payslip -->
+        <div class="float-slip">
+          <div class="arrow-line">
+            un seul clic
+            <svg width="38" height="22" viewBox="0 0 38 22" fill="none">
+              <path d="M2 2 Q 20 20 36 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none" />
+              <path
+                d="M30 13 L36 16 L33 21"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                fill="none"
+              />
+            </svg>
+          </div>
+          <div class="lbl">Bulletin généré</div>
+          <div class="val">2 783,050</div>
+          <div class="sub">M. Ben Salah · PDF signé</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Trust band — vraies entreprises ──────────────────────── -->
-  <section class="trust-band">
-    <div class="trust-label">Déjà adopté par des PME tunisiennes innovantes</div>
-    <div class="trust-logos">
-      @for (name of trustNames(); track name) {
-        <div>{{ name }}</div>
+  <!-- ══════════ MARQUEE ══════════ -->
+  <div class="marquee">
+    <div class="marquee-track">
+      @for (item of marqueeItems; track $index) {
+        <div class="marquee-item"><span class="star">✦</span> {{ item }}</div>
       }
+      @for (item of marqueeItems; track $index) {
+        <div class="marquee-item"><span class="star">✦</span> {{ item }}</div>
+      }
+    </div>
+  </div>
+
+  <!-- ══════════ 01 — COMMENT ÇA MARCHE ══════════ -->
+  <section class="section" id="how">
+    <div class="section-head">
+      <div class="eyebrow"><span class="eyebrow-num">01</span> En 3 étapes</div>
+      <h2>Votre première paie en <span class="serif">10 minutes,</span><br />vraiment.</h2>
+      <p>Trois étapes, et vous gérez toute votre entreprise depuis une seule interface. Sans formation, sans documentation à lire.</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">01 — Setup</div>
+        <h3>Créez votre <span class="serif">entreprise</span></h3>
+        <p>Raison sociale, matricule fiscal, identifiant CNSS. Choisissez votre formule — essai gratuit immédiat, sans carte bancaire.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">02 — Import</div>
+        <h3>Importez vos <span class="serif">employés</span></h3>
+        <p>Excel, CSV ou saisie manuelle. PaieZone détecte le contrat, la catégorie et calcule automatiquement les cotisations.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">03 — Lancer</div>
+        <h3>Lancez votre <span class="serif">paie</span></h3>
+        <p>Un clic et 42 bulletins partent. IRPP calculé, PDF envoyés, déclarations CNSS prêtes à exporter. C'est tout.</p>
+      </div>
     </div>
   </section>
 
-  <!-- ── Features ─────────────────────────────────────────────── -->
-  <section id="features" class="features">
-    <div class="section-head">
-      <div class="eyebrow">Fonctionnalités</div>
-      <h2>Tout ce qu'il faut pour gérer la paie tunisienne</h2>
-      <p>De la création du dossier employé au virement bancaire, en passant par l'IRPP et les congés payés.</p>
-    </div>
-    <div class="features-grid">
-      @for (f of FEATURES; track f.title) {
-        <div class="feature">
-          <div class="f-ico"><pz-icon [name]="f.icon" /></div>
-          <h3>{{ f.title }}</h3>
-          <p>{{ f.desc }}</p>
+  <!-- ══════════ 02 — LE PRODUIT ══════════ -->
+  <section class="section bg-cream" id="features">
+    <div class="section-inner">
+      <div class="section-head">
+        <div class="eyebrow"><span class="eyebrow-num">02</span> Le produit</div>
+        <h2>Tout ce qu'il faut.<br /><span class="serif">Rien de superflu.</span></h2>
+        <p>De la création du dossier employé au virement bancaire, en passant par l'IRPP, les congés et les déclarations trimestrielles.</p>
+      </div>
+      <div class="bento">
+        <!-- Feat 1 — dark #2a0f56 — IA RAG (spans 2 cols) -->
+        <div class="bento-card feat-1">
+          <div class="bento-header"><span class="bento-tag">IA · RAG</span></div>
+          <h3>Posez n'importe quelle question sur le <span class="serif">Code du Travail</span></h3>
+          <p>Notre assistant RAG indexe le JORT, la LF 2026 et les conventions collectives. Sources citées à chaque réponse.</p>
+          <div class="bento-illust ill-chat">
+            <div class="chat-bubble them">Quel est le délai de préavis pour un CDI cadre ?</div>
+            <div class="chat-bubble me">3 mois pour les cadres (Art. 14 bis du Code du Travail). Source citée.</div>
+          </div>
         </div>
-      }
+
+        <!-- Feat 2 — purple — CNSS -->
+        <div class="bento-card feat-2">
+          <div class="bento-header"><span class="bento-tag">Conforme</span></div>
+          <h3>Cotisations sociales <span class="serif">au cordeau</span></h3>
+          <p>CNSS · CAVIS · CSS · IRPP. Barèmes LF 2026 maintenus par notre équipe juridique.</p>
+          <div class="bento-illust ill-cnss">
+            <div class="ill-cnss-percent">9,18%</div>
+          </div>
+        </div>
+
+        <!-- Feat 3 — white — Self-service -->
+        <div class="bento-card">
+          <div class="bento-header"><span class="bento-tag">Self-service</span></div>
+          <h3>Vos collaborateurs en <span class="serif">autonomie</span></h3>
+          <p>Bulletins, congés, avances — directement depuis leur espace personnel.</p>
+          <div class="bento-illust ill-cal">
+            <div style="font-size: 11px; font-weight: 600; color: #3a3d47">Mai 2026</div>
+            <div class="ill-cal-grid">
+              <div class="ill-cal-cell">L</div>
+              <div class="ill-cal-cell">M</div>
+              <div class="ill-cal-cell">M</div>
+              <div class="ill-cal-cell">J</div>
+              <div class="ill-cal-cell">V</div>
+              <div class="ill-cal-cell">S</div>
+              <div class="ill-cal-cell">D</div>
+              <div class="ill-cal-cell">1</div>
+              <div class="ill-cal-cell has">2</div>
+              <div class="ill-cal-cell has">3</div>
+              <div class="ill-cal-cell">4</div>
+              <div class="ill-cal-cell">5</div>
+              <div class="ill-cal-cell">6</div>
+              <div class="ill-cal-cell">7</div>
+              <div class="ill-cal-cell">8</div>
+              <div class="ill-cal-cell">9</div>
+              <div class="ill-cal-cell">10</div>
+              <div class="ill-cal-cell">11</div>
+              <div class="ill-cal-cell">12</div>
+              <div class="ill-cal-cell">13</div>
+              <div class="ill-cal-cell today">14</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feat 4 — cream — PDF (spans 2 cols) -->
+        <div class="bento-card feat-4">
+          <div class="bento-header"><span class="bento-tag">Génération PDF</span></div>
+          <h3>Bulletins, contrats, attestations — <span class="serif">signés et envoyés</span> en un clic</h3>
+          <p>JasperReports + signature électronique eIDAS. Vos employés reçoivent leur bulletin par email avant la fin du mois.</p>
+          <div class="bento-illust ill-doc">
+            <div class="ill-doc-card tilt">
+              <div class="ill-doc-card-h"><span class="pill">PDF</span></div>
+              <div class="ill-doc-card-line"></div>
+              <div class="ill-doc-card-line"></div>
+              <div class="ill-doc-card-line s"></div>
+            </div>
+            <div class="ill-doc-card">
+              <div class="ill-doc-card-h"><span class="pill">Signé</span></div>
+              <div class="ill-doc-card-line"></div>
+              <div class="ill-doc-card-line"></div>
+              <div class="ill-doc-card-line s"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feat 5 — white — Sécurité -->
+        <div class="bento-card">
+          <div class="bento-header"><span class="bento-tag">Sécurité</span></div>
+          <h3>Multi-tenant <span class="serif">par construction</span></h3>
+          <p>Isolation PostgreSQL, RBAC, 2FA, audit log 7 ans.</p>
+          <div class="bento-illust ill-bigstat">
+            <div class="ill-bigstat-num">7<small> ans</small></div>
+            <div class="ill-bigstat-lbl">Conservation audit</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ── Plans — prix depuis DataService.planLimits ───────────── -->
-  <section id="plans" class="plans">
-    <div class="section-head">
-      <div class="eyebrow">Tarifs</div>
-      <h2>Une formule pour chaque taille d'équipe</h2>
-      <p>14 jours d'essai sur toutes les formules. Sans carte bancaire, sans engagement.</p>
+  <!-- ══════════ 03 — LES CHIFFRES ══════════ -->
+  <section class="big-numbers" id="chiffres">
+    <div class="big-numbers-inner">
+      <div class="big-numbers-head">
+        <div class="eyebrow"><span class="eyebrow-num">03</span> Les chiffres</div>
+        <h2>Des résultats <span class="serif">mesurables</span> dès le premier mois.</h2>
+      </div>
+      <div class="big-numbers-grid">
+        <div class="big-num">
+          <div class="big-num-val">10<small>min</small></div>
+          <div class="big-num-lbl">Pour configurer votre entreprise et lancer votre première paie de A à Z.</div>
+        </div>
+        <div class="big-num">
+          <div class="big-num-val">7<small>h</small></div>
+          <div class="big-num-lbl">Économisées chaque mois en moyenne par un responsable RH.</div>
+        </div>
+        <div class="big-num">
+          <div class="big-num-val">99,97<small>%</small></div>
+          <div class="big-num-lbl">Disponibilité de la plateforme sur les 12 derniers mois.</div>
+        </div>
+        <div class="big-num">
+          <div class="big-num-val">100<small>%</small></div>
+          <div class="big-num-lbl">Conformité LF 2026 — barèmes maintenus par notre équipe juridique.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ TESTIMONIAL ══════════ -->
+  <div class="testimonial-wrap">
+    <div class="testimonial-card">
+      <div class="testimonial-quote">
+        Avant PaieZone, je passais trois jours par mois sur la paie. Aujourd'hui, je clique sur un bouton, je vérifie, je valide.
+        <span class="serif">Le reste du temps,</span> je m'occupe vraiment de RH.
+      </div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">LC</div>
+        <div>
+          <div class="testimonial-meta-name">Leila Chaâbane</div>
+          <div class="testimonial-meta-title">Directrice RH · Atlas Tech (42 salariés)</div>
+        </div>
+        <div class="testimonial-rating">★ ★ ★ ★ ★</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ 04 — TARIFS ══════════ -->
+  <section class="section" id="plans">
+    <div class="section-head center">
+      <div class="eyebrow"><span class="eyebrow-num">04</span> Tarifs</div>
+      <h2>Une formule par <span class="serif">taille d'équipe.</span></h2>
+      <p>14 jours d'essai sur toutes les formules. Sans carte bancaire, sans engagement, sans surprise.</p>
     </div>
     <div class="plans-grid">
       @for (p of plans(); track p.code) {
         <div class="plan" [class.popular]="p.popular">
           @if (p.popular) {
-            <div class="popular-badge">Le plus choisi</div>
+            <div class="popular-badge">★ Le plus choisi</div>
           }
-          <div class="plan-head" [style.--plan-color]="p.color">
+          <div class="plan-head">
             <div class="plan-name">{{ p.label }}</div>
             <div class="plan-price">
               @if (p.price === 0) {
-                <span class="price">Gratuit</span>
-                <span class="period">· {{ p.period }}</span>
+                <span class="price">0</span><span class="period">/ 14 j</span>
               } @else {
-                <span class="price">{{ p.price }} <small>TND</small></span>
-                <span class="period">/ {{ p.period }}</span>
+                <span class="price">{{ p.price }}</span>
+                <span class="period"> TND / mois</span>
               }
             </div>
             <div class="plan-max">Jusqu'à {{ p.max }} employés</div>
           </div>
           <ul class="plan-features">
             @for (feat of p.features; track feat) {
-              <li><pz-icon name="Check" [size]="14" [strokeWidth]="1.8" /> {{ feat }}</li>
+              <li>
+                <svg
+                  class="check"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m3.5 8.5 3 3 6-7" />
+                </svg>
+                {{ feat }}
+              </li>
             }
           </ul>
-          <a class="pz-btn full" [class.pz-primary]="p.popular" [routerLink]="['/account/register']" [queryParams]="{ plan: p.code }">
-            Choisir {{ p.label }}
+          <a class="btn full" routerLink="/paiezone/register">
+            @if (p.price === 0) {
+              Essayer gratuitement
+            } @else if (p.code === 'ENTERPRISE') {
+              Nous contacter
+            } @else {
+              Choisir {{ p.label }}
+            }
+            <span class="arrow">→</span>
           </a>
         </div>
       }
     </div>
   </section>
 
-  <!-- ── CTA ──────────────────────────────────────────────────── -->
-  <section class="cta">
-    <div class="cta-inner">
-      <h2>Prêt à passer à PaieZone ?</h2>
-      <p>Mise en service en 10 minutes. Importez vos employés via Excel, lancez votre première paie le jour même.</p>
-      <div class="cta-actions">
-        <a class="pz-btn pz-primary lg" routerLink="/account/register">
-          Créer mon compte <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6" />
-        </a>
-        <a class="pz-btn lg" href="mailto:contact@paiezone.tn"> <pz-icon name="Mail" [size]="14" [strokeWidth]="1.4" /> Nous contacter </a>
+  <!-- ══════════ 05 — FAQ ══════════ -->
+  <section class="section bg-cream" id="faq">
+    <div class="section-inner">
+      <div class="faq-layout">
+        <div class="faq-side">
+          <div class="eyebrow"><span class="eyebrow-num">05</span> FAQ</div>
+          <h2>Questions <span class="serif">fréquentes.</span></h2>
+          <p>Tout ce que vous voulez savoir avant de vous lancer. Si une réponse manque, écrivez-nous.</p>
+          <div class="contact-card">
+            <h4>Une question particulière ?</h4>
+            <p>Notre équipe répond en moins de 2h ouvrées, en français ou en arabe.</p>
+            <a class="btn" routerLink="/paiezone/login">Nous écrire <span class="arrow">→</span></a>
+          </div>
+        </div>
+        <div class="faq-list">
+          @for (faq of FAQS; track faq.q) {
+            <details class="faq-item" [attr.open]="faq.open ? '' : null">
+              <summary>
+                {{ faq.q }}
+                <span class="faq-icon">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  >
+                    <path d="M8 3v10M3 8h10" />
+                  </svg>
+                </span>
+              </summary>
+              <div class="faq-answer">{{ faq.a }}</div>
+            </details>
+          }
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <!-- ══════════ CTA ══════════ -->
+  <section class="cta-band">
+    <div class="cta">
+      <div class="cta-inner">
+        <h2>Prêt à passer<br />à <span class="serif">PaieZone</span> ?</h2>
+        <p>Mise en service en 10 minutes. Importez vos employés via Excel, lancez votre première paie le jour même.</p>
+        <div class="cta-actions">
+          <a class="btn lg light" routerLink="/paiezone/register">Créer mon compte <span class="arrow">→</span></a>
+          <a class="btn lg outline" routerLink="/paiezone/login">Parler à un expert</a>
+        </div>
+      </div>
+      <div class="cta-meta">
+        <div class="row"><span class="cta-check">✓</span> Sans CB</div>
+        <div class="row"><span class="cta-check">✓</span> Sans engagement</div>
+        <div class="row"><span class="cta-check">✓</span> 🇹🇳 Données en Tunisie</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ FOOTER ══════════ -->
   <footer class="footer">
     <div class="foot-cols">
       <div>
         <div class="brand">
           <div class="brand-mark">PZ</div>
-          <div class="brand-name">paie<span>zone</span> RH</div>
+          <div class="brand-name">paie<span class="it">zone</span> RH</div>
         </div>
-        <p class="foot-tagline">La paie tunisienne, simplifiée.</p>
+        <p class="foot-tagline">La paie tunisienne, repensée. Conçu à Tunis, pour les PME et entreprises de toutes tailles.</p>
+        <div class="foot-social">
+          <a href="#" aria-label="LinkedIn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M2.5 4a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zM2.7 6.5h2.6V14H2.7V6.5zM7 6.5h2.5v1c.5-.7 1.3-1.2 2.5-1.2 2 0 3 1.3 3 3.4V14h-2.6v-3.6c0-1.1-.4-1.8-1.4-1.8s-1.6.7-1.6 1.8V14H7V6.5z"
+              />
+            </svg>
+          </a>
+          <a href="#" aria-label="Twitter">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M12.5 2H14l-3.7 4.2L14.7 14H11l-2.9-4-3.3 4H3l4-4.6L2.7 2h3.8l2.6 3.7L12.5 2zm-.5 11.2h.8L5.7 2.7H4.8L12 13.2z" />
+            </svg>
+          </a>
+          <a href="#" aria-label="GitHub">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 1.5C4.4 1.5 1.5 4.4 1.5 8c0 2.9 1.9 5.3 4.4 6.2.3.1.5-.1.5-.3v-1.1c-1.8.4-2.2-.9-2.2-.9-.3-.7-.7-.9-.7-.9-.6-.4 0-.4 0-.4.7 0 1 .7 1 .7.6 1 1.5.7 1.9.6.1-.4.2-.7.4-.9-1.4-.2-3-.7-3-3.2 0-.7.3-1.3.7-1.7-.1-.2-.3-.9.1-1.8 0 0 .6-.2 1.8.7.5-.2 1.1-.2 1.7-.2.6 0 1.2.1 1.7.2 1.3-.9 1.8-.7 1.8-.7.4.9.1 1.6.1 1.8.4.5.7 1 .7 1.7 0 2.4-1.5 3-3 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.4.5.3 2.6-.9 4.4-3.3 4.4-6.2 0-3.6-2.9-6.5-6.5-6.5z"
+              />
+            </svg>
+          </a>
+        </div>
       </div>
       <div>
         <div class="foot-title">Produit</div>
-        <a href="#features">Fonctionnalités</a>
-        <a href="#plans">Tarifs</a>
-        <a>Sécurité</a>
-        <a>API</a>
+        <a href="#features" (click)="scrollTo('features', $event)">Fonctionnalités</a>
+        <a href="#plans" (click)="scrollTo('plans', $event)">Tarifs</a>
+        <a href="#how" (click)="scrollTo('how', $event)">Comment ça marche</a>
+        <a href="#">Sécurité</a>
+        <a href="#">API REST</a>
       </div>
       <div>
         <div class="foot-title">Ressources</div>
-        <a>Centre d'aide</a>
-        <a>Blog RH</a>
-        <a>Guide LF 2026</a>
-        <a>Statut</a>
+        <a href="#">Centre d'aide</a>
+        <a href="#">Blog RH</a>
+        <a href="#">Guide LF 2026</a>
+        <a href="#faq" (click)="scrollTo('faq', $event)">FAQ</a>
       </div>
       <div>
         <div class="foot-title">Légal</div>
-        <a>CGU</a>
-        <a>Politique de confidentialité</a>
-        <a>Mentions légales</a>
-        <a>RGPD</a>
+        <a href="#">CGU / CGV</a>
+        <a href="#">Confidentialité</a>
+        <a href="#">Mentions légales</a>
+        <a href="#">Contact</a>
       </div>
     </div>
     <div class="foot-bottom">
       <span>© {{ currentYear }} PaieZone. Tous droits réservés.</span>
-      <span>🇹🇳 Hébergé en Tunisie</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 500">🇹🇳 Conçu et hébergé en Tunisie</span>
     </div>
   </footer>
 </div>

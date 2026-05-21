@@ -9,7 +9,7 @@ import { ChatbotComponent } from '../../../chatbot/chatbot.component';
   standalone: true,
   imports: [RouterOutlet, TopNavComponent, ChatbotComponent],
   template: `
-    <div class="pz-app">
+    <div class="pz-app" style="font-weight:400;color:#0f172a;">
       <pz-top-nav />
       <main>
         <router-outlet />
@@ -27,6 +27,14 @@ import { ChatbotComponent } from '../../../chatbot/chatbot.component';
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        font-weight: 400;
+        color: #0f172a;
+      }
+      .pz-app h1,
+      .pz-app h2,
+      .pz-app h3,
+      .pz-app h4 {
+        font-weight: 600;
       }
       main {
         flex: 1;

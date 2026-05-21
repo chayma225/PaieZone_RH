@@ -264,6 +264,8 @@ export interface ActivityItem {
   message: string;
   dateLabel: string;
   timeHm: string;
+  entityType: string;
+  entityId: number | null;
 }
 
 export interface PayrollChartPoint {

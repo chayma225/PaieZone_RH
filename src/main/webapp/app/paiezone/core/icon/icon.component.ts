@@ -5,6 +5,7 @@ const ICONS: Record<string, string> = {
   Home: '<path d="M2 7.5 8 2.5l6 5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5z"/><path d="M6.5 14V9.5h3V14"/>',
   Building: '<rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5.5 5h1M9.5 5h1M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/>',
   Shield: '<path d="M8 2 3 4v4.5C3 11.5 8 14 8 14s5-2.5 5-5.5V4L8 2z"/><path d="m6 8 1.5 1.5L10.5 6.5"/>',
+  ShieldOff: '<path d="M3 5v4.5C3 11.5 8 14 8 14s5-2.5 5-5.5V4L8 2 5.5 3M2 2l12 12"/>',
   History: '<path d="M3 8a5 5 0 1 0 1.5-3.5"/><path d="M3 2v3h3"/><path d="M8 5v3l2 1.5"/>',
   Users:
     '<circle cx="6" cy="6" r="2.5"/><path d="M2 13c0-2.2 1.8-4 4-4s4 1.8 4 4"/><path d="M11 5c1.4 0 2.5 1.1 2.5 2.5S12.4 10 11 10"/><path d="M11 10.5c1.7 0 3 1.3 3 3"/>',

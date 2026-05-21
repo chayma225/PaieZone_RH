@@ -57,6 +57,11 @@ const routes: Routes = [
         loadComponent: () => import('./screens/reset-password/reset-password.component'),
         title: 'Réinitialisation — PaieZone',
       },
+      {
+        path: 'register',
+        loadComponent: () => import('./screens/register/register.component'),
+        title: 'Inscription — PaieZone',
+      },
     ],
   },
   {
@@ -165,6 +170,14 @@ const routes: Routes = [
         path: 'emp-requests',
         loadComponent: () => import('./screens/emp-requests/emp-requests.component'),
         title: 'Mes demandes',
+        data: { authorities: ALL_ROLES },
+      },
+
+      // ── Mon compte ───────────────────────────────────────────────────────
+      {
+        path: '2fa-setup',
+        loadComponent: () => import('./screens/twofa-setup/twofa-setup.component'),
+        title: 'Sécurité du compte — PaieZone',
         data: { authorities: ALL_ROLES },
       },
 

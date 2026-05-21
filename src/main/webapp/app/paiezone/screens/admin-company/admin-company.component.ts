@@ -428,12 +428,13 @@ import { ApiService } from '../../core/api.service';
         width: 72px;
         height: 72px;
         border-radius: 16px;
-        background: linear-gradient(135deg, var(--pz-primary), #7c3aed);
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: #fff;
         display: grid;
         place-items: center;
         font-weight: 700;
         font-size: 22px;
+        letter-spacing: -0.5px;
       }
       .logo-img {
         width: 72px;

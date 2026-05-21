@@ -20,6 +20,21 @@ const ACTION_LABELS: Record<string, string> = {
   LOGIN: 'Connexion',
   LOGOUT: 'Déconnexion',
   EXPORT: 'Export',
+  VALIDATE: 'Validation',
+  LOCK: 'Verrouillage',
+  APPROVE: 'Approbation',
+  REJECT: 'Rejet',
+  NOTIFICATION_CONTRACT_EXPIRATION: 'Notif. contrat',
+  NOTIFICATION_LEAVE: 'Notif. congé',
+  NOTIFICATION_PAYROLL: 'Notif. paie',
+};
+
+const JHIPSTER_ROLE_MAP: Record<string, string> = {
+  ROLE_SUPER_ADMIN: 'SUPER_ADMIN',
+  ROLE_ADMIN: 'ADMIN',
+  ROLE_RH_COMPTABLE: 'RH_COMPTABLE',
+  ROLE_MANAGER: 'MANAGER',
+  ROLE_USER: 'EMPLOYE',
 };
 
 @Component({
@@ -68,7 +83,7 @@ const ACTION_LABELS: Record<string, string> = {
           <button class="reset-btn" (click)="clearFilters()"><pz-icon name="X" [size]="13" /> Réinitialiser</button>
         }
 
-        <span class="count-badge">{{ filtered().length }} entrée{{ filtered().length > 1 ? 's' : '' }}</span>
+        <span class="count-badge" style="color:#64748b;">{{ filtered().length }} entrée{{ filtered().length > 1 ? 's' : '' }}</span>
       </div>
 
       <!-- Tableau -->
@@ -106,13 +121,31 @@ const ACTION_LABELS: Record<string, string> = {
                   <!-- Utilisateur -->
                   <td>
                     <div class="user-cell">
-                      <div class="user-avatar" [class]="'av-' + avatarIdx(entry.id)">
-                        {{ initials(userName(entry.user)) }}
+                      <div class="user-avatar" [class]="isScheduler(entry) ? 'av-sys' : 'av-' + avatarIdx(entry.id)">
+                        @if (isScheduler(entry)) {
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            width="14"
+                            height="14"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <rect x="3" y="5" width="10" height="8" rx="1.5" />
+                            <path d="M8 2v3M5.5 8.5h.01M10.5 8.5h.01M6 11h4" />
+                            <path d="M2 9v2M14 9v2" />
+                          </svg>
+                        } @else {
+                          {{ initials(displayName(entry)) }}
+                        }
                       </div>
                       <div>
-                        <div class="user-name">{{ userName(entry.user) }}</div>
-                        @if (userName(entry.user) !== entry.user && entry.user !== 'system') {
-                          <div class="user-login pz-mono">{{ entry.user }}</div>
+                        <div class="user-name" style="color:#0f172a;">{{ displayName(entry) }}</div>
+                        @if (displayLogin(entry)) {
+                          <div class="user-login pz-mono">{{ displayLogin(entry) }}</div>
                         }
                       </div>
                     </div>
@@ -120,12 +153,13 @@ const ACTION_LABELS: Record<string, string> = {
 
                   <!-- Rôle -->
                   <td>
-                    @if (entry.role) {
-                      <span class="role-pill" [ngClass]="roleClass(entry.role)">
-                        {{ roleLabel(entry.role) }}
+                    @let role = resolvedRole(entry);
+                    @if (role) {
+                      <span class="role-pill" [ngClass]="roleClass(role)">
+                        {{ roleLabel(role) }}
                       </span>
                     } @else {
-                      <span class="role-pill role-sys">Système</span>
+                      <span class="role-pill role-emp" style="color:#64748b;">—</span>
                     }
                   </td>
 
@@ -143,24 +177,28 @@ const ACTION_LABELS: Record<string, string> = {
                   </td>
 
                   <!-- Entité -->
-                  <td class="col-entity">
+                  <td class="col-entity" style="color:#334155;">
                     {{ entry.entity }}
                     @if (entry.entityId) {
-                      <span class="entity-id pz-mono">#{{ entry.entityId }}</span>
+                      <span class="entity-id pz-mono" style="color:#94a3b8;">#{{ entry.entityId }}</span>
                     }
                   </td>
 
                   <!-- Détail -->
                   <td class="col-detail">
-                    @if (entry.detail) {
-                      <code class="detail-text" [class.full]="expandedId() === entry.id">{{ entry.detail }}</code>
-                    } @else {
-                      <span class="pz-muted">—</span>
-                    }
+                    <span class="detail-text" [class.full]="expandedId() === entry.id" style="color:#334155;">{{
+                      humanDetail(entry)
+                    }}</span>
                   </td>
 
                   <!-- IP -->
-                  <td class="col-ip pz-mono">{{ entry.ip || '—' }}</td>
+                  <td class="col-ip pz-mono" style="color:#94a3b8;">
+                    @if (isScheduler(entry)) {
+                      <span style="color:#94a3b8;font-style:italic;">auto</span>
+                    } @else {
+                      {{ entry.ip || '—' }}
+                    }
+                  </td>
                 </tr>
               }
             </tbody>
@@ -276,18 +314,19 @@ const ACTION_LABELS: Record<string, string> = {
         text-align: left;
         font-size: 11px;
         font-weight: 600;
-        color: var(--pz-muted);
+        color: #64748b;
         padding: 10px 16px;
-        border-bottom: 1px solid var(--pz-line);
+        border-bottom: 1px solid #e2e8f0;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         white-space: nowrap;
       }
       .pz-table td {
         padding: 11px 16px;
-        border-bottom: 1px solid var(--pz-line);
+        border-bottom: 1px solid #e2e8f0;
         font-size: 13px;
         vertical-align: middle;
+        color: #0f172a;
       }
       .pz-table tr:last-child td {
         border-bottom: 0;
@@ -307,12 +346,12 @@ const ACTION_LABELS: Record<string, string> = {
       /* ── Columns ── */
       .col-date {
         font-size: 11.5px;
-        color: var(--pz-muted);
+        color: #64748b;
         white-space: nowrap;
       }
       .col-ip {
         font-size: 11.5px;
-        color: var(--pz-muted);
+        color: #94a3b8;
         white-space: nowrap;
       }
       .col-entity {
@@ -368,6 +407,11 @@ const ACTION_LABELS: Record<string, string> = {
       .av-6 {
         background: #ffedd5;
         color: #9a3412;
+      }
+      .av-sys {
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
       }
 
       .user-name {
@@ -444,22 +488,9 @@ const ACTION_LABELS: Record<string, string> = {
 
       /* ── Detail ── */
       .detail-text {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        font-size: 11px;
-        color: var(--pz-muted);
-        font-family: 'Courier New', monospace;
-        word-break: break-all;
-      }
-      .detail-text.full {
-        display: block;
-        -webkit-line-clamp: unset;
-        overflow: visible;
-        white-space: pre-wrap;
-        color: var(--pz-ink);
-        font-size: 11px;
+        font-size: 12.5px;
+        color: var(--pz-ink-2);
+        font-family: inherit;
       }
     `,
   ],
@@ -474,6 +505,7 @@ export default class AdminAuditComponent {
   protected readonly expandedId = signal<number | null>(null);
 
   private readonly userNames = signal<Map<string, string>>(new Map());
+  private readonly userRoles = signal<Map<string, string>>(new Map());
 
   protected readonly filtered = computed(() => {
     let list = this.data.audit();
@@ -482,7 +514,12 @@ export default class AdminAuditComponent {
     const entity = this.entityFilter();
 
     if (q) {
-      list = list.filter(e => e.user.toLowerCase().includes(q) || (this.userNames().get(e.user) ?? '').toLowerCase().includes(q));
+      list = list.filter(e => {
+        const login = e.user.toLowerCase();
+        const fullName = (this.userNames().get(e.user) ?? '').toLowerCase();
+        const disp = this.isScheduler(e) ? 'planificateur auto' : e.user === 'system' ? 'compte système' : fullName || login;
+        return login.includes(q) || fullName.includes(q) || disp.includes(q);
+      });
     }
     if (action) list = list.filter(e => e.action === action);
     if (entity) list = list.filter(e => e.entity === entity);
@@ -518,27 +555,113 @@ export default class AdminAuditComponent {
     this.data.loadAudit();
     this.api.adminUsers().subscribe({
       next: users => {
-        const map = new Map<string, string>();
+        const names = new Map<string, string>();
+        const roles = new Map<string, string>();
         for (const u of users) {
           const name = [u.firstName, u.lastName].filter(Boolean).join(' ').trim() || u.login;
-          map.set(u.login, name);
+          names.set(u.login, name);
+          const auths: string[] = u.authorities ?? [];
+          const mapped = auths
+            .filter((a: string) => a !== 'ROLE_USER')
+            .map((a: string) => JHIPSTER_ROLE_MAP[a] ?? a)
+            .filter(Boolean);
+          if (mapped.length > 0) roles.set(u.login, mapped[0]);
         }
-        this.userNames.set(map);
+        this.userNames.set(names);
+        this.userRoles.set(roles);
       },
       error: () => {},
     });
   }
 
-  protected userName(login: string): string {
-    if (!login || login === 'system') return 'Système';
-    return this.userNames().get(login) ?? login;
+  protected isScheduler(entry: { ip: string; action: string }): boolean {
+    return entry.ip === 'SYSTEM_SCHEDULER' || entry.action.startsWith('NOTIFICATION_');
+  }
+
+  /** Nom affiché dans la colonne Utilisateur */
+  protected displayName(entry: { user: string; ip: string; action: string }): string {
+    if (this.isScheduler(entry)) return 'Planificateur auto';
+    if (!entry.user || entry.user === 'system') return 'Compte système';
+    return this.userNames().get(entry.user) ?? entry.user;
+  }
+
+  /** Login secondaire (affiché en petit sous le nom) */
+  protected displayLogin(entry: { user: string; ip: string; action: string }): string | null {
+    if (this.isScheduler(entry) || !entry.user || entry.user === 'system') return null;
+    const full = this.userNames().get(entry.user);
+    return full ? entry.user : null;
+  }
+
+  /** Rôle résolu : backend → sinon map adminUsers */
+  protected resolvedRole(entry: { user: string; role: string; ip: string; action: string }): string {
+    if (this.isScheduler(entry)) return 'SYSTEM';
+    return entry.role || this.userRoles().get(entry.user) || '';
+  }
+
+  /** Génère une phrase en français décrivant l'action */
+  protected humanDetail(e: { action: string; entity: string; entityId: string }): string {
+    const entityFr: Record<string, string> = {
+      employee: 'employé',
+      employees: 'employé',
+      company: 'entreprise',
+      companies: 'entreprise',
+      payrollperiod: 'période de paie',
+      payroll_period: 'période de paie',
+      payslip: 'bulletin de paie',
+      pay_slip: 'bulletin de paie',
+      leave: 'demande de congé',
+      leaverequest: 'demande de congé',
+      advance: 'avance sur salaire',
+      contract: 'contrat',
+      user: 'utilisateur',
+      userprofile: 'profil utilisateur',
+      bonus: 'prime',
+      auditlog: "journal d'audit",
+    };
+    const nom = entityFr[(e.entity ?? '').toLowerCase()] ?? (e.entity || 'enregistrement');
+    const id = e.entityId ? ` #${e.entityId}` : '';
+    switch ((e.action ?? '').toUpperCase()) {
+      case 'CREATE':
+        return `Création d'un ${nom}${id}`;
+      case 'UPDATE':
+      case 'PATCH':
+        return `Modification du ${nom}${id}`;
+      case 'DELETE':
+        return `Suppression du ${nom}${id}`;
+      case 'LOGIN':
+        return `Connexion au compte`;
+      case 'LOGOUT':
+        return `Déconnexion du compte`;
+      case 'EXPORT':
+        return `Export ${nom}`;
+      case 'VALIDATE':
+        return `Validation du ${nom}${id}`;
+      case 'LOCK':
+        return `Verrouillage du ${nom}${id}`;
+      case 'APPROVE':
+        return `Approbation de la ${nom}${id}`;
+      case 'REJECT':
+        return `Rejet de la ${nom}${id}`;
+      case 'NOTIFICATION_CONTRACT_EXPIRATION':
+        return `Notification expiration contrat${id}`;
+      case 'NOTIFICATION_LEAVE':
+        return `Notification demande de congé${id}`;
+      case 'NOTIFICATION_PAYROLL':
+        return `Notification bulletin de paie${id}`;
+      default: {
+        if ((e.action ?? '').startsWith('NOTIFICATION_')) return `Notification automatique${id}`;
+        return e.action ? `${ACTION_LABELS[e.action] ?? e.action} — ${nom}${id}` : '—';
+      }
+    }
   }
 
   protected roleLabel(role: string): string {
+    if (role === 'SYSTEM') return 'Système';
     return ROLE_LABELS[role] ?? role;
   }
 
   protected roleClass(role: string): string {
+    if (role === 'SYSTEM') return 'role-sys';
     if (role === 'SUPER_ADMIN') return 'role-super';
     if (role === 'ADMIN') return 'role-admin';
     if (role === 'RH_COMPTABLE') return 'role-rh';

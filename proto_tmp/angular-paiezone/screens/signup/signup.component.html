@@ -1,0 +1,263 @@
+@if (done()) {
+  <div class="auth-card center">
+    <div class="ok-circle">
+      <pz-icon name="Check" [size]="32" [strokeWidth]="2"/>
+    </div>
+    <h1>Compte créé avec succès 🎉</h1>
+    <p class="sub">
+      Bienvenue chez PaieZone, <strong>{{ form().firstName }}</strong>.<br/>
+      Un email d'activation a été envoyé à <strong>{{ form().email }}</strong>.
+    </p>
+    <div class="recap">
+      <div class="recap-row"><span>Entreprise</span><strong>{{ form().companyName }}</strong></div>
+      <div class="recap-row"><span>Plan choisi</span><strong>{{ form().plan }}</strong></div>
+      <div class="recap-row"><span>Schéma BD</span><span class="pz-mono">{{ form().tradeName.toLowerCase().replace(' ', '_') }}</span></div>
+    </div>
+    <p class="redirect">
+      <span class="spinner"></span>
+      @if (form().enable2fa) {
+        Redirection vers la configuration 2FA…
+      } @else {
+        Redirection vers votre tableau de bord…
+      }
+    </p>
+  </div>
+} @else {
+  <div class="auth-card wide">
+
+    <!-- ── Stepper ────────────────────────────────────────────── -->
+    <div class="stepper">
+      @for (s of [
+        { n: 1, label: 'Formule' },
+        { n: 2, label: 'Entreprise' },
+        { n: 3, label: 'Administrateur' },
+        { n: 4, label: 'Confirmation' }
+      ]; track s.n) {
+        <div class="step" [class.done]="step() > s.n" [class.active]="step() === s.n">
+          <div class="step-circle">
+            @if (step() > s.n) {
+              <pz-icon name="Check" [size]="14" [strokeWidth]="2"/>
+            } @else {
+              {{ s.n }}
+            }
+          </div>
+          <span class="step-label">{{ s.label }}</span>
+        </div>
+      }
+    </div>
+
+    @if (error()) {
+      <div class="alert">
+        <pz-icon name="CircleHelp" [size]="14"/>{{ error() }}
+      </div>
+    }
+
+    <!-- ── STEP 1 : Plan ─────────────────────────────────────── -->
+    @if (step() === 1) {
+      <div class="step-content">
+        <h1>Choisissez votre formule</h1>
+        <p class="sub">14 jours d'essai gratuit sur toutes les formules. Sans engagement.</p>
+
+        <div class="plans">
+          @for (p of planOptions; track p.code) {
+            <button type="button" class="plan-card"
+                    [class.selected]="form().plan === p.code"
+                    [class.popular]="p.popular"
+                    (click)="update('plan', $any(p.code))">
+              @if (p.popular) { <span class="popular-badge">Recommandé</span> }
+              <div class="plan-radio">
+                @if (form().plan === p.code) {
+                  <div class="dot"></div>
+                }
+              </div>
+              <div class="plan-info">
+                <div class="plan-name" [style.color]="p.color">{{ p.label }}</div>
+                <div class="plan-max">Jusqu'à {{ p.max }} employés</div>
+              </div>
+              <div class="plan-price">{{ p.price }}</div>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── STEP 2 : Entreprise ──────────────────────────────── -->
+    @if (step() === 2) {
+      <div class="step-content">
+        <h1>Votre entreprise</h1>
+        <p class="sub">Ces informations apparaîtront sur vos bulletins et déclarations CNSS.</p>
+
+        <div class="form-grid">
+          <div class="field full">
+            <label>Raison sociale <span class="req">*</span></label>
+            <div class="input-wrap">
+              <pz-icon name="Building" [size]="14" [strokeWidth]="1.4"/>
+              <input [ngModel]="form().companyName" (ngModelChange)="update('companyName', $event)"
+                     placeholder="Ex. Atlas Tech SARL"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Nom commercial</label>
+            <input class="input" [ngModel]="form().tradeName" (ngModelChange)="update('tradeName', $event)"
+                   placeholder="Ex. Atlas Tech"/>
+          </div>
+          <div class="field">
+            <label>Matricule fiscal <span class="req">*</span></label>
+            <input class="input pz-mono" [ngModel]="form().taxId" (ngModelChange)="update('taxId', $event)"
+                   placeholder="1234567/A"/>
+          </div>
+          <div class="field">
+            <label>Identifiant CNSS</label>
+            <input class="input pz-mono" [ngModel]="form().cnssId" (ngModelChange)="update('cnssId', $event)"
+                   placeholder="12500-0001"/>
+          </div>
+          <div class="field">
+            <label>Ville <span class="req">*</span></label>
+            <select class="input" [ngModel]="form().city" (ngModelChange)="update('city', $event)">
+              <option value="">Sélectionnez…</option>
+              @for (c of cities; track c) {<option [value]="c">{{ c }}</option>}
+            </select>
+          </div>
+          <div class="field full">
+            <label>Téléphone</label>
+            <div class="input-wrap">
+              <pz-icon name="Phone" [size]="14" [strokeWidth]="1.4"/>
+              <input [ngModel]="form().phone" (ngModelChange)="update('phone', $event)"
+                     placeholder="+216 ..."/>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ── STEP 3 : Administrateur ───────────────────────────── -->
+    @if (step() === 3) {
+      <div class="step-content">
+        <h1>Votre compte administrateur</h1>
+        <p class="sub">Ce compte aura un accès complet à votre espace PaieZone.</p>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Prénom <span class="req">*</span></label>
+            <input class="input" [ngModel]="form().firstName" (ngModelChange)="update('firstName', $event)"
+                   placeholder="Mehdi"/>
+          </div>
+          <div class="field">
+            <label>Nom <span class="req">*</span></label>
+            <input class="input" [ngModel]="form().lastName" (ngModelChange)="update('lastName', $event)"
+                   placeholder="Trabelsi"/>
+          </div>
+          <div class="field full">
+            <label>Email professionnel <span class="req">*</span></label>
+            <div class="input-wrap">
+              <pz-icon name="Mail" [size]="14" [strokeWidth]="1.4"/>
+              <input type="email" [ngModel]="form().email" (ngModelChange)="update('email', $event)"
+                     placeholder="prenom.nom@entreprise.tn"/>
+            </div>
+            <div class="hint">Servira aussi d'identifiant de connexion.</div>
+          </div>
+          <div class="field full">
+            <label>Mot de passe <span class="req">*</span></label>
+            <div class="input-wrap">
+              <pz-icon name="Lock" [size]="14" [strokeWidth]="1.4"/>
+              <input type="password" [ngModel]="form().password" (ngModelChange)="update('password', $event)"
+                     placeholder="Au moins 8 caractères"/>
+            </div>
+            @if (form().password) {
+              <div class="pwd-meter">
+                <div class="bars">
+                  <i [class.on]="pwdScore() >= 1" [style.background]="pwdLabel().color"></i>
+                  <i [class.on]="pwdScore() >= 2" [style.background]="pwdLabel().color"></i>
+                  <i [class.on]="pwdScore() >= 3" [style.background]="pwdLabel().color"></i>
+                  <i [class.on]="pwdScore() >= 4" [style.background]="pwdLabel().color"></i>
+                </div>
+                <span [style.color]="pwdLabel().color">{{ pwdLabel().label }}</span>
+              </div>
+            }
+            <div class="hint">Utilisez au moins 8 caractères, mélangez majuscules, chiffres et symboles.</div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ── STEP 4 : Récap + 2FA + CGU ───────────────────────── -->
+    @if (step() === 4) {
+      <div class="step-content">
+        <h1>Vérification finale</h1>
+        <p class="sub">Vérifiez les informations ci-dessous avant de créer votre compte.</p>
+
+        <div class="recap-section">
+          <h3>Formule</h3>
+          <div class="recap-row">
+            <span>Plan choisi</span>
+            <strong>{{ form().plan }}</strong>
+          </div>
+        </div>
+
+        <div class="recap-section">
+          <h3>Entreprise <button class="link-edit" (click)="step.set(2)">Modifier</button></h3>
+          <div class="recap-row"><span>Raison sociale</span><strong>{{ form().companyName }}</strong></div>
+          <div class="recap-row"><span>Matricule fiscal</span><strong class="pz-mono">{{ form().taxId }}</strong></div>
+          <div class="recap-row"><span>Ville</span><strong>{{ form().city }}</strong></div>
+        </div>
+
+        <div class="recap-section">
+          <h3>Administrateur <button class="link-edit" (click)="step.set(3)">Modifier</button></h3>
+          <div class="recap-row"><span>Nom complet</span><strong>{{ form().firstName }} {{ form().lastName }}</strong></div>
+          <div class="recap-row"><span>Email</span><strong>{{ form().email }}</strong></div>
+        </div>
+
+        <div class="option-box">
+          <div class="opt-head">
+            <div class="opt-ico"><pz-icon name="Shield"/></div>
+            <div class="opt-text">
+              <div class="opt-title">Activer la double authentification (2FA)</div>
+              <div class="opt-sub">Vivement recommandé pour le rôle administrateur. Configuration en 30 secondes après la création.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [ngModel]="form().enable2fa" (ngModelChange)="update('enable2fa', $event)"/>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <label class="terms">
+          <input type="checkbox" [ngModel]="form().acceptTerms" (ngModelChange)="update('acceptTerms', $event)"/>
+          <span class="check-box"><pz-icon name="Check" [size]="10" [strokeWidth]="2.4"/></span>
+          <span>
+            J'accepte les <a class="link">conditions générales d'utilisation</a> et la
+            <a class="link">politique de confidentialité</a> de PaieZone.
+          </span>
+        </label>
+      </div>
+    }
+
+    <!-- ── Actions ────────────────────────────────────────────── -->
+    <div class="actions">
+      @if (step() > 1) {
+        <button type="button" class="pz-btn" (click)="back()">← Retour</button>
+      } @else {
+        <a class="link-back" routerLink="/paiezone">← Retour à l'accueil</a>
+      }
+
+      @if (step() < 4) {
+        <button type="button" class="pz-btn pz-primary lg" (click)="next()">
+          Continuer <pz-icon name="Arrow" [size]="14" [strokeWidth]="1.6"/>
+        </button>
+      } @else {
+        <button type="button" class="pz-btn pz-primary lg" (click)="submit()" [disabled]="busy() || !form().acceptTerms">
+          @if (busy()) {
+            <span class="spinner"></span> Création en cours…
+          } @else {
+            Créer mon compte
+          }
+        </button>
+      }
+    </div>
+
+    <div class="footer-link">
+      Déjà un compte ?
+      <a routerLink="/paiezone/login">Connectez-vous</a>
+    </div>
+  </div>
+}

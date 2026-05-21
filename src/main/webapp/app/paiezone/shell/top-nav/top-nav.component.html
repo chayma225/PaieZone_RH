@@ -93,6 +93,15 @@
       </div>
     </div>
     <div class="menu-sep"></div>
+    <a class="role-opt" routerLink="/paiezone/2fa-setup" (click)="menuOpen.set(false)">
+      <div class="pz-avatar" data-bg="4">
+        <pz-icon name="Shield" />
+      </div>
+      <div>
+        <div class="role-title">Sécurité (2FA)</div>
+        <div class="role-sub">Double authentification</div>
+      </div>
+    </a>
     <button class="role-opt logout-opt" (click)="logout()">
       <div class="pz-avatar" data-bg="1">
         <pz-icon name="LogOut" />

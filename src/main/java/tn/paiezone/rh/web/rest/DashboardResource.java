@@ -150,7 +150,7 @@ public class DashboardResource {
         LocalDate yesterday = today.minusDays(1);
 
         auditLogRepository
-            .findTop10ByOrderByOccurredAtDesc()
+            .findTop20ByOrderByOccurredAtDesc()
             .forEach(log -> {
                 ZonedDateTime zdt = log.getOccurredAt().atZone(TN);
                 LocalDate logDate = zdt.toLocalDate();
@@ -168,6 +168,8 @@ public class DashboardResource {
                 item.put("message", buildMessage(log.getAction(), log.getEntityType(), userLogin));
                 item.put("dateLabel", dateLabel);
                 item.put("timeHm", zdt.format(HM));
+                item.put("entityType", log.getEntityType() != null ? log.getEntityType() : "");
+                item.put("entityId", log.getEntityId() != null ? String.valueOf(log.getEntityId()) : "");
                 activities.add(item);
             });
 

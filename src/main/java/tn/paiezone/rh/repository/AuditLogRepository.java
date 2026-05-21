@@ -16,6 +16,8 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long>, JpaSp
 
     List<AuditLog> findTop10ByOrderByOccurredAtDesc();
 
+    List<AuditLog> findTop20ByOrderByOccurredAtDesc();
+
     @Query("SELECT COUNT(a) FROM AuditLog a WHERE a.occurredAt >= :since")
     long countSince(Instant since);
 }
