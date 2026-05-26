@@ -9,6 +9,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import IconComponent from '../../core/icon/icon.component';
+import { DataService } from '../../core/data.service';
 
 @Component({
   selector: 'pz-login',
@@ -340,6 +341,7 @@ export default class LoginComponent {
   private readonly authServer = inject(AuthServerProvider);
   private readonly accountService = inject(AccountService);
   private readonly appConfig = inject(ApplicationConfigService);
+  private readonly data = inject(DataService);
 
   protected readonly email = signal('');
   protected readonly password = signal('');
@@ -384,6 +386,7 @@ export default class LoginComponent {
             return;
           }
           this.authServer.storeToken(res.id_token, this.remember());
+          this.data.reset();
           this.accountService.identity(true).subscribe(acc => {
             this.busy.set(false);
             const roles = acc?.authorities ?? [];

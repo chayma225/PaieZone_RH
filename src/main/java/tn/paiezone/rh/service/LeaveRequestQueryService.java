@@ -32,34 +32,40 @@ public class LeaveRequestQueryService extends QueryService<LeaveRequest> {
 
     private final LeaveRequestMapper leaveRequestMapper;
 
-    public LeaveRequestQueryService(LeaveRequestRepository leaveRequestRepository, LeaveRequestMapper leaveRequestMapper) {
+    private final TenantContextService tenantContextService;
+
+    public LeaveRequestQueryService(
+        LeaveRequestRepository leaveRequestRepository,
+        LeaveRequestMapper leaveRequestMapper,
+        TenantContextService tenantContextService
+    ) {
         this.leaveRequestRepository = leaveRequestRepository;
         this.leaveRequestMapper = leaveRequestMapper;
+        this.tenantContextService = tenantContextService;
     }
 
-    /**
-     * Return a {@link Page} of {@link LeaveRequestDTO} which matches the criteria from the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
-     * @return the matching entities.
-     */
     @Transactional(readOnly = true)
     public Page<LeaveRequestDTO> findByCriteria(LeaveRequestCriteria criteria, Pageable page) {
         LOG.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<LeaveRequest> specification = createSpecification(criteria);
-        return leaveRequestRepository.findAll(specification, page).map(leaveRequestMapper::toDto);
+        return leaveRequestRepository.findAll(secureSpec(createSpecification(criteria)), page).map(leaveRequestMapper::toDto);
     }
 
-    /**
-     * Return the number of matching entities in the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the number of matching entities.
-     */
     @Transactional(readOnly = true)
     public long countByCriteria(LeaveRequestCriteria criteria) {
         LOG.debug("count by criteria : {}", criteria);
-        final Specification<LeaveRequest> specification = createSpecification(criteria);
-        return leaveRequestRepository.count(specification);
+        return leaveRequestRepository.count(secureSpec(createSpecification(criteria)));
+    }
+
+    private Specification<LeaveRequest> secureSpec(Specification<LeaveRequest> spec) {
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("employee").get("company").get("id"), companyId));
+        }
+        Long employeeId = tenantContextService.getCurrentEmployeeId();
+        if (employeeId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("employee").get("id"), employeeId));
+        }
+        return spec;
     }
 
     /**

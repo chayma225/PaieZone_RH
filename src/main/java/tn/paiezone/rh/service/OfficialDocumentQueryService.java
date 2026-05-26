@@ -32,37 +32,34 @@ public class OfficialDocumentQueryService extends QueryService<OfficialDocument>
 
     private final OfficialDocumentMapper officialDocumentMapper;
 
+    private final TenantContextService tenantContextService;
+
     public OfficialDocumentQueryService(
         OfficialDocumentRepository officialDocumentRepository,
-        OfficialDocumentMapper officialDocumentMapper
+        OfficialDocumentMapper officialDocumentMapper,
+        TenantContextService tenantContextService
     ) {
         this.officialDocumentRepository = officialDocumentRepository;
         this.officialDocumentMapper = officialDocumentMapper;
+        this.tenantContextService = tenantContextService;
     }
 
-    /**
-     * Return a {@link Page} of {@link OfficialDocumentDTO} which matches the criteria from the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
-     * @return the matching entities.
-     */
     @Transactional(readOnly = true)
     public Page<OfficialDocumentDTO> findByCriteria(OfficialDocumentCriteria criteria, Pageable page) {
         LOG.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<OfficialDocument> specification = createSpecification(criteria);
-        return officialDocumentRepository.findAll(specification, page).map(officialDocumentMapper::toDto);
+        return officialDocumentRepository.findAll(tenantSpec(createSpecification(criteria)), page).map(officialDocumentMapper::toDto);
     }
 
-    /**
-     * Return the number of matching entities in the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the number of matching entities.
-     */
     @Transactional(readOnly = true)
     public long countByCriteria(OfficialDocumentCriteria criteria) {
         LOG.debug("count by criteria : {}", criteria);
-        final Specification<OfficialDocument> specification = createSpecification(criteria);
-        return officialDocumentRepository.count(specification);
+        return officialDocumentRepository.count(tenantSpec(createSpecification(criteria)));
+    }
+
+    private Specification<OfficialDocument> tenantSpec(Specification<OfficialDocument> spec) {
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId == null) return spec;
+        return spec.and((root, query, cb) -> cb.equal(root.get("company").get("id"), companyId));
     }
 
     /**

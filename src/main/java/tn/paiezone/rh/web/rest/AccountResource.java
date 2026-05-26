@@ -8,8 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.User;
+import tn.paiezone.rh.domain.UserProfile;
+import tn.paiezone.rh.domain.enumeration.AppRole;
 import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.CompanyService;
@@ -49,18 +53,22 @@ public class AccountResource {
 
     private final CompanyRepository companyRepository;
 
+    private final UserProfileRepository userProfileRepository;
+
     public AccountResource(
         UserRepository userRepository,
         UserService userService,
         MailService mailService,
         CompanyService companyService,
-        CompanyRepository companyRepository
+        CompanyRepository companyRepository,
+        UserProfileRepository userProfileRepository
     ) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
         this.companyService = companyService;
         this.companyRepository = companyRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     /**
@@ -106,8 +114,20 @@ public class AccountResource {
         companyDTO.setGouvernorat(vm.getGouvernorat());
         companyDTO.setCity(vm.getCity());
         companyDTO.setPostalCode(vm.getPostalCode());
-        companyDTO.setAdminLogin(vm.getLogin());
-        companyService.save(companyDTO);
+        String adminLogin = vm.getLogin().toLowerCase();
+        companyDTO.setAdminLogin(adminLogin);
+        CompanyDTO savedCompany = companyService.save(companyDTO, vm.getPlan());
+
+        // Create a UserProfile for the admin so tenant resolution works via both paths
+        if (!userProfileRepository.existsByJhiUserId(adminLogin)) {
+            Company company = companyRepository.findById(savedCompany.getId()).orElseThrow();
+            UserProfile profile = new UserProfile();
+            profile.setJhiUserId(adminLogin);
+            profile.setRole(AppRole.ADMIN);
+            profile.setCompany(company);
+            profile.setActive(true);
+            userProfileRepository.save(profile);
+        }
     }
 
     /**

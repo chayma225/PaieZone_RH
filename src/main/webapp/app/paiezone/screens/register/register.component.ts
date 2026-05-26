@@ -961,10 +961,11 @@ export default class RegisterComponent {
       cnssId: this.step2.cnssId,
       city: this.step2.city,
       phone: this.step2.phone,
+      companyEmail: this.step3.email,
       plan: this.selectedPlan(),
     };
 
-    this.http.post(this.appConfig.getEndpointFor('api/register'), payload).subscribe({
+    this.http.post(this.appConfig.getEndpointFor('api/register-with-company'), payload).subscribe({
       next: () => {
         this.busy.set(false);
         this.router.navigate(['/paiezone/login'], { queryParams: { registered: 'true' } });

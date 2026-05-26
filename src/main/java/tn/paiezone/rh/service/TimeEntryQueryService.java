@@ -32,34 +32,40 @@ public class TimeEntryQueryService extends QueryService<TimeEntry> {
 
     private final TimeEntryMapper timeEntryMapper;
 
-    public TimeEntryQueryService(TimeEntryRepository timeEntryRepository, TimeEntryMapper timeEntryMapper) {
+    private final TenantContextService tenantContextService;
+
+    public TimeEntryQueryService(
+        TimeEntryRepository timeEntryRepository,
+        TimeEntryMapper timeEntryMapper,
+        TenantContextService tenantContextService
+    ) {
         this.timeEntryRepository = timeEntryRepository;
         this.timeEntryMapper = timeEntryMapper;
+        this.tenantContextService = tenantContextService;
     }
 
-    /**
-     * Return a {@link Page} of {@link TimeEntryDTO} which matches the criteria from the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
-     * @return the matching entities.
-     */
     @Transactional(readOnly = true)
     public Page<TimeEntryDTO> findByCriteria(TimeEntryCriteria criteria, Pageable page) {
         LOG.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<TimeEntry> specification = createSpecification(criteria);
-        return timeEntryRepository.findAll(specification, page).map(timeEntryMapper::toDto);
+        return timeEntryRepository.findAll(secureSpec(createSpecification(criteria)), page).map(timeEntryMapper::toDto);
     }
 
-    /**
-     * Return the number of matching entities in the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the number of matching entities.
-     */
     @Transactional(readOnly = true)
     public long countByCriteria(TimeEntryCriteria criteria) {
         LOG.debug("count by criteria : {}", criteria);
-        final Specification<TimeEntry> specification = createSpecification(criteria);
-        return timeEntryRepository.count(specification);
+        return timeEntryRepository.count(secureSpec(createSpecification(criteria)));
+    }
+
+    private Specification<TimeEntry> secureSpec(Specification<TimeEntry> spec) {
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("employee").get("company").get("id"), companyId));
+        }
+        Long employeeId = tenantContextService.getCurrentEmployeeId();
+        if (employeeId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("employee").get("id"), employeeId));
+        }
+        return spec;
     }
 
     /**
@@ -85,7 +91,8 @@ public class TimeEntryQueryService extends QueryService<TimeEntry> {
                 buildStringSpecification(criteria.getAnomalyNote(), TimeEntry_.anomalyNote),
                 buildStringSpecification(criteria.getValidatedBy(), TimeEntry_.validatedBy),
                 buildRangeSpecification(criteria.getValidatedAt(), TimeEntry_.validatedAt),
-                buildSpecification(criteria.getEmployeeId(), root -> root.join(TimeEntry_.employee, JoinType.LEFT).get(Employee_.id)),buildStringSpecification(criteria.getValidatedBy(), TimeEntry_.validatedBy)
+                buildSpecification(criteria.getEmployeeId(), root -> root.join(TimeEntry_.employee, JoinType.LEFT).get(Employee_.id)),
+                buildStringSpecification(criteria.getValidatedBy(), TimeEntry_.validatedBy)
             );
         }
         return specification;

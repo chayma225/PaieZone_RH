@@ -185,6 +185,26 @@ public class EmployeeResource {
             dto.setPosition(posDto);
         }
 
+        // Vérification limite de plan
+        var sub = company.getCompanySubscription();
+        if (sub != null && sub.getMaxEmployees() != null && sub.getMaxEmployees() > 0) {
+            long current = employeeRepository.countByCompanyIdAndActiveTrue(company.getId());
+            if (current >= sub.getMaxEmployees()) {
+                String next = nextPlanLabel(sub.getPlan() != null ? sub.getPlan().name() : "STARTER");
+                throw new BadRequestAlertException(
+                    "Limite atteinte : votre plan " +
+                        sub.getPlan() +
+                        " autorise " +
+                        sub.getMaxEmployees() +
+                        " employés. Passez au plan " +
+                        next +
+                        " pour continuer.",
+                    ENTITY_NAME,
+                    "planLimitReached"
+                );
+            }
+        }
+
         EmployeeDTO result = employeeService.save(dto);
         return ResponseEntity.created(new URI("/api/employees/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -357,5 +377,14 @@ public class EmployeeResource {
             throw new BadRequestAlertException("Champ obligatoire manquant : " + key, ENTITY_NAME, "missingfield");
         }
         return val.toString();
+    }
+
+    private String nextPlanLabel(String current) {
+        return switch (current) {
+            case "STARTER" -> "PME (30 employés, 290 TND/mois)";
+            case "PME" -> "BUSINESS (100 employés, 720 TND/mois)";
+            case "BUSINESS" -> "ENTERPRISE (500 employés, 1 480 TND/mois)";
+            default -> "CUSTOM — contactez-nous";
+        };
     }
 }

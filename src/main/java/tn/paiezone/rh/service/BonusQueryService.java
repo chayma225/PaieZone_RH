@@ -32,34 +32,36 @@ public class BonusQueryService extends QueryService<Bonus> {
 
     private final BonusMapper bonusMapper;
 
-    public BonusQueryService(BonusRepository bonusRepository, BonusMapper bonusMapper) {
+    private final TenantContextService tenantContextService;
+
+    public BonusQueryService(BonusRepository bonusRepository, BonusMapper bonusMapper, TenantContextService tenantContextService) {
         this.bonusRepository = bonusRepository;
         this.bonusMapper = bonusMapper;
+        this.tenantContextService = tenantContextService;
     }
 
-    /**
-     * Return a {@link Page} of {@link BonusDTO} which matches the criteria from the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
-     * @return the matching entities.
-     */
     @Transactional(readOnly = true)
     public Page<BonusDTO> findByCriteria(BonusCriteria criteria, Pageable page) {
         LOG.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<Bonus> specification = createSpecification(criteria);
-        return bonusRepository.findAll(specification, page).map(bonusMapper::toDto);
+        return bonusRepository.findAll(secureSpec(createSpecification(criteria)), page).map(bonusMapper::toDto);
     }
 
-    /**
-     * Return the number of matching entities in the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the number of matching entities.
-     */
     @Transactional(readOnly = true)
     public long countByCriteria(BonusCriteria criteria) {
         LOG.debug("count by criteria : {}", criteria);
-        final Specification<Bonus> specification = createSpecification(criteria);
-        return bonusRepository.count(specification);
+        return bonusRepository.count(secureSpec(createSpecification(criteria)));
+    }
+
+    private Specification<Bonus> secureSpec(Specification<Bonus> spec) {
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("employee").get("company").get("id"), companyId));
+        }
+        Long employeeId = tenantContextService.getCurrentEmployeeId();
+        if (employeeId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("employee").get("id"), employeeId));
+        }
+        return spec;
     }
 
     /**

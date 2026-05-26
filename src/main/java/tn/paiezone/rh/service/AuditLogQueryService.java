@@ -32,34 +32,34 @@ public class AuditLogQueryService extends QueryService<AuditLog> {
 
     private final AuditLogMapper auditLogMapper;
 
-    public AuditLogQueryService(AuditLogRepository auditLogRepository, AuditLogMapper auditLogMapper) {
+    private final TenantContextService tenantContextService;
+
+    public AuditLogQueryService(
+        AuditLogRepository auditLogRepository,
+        AuditLogMapper auditLogMapper,
+        TenantContextService tenantContextService
+    ) {
         this.auditLogRepository = auditLogRepository;
         this.auditLogMapper = auditLogMapper;
+        this.tenantContextService = tenantContextService;
     }
 
-    /**
-     * Return a {@link Page} of {@link AuditLogDTO} which matches the criteria from the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
-     * @return the matching entities.
-     */
     @Transactional(readOnly = true)
     public Page<AuditLogDTO> findByCriteria(AuditLogCriteria criteria, Pageable page) {
         LOG.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specification<AuditLog> specification = createSpecification(criteria);
-        return auditLogRepository.findAll(specification, page).map(auditLogMapper::toDto);
+        return auditLogRepository.findAll(tenantSpec(createSpecification(criteria)), page).map(auditLogMapper::toDto);
     }
 
-    /**
-     * Return the number of matching entities in the database.
-     * @param criteria The object which holds all the filters, which the entities should match.
-     * @return the number of matching entities.
-     */
     @Transactional(readOnly = true)
     public long countByCriteria(AuditLogCriteria criteria) {
         LOG.debug("count by criteria : {}", criteria);
-        final Specification<AuditLog> specification = createSpecification(criteria);
-        return auditLogRepository.count(specification);
+        return auditLogRepository.count(tenantSpec(createSpecification(criteria)));
+    }
+
+    private Specification<AuditLog> tenantSpec(Specification<AuditLog> spec) {
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId == null) return spec;
+        return spec.and((root, query, cb) -> cb.equal(root.get("company").get("id"), companyId));
     }
 
     /**

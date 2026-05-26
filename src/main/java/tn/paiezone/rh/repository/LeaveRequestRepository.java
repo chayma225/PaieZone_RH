@@ -23,4 +23,6 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
     List<LeaveRequest> findApprovedByEmployeeAndMonth(@Param("empId") Long empId, @Param("month") int month, @Param("year") int year);
 
     long countByStatus(LeaveStatus status);
+
+    long countByEmployee_Company_IdAndStatus(Long companyId, LeaveStatus status);
 }

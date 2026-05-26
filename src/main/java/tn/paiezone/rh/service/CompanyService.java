@@ -20,6 +20,7 @@ import tn.paiezone.rh.domain.enumeration.CompanySubscriptionStatus;
 import tn.paiezone.rh.domain.enumeration.PlanType;
 import tn.paiezone.rh.repository.CompanyRepository;
 import tn.paiezone.rh.repository.CompanySubscriptionRepository;
+import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.dto.CompanyDTO;
@@ -35,21 +36,51 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final CompanySubscriptionRepository subscriptionRepository;
+    private final EmployeeRepository employeeRepository;
 
     public CompanyService(
         CompanyRepository companyRepository,
         CompanyMapper companyMapper,
-        CompanySubscriptionRepository subscriptionRepository
+        CompanySubscriptionRepository subscriptionRepository,
+        EmployeeRepository employeeRepository
     ) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.subscriptionRepository = subscriptionRepository;
+        this.employeeRepository = employeeRepository;
     }
+
+    private CompanyDTO withEmployeeCount(CompanyDTO dto) {
+        if (dto.getId() != null) {
+            dto.setEmployeeCount(employeeRepository.countByCompanyId(dto.getId()));
+        }
+        return dto;
+    }
+
+    private static final java.util.Map<PlanType, int[]> PLAN_LIMITS = java.util.Map.of(
+        PlanType.STARTER,
+        new int[] { 10, 0 },
+        PlanType.PME,
+        new int[] { 30, 290 },
+        PlanType.BUSINESS,
+        new int[] { 100, 720 },
+        PlanType.ENTERPRISE,
+        new int[] { 500, 1480 },
+        PlanType.CUSTOM,
+        new int[] { 9999, 0 }
+    );
 
     /**
      * ✅ CREATE — génération automatique des champs techniques
      */
     public CompanyDTO save(CompanyDTO companyDTO) {
+        return save(companyDTO, null);
+    }
+
+    /**
+     * ✅ CREATE with explicit plan — honore le plan choisi à l'inscription.
+     */
+    public CompanyDTO save(CompanyDTO companyDTO, PlanType chosenPlan) {
         LOG.debug("Request to save Company : {}", companyDTO);
 
         companyDTO.setTenantSchema("tenant_" + UUID.randomUUID().toString().replace("-", ""));
@@ -60,13 +91,15 @@ public class CompanyService {
         Company company = companyMapper.toEntity(companyDTO);
         company = companyRepository.save(company);
 
-        // Crée un abonnement STARTER par défaut si la compagnie n'en a pas
+        // Crée l'abonnement en respectant le plan choisi (STARTER par défaut)
         if (company.getCompanySubscription() == null) {
+            PlanType plan = (chosenPlan != null) ? chosenPlan : PlanType.STARTER;
+            int[] limits = PLAN_LIMITS.getOrDefault(plan, new int[] { 10, 0 });
             CompanySubscription sub = new CompanySubscription();
-            sub.setPlan(PlanType.STARTER);
+            sub.setPlan(plan);
             sub.setStatus(CompanySubscriptionStatus.TRIAL);
-            sub.setMaxEmployees(10);
-            sub.setPriceHT(BigDecimal.ZERO);
+            sub.setMaxEmployees(limits[0]);
+            sub.setPriceHT(BigDecimal.valueOf(limits[1]));
             sub.setBillingDay(1);
             sub.setStartDate(LocalDate.now());
             sub.setRenewalDate(LocalDate.now().plusDays(14));
@@ -142,7 +175,12 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public List<CompanyDTO> findAll() {
         LOG.debug("Request to get all Companies");
-        return companyRepository.findAll().stream().map(companyMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
+        return companyRepository
+            .findAll()
+            .stream()
+            .map(companyMapper::toDto)
+            .map(this::withEmployeeCount)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -160,6 +198,7 @@ public class CompanyService {
                     .findByAdminLoginOrAdminProfile(login, tn.paiezone.rh.domain.enumeration.AppRole.ADMIN)
                     .stream()
                     .map(companyMapper::toDto)
+                    .map(this::withEmployeeCount)
                     .collect(Collectors.toCollection(LinkedList::new))
             )
             .orElseGet(LinkedList::new);
@@ -171,7 +210,7 @@ public class CompanyService {
     @Transactional(readOnly = true)
     public Optional<CompanyDTO> findOne(Long id) {
         LOG.debug("Request to get Company : {}", id);
-        return companyRepository.findById(id).map(companyMapper::toDto);
+        return companyRepository.findById(id).map(companyMapper::toDto).map(this::withEmployeeCount);
     }
 
     /**

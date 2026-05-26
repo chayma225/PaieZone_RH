@@ -44,10 +44,25 @@ public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSp
 
     long countByStatus(ContractStatus status);
 
+    long countByEmployee_Company_IdAndStatus(Long companyId, ContractStatus status);
+
     java.util.Optional<Contract> findFirstByEmployeeIdAndStatusOrderByStartDateDesc(Long employeeId, ContractStatus status);
 
     java.util.Optional<Contract> findFirstByEmployeeIdOrderByStartDateDesc(Long employeeId);
 
     @Query("SELECT count(c) FROM Contract c WHERE c.endDate <= :date AND c.status = 'ACTIVE'")
     long countExpiringWithin30Days(@Param("date") LocalDate date);
+
+    @Query("SELECT count(c) FROM Contract c WHERE c.endDate <= :date AND c.status = 'ACTIVE' AND c.employee.company.id = :companyId")
+    long countExpiringWithin30DaysByCompanyId(@Param("date") LocalDate date, @Param("companyId") Long companyId);
+
+    @Query(
+        "SELECT c FROM Contract c JOIN FETCH c.employee WHERE c.status = :status AND c.endDate BETWEEN :start AND :end AND c.employee.company.id = :companyId"
+    )
+    List<Contract> findByStatusAndEndDateBetweenAndCompanyId(
+        @Param("status") ContractStatus status,
+        @Param("start") LocalDate start,
+        @Param("end") LocalDate end,
+        @Param("companyId") Long companyId
+    );
 }

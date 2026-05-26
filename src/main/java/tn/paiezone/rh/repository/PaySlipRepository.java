@@ -75,4 +75,19 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, Long>, JpaSpec
             "ORDER BY ps.year ASC, ps.month ASC"
     )
     List<Object[]> aggregatePayrollByMonth(@Param("fromYm") int fromYm, @Param("toYm") int toYm);
+
+    @Query(
+        "SELECT ps.month, ps.year, COALESCE(SUM(ps.grossSalary), 0), COALESCE(SUM(ps.employerCnss), 0) " +
+            "FROM PaySlip ps " +
+            "WHERE ps.employee.company.id = :companyId " +
+            "AND (ps.year * 100 + ps.month) >= :fromYm " +
+            "AND (ps.year * 100 + ps.month) <= :toYm " +
+            "GROUP BY ps.year, ps.month " +
+            "ORDER BY ps.year ASC, ps.month ASC"
+    )
+    List<Object[]> aggregatePayrollByMonthAndCompany(
+        @Param("companyId") Long companyId,
+        @Param("fromYm") int fromYm,
+        @Param("toYm") int toYm
+    );
 }

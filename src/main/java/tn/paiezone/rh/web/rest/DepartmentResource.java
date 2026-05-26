@@ -133,11 +133,12 @@ public class DepartmentResource {
     @GetMapping("")
     public List<DepartmentDTO> getAllDepartments(@RequestParam(name = "companyId", required = false) Long companyId) {
         LOG.debug("REST request to get all Departments");
-        Long effectiveCompanyId = companyId != null ? companyId : tenantContextService.getCurrentCompanyId();
-        if (effectiveCompanyId != null) {
-            return departmentService.findByCompany(effectiveCompanyId);
+        Long tenantId = tenantContextService.getCurrentCompanyId();
+        if (tenantId == null) {
+            // SUPER_ADMIN : peut filtrer par companyId client ou voir tout
+            return companyId != null ? departmentService.findByCompany(companyId) : departmentService.findAll();
         }
-        return departmentService.findAll();
+        return departmentService.findByCompany(tenantId);
     }
 
     @GetMapping("/{id}")

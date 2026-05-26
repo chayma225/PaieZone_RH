@@ -9,6 +9,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import IconComponent from '../../core/icon/icon.component';
+import { DataService } from '../../core/data.service';
 
 @Component({
   selector: 'pz-twofa',
@@ -312,6 +313,7 @@ export default class TwoFaComponent implements OnInit, OnDestroy {
   private readonly accountService = inject(AccountService);
   private readonly stateStorage = inject(StateStorageService);
   private readonly appConfig = inject(ApplicationConfigService);
+  private readonly data = inject(DataService);
 
   protected readonly digits = signal<string[]>(['', '', '', '', '', '']);
   protected readonly busy = signal(false);
@@ -415,6 +417,7 @@ export default class TwoFaComponent implements OnInit, OnDestroy {
         this.stateStorage.storeAuthenticationToken(token, rememberMe);
         this.session.clear('2fa_login');
         this.session.clear('2fa_remember');
+        this.data.reset();
         this.verified.set(true);
         this.busy.set(false);
         this.accountService.identity(true).subscribe(acc => {

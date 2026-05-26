@@ -1,21 +1,25 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
+import { ApiService } from '../../core/api.service';
+import type { Company } from '../../core/types';
 
 const MONTHS_SHORT = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
 
 @Component({
   selector: 'pz-saas-dashboard',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, FormsModule, IconComponent],
   templateUrl: './saas-dashboard.component.html',
   styleUrl: './saas-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SaasDashboardComponent {
   protected readonly data = inject(DataService);
+  private readonly api = inject(ApiService);
 
   readonly currentMonth = MONTHS_SHORT[new Date().getMonth()] + ' ' + new Date().getFullYear();
 
@@ -25,13 +29,9 @@ export default class SaasDashboardComponent {
     const mrr = companies.reduce((s, c) => s + (c.mrr ?? 0), 0);
     return {
       mrr,
-      mrrDelta: 0,
       arr: mrr * 12,
-      arrDelta: 0,
       tenants: (stats['totalCompanies'] as number) ?? companies.length,
-      tenantsDelta: 0,
       totalEmployees: (stats['totalEmployees'] as number) ?? 0,
-      employeesDelta: 0,
       churn: 0,
       uptime: 99.97,
     };
@@ -123,4 +123,64 @@ export default class SaasDashboardComponent {
       last = pts[pts.length - 1];
     return [`${first.x},105`, ...pts.map(p => `${p.x},${p.y}`), `${last.x},105`].join(' ');
   });
+
+  readonly plans = ['STARTER', 'PME', 'BUSINESS', 'ENTERPRISE', 'CUSTOM'];
+
+  downloadReport(): void {
+    const companies = this.data.companies();
+    const kpi = this.kpi();
+    const month = this.currentMonth;
+
+    const headers = ['Entreprise', 'Matricule fiscal', 'Ville', 'Plan', 'Employés', 'MRR (TND)', 'Statut', 'Renouvellement'];
+    const rows = companies.map(c => [
+      `"${(c.name || c.tradeName || '').replace(/"/g, '""')}"`,
+      c.taxId,
+      c.city,
+      this.data.planLabel(c.plan),
+      c.employees,
+      c.mrr,
+      c.status,
+      c.renewal,
+    ]);
+
+    const summary = [
+      [],
+      ['Récapitulatif', month],
+      ['MRR total', kpi.mrr],
+      ['ARR projeté', kpi.arr],
+      ["Nombre d'entreprises", kpi.tenants],
+      ['Total employés', kpi.totalEmployees],
+    ];
+
+    const csv = [headers.join(';'), ...rows.map(r => r.join(';')), ...summary.map(r => r.join(';'))].join('\n');
+
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rapport-mensuel-${month.replace(' ', '-')}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  activateCompany(c: Company): void {
+    this.api.changePlan(c.id, c.plan || 'STARTER').subscribe({
+      next: updated => this.data.companies.update(list => list.map(x => (x.id === updated.id ? updated : x))),
+    });
+  }
+
+  suspendCompany(c: Company): void {
+    this.api.suspendCompany(c.id).subscribe({
+      next: updated => this.data.companies.update(list => list.map(x => (x.id === updated.id ? updated : x))),
+    });
+  }
+
+  changePlan(c: Company, plan: string): void {
+    if (!plan) return;
+    this.api.changePlan(c.id, plan).subscribe({
+      next: updated => this.data.companies.update(list => list.map(x => (x.id === updated.id ? updated : x))),
+    });
+  }
 }

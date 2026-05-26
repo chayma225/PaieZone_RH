@@ -23,4 +23,6 @@ public interface AdvanceRepository extends JpaRepository<Advance, Long>, JpaSpec
     List<Advance> findApprovedForDeduction(@Param("employeeId") Long employeeId, @Param("month") int month, @Param("year") int year);
 
     long countByStatus(AdvanceStatus status);
+
+    long countByEmployee_Company_IdAndStatus(Long companyId, AdvanceStatus status);
 }

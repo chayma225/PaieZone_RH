@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, computed, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import IconComponent from '../../core/icon/icon.component';
@@ -9,7 +10,7 @@ import { ApiService } from '../../core/api.service';
 @Component({
   selector: 'pz-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, IconComponent],
+  imports: [CommonModule, FormsModule, RouterLink, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="pz-page">
@@ -36,7 +37,58 @@ import { ApiService } from '../../core/api.service';
             <strong>Aucune entreprise configurée.</strong>
             Créez votre entreprise pour commencer à utiliser PaieZone RH.
           </div>
-          <a class="pz-btn pz-primary" routerLink="/account/company-setup">Configurer mon entreprise</a>
+          <button class="pz-btn pz-primary" (click)="openSetup()">Configurer mon entreprise</button>
+        </div>
+      }
+
+      <!-- ── Modal création entreprise ─────────────────────────────────────── -->
+      @if (showSetup()) {
+        <div class="pz-overlay" (click)="closeSetup()">
+          <div class="pz-modal" (click)="$event.stopPropagation()">
+            <div class="pz-modal-head">
+              <span>Configurer mon entreprise</span>
+              <button class="pz-modal-close" (click)="closeSetup()"><pz-icon name="X" [size]="16" /></button>
+            </div>
+            <div class="pz-modal-body">
+              <div class="pz-field">
+                <label>Raison sociale *</label>
+                <input type="text" [(ngModel)]="setupForm.name" placeholder="ex: Ma Société SARL" />
+              </div>
+              <div class="pz-field">
+                <label>Matricule fiscal *</label>
+                <input type="text" [(ngModel)]="setupForm.taxId" placeholder="ex: 1234567A/P/M/000" />
+              </div>
+              <div class="pz-field-row">
+                <div class="pz-field">
+                  <label>Téléphone</label>
+                  <input type="text" [(ngModel)]="setupForm.phone" placeholder="+216 XX XXX XXX" />
+                </div>
+                <div class="pz-field">
+                  <label>Email</label>
+                  <input type="email" [(ngModel)]="setupForm.email" placeholder="contact@entreprise.tn" />
+                </div>
+              </div>
+              <div class="pz-field-row">
+                <div class="pz-field">
+                  <label>Ville</label>
+                  <input type="text" [(ngModel)]="setupForm.city" placeholder="ex: Tunis" />
+                </div>
+                <div class="pz-field">
+                  <label>Gouvernorat</label>
+                  <input type="text" [(ngModel)]="setupForm.gouvernorat" placeholder="ex: Tunis" />
+                </div>
+              </div>
+              @if (setupErr()) {
+                <div class="pz-err">{{ setupErr() }}</div>
+              }
+            </div>
+            <div class="pz-modal-foot">
+              <button class="pz-btn" (click)="closeSetup()">Annuler</button>
+              <button class="pz-btn pz-primary" [disabled]="setupBusy()" (click)="submitSetup()">
+                {{ setupBusy() ? 'Enregistrement…' : 'Créer mon entreprise' }}
+              </button>
+            </div>
+          </div>
         </div>
       }
 
@@ -399,6 +451,95 @@ import { ApiService } from '../../core/api.service';
       .no-company-banner div {
         flex: 1;
       }
+
+      .pz-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .pz-modal {
+        background: var(--pz-surface);
+        border-radius: 14px;
+        width: 520px;
+        max-width: 95vw;
+        max-height: 90vh;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+        display: flex;
+        flex-direction: column;
+      }
+      .pz-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px 14px;
+        font-weight: 600;
+        font-size: 15px;
+        border-bottom: 1px solid var(--pz-line);
+      }
+      .pz-modal-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--pz-muted);
+        display: flex;
+      }
+      .pz-modal-body {
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+      }
+      .pz-modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 20px;
+        border-top: 1px solid var(--pz-line);
+      }
+      .pz-field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .pz-field-row {
+        display: flex;
+        gap: 12px;
+      }
+      .pz-field-row .pz-field {
+        flex: 1;
+      }
+      .pz-field label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--pz-muted);
+      }
+      .pz-field input {
+        border: 1px solid var(--pz-line);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font: inherit;
+        font-size: 13px;
+        background: var(--pz-surface);
+        color: var(--pz-ink);
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .pz-field input:focus {
+        border-color: var(--pz-primary);
+      }
+      .pz-err {
+        color: #b91c1c;
+        font-size: 12.5px;
+        background: #fee2e2;
+        border-radius: 8px;
+        padding: 8px 12px;
+      }
     `,
   ],
 })
@@ -407,6 +548,52 @@ export default class AdminDashboardComponent implements OnInit {
   private readonly api = inject(ApiService);
 
   readonly jhUsers = signal<any[]>([]);
+
+  // ── Company setup modal ──────────────────────────────────────────────────
+  readonly showSetup = signal(false);
+  readonly setupBusy = signal(false);
+  readonly setupErr = signal('');
+  setupForm = { name: '', taxId: '', phone: '', email: '', city: '', gouvernorat: '' };
+
+  openSetup(): void {
+    this.setupForm = { name: '', taxId: '', phone: '', email: '', city: '', gouvernorat: '' };
+    this.setupErr.set('');
+    this.showSetup.set(true);
+  }
+
+  closeSetup(): void {
+    this.showSetup.set(false);
+  }
+
+  submitSetup(): void {
+    if (!this.setupForm.name.trim() || !this.setupForm.taxId.trim()) {
+      this.setupErr.set('La raison sociale et le matricule fiscal sont obligatoires.');
+      return;
+    }
+    this.setupBusy.set(true);
+    this.setupErr.set('');
+    this.api
+      .createCompany({
+        name: this.setupForm.name.trim(),
+        taxId: this.setupForm.taxId.trim(),
+        phone: this.setupForm.phone.trim() || null,
+        email: this.setupForm.email.trim() || null,
+        city: this.setupForm.city.trim() || null,
+        gouvernorat: this.setupForm.gouvernorat.trim() || null,
+      })
+      .subscribe({
+        next: company => {
+          this.data.companies.set([company]);
+          this.closeSetup();
+          this.setupBusy.set(false);
+        },
+        error: err => {
+          const msg = err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la création.';
+          this.setupErr.set(msg);
+          this.setupBusy.set(false);
+        },
+      });
+  }
 
   readonly today = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
 

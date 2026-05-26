@@ -18,4 +18,7 @@ public interface BonusRepository extends JpaRepository<Bonus, Long>, JpaSpecific
 
     @Query("SELECT count(b) FROM Bonus b WHERE b.month = :month AND b.year = :year")
     long countByMonthAndYear(@Param("month") int month, @Param("year") int year);
+
+    @Query("SELECT count(b) FROM Bonus b WHERE b.employee.company.id = :companyId AND b.month = :month AND b.year = :year")
+    long countByCompanyIdAndMonthAndYear(@Param("companyId") Long companyId, @Param("month") int month, @Param("year") int year);
 }

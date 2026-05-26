@@ -18,6 +18,7 @@ import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.PayrollCalculationService;
 import tn.paiezone.rh.service.PayrollPeriodService;
+import tn.paiezone.rh.service.TenantContextService;
 import tn.paiezone.rh.service.dto.BulkCalculationResultDTO;
 import tn.paiezone.rh.service.dto.PayrollPeriodDTO;
 import tn.paiezone.rh.service.mapper.PayrollPeriodMapper;
@@ -33,12 +34,13 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
     private final CompanyRepository companyRepository;
     private final PayrollCalculationService calculationService;
     private final UserProfileRepository userProfileRepository;
+    private final TenantContextService tenantContextService;
 
     // ── Récupère la société de l'utilisateur connecté ─────────────
     private Optional<Company> getCurrentCompany() {
-        return SecurityUtils.getCurrentUserLogin()
-            .flatMap(userProfileRepository::findByJhiUserId)
-            .map(up -> up.getCompany());
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId == null || companyId < 0) return Optional.empty();
+        return companyRepository.findById(companyId);
     }
 
     @Override
@@ -107,8 +109,11 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
             log.debug("findAll filtré par company ID={}", comp.getId());
             return periodRepository.findByCompanyId(comp.getId(), pageable).map(periodMapper::toDto);
         }
-        // ── Fallback : retourner toutes les périodes (admin global) ─
-        log.warn("Aucune société trouvée pour l'utilisateur courant — retour de toutes les périodes.");
+        // Aucune société trouvée pour un non-super-admin → liste vide (fail-closed)
+        if (!tenantContextService.isSuperAdmin()) {
+            log.warn("Aucune société trouvée pour l'utilisateur courant — retour liste vide (fail-closed).");
+            return Page.empty(pageable);
+        }
         return periodRepository.findAll(pageable).map(periodMapper::toDto);
     }
 

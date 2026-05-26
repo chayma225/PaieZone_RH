@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+    Pour chaque entreprise avec admin_login renseigné mais sans UserProfile ADMIN,
+    crée un UserProfile liant l'admin à son entreprise.
+    Couvre les admins inscrits via /register-with-company sans UserProfile.
+  -->
+  <changeSet id="20260525-create-user-profiles-for-admins" author="paiezone" dbms="postgresql">
+    <sql>
+      INSERT INTO user_profile (id, jhi_user_id, company_id, role, active)
+      SELECT nextval('sequence_generator'), LOWER(c.admin_login), c.id, 'ADMIN', true
+      FROM company c
+      WHERE c.admin_login IS NOT NULL
+        AND c.admin_login != ''
+        AND NOT EXISTS (
+          SELECT 1 FROM user_profile up
+          WHERE up.company_id = c.id
+            AND up.role = 'ADMIN'
+        )
+        AND EXISTS (
+          SELECT 1 FROM jhi_user u
+          WHERE LOWER(u.login) = LOWER(c.admin_login)
+        )
+      ON CONFLICT (jhi_user_id) DO NOTHING
+      ;
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

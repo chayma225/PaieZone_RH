@@ -6,8 +6,7 @@
       <div class="pz-muted">Vue consolidée des entreprises clientes, revenus et santé du service.</div>
     </div>
     <div class="pz-page-actions">
-      <button class="pz-btn"><pz-icon name="Download" [size]="14" /> Rapport mensuel</button>
-      <button class="pz-btn pz-primary"><pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvelle entreprise</button>
+      <button class="pz-btn pz-primary" (click)="downloadReport()"><pz-icon name="Download" [size]="14" /> Rapport mensuel</button>
     </div>
   </div>
 
@@ -19,7 +18,7 @@
       </div>
       <div class="stat-val">{{ data.fmtTND(kpi().mrr) }}</div>
       <div class="stat-foot">
-        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi().mrrDelta }}%</span>
+        <span class="pz-pill">—</span>
         <span class="pz-muted">vs mois précédent</span>
       </div>
     </div>
@@ -29,7 +28,7 @@
       </div>
       <div class="stat-val">{{ data.fmtTND(kpi().arr) }}</div>
       <div class="stat-foot">
-        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi().arrDelta }}%</span>
+        <span class="pz-pill">—</span>
         <span class="pz-muted">12 derniers mois</span>
       </div>
     </div>
@@ -39,7 +38,7 @@
       </div>
       <div class="stat-val">{{ kpi().tenants }}</div>
       <div class="stat-foot">
-        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi().tenantsDelta }}</span>
+        <span class="pz-pill">—</span>
         <span class="pz-muted">ce trimestre</span>
       </div>
     </div>
@@ -49,7 +48,7 @@
       </div>
       <div class="stat-val">{{ kpi().totalEmployees }}</div>
       <div class="stat-foot">
-        <span class="pz-pill pos"><pz-icon name="Up" [size]="10" [strokeWidth]="2" /> +{{ kpi().employeesDelta }}</span>
+        <span class="pz-pill">—</span>
         <span class="pz-muted">ce mois-ci</span>
       </div>
     </div>
@@ -175,15 +174,16 @@
             <th class="num">Employés</th>
             <th class="num">MRR</th>
             <th>Statut</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           @if (data.companies().length === 0) {
             <tr>
-              <td colspan="5" style="text-align: center; padding: 32px; color: var(--pz-muted)">Aucune entreprise</td>
+              <td colspan="6" style="text-align: center; padding: 32px; color: var(--pz-muted)">Aucune entreprise</td>
             </tr>
           }
-          @for (c of data.companies().slice(0, 6); track c.id) {
+          @for (c of data.companies(); track c.id) {
             <tr>
               <td>
                 <div class="ev-name">
@@ -213,7 +213,11 @@
                 </div>
               </td>
               <td>
-                <span class="pz-pill primary">{{ data.planLabel(c.plan) }}</span>
+                <select class="plan-select" [ngModel]="c.plan" (ngModelChange)="changePlan(c, $event)">
+                  @for (p of plans; track p) {
+                    <option [value]="p">{{ data.planLabel(p) }}</option>
+                  }
+                </select>
               </td>
               <td class="num">{{ c.employees }}</td>
               <td class="num">{{ c.mrr > 0 ? data.fmtTND(c.mrr) : '—' }}</td>
@@ -226,6 +230,20 @@
                 >
                   <span class="dot"></span>{{ c.status }}
                 </span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 6px; align-items: center">
+                  @if (c.status !== 'ACTIVE') {
+                    <button class="pz-btn pz-primary" style="font-size: 12px; padding: 4px 10px" (click)="activateCompany(c)">
+                      Activer
+                    </button>
+                  }
+                  @if (c.status === 'ACTIVE') {
+                    <button class="pz-btn" style="font-size: 12px; padding: 4px 10px; color: var(--pz-danger)" (click)="suspendCompany(c)">
+                      Suspendre
+                    </button>
+                  }
+                </div>
               </td>
             </tr>
           }

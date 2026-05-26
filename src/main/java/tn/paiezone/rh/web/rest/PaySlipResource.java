@@ -21,11 +21,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.PaySlipRepository;
 import tn.paiezone.rh.repository.PayrollPeriodRepository;
+import tn.paiezone.rh.security.SecurityUtils;
+import tn.paiezone.rh.service.PaySlipPdfService;
 import tn.paiezone.rh.service.PaySlipQueryService;
 import tn.paiezone.rh.service.PaySlipService;
-import tn.paiezone.rh.service.PaySlipPdfService;
 import tn.paiezone.rh.service.criteria.PaySlipCriteria;
 import tn.paiezone.rh.service.dto.PaySlipDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
@@ -49,19 +51,22 @@ public class PaySlipResource {
     private final PaySlipQueryService paySlipQueryService;
     private final PaySlipPdfService paySlipPdfService;
     private final PayrollPeriodRepository payrollPeriodRepository;
+    private final EmployeeRepository employeeRepository;
 
     public PaySlipResource(
         PaySlipService paySlipService,
         PaySlipRepository paySlipRepository,
         PaySlipQueryService paySlipQueryService,
         PaySlipPdfService paySlipPdfService,
-        PayrollPeriodRepository payrollPeriodRepository
+        PayrollPeriodRepository payrollPeriodRepository,
+        EmployeeRepository employeeRepository
     ) {
         this.paySlipService = paySlipService;
         this.paySlipRepository = paySlipRepository;
         this.paySlipQueryService = paySlipQueryService;
         this.paySlipPdfService = paySlipPdfService;
         this.payrollPeriodRepository = payrollPeriodRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     /**
@@ -115,9 +120,32 @@ public class PaySlipResource {
     }
 
     /**
+     * {@code GET /pay-slips/my} : bulletins de l'employé connecté.
+     */
+    @GetMapping("/my")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<PaySlipDTO>> getMyPaySlips(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        if (login == null) return ResponseEntity.ok(List.of());
+
+        return employeeRepository
+            .findByUserProfile_JhiUserId(login)
+            .map(emp -> {
+                List<PaySlipDTO> slips = paySlipRepository
+                    .findByEmployeeId(emp.getId(), pageable)
+                    .stream()
+                    .map(ps -> paySlipService.findOne(ps.getId()).orElseThrow())
+                    .toList();
+                return ResponseEntity.ok(slips);
+            })
+            .orElseGet(() -> ResponseEntity.ok(List.of()));
+    }
+
+    /**
      * {@code GET  /pay-slips/:id} : get the "id" paySlip.
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE','ROLE_ADMIN','ROLE_SUPER_ADMIN') or @paySlipSecurity.isOwner(#id, authentication)")
     public ResponseEntity<PaySlipDTO> getPaySlip(@PathVariable("id") Long id) {
         LOG.debug("REST request to get PaySlip : {}", id);
         Optional<PaySlipDTO> paySlipDTO = paySlipService.findOne(id);
@@ -145,10 +173,10 @@ public class PaySlipResource {
 
         byte[] pdf = paySlipPdfService.generatePdf(id);
 
-        return paySlipRepository.findById(id)
+        return paySlipRepository
+            .findById(id)
             .map(ps -> {
-                String filename = String.format("bulletin_%s_%02d_%d.pdf",
-                    ps.getEmployee().getMatricule(), ps.getMonth(), ps.getYear());
+                String filename = String.format("bulletin_%s_%02d_%d.pdf", ps.getEmployee().getMatricule(), ps.getMonth(), ps.getYear());
 
                 return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
@@ -168,10 +196,10 @@ public class PaySlipResource {
 
         byte[] pdf = paySlipPdfService.generateBulkPdf(periodId);
 
-        return payrollPeriodRepository.findById(periodId)
+        return payrollPeriodRepository
+            .findById(periodId)
             .map(period -> {
-                String filename = String.format("bulletins_%02d_%d.pdf",
-                    period.getMonth(), period.getYear());
+                String filename = String.format("bulletins_%02d_%d.pdf", period.getMonth(), period.getYear());
 
                 return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")

@@ -19,6 +19,7 @@ import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.repository.JobPositionRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.service.JobPositionService;
+import tn.paiezone.rh.service.TenantContextService;
 import tn.paiezone.rh.service.dto.JobPositionDTO;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
@@ -34,10 +35,16 @@ public class JobPositionResource {
 
     private final JobPositionService jobPositionService;
     private final JobPositionRepository jobPositionRepository;
+    private final TenantContextService tenantContextService;
 
-    public JobPositionResource(JobPositionService jobPositionService, JobPositionRepository jobPositionRepository) {
+    public JobPositionResource(
+        JobPositionService jobPositionService,
+        JobPositionRepository jobPositionRepository,
+        TenantContextService tenantContextService
+    ) {
         this.jobPositionService = jobPositionService;
         this.jobPositionRepository = jobPositionRepository;
+        this.tenantContextService = tenantContextService;
     }
 
     @PostMapping("")
@@ -126,10 +133,12 @@ public class JobPositionResource {
     @GetMapping("")
     public List<JobPositionDTO> getAllJobPositions(@RequestParam(name = "companyId", required = false) Long companyId) {
         LOG.debug("REST request to get all JobPositions");
-        if (companyId != null) {
-            return jobPositionService.findByCompany(companyId);
+        Long tenantId = tenantContextService.getCurrentCompanyId();
+        if (tenantId == null) {
+            // SUPER_ADMIN : peut filtrer par companyId client ou voir tout
+            return companyId != null ? jobPositionService.findByCompany(companyId) : jobPositionService.findAll();
         }
-        return jobPositionService.findAll();
+        return jobPositionService.findByCompany(tenantId);
     }
 
     @GetMapping("/{id}")

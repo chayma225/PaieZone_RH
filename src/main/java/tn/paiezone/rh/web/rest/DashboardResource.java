@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import tn.paiezone.rh.domain.AuditLog;
+import tn.paiezone.rh.domain.Contract;
 import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 import tn.paiezone.rh.domain.enumeration.CompanySubscriptionStatus;
 import tn.paiezone.rh.domain.enumeration.ContractStatus;
@@ -18,6 +20,7 @@ import tn.paiezone.rh.domain.enumeration.LeaveStatus;
 import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 import tn.paiezone.rh.repository.*;
 import tn.paiezone.rh.security.AuthoritiesConstants;
+import tn.paiezone.rh.service.TenantContextService;
 
 /**
  * REST controller pour les données du Dashboard.
@@ -42,6 +45,7 @@ public class DashboardResource {
     private final ChatSessionRepository chatSessionRepository;
     private final CompanyRepository companyRepository;
     private final CompanySubscriptionRepository companySubscriptionRepository;
+    private final TenantContextService tenantContextService;
     // Calcule la date limite (27 Avril + 30 jours = 27 Mai)
     LocalDate limite = LocalDate.now().plusDays(30);
 
@@ -58,7 +62,8 @@ public class DashboardResource {
         AuditLogRepository auditLogRepository,
         ChatSessionRepository chatSessionRepository,
         CompanyRepository companyRepository,
-        CompanySubscriptionRepository companySubscriptionRepository
+        CompanySubscriptionRepository companySubscriptionRepository,
+        TenantContextService tenantContextService
     ) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
@@ -73,6 +78,7 @@ public class DashboardResource {
         this.chatSessionRepository = chatSessionRepository;
         this.companyRepository = companyRepository;
         this.companySubscriptionRepository = companySubscriptionRepository;
+        this.tenantContextService = tenantContextService;
     }
 
     // =========================================================
@@ -84,36 +90,45 @@ public class DashboardResource {
     public ResponseEntity<Map<String, Object>> getStats() {
         LOG.debug("REST request to get Dashboard stats");
 
+        Long companyId = tenantContextService.getCurrentCompanyId();
         Map<String, Object> stats = new HashMap<>();
 
-        // --- Stats communes à tous les rôles ---
-        stats.put("totalEmployees", employeeRepository.count());
-        stats.put("activeEmployees", employeeRepository.countByActiveTrue());
-        stats.put("departments", departmentRepository.count());
-        stats.put("positions", jobPositionRepository.count());
-        long activeContracts = contractRepository.countByStatus(ContractStatus.ACTIVE);
-        stats.put("expiringContracts", contractRepository.countExpiringWithin30Days(limite));
-        //--stats.put("chatSessions", chatSessionRepository.countByStatus("ACTIVE"));
-        // --- Congés ---
-        stats.put("pendingLeaves", leaveRequestRepository.countByStatus(LeaveStatus.PENDING));
-        stats.put("approvedLeaves", leaveRequestRepository.countByStatus(LeaveStatus.PENDING));
-
-        // --- Paie ---
-        stats.put("payrollDrafts", payrollPeriodRepository.countByStatus(PayrollStatus.DRAFT));
-        stats.put("payrollValidated", payrollPeriodRepository.countByStatus(PayrollStatus.VALIDATED));
-
-        // --- RH_COMPTABLE ---
         int currentMonth = java.time.LocalDate.now().getMonthValue();
         int currentYear = java.time.LocalDate.now().getYear();
-        stats.put("pendingAdvances", advanceRepository.countByStatus(AdvanceStatus.REQUESTED));
-        stats.put("bonusThisMonth", bonusRepository.countByMonthAndYear(currentMonth, currentYear));
 
-        // --- ADMIN / SUPER_ADMIN ---
-        stats.put("auditLogsToday", auditLogRepository.countSince(Instant.now().minus(24, ChronoUnit.HOURS)));
-
-        // --- SUPER_ADMIN uniquement ---
-        stats.put("totalCompanies", companyRepository.count());
-        stats.put("activeSubscriptions", companySubscriptionRepository.countByStatus(CompanySubscriptionStatus.ACTIVE));
+        if (companyId != null) {
+            stats.put("totalEmployees", employeeRepository.countByCompanyId(companyId));
+            stats.put("activeEmployees", employeeRepository.countByCompanyIdAndActiveTrue(companyId));
+            stats.put("departments", departmentRepository.countByCompanyId(companyId));
+            stats.put("positions", jobPositionRepository.countByCompanyId(companyId));
+            stats.put("expiringContracts", contractRepository.countExpiringWithin30DaysByCompanyId(limite, companyId));
+            stats.put("pendingLeaves", leaveRequestRepository.countByEmployee_Company_IdAndStatus(companyId, LeaveStatus.PENDING));
+            stats.put("approvedLeaves", leaveRequestRepository.countByEmployee_Company_IdAndStatus(companyId, LeaveStatus.APPROVED));
+            stats.put("payrollDrafts", payrollPeriodRepository.countByCompanyIdAndStatus(companyId, PayrollStatus.DRAFT));
+            stats.put("payrollValidated", payrollPeriodRepository.countByCompanyIdAndStatus(companyId, PayrollStatus.VALIDATED));
+            stats.put("pendingAdvances", advanceRepository.countByEmployee_Company_IdAndStatus(companyId, AdvanceStatus.REQUESTED));
+            stats.put("bonusThisMonth", bonusRepository.countByCompanyIdAndMonthAndYear(companyId, currentMonth, currentYear));
+            stats.put("auditLogsToday", auditLogRepository.countByCompanyIdSince(companyId, Instant.now().minus(24, ChronoUnit.HOURS)));
+            // SUPER_ADMIN stats masquées pour les admins tenant
+            stats.put("totalCompanies", 1L);
+            stats.put("activeSubscriptions", companySubscriptionRepository.countByStatus(CompanySubscriptionStatus.ACTIVE));
+        } else {
+            // SUPER_ADMIN : voit tout
+            stats.put("totalEmployees", employeeRepository.count());
+            stats.put("activeEmployees", employeeRepository.countByActiveTrue());
+            stats.put("departments", departmentRepository.count());
+            stats.put("positions", jobPositionRepository.count());
+            stats.put("expiringContracts", contractRepository.countExpiringWithin30Days(limite));
+            stats.put("pendingLeaves", leaveRequestRepository.countByStatus(LeaveStatus.PENDING));
+            stats.put("approvedLeaves", leaveRequestRepository.countByStatus(LeaveStatus.APPROVED));
+            stats.put("payrollDrafts", payrollPeriodRepository.countByStatus(PayrollStatus.DRAFT));
+            stats.put("payrollValidated", payrollPeriodRepository.countByStatus(PayrollStatus.VALIDATED));
+            stats.put("pendingAdvances", advanceRepository.countByStatus(AdvanceStatus.REQUESTED));
+            stats.put("bonusThisMonth", bonusRepository.countByMonthAndYear(currentMonth, currentYear));
+            stats.put("auditLogsToday", auditLogRepository.countSince(Instant.now().minus(24, ChronoUnit.HOURS)));
+            stats.put("totalCompanies", companyRepository.count());
+            stats.put("activeSubscriptions", companySubscriptionRepository.countByStatus(CompanySubscriptionStatus.ACTIVE));
+        }
 
         return ResponseEntity.ok(stats);
     }
@@ -145,33 +160,37 @@ public class DashboardResource {
     public ResponseEntity<List<Map<String, String>>> getRecentActivity() {
         LOG.debug("REST request to get recent activity");
 
+        Long companyId = tenantContextService.getCurrentCompanyId();
         List<Map<String, String>> activities = new ArrayList<>();
         LocalDate today = LocalDate.now(TN);
         LocalDate yesterday = today.minusDays(1);
 
-        auditLogRepository
-            .findTop20ByOrderByOccurredAtDesc()
-            .forEach(log -> {
-                ZonedDateTime zdt = log.getOccurredAt().atZone(TN);
-                LocalDate logDate = zdt.toLocalDate();
+        List<AuditLog> logs =
+            companyId != null
+                ? auditLogRepository.findTop20ByCompany_IdOrderByOccurredAtDesc(companyId)
+                : auditLogRepository.findTop20ByOrderByOccurredAtDesc();
 
-                String dateLabel;
-                if (logDate.equals(today)) dateLabel = "Aujourd'hui";
-                else if (logDate.equals(yesterday)) dateLabel = "Hier";
-                else dateLabel = logDate.getDayOfMonth() + "/" + String.format("%02d", logDate.getMonthValue());
+        logs.forEach(log -> {
+            ZonedDateTime zdt = log.getOccurredAt().atZone(TN);
+            LocalDate logDate = zdt.toLocalDate();
 
-                String userLogin = log.getUser() != null ? formatLogin(log.getUser().getJhiUserId()) : "Système";
+            String dateLabel;
+            if (logDate.equals(today)) dateLabel = "Aujourd'hui";
+            else if (logDate.equals(yesterday)) dateLabel = "Hier";
+            else dateLabel = logDate.getDayOfMonth() + "/" + String.format("%02d", logDate.getMonthValue());
 
-                Map<String, String> item = new LinkedHashMap<>();
-                item.put("icon", actionIcon(log.getAction(), log.getEntityType()));
-                item.put("userLogin", userLogin);
-                item.put("message", buildMessage(log.getAction(), log.getEntityType(), userLogin));
-                item.put("dateLabel", dateLabel);
-                item.put("timeHm", zdt.format(HM));
-                item.put("entityType", log.getEntityType() != null ? log.getEntityType() : "");
-                item.put("entityId", log.getEntityId() != null ? String.valueOf(log.getEntityId()) : "");
-                activities.add(item);
-            });
+            String userLogin = log.getUser() != null ? formatLogin(log.getUser().getJhiUserId()) : "Système";
+
+            Map<String, String> item = new LinkedHashMap<>();
+            item.put("icon", actionIcon(log.getAction(), log.getEntityType()));
+            item.put("userLogin", userLogin);
+            item.put("message", buildMessage(log.getAction(), log.getEntityType(), userLogin));
+            item.put("dateLabel", dateLabel);
+            item.put("timeHm", zdt.format(HM));
+            item.put("entityType", log.getEntityType() != null ? log.getEntityType() : "");
+            item.put("entityId", log.getEntityId() != null ? String.valueOf(log.getEntityId()) : "");
+            activities.add(item);
+        });
 
         return ResponseEntity.ok(activities);
     }
@@ -185,6 +204,7 @@ public class DashboardResource {
     public ResponseEntity<List<Map<String, Object>>> getPayrollChart() {
         LOG.debug("REST request to get payroll chart data");
 
+        Long companyId = tenantContextService.getCurrentCompanyId();
         LocalDate today = LocalDate.now();
         LocalDate from = today.minusMonths(5).withDayOfMonth(1);
 
@@ -193,15 +213,17 @@ public class DashboardResource {
 
         // Résultats DB : [month, year, sumGross, sumCharges]
         Map<String, double[]> dbMap = new HashMap<>();
-        paySlipRepository
-            .aggregatePayrollByMonth(fromYm, toYm)
-            .forEach(row -> {
-                int m = ((Number) row[0]).intValue();
-                int y = ((Number) row[1]).intValue();
-                double brut = ((Number) row[2]).doubleValue();
-                double charges = ((Number) row[3]).doubleValue();
-                dbMap.put(y + "-" + m, new double[] { brut, charges });
-            });
+        List<Object[]> rows =
+            companyId != null
+                ? paySlipRepository.aggregatePayrollByMonthAndCompany(companyId, fromYm, toYm)
+                : paySlipRepository.aggregatePayrollByMonth(fromYm, toYm);
+        rows.forEach(row -> {
+            int m = ((Number) row[0]).intValue();
+            int y = ((Number) row[1]).intValue();
+            double brut = ((Number) row[2]).doubleValue();
+            double charges = ((Number) row[3]).doubleValue();
+            dbMap.put(y + "-" + m, new double[] { brut, charges });
+        });
 
         // Construire la série complète des 6 mois (même si 0)
         List<Map<String, Object>> series = new ArrayList<>();
@@ -232,13 +254,18 @@ public class DashboardResource {
     @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getContractAlerts() {
         try {
+            Long companyId = tenantContextService.getCurrentCompanyId();
             LocalDate today = LocalDate.now();
             LocalDate limit = today.plusDays(30);
 
             LOG.info("contract-alerts: recherche entre {} et {}", today, limit);
 
-            List<Map<String, Object>> alerts = contractRepository
-                .findByStatusAndEndDateBetween(ContractStatus.ACTIVE, today, limit)
+            List<Contract> contracts =
+                companyId != null
+                    ? contractRepository.findByStatusAndEndDateBetweenAndCompanyId(ContractStatus.ACTIVE, today, limit, companyId)
+                    : contractRepository.findByStatusAndEndDateBetween(ContractStatus.ACTIVE, today, limit);
+
+            List<Map<String, Object>> alerts = contracts
                 .stream()
                 .map(c -> {
                     long daysLeft = ChronoUnit.DAYS.between(today, c.getEndDate());

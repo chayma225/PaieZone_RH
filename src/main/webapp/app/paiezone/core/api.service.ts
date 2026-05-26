@@ -219,6 +219,10 @@ export class ApiService {
     return this.http.post<any>(`/api/companies/${companyId}/change-plan`, { plan }).pipe(map(d => this.mapCompany(d)));
   }
 
+  suspendCompany(companyId: number): Observable<Company> {
+    return this.http.patch<any>(`/api/companies/${companyId}/suspend`, {}).pipe(map(d => this.mapCompany(d)));
+  }
+
   patchEmployee(id: number, patch: Record<string, any>): Observable<any> {
     return this.http.patch<any>(`/api/employees/${id}`, { ...patch, id });
   }
@@ -539,7 +543,7 @@ export class ApiService {
       legalForm: d.legalForm ?? '',
       capitalSocial: d.capitalSocial != null ? +d.capitalSocial : null,
       mainActivity: d.mainActivity ?? '',
-      employees: 0,
+      employees: d.employeeCount != null ? +d.employeeCount : 0,
       plan: sub?.plan ?? 'STARTER',
       status,
       priceHT: +(sub?.priceHT ?? 0),
@@ -693,7 +697,7 @@ export class ApiService {
       year: d.year,
       label: `${MONTHS_FR[m]} ${d.year}`,
       status: d.status ?? 'DRAFT',
-      employees: 0,
+      employees: d.employeeCount != null ? +d.employeeCount : 0,
       gross: 0,
       net: 0,
       validatedAt: d.validatedAt ?? null,

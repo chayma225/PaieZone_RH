@@ -2,6 +2,7 @@ package tn.paiezone.rh.web.rest.vm;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import tn.paiezone.rh.domain.enumeration.PlanType;
 
 /**
  * VM for the full registration flow: admin account + company in one request.
@@ -35,6 +36,16 @@ public class RegisterWithCompanyVM extends ManagedUserVM {
 
     @Size(max = 10)
     private String postalCode;
+
+    private PlanType plan;
+
+    public PlanType getPlan() {
+        return plan;
+    }
+
+    public void setPlan(PlanType plan) {
+        this.plan = plan;
+    }
 
     public String getCompanyName() {
         return companyName;

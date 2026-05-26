@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.UserProfile;
 import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.security.SecurityUtils;
@@ -29,10 +30,16 @@ public class TenantContextService {
 
     private final UserProfileRepository userProfileRepository;
     private final CompanyRepository companyRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public TenantContextService(UserProfileRepository userProfileRepository, CompanyRepository companyRepository) {
+    public TenantContextService(
+        UserProfileRepository userProfileRepository,
+        CompanyRepository companyRepository,
+        EmployeeRepository employeeRepository
+    ) {
         this.userProfileRepository = userProfileRepository;
         this.companyRepository = companyRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     /**
@@ -62,7 +69,7 @@ public class TenantContextService {
             }
             // Fallback : admin inscrit via /register-with-company (pas de UserProfile)
             if (companyId == null) {
-                Optional<Company> adminCompany = companyRepository.findFirstByAdminLogin(login);
+                Optional<Company> adminCompany = companyRepository.findFirstByAdminLoginIgnoreCase(login);
                 if (adminCompany.isPresent()) {
                     companyId = adminCompany.get().getId();
                     tenantSchema = adminCompany.get().getTenantSchema();
@@ -76,12 +83,19 @@ public class TenantContextService {
     }
 
     /**
-     * Retourne le company_id du tenant courant, ou null si super admin / non trouvé.
-     * Les SUPER_ADMIN n'ont pas de tenant propre : ils voient tout.
+     * Retourne le company_id du tenant courant.
+     * - null   → SUPER_ADMIN, aucun filtre (voit tout)
+     * - id > 0 → filtre par cette entreprise
+     * - -1L   → utilisateur authentifié sans entreprise résolue → aucun résultat (fail-closed)
      */
     public Long getCurrentCompanyId() {
         if (isSuperAdmin()) return null;
-        return buildContext().companyId();
+        Long companyId = buildContext().companyId();
+        if (companyId == null) {
+            log.warn("[TenantContext] Aucune company trouvée pour l'utilisateur courant — accès bloqué (fail-closed)");
+            return -1L;
+        }
+        return companyId;
     }
 
     /**
@@ -106,5 +120,42 @@ public class TenantContextService {
         if (isSuperAdmin()) return true;
         Long myCompanyId = getCurrentCompanyId();
         return myCompanyId != null && myCompanyId.equals(targetCompanyId);
+    }
+
+    /**
+     * Retourne true si l'utilisateur connecté est un employé simple (ROLE_EMPLOYE)
+     * sans rôle de gestion (pas ADMIN, RH_COMPTABLE, SUPER_ADMIN, MANAGER).
+     * Ces utilisateurs ne voient que leurs propres données.
+     */
+    public boolean isRestrictedEmployee() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) return false;
+        Set<String> roles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+        return (
+            roles.contains(AuthoritiesConstants.EMPLOYE) &&
+            !roles.contains(AuthoritiesConstants.ADMIN) &&
+            !roles.contains(AuthoritiesConstants.RH_COMPTABLE) &&
+            !roles.contains(AuthoritiesConstants.MANAGER) &&
+            !roles.contains(AuthoritiesConstants.SUPER_ADMIN)
+        );
+    }
+
+    /**
+     * Retourne l'employeeId de l'utilisateur connecté s'il est ROLE_EMPLOYE restreint,
+     * null sinon (les managers/RH/admins voient tous les employés de leur entreprise).
+     */
+    public Long getCurrentEmployeeId() {
+        if (!isRestrictedEmployee()) return null;
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        if (login == null) return null;
+        try {
+            return employeeRepository
+                .findByUserProfile_JhiUserId(login)
+                .map(e -> e.getId())
+                .orElse(null);
+        } catch (Exception e) {
+            log.error("[TenantContext] Erreur chargement employé pour {} : {}", login, e.getMessage());
+            return null;
+        }
     }
 }

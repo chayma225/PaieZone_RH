@@ -92,10 +92,13 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/20260512000002 add employee salary columns.xml"
            relativeToChangelogFile="false"/>
-  <include file="config/liquibase/changelog/20260517_backfill_company_admin_login.xml"
-           relativeToChangelogFile="false"/>
   <!-- SPRINT 3 — Paie & Congés -->
   <include file="config/liquibase/changelog/sprint3/00_sprint3_master.xml"
+           relativeToChangelogFile="false"/>
+  <!-- Backfill admin_login (must run AFTER sprint3/23 adds the column) -->
+  <include file="config/liquibase/changelog/20260517_backfill_company_admin_login.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260525_create_user_profiles_for_admins.xml"
            relativeToChangelogFile="false"/>
 
 

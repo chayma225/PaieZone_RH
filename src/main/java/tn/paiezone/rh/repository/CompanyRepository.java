@@ -14,6 +14,9 @@ import tn.paiezone.rh.domain.enumeration.AppRole;
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     Optional<Company> findFirstByAdminLogin(String adminLogin);
 
+    @Query("SELECT c FROM Company c WHERE LOWER(c.adminLogin) = LOWER(:login)")
+    Optional<Company> findFirstByAdminLoginIgnoreCase(@Param("login") String login);
+
     List<Company> findByAdminLogin(String adminLogin);
 
     boolean existsByTaxId(String taxId);
@@ -25,7 +28,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query(
         """
         SELECT DISTINCT c FROM Company c
-        WHERE c.adminLogin = :login
+        WHERE LOWER(c.adminLogin) = LOWER(:login)
            OR EXISTS (
                SELECT up FROM UserProfile up
                WHERE up.company = c

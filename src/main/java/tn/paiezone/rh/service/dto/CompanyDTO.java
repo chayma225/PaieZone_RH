@@ -75,6 +75,8 @@ public class CompanyDTO implements Serializable {
 
     private CompanySubscriptionDTO companySubscription;
 
+    private Long employeeCount;
+
     public Long getId() {
         return id;
     }
@@ -249,6 +251,14 @@ public class CompanyDTO implements Serializable {
 
     public void setCompanySubscription(CompanySubscriptionDTO companySubscription) {
         this.companySubscription = companySubscription;
+    }
+
+    public Long getEmployeeCount() {
+        return employeeCount;
+    }
+
+    public void setEmployeeCount(Long employeeCount) {
+        this.employeeCount = employeeCount;
     }
 
     @Override

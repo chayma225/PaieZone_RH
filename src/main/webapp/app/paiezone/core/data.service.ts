@@ -75,6 +75,22 @@ export class DataService {
     });
   }
 
+  reset(): void {
+    this.companies.set([]);
+    this.companiesLoaded.set(false);
+    this.employees.set([]);
+    this.departments.set([]);
+    this.payrollPeriods.set([]);
+    this.leaves.set([]);
+    this.advances.set([]);
+    this.stats.set({});
+    this.audit.set([]);
+    this.tenantUsers.set([]);
+    this.myEmployee.set(null);
+    this.regulatoryParams.set([]);
+    this.loadAll();
+  }
+
   private loadAll(): void {
     this.api.employees().subscribe({
       next: emps => {

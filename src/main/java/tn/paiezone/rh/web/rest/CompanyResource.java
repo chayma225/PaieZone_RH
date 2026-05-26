@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 import tn.paiezone.rh.aop.logging.audit.Auditable;
+import tn.paiezone.rh.domain.Company;
+import tn.paiezone.rh.domain.UserProfile;
+import tn.paiezone.rh.domain.enumeration.AppRole;
 import tn.paiezone.rh.domain.enumeration.CompanySubscriptionStatus;
 import tn.paiezone.rh.domain.enumeration.PlanType;
 import tn.paiezone.rh.repository.CompanyRepository;
@@ -25,6 +28,7 @@ import tn.paiezone.rh.repository.CompanySubscriptionRepository;
 import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
+import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.CompanyService;
 import tn.paiezone.rh.service.TenantContextService;
 import tn.paiezone.rh.service.dto.AdminUserDTO;
@@ -79,12 +83,33 @@ public class CompanyResource {
 
     @PostMapping("")
     @Auditable(action = "CREATE", entityType = "Company")
+    @Transactional
     public ResponseEntity<CompanyDTO> createCompany(@Valid @RequestBody CompanyDTO companyDTO) throws URISyntaxException {
         LOG.debug("REST request to save Company : {}", companyDTO);
         if (companyDTO.getId() != null) {
             throw new BadRequestAlertException("Une nouvelle entreprise ne peut pas déjà avoir un ID.", ENTITY_NAME, "idexists");
         }
+        // Non-SUPER_ADMIN creating their own company: auto-bind to current user
+        if (!tenantContextService.isSuperAdmin()) {
+            String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+            companyDTO.setAdminLogin(login);
+        }
         companyDTO = companyService.save(companyDTO);
+
+        // Create UserProfile for the admin so tenant resolution works immediately
+        if (!tenantContextService.isSuperAdmin()) {
+            String login = companyDTO.getAdminLogin();
+            if (login != null && !userProfileRepository.existsByJhiUserId(login)) {
+                Company company = companyRepository.findById(companyDTO.getId()).orElseThrow();
+                UserProfile profile = new UserProfile();
+                profile.setJhiUserId(login);
+                profile.setRole(AppRole.ADMIN);
+                profile.setCompany(company);
+                profile.setActive(true);
+                userProfileRepository.save(profile);
+            }
+        }
+
         return ResponseEntity.created(new URI("/api/companies/" + companyDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, companyDTO.getId().toString()))
             .body(companyDTO);
@@ -237,6 +262,22 @@ public class CompanyResource {
 
         CompanyDTO dto = companyService.findOne(id).orElseThrow();
         return ResponseEntity.ok().body(dto);
+    }
+
+    /** Suspend l'abonnement d'une entreprise (Super Admin uniquement). */
+    @PatchMapping("/{id}/suspend")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    @Transactional
+    public ResponseEntity<CompanyDTO> suspendCompany(@PathVariable Long id) {
+        var company = companyRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entreprise introuvable", ENTITY_NAME, "idnotfound"));
+        var sub = company.getCompanySubscription();
+        if (sub != null) {
+            sub.setStatus(CompanySubscriptionStatus.SUSPENDED);
+            subscriptionRepository.save(sub);
+        }
+        return ResponseEntity.ok(companyService.findOne(id).orElseThrow());
     }
 
     @PatchMapping("/{id}/toggle-status")
