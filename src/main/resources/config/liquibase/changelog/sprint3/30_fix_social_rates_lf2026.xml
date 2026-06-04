@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!--
+    Correction des taux sociaux — LF 2026
+
+    Problèmes détectés :
+    1. CNSS_PLAFOND_MENSUEL = 3000 → CNSS calculée sur 3000 au lieu du brut réel
+       En Tunisie le taux 9,18 % s'applique sur la totalité du salaire (sans plafond effectif)
+    2. CAVIS_TAUX_SALARIE = 1 % → déjà inclus dans le 9,18 % CNSS, ne doit pas être redécompté
+    3. CSS_TAUX = 0,5 % → non retenu sur bulletin standard salarié
+    4. Ajout CAVIS_TAUX_PATRONAL = 1 % (côté employeur uniquement)
+  -->
+
+  <!-- 1. Supprimer le plafond CNSS (appliquer le taux sur le salaire entier) -->
+  <changeSet id="sprint3-fix-cnss-plafond-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="regulatory_param"/>
+      <sqlCheck expectedResult="1">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM regulatory_param
+        WHERE param_key = 'CNSS_PLAFOND_MENSUEL' AND numeric_value = 3000
+      </sqlCheck>
+    </preConditions>
+    <update tableName="regulatory_param">
+      <column name="numeric_value"   valueNumeric="999999.0000"/>
+      <column name="param_label"     value="Plafond mensuel CNSS — sans plafond effectif (LF 2026)"/>
+      <where>param_key = 'CNSS_PLAFOND_MENSUEL'</where>
+    </update>
+  </changeSet>
+
+  <!-- 2. Mettre CAVIS salarié à 0 (inclus dans le 9,18 % CNSS) -->
+  <changeSet id="sprint3-fix-cavis-salarie-zero" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="regulatory_param"/>
+      <sqlCheck expectedResult="1">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM regulatory_param
+        WHERE param_key = 'CAVIS_TAUX_SALARIE' AND numeric_value > 0
+      </sqlCheck>
+    </preConditions>
+    <update tableName="regulatory_param">
+      <column name="numeric_value"   valueNumeric="0.0000"/>
+      <column name="param_label"     value="CAVIS salarié — inclus dans CNSS 9,18 % (LF 2026)"/>
+      <where>param_key = 'CAVIS_TAUX_SALARIE'</where>
+    </update>
+  </changeSet>
+
+  <!-- 3. Mettre CSS à 0 côté salarié -->
+  <changeSet id="sprint3-fix-css-zero" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="regulatory_param"/>
+      <sqlCheck expectedResult="1">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM regulatory_param
+        WHERE param_key = 'CSS_TAUX' AND numeric_value > 0
+      </sqlCheck>
+    </preConditions>
+    <update tableName="regulatory_param">
+      <column name="numeric_value"   valueNumeric="0.0000"/>
+      <column name="param_label"     value="CSS salarié — non retenu sur bulletin standard (LF 2026)"/>
+      <where>param_key = 'CSS_TAUX'</where>
+    </update>
+  </changeSet>
+
+  <!-- 4. Ajouter CAVIS_TAUX_PATRONAL = 1 % (côté employeur uniquement) -->
+  <changeSet id="sprint3-add-cavis-patronal" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="regulatory_param"/>
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM regulatory_param WHERE param_key = 'CAVIS_TAUX_PATRONAL'
+      </sqlCheck>
+    </preConditions>
+    <insert tableName="regulatory_param">
+      <column name="id"              valueComputed="nextval('sequence_generator')"/>
+      <column name="param_key"       value="CAVIS_TAUX_PATRONAL"/>
+      <column name="param_label"     value="Taux CAVIS patronal (1%)"/>
+      <column name="numeric_value"   valueNumeric="0.0100"/>
+      <column name="category"        value="SOCIAL"/>
+      <column name="effective_from"  valueDate="2026-01-01"/>
+      <column name="legal_reference" value="LF 2026"/>
+      <column name="active"          valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

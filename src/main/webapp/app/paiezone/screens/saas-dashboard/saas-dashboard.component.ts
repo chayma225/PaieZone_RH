@@ -97,6 +97,28 @@ export default class SaasDashboardComponent {
     });
   });
 
+  // ── Badges dynamiques KPI ───────────────────────────────────────────────
+
+  readonly mrrGrowthPct = computed(() => {
+    const vals = this.mrrValues();
+    const prev = vals[4];
+    const curr = vals[5];
+    if (!prev) return 0;
+    return Math.round(((curr - prev) / prev) * 100);
+  });
+
+  readonly mrrGrowthClass = computed(() => (this.mrrGrowthPct() > 0 ? 'pos' : this.mrrGrowthPct() < 0 ? 'danger' : ''));
+
+  readonly activeCompaniesCount = computed(() => this.data.companies().filter(c => c.status === 'ACTIVE').length);
+
+  readonly activeEmployeesCount = computed(() => (this.data.stats()['activeEmployees'] as number) ?? this.kpi().totalEmployees);
+
+  readonly newCompaniesThisQuarter = computed(() => {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 90);
+    return this.data.companies().filter(c => c.createdAt && new Date(c.createdAt) >= cutoff).length;
+  });
+
   readonly mrrPoints = computed(() => {
     const vals = this.mrrValues();
     const maxV = Math.max(1, ...vals);

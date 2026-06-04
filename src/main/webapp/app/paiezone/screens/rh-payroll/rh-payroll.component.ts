@@ -248,9 +248,14 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
                       }
                     </td>
                     <td>
-                      <button class="pz-btn pz-sm pz-danger" (click)="deleteBonus(b.id)">
-                        <pz-icon name="Trash2" [size]="13" />
-                      </button>
+                      <div style="display:flex;gap:5px">
+                        <button class="pz-btn pz-sm" (click)="openEditBonus(b)" title="Modifier">
+                          <pz-icon name="Edit" [size]="13" />
+                        </button>
+                        <button class="pz-btn pz-sm pz-danger" (click)="deleteBonus(b.id)" title="Supprimer">
+                          <pz-icon name="Trash2" [size]="13" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 }
@@ -438,18 +443,18 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
       </div>
     }
 
-    <!-- Modal Ajouter prime -->
+    <!-- Modal Ajouter / Modifier prime -->
     @if (showCreateBonus()) {
       <div class="pz-overlay" (click)="closeCreateBonus()">
         <div class="pz-modal" (click)="$event.stopPropagation()">
           <div class="pz-modal-head">
-            <span>Ajouter une prime</span>
+            <span>{{ editBonusId() ? 'Modifier la prime' : 'Ajouter une prime' }}</span>
             <button class="pz-modal-close" (click)="closeCreateBonus()"><pz-icon name="X" [size]="16" /></button>
           </div>
           <div class="pz-modal-body">
             <div class="pz-field">
               <label>Employé *</label>
-              <select [(ngModel)]="bonusForm.employeeId">
+              <select [(ngModel)]="bonusForm.employeeId" [disabled]="!!editBonusId()">
                 <option [value]="0">— Sélectionner —</option>
                 @for (e of data.employees(); track e.id) {
                   <option [value]="e.id">{{ data.fullName(e) }}</option>
@@ -502,7 +507,7 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
               @if (busy()) {
                 Enregistrement…
               } @else {
-                Ajouter
+                {{ editBonusId() ? 'Enregistrer' : 'Ajouter' }}
               }
             </button>
           </div>
@@ -802,6 +807,7 @@ export default class RhPayrollComponent {
 
   // Bonus
   protected readonly showCreateBonus = signal(false);
+  protected readonly editBonusId = signal<number | null>(null);
   protected readonly bonuses = signal<Bonus[]>([]);
   protected readonly bonusLoading = signal(false);
   protected readonly bonusErrMsg = signal('');
@@ -953,6 +959,10 @@ export default class RhPayrollComponent {
     this.busy.set(true);
     this.api.calculatePayroll(id).subscribe({ next: () => this.reloadPeriods(), error: () => this.busy.set(false) });
   }
+  recalculate(id: number) {
+    this.busy.set(true);
+    this.api.recalculatePayroll(id).subscribe({ next: () => this.reloadPeriods(), error: () => this.busy.set(false) });
+  }
   validate(id: number) {
     this.busy.set(true);
     this.api.validatePayroll(id).subscribe({ next: () => this.reloadPeriods(), error: () => this.busy.set(false) });
@@ -992,6 +1002,7 @@ export default class RhPayrollComponent {
   }
 
   openCreateBonus() {
+    this.editBonusId.set(null);
     this.bonusForm = {
       employeeId: 0,
       bonusType: 'OTHER',
@@ -1004,9 +1015,27 @@ export default class RhPayrollComponent {
     this.bonusErrMsg.set('');
     this.showCreateBonus.set(true);
   }
+
+  openEditBonus(b: Bonus) {
+    this.editBonusId.set(b.id);
+    this.bonusForm = {
+      employeeId: b.employeeId,
+      bonusType: b.bonusType,
+      label: b.label,
+      amount: b.amount,
+      month: b.month,
+      year: b.year,
+      taxable: b.taxable,
+    };
+    this.bonusErrMsg.set('');
+    this.showCreateBonus.set(true);
+  }
+
   closeCreateBonus() {
     this.showCreateBonus.set(false);
+    this.editBonusId.set(null);
   }
+
   submitCreateBonus() {
     if (!this.bonusForm.employeeId) {
       this.bonusErrMsg.set('Sélectionnez un employé.');
@@ -1022,28 +1051,33 @@ export default class RhPayrollComponent {
     }
     this.busy.set(true);
     this.bonusErrMsg.set('');
-    this.api
-      .createBonus({
-        bonusType: this.bonusForm.bonusType,
-        label: this.bonusForm.label.trim(),
-        amount: this.bonusForm.amount,
-        taxable: this.bonusForm.taxable,
-        month: this.bonusForm.month,
-        year: this.bonusForm.year,
-        notes: '',
-        employeeId: this.bonusForm.employeeId,
-      })
-      .subscribe({
-        next: b => {
+    const dto = {
+      bonusType: this.bonusForm.bonusType,
+      label: this.bonusForm.label.trim(),
+      amount: this.bonusForm.amount,
+      taxable: this.bonusForm.taxable,
+      month: this.bonusForm.month,
+      year: this.bonusForm.year,
+      notes: '',
+      employeeId: this.bonusForm.employeeId,
+    };
+    const editId = this.editBonusId();
+    const call = editId ? this.api.updateBonus(editId, dto) : this.api.createBonus(dto);
+    call.subscribe({
+      next: b => {
+        if (editId) {
+          this.bonuses.update(list => list.map(x => (x.id === editId ? b : x)));
+        } else {
           this.bonuses.update(list => [b, ...list]);
-          this.busy.set(false);
-          this.closeCreateBonus();
-        },
-        error: (err: any) => {
-          this.bonusErrMsg.set(err?.error?.detail ?? 'Erreur lors de la création.');
-          this.busy.set(false);
-        },
-      });
+        }
+        this.busy.set(false);
+        this.closeCreateBonus();
+      },
+      error: (err: any) => {
+        this.bonusErrMsg.set(err?.error?.detail ?? 'Erreur lors de la sauvegarde.');
+        this.busy.set(false);
+      },
+    });
   }
 
   deleteBonus(id: number) {

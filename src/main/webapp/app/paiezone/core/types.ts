@@ -49,6 +49,7 @@ export interface Employee {
   matricule: string;
   first: string;
   last: string;
+  active?: boolean;
   ar: string;
   role: string;
   dept: string;
@@ -75,6 +76,8 @@ export interface Department {
   name: string;
   head: string;
   count: number;
+  active?: boolean;
+  description?: string;
 }
 
 export interface PayrollPeriod {
@@ -137,6 +140,7 @@ export interface ChatMessage {
   role: 'me' | 'bot';
   text: string;
   cite?: string;
+  action?: { label: string; route?: string; href?: string };
 }
 
 export interface JobPosition {
@@ -283,4 +287,37 @@ export interface ContractAlert {
   endDate: string;
   daysLeft: number;
   employeeName: string;
+}
+
+export interface AccountPlan {
+  id: number;
+  accountCode: string;
+  accountLabel: string;
+  accountType: string | null;
+  active: boolean;
+}
+
+export interface AccountingEntry {
+  id: number;
+  entryDate: string;
+  journalRef: string;
+  entryType: string;
+  description: string;
+  debitAccount: string;
+  creditAccount: string;
+  amount: number;
+  exportedAt: string | null;
+  periodLabel?: string;
+  periodId?: number;
+}
+
+export interface LeaveType {
+  id: number;
+  code: string;
+  label: string;
+  maxDaysPerYear: number;
+  paid: boolean;
+  requiresApproval: boolean;
+  active: boolean;
+  description: string;
 }

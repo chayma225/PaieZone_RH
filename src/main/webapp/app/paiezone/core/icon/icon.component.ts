@@ -59,6 +59,17 @@ const ICONS: Record<string, string> = {
   BookOpen:
     '<path d="M2 4.5C2 4 2.5 3.5 3 3.5h4.5v9H3c-.5 0-1-.5-1-1V4.5z"/><path d="M14 4.5C14 4 13.5 3.5 13 3.5H8.5v9H13c.5 0 1-.5 1-1V4.5z"/><path d="M7.5 3.5v9M8.5 3.5v9"/>',
   ClipboardList: '<rect x="4" y="3" width="8" height="11" rx="1"/><path d="M6 3V2h4v1M5.5 7h5M5.5 9h5M5.5 11h3"/><path d="M8 1.5h0"/>',
+  Tag: '<path d="M8.5 2.5H13a.5.5 0 0 1 .5.5v4.5L8 13.2a1 1 0 0 1-1.4 0L2.8 9.4a1 1 0 0 1 0-1.4L8.5 2.5z"/><circle cx="11" cy="5" r="1" fill="currentColor" stroke="none"/>',
+  PauseCircle: '<circle cx="8" cy="8" r="5.5"/><path d="M6.5 5.8v4.4M9.5 5.8v4.4"/>',
+  PlayCircle: '<circle cx="8" cy="8" r="5.5"/><path d="M6.5 5.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/>',
+  XCircle: '<circle cx="8" cy="8" r="5.5"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5"/>',
+  EyeOff:
+    '<path d="M2 2l12 12"/><path d="M8.5 5.8A5.5 5.5 0 0 1 14.5 8s-1 2-3 3.3M4.5 4.5C2.8 5.7 1.5 8 1.5 8S4 12.5 8 12.5c1.2 0 2.3-.3 3.2-.8"/><path d="M6.2 6.2a2 2 0 0 0 3.6 3.6"/>',
+  Unlock: '<rect x="3.5" y="7.5" width="9" height="6.5" rx="1.2"/><path d="M5.5 7.5V5a2.5 2.5 0 0 1 5 0"/>',
+  RotateCcw: '<path d="M3 8a5 5 0 1 0 1-3.2"/><path d="M3 2.5V6h3.5"/>',
+  Info: '<circle cx="8" cy="8" r="6"/><path d="M8 7.5v4"/><circle cx="8" cy="5.5" r=".5" fill="currentColor" stroke="none"/>',
+  Archive: '<rect x="2" y="2.5" width="12" height="3.5" rx="1"/><path d="M3.5 6v7.5h9V6"/><path d="M6 9.5h4"/>',
+  CalendarRange: '<rect x="2.5" y="3" width="11" height="11" rx="1.4"/><path d="M2.5 7h11M5.5 2v2M10.5 2v2M5 10h2M9 10h2"/>',
 };
 
 @Component({

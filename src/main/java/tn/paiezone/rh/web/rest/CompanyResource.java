@@ -280,6 +280,39 @@ public class CompanyResource {
         return ResponseEntity.ok(companyService.findOne(id).orElseThrow());
     }
 
+    /** Réactive un abonnement suspendu ou résilié (Super Admin uniquement). */
+    @PatchMapping("/{id}/reactivate")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    @Transactional
+    public ResponseEntity<CompanyDTO> reactivateCompany(@PathVariable Long id) {
+        var company = companyRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entreprise introuvable", ENTITY_NAME, "idnotfound"));
+        var sub = company.getCompanySubscription();
+        if (sub != null) {
+            sub.setStatus(CompanySubscriptionStatus.ACTIVE);
+            sub.setRenewalDate(LocalDate.now().plusMonths(1));
+            subscriptionRepository.save(sub);
+        }
+        return ResponseEntity.ok(companyService.findOne(id).orElseThrow());
+    }
+
+    /** Résilie définitivement l'abonnement (Super Admin uniquement). */
+    @PatchMapping("/{id}/cancel")
+    @PreAuthorize("hasAuthority('" + AuthoritiesConstants.SUPER_ADMIN + "')")
+    @Transactional
+    public ResponseEntity<CompanyDTO> cancelSubscription(@PathVariable Long id) {
+        var company = companyRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Entreprise introuvable", ENTITY_NAME, "idnotfound"));
+        var sub = company.getCompanySubscription();
+        if (sub != null) {
+            sub.setStatus(CompanySubscriptionStatus.CANCELLED);
+            subscriptionRepository.save(sub);
+        }
+        return ResponseEntity.ok(companyService.findOne(id).orElseThrow());
+    }
+
     @PatchMapping("/{id}/toggle-status")
     @PreAuthorize("hasRole('ADMIN')")
     @Auditable(action = "TOGGLE_STATUS", entityType = "Company")

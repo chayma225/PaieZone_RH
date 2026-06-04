@@ -192,15 +192,12 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
         // ── ÉTAPE 7 : CAVIS salarié ───────────────────────────────
         BigDecimal cavisAmount = taxService.calculateCavisEmployee(cnssBase, year);
 
-        // ── ÉTAPE 8 : CSS (Contribution Sociale de Solidarité) ───
-        // Base CSS = brut - CNSS salarié - CAVIS salarié
-        BigDecimal cssBase = grossSalary.subtract(cnssSalary).subtract(cavisAmount).max(ZERO);
-        BigDecimal cssAmount = taxService.calculateCss(cssBase, year);
+        // ── ÉTAPE 8 : CSS — 0 côté salarié (taux = 0 par défaut) ───
+        BigDecimal cssAmount = taxService.calculateCss(grossSalary.subtract(cnssSalary).max(ZERO), year);
 
         // ── ÉTAPE 9 : Base IRPP ───────────────────────────────────
-        // Base IRPP = salaire + gains IRPP + primes taxables - CNSS - CAVIS
-        // IMPORTANT : La CSS n'est PAS déductible de la base IRPP en droit tunisien
-        BigDecimal irppBase = baseSalary.add(rr.irppGains).add(taxableBonuses).subtract(cnssSalary).subtract(cavisAmount).max(ZERO);
+        // Brut - CNSS uniquement (CAVIS = 0, inclus dans 9,18 %)
+        BigDecimal irppBase = baseSalary.add(rr.irppGains).add(taxableBonuses).subtract(cnssSalary).max(ZERO);
 
         // ── ÉTAPE 10 : IRPP ───────────────────────────────────────
         BigDecimal irpp = taxService.calculateMonthlyIrpp(irppBase, year, employee);
@@ -210,16 +207,28 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
         BigDecimal advanceDeduction = advances.stream().map(Advance::getAmount).filter(Objects::nonNull).reduce(ZERO, BigDecimal::add);
 
         // ── ÉTAPE 12 : Net Salary ─────────────────────────────────
-        BigDecimal totalDeductions = cnssSalary.add(cavisAmount).add(cssAmount).add(irpp).add(rr.rubriqueDeductions).add(advanceDeduction);
+        BigDecimal totalDeductions = cnssSalary.add(cssAmount).add(irpp).add(rr.rubriqueDeductions).add(advanceDeduction);
 
         BigDecimal netSalary = grossSalary
             .subtract(cnssSalary)
-            .subtract(cavisAmount)
             .subtract(cssAmount)
             .subtract(irpp)
             .subtract(rr.rubriqueDeductions)
             .subtract(advanceDeduction)
             .max(ZERO);
+
+        if (netSalary.compareTo(ZERO) == 0) {
+            log.warn(
+                "⚠ NET=0 pour {} | brut={} cnss={} css={} irpp={} rubriques={} avances={}",
+                employee.getMatricule(),
+                grossSalary,
+                cnssSalary,
+                cssAmount,
+                irpp,
+                rr.rubriqueDeductions,
+                advanceDeduction
+            );
+        }
 
         // ── ÉTAPE 13 : TFP (charge patronale) ────────────────────
         BigDecimal tfpAmount = taxService.calculateTfp(grossSalary, year);
@@ -439,6 +448,57 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
         calculateAllPaySlips(id);
     }
 
+    @Override
+    public java.util.List<BulkCalculationResultDTO> forceRecalculateAllPeriods() {
+        java.util.List<PayrollPeriod> allPeriods = periodRepository.findAll();
+
+        java.util.List<BulkCalculationResultDTO> results = new ArrayList<>();
+
+        for (PayrollPeriod period : allPeriods) {
+            boolean hasBulletins = paySlipRepository.existsByPayrollPeriodId(period.getId());
+            if (!hasBulletins) continue;
+
+            try {
+                log.info("♻ Recalcul période {}/{}", period.getMonth(), period.getYear());
+                BulkCalculationResultDTO result = forceRecalculateAll(period.getId());
+                results.add(result);
+            } catch (Exception e) {
+                log.error("❌ Erreur recalcul période {} : {}", period.getId(), e.getMessage());
+            }
+        }
+
+        log.info("✅ Recalcul global terminé — {} période(s) traitée(s)", results.size());
+        return results;
+    }
+
+    @Override
+    public BulkCalculationResultDTO forceRecalculateAll(Long periodId) {
+        PayrollPeriod period = periodRepository
+            .findById(periodId)
+            .orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + periodId));
+
+        PayrollStatus statusAvant = period.getStatus();
+        boolean estVerrouille = statusAvant == PayrollStatus.LOCKED;
+
+        if (estVerrouille) {
+            log.warn("♻ Période {}/{} LOCKED — déverrouillage temporaire pour recalcul", period.getMonth(), period.getYear());
+            period.setStatus(PayrollStatus.VALIDATED);
+            periodRepository.save(period);
+            periodRepository.flush();
+        }
+
+        try {
+            BulkCalculationResultDTO result = calculateAllPaySlips(periodId);
+            return result;
+        } finally {
+            if (estVerrouille) {
+                period.setStatus(PayrollStatus.LOCKED);
+                periodRepository.save(period);
+                log.info("🔒 Période {}/{} reverrouillée après recalcul", period.getMonth(), period.getYear());
+            }
+        }
+    }
+
     // ═══════════════════════════════════════════════════════════════
     //  VALIDATION / CLÔTURE DE PÉRIODE
     // ═══════════════════════════════════════════════════════════════
@@ -496,6 +556,21 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
     private RubriqueResult buildRubriqueLines(Employee emp, Contract contract, BigDecimal baseSalary, BigDecimal overtimeHours, int year) {
         List<Rubrique> rubriques = rubriqueRepository.findByCompanyIdAndActiveTrueOrderBySortOrderAsc(emp.getCompany().getId());
 
+        if (!rubriques.isEmpty()) {
+            log.warn("📋 {} rubrique(s) trouvée(s) pour {} :", rubriques.size(), emp.getMatricule());
+            rubriques.forEach(r ->
+                log.warn(
+                    "   → [{}] {} | type={} base={} taux={} montant_fixe={}",
+                    r.getCode(),
+                    r.getLabel(),
+                    r.getRubriqueType(),
+                    r.getBase(),
+                    r.getRate(),
+                    r.getFixedAmount()
+                )
+            );
+        }
+
         RubriqueResult result = new RubriqueResult();
         int sortOrder = 1;
 
@@ -507,8 +582,15 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
         for (Rubrique r : rubriques) {
             BigDecimal amount = switch (r.getBase()) {
                 case FIXED -> r.getFixedAmount() != null ? r.getFixedAmount() : ZERO;
-                case PERCENT_BRUT -> baseSalary.multiply(r.getRate() != null ? r.getRate() : ZERO).setScale(3, RM);
-                case PERCENT_NET -> baseSalary.multiply(r.getRate() != null ? r.getRate() : ZERO).setScale(3, RM);
+                case PERCENT_BRUT -> {
+                    // rate stocké en % (ex: 10 pour 10%) → diviser par 100
+                    BigDecimal pct = r.getRate() != null ? r.getRate().divide(BigDecimal.valueOf(100), 6, RM) : ZERO;
+                    yield baseSalary.multiply(pct).setScale(3, RM);
+                }
+                case PERCENT_NET -> {
+                    BigDecimal pct = r.getRate() != null ? r.getRate().divide(BigDecimal.valueOf(100), 6, RM) : ZERO;
+                    yield baseSalary.multiply(pct).setScale(3, RM);
+                }
                 case HOURS -> {
                     if (overtimeHours.compareTo(ZERO) == 0) yield ZERO;
                     // Détermine le coefficient selon le code rubrique
@@ -545,7 +627,13 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
                 else result.nonCnssGains = result.nonCnssGains.add(amount);
                 if (Boolean.TRUE.equals(r.getTaxable())) result.irppGains = result.irppGains.add(amount);
             } else if (r.getRubriqueType() == RubriqueType.DEDUCTION) {
-                result.rubriqueDeductions = result.rubriqueDeductions.add(amount);
+                // Exclure les cotisations légales déjà calculées automatiquement
+                // pour éviter la double déduction (CNSS, CAVIS, CSS, IRPP)
+                if (!isSocialContributionCode(r.getCode())) {
+                    result.rubriqueDeductions = result.rubriqueDeductions.add(amount);
+                } else {
+                    log.warn("⚠ Rubrique DEDUCTION '{}' ignorée dans le calcul net (cotisation légale auto-calculée)", r.getCode());
+                }
             }
         }
         return result;
@@ -568,6 +656,17 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
         }
         // Par défaut : ×1.25 (HS jour)
         return tauxHs25;
+    }
+
+    /**
+     * Retourne true si le code rubrique correspond à une cotisation légale
+     * déjà calculée automatiquement (CNSS, CAVIS, CSS, IRPP).
+     * Ces rubriques ne doivent PAS être déduites du net pour éviter la double déduction.
+     */
+    private boolean isSocialContributionCode(String code) {
+        if (code == null) return false;
+        String c = code.toUpperCase();
+        return c.contains("CNS") || c.contains("CAV") || c.contains("CSS") || c.contains("TFP") || c.contains("IRPP") || c.contains("IMP");
     }
 
     // ── Structure interne résultat rubriques ──────────────────────

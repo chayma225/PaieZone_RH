@@ -74,6 +74,7 @@ public class ChatbotService {
     private final KnowledgeDocumentRepository knowledgeRepository;
     private final UserProfileRepository userProfileRepository;
     private final CompanyRepository companyRepository;
+    private final PaySlipRepository paySlipRepository;
     private final OllamaService ollamaService;
     private final TextToSqlService textToSqlService;
 
@@ -83,6 +84,7 @@ public class ChatbotService {
         KnowledgeDocumentRepository knowledgeRepository,
         UserProfileRepository userProfileRepository,
         CompanyRepository companyRepository,
+        PaySlipRepository paySlipRepository,
         OllamaService ollamaService,
         TextToSqlService textToSqlService
     ) {
@@ -91,6 +93,7 @@ public class ChatbotService {
         this.knowledgeRepository = knowledgeRepository;
         this.userProfileRepository = userProfileRepository;
         this.companyRepository = companyRepository;
+        this.paySlipRepository = paySlipRepository;
         this.ollamaService = ollamaService;
         this.textToSqlService = textToSqlService;
     }
@@ -386,6 +389,26 @@ public class ChatbotService {
     // ─────────────────────────────────────────────────────────────
     //  Knowledge
     // ─────────────────────────────────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getMyLatestBulletin() {
+        String login = requireLogin();
+        Optional<UserProfile> profileOpt = userProfileRepository.findByJhiUserId(login);
+        if (profileOpt.isEmpty()) {
+            return Map.of("error", "Profil employé introuvable. Contactez le service RH.");
+        }
+        Long userProfileId = profileOpt.get().getId();
+        Optional<PaySlip> slipOpt = paySlipRepository.findFirstByEmployee_UserProfile_IdOrderByYearDescMonthDesc(userProfileId);
+        if (slipOpt.isEmpty()) {
+            return Map.of("error", "Aucun bulletin disponible pour le moment.");
+        }
+        PaySlip slip = slipOpt.get();
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", slip.getId());
+        result.put("month", slip.getMonth());
+        result.put("year", slip.getYear());
+        return result;
+    }
 
     public KnowledgeDocumentDTO addKnowledge(KnowledgeDocumentDTO dto) {
         KnowledgeDocument doc = new KnowledgeDocument();

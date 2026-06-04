@@ -96,27 +96,21 @@ public class PdfExportService {
 
         return (
             "<!DOCTYPE html><html><head><meta charset='UTF-8'/><style>" +
-            "body{font-family:Arial,sans-serif;font-size:7.5pt;margin:5mm}" +
-            "table{border-collapse:collapse;width:100%}" +
-            "td,th{padding:2px 3px;font-size:7pt}" +
-            ".copy{border:1px solid #444;padding:3px}" +
-            ".sep{width:8px;border-left:2px dashed #aaa}" +
-            ".title{font-size:10pt;font-weight:bold;text-align:center}" +
-            ".hd{background:#e8e8e8;font-weight:bold;text-align:center;border:1px solid #666;font-size:6.5pt;text-transform:uppercase}" +
+            "@page{size:A4 portrait;margin:10mm 12mm}" +
+            "html,body{width:100%;margin:0;padding:0;font-family:Arial,sans-serif;font-size:10pt}" +
+            "table{border-collapse:collapse;width:100%;table-layout:fixed}" +
+            "td,th{padding:5px 6px;font-size:9.5pt;word-wrap:break-word}" +
+            ".title{font-size:14pt;font-weight:bold;text-align:center}" +
+            ".hd{background:#d0d8e8;font-weight:bold;text-align:center;border:1px solid #555;font-size:9pt;text-transform:uppercase}" +
             ".c{border:1px solid #888}" +
+            ".r{padding:4px 6px;border-left:1px solid #888;border-right:1px solid #888}" +
             ".num{text-align:right}" +
             ".bold{font-weight:bold}" +
-            ".net td{font-weight:bold;border-top:2px solid #000}" +
+            ".net td{font-weight:bold;border-top:2px solid #000;font-size:9.5pt;padding:4px 6px}" +
+            ".rubriques-table{width:100%;height:420px;border:1px solid #888}" +
             "</style></head><body>" +
-            "<table><tr>" +
-            "<td class='copy'>" +
             singleCopy +
-            "</td>" +
-            "<td class='sep'></td>" +
-            "<td class='copy'>" +
-            singleCopy +
-            "</td>" +
-            "</tr></table></body></html>"
+            "</body></html>"
         );
     }
 
@@ -137,19 +131,19 @@ public class PdfExportService {
         // ── En-tête entreprise / titre ─────────────────────────────────────────
         sb
             .append("<table><tr>")
-            .append("<td style='width:55%'><span class='bold'>")
+            .append("<td class='c' style='width:55%'><span class='bold' style='font-size:11pt'>")
             .append(esc(co.getName()))
             .append("</span><br/>")
             .append(esc(Optional.ofNullable(co.getAddress()).orElse("")))
             .append("<br/>")
             .append(esc(Optional.ofNullable(co.getCity()).orElse("")))
             .append("</td>")
-            .append("<td style='width:45%;text-align:center'><div class='title'>BULLETIN DE PAIE</div></td>")
+            .append("<td class='c' style='width:45%;text-align:center'><div class='title'>BULLETIN DE PAIE</div></td>")
             .append("</tr></table>");
 
         // ── N° CNSS entreprise / Mois ─────────────────────────────────────────
         sb
-            .append("<table style='margin-top:3px'><tr>")
+            .append("<table style='margin-top:8px'><tr>")
             .append("<td class='c' style='width:55%'><b>N° C.N.S.S : ")
             .append(esc(Optional.ofNullable(co.getCnssId()).orElse("—")))
             .append("</b></td>")
@@ -161,7 +155,7 @@ public class PdfExportService {
 
         // ── Ligne employé ──────────────────────────────────────────────────────
         sb
-            .append("<table style='margin-top:2px'>")
+            .append("<table style='margin-top:6px'>")
             .append("<tr>")
             .append("<th class='hd' style='width:10%'>MAT.</th>")
             .append("<th class='hd' style='width:42%'>NOM &amp; PRENOM</th>")
@@ -184,7 +178,7 @@ public class PdfExportService {
 
         // ── Ligne CNSS employé ─────────────────────────────────────────────────
         sb
-            .append("<table style='margin-top:1px'>")
+            .append("<table style='margin-top:4px'>")
             .append("<tr>")
             .append("<th class='hd' style='width:30%'>N° CNSS</th>")
             .append("<th class='hd' style='width:8%'>CAT.</th>")
@@ -206,7 +200,7 @@ public class PdfExportService {
 
         // ── Tableau des rubriques ──────────────────────────────────────────────
         sb
-            .append("<table style='margin-top:2px'>")
+            .append("<table class='rubriques-table' style='margin-top:6px'>")
             .append("<tr>")
             .append("<th class='hd' style='width:10%'>CODE</th>")
             .append("<th class='hd' style='width:38%'>DESIGNATION</th>")
@@ -215,68 +209,77 @@ public class PdfExportService {
             .append("<th class='hd' style='width:20%'>RETENUES</th>")
             .append("</tr>");
 
-        if (!lines.isEmpty()) {
-            for (PaySlipLine l : lines) {
-                boolean isDeduction = l.getRubriqueType() == RubriqueType.DEDUCTION;
-                sb
-                    .append("<tr>")
-                    .append("<td class='c num'>")
-                    .append(esc(l.getRubriqueCode()))
-                    .append("</td>")
-                    .append("<td class='c'>")
-                    .append(esc(l.getRubriqueLabel()))
-                    .append("</td>")
-                    .append("<td class='c num'>")
-                    .append(l.getBase() != null && !isDeduction ? fmt(l.getBase()) : "")
-                    .append("</td>")
-                    .append("<td class='c num'>")
-                    .append(!isDeduction ? fmt(l.getAmount()) : "")
-                    .append("</td>")
-                    .append("<td class='c num'>")
-                    .append(isDeduction ? fmt(l.getAmount()) : "")
-                    .append("</td>")
-                    .append("</tr>");
+        // ── GAINS : Salaire de base + heures supp + primes + rubriques GAIN ──
+        sb.append(rubriqueRow("1000", "SALAIRE DE BASE", String.valueOf(workedDays), fmt(ps.getBaseSalary()), ""));
+
+        if (ps.getOvertimeAmount() != null && ps.getOvertimeAmount().compareTo(BigDecimal.ZERO) > 0) sb.append(
+            rubriqueRow("1120", "HEURES SUPPLEMENTAIRES", "", fmt(ps.getOvertimeAmount()), "")
+        );
+
+        if (ps.getBonusTotal() != null && ps.getBonusTotal().compareTo(BigDecimal.ZERO) > 0) sb.append(
+            rubriqueRow("1110", "PRIMES", "", fmt(ps.getBonusTotal()), "")
+        );
+
+        // Rubriques GAIN personnalisées (hors cotisations automatiques)
+        for (PaySlipLine l : lines) {
+            if (l.getRubriqueType() == RubriqueType.GAIN) {
+                sb.append(
+                    rubriqueRow(
+                        l.getRubriqueCode(),
+                        l.getRubriqueLabel(),
+                        l.getBase() != null ? fmt(l.getBase()) : "",
+                        fmt(l.getAmount()),
+                        ""
+                    )
+                );
             }
-        } else {
-            // Lignes par défaut depuis les champs PaySlip
-            sb.append(rubriqueRow("1000", "SALAIRE DE BASE", String.valueOf(workedDays), fmt(ps.getBaseSalary()), ""));
-            if (ps.getBonusTotal() != null && ps.getBonusTotal().compareTo(BigDecimal.ZERO) > 0) sb.append(
-                rubriqueRow("1110", "PRIMES", "", fmt(ps.getBonusTotal()), "")
-            );
-            if (ps.getOvertimeAmount() != null && ps.getOvertimeAmount().compareTo(BigDecimal.ZERO) > 0) sb.append(
-                rubriqueRow("1120", "HEURES SUPPLEMENTAIRES", "", fmt(ps.getOvertimeAmount()), "")
-            );
-            sb.append(rubriqueRow("2000", "SALAIRE BRUT", "", fmt(ps.getGrossSalary()), ""));
-            sb.append(rubriqueRow("3000", "C.N.S.S", "", "", fmt(ps.getCnssSalaryAmount())));
-            sb.append(rubriqueRow("4000", "IMPOSABLE", "", fmt(ps.getTaxableIncome()), ""));
-            sb.append(rubriqueRow("5000", "I.R.P.P", "", "", fmt(ps.getIrppAmount())));
-            if (ps.getCssAmount() != null && ps.getCssAmount().compareTo(BigDecimal.ZERO) > 0) sb.append(
-                rubriqueRow("5001", "C.S.S", "", "", fmt(ps.getCssAmount()))
-            );
-            if (ps.getAdvanceDeduction() != null && ps.getAdvanceDeduction().compareTo(BigDecimal.ZERO) > 0) sb.append(
-                rubriqueRow("6000", "AVANCE", "", "", fmt(ps.getAdvanceDeduction()))
-            );
         }
-        // Lignes vides pour espace
-        for (int i = 0; i < 4; i++) sb.append(
-            "<tr><td class='c'>&nbsp;</td><td class='c'></td><td class='c'></td><td class='c'></td><td class='c'></td></tr>"
+
+        sb.append(rubriqueRow("2000", "SALAIRE BRUT", "", fmt(ps.getGrossSalary()), ""));
+
+        // ── RETENUES : toujours depuis les champs PaySlip (évite doubles déductions) ──
+        sb.append(rubriqueRow("3000", "C.N.S.S (9,18%)", "", "", fmt(ps.getCnssSalaryAmount())));
+        sb.append(rubriqueRow("4000", "BASE IMPOSABLE", "", fmt(ps.getTaxableIncome()), ""));
+        sb.append(rubriqueRow("5000", "I.R.P.P", "", "", fmt(ps.getIrppAmount())));
+
+        if (ps.getCssAmount() != null && ps.getCssAmount().compareTo(BigDecimal.ZERO) > 0) sb.append(
+            rubriqueRow("5001", "C.S.S", "", "", fmt(ps.getCssAmount()))
+        );
+
+        // Rubriques DEDUCTION personnalisées (hors cotisations légales auto-calculées)
+        for (PaySlipLine l : lines) {
+            if (l.getRubriqueType() == RubriqueType.DEDUCTION && !isSocialContribution(l.getRubriqueCode())) {
+                sb.append(rubriqueRow(l.getRubriqueCode(), l.getRubriqueLabel(), "", "", fmt(l.getAmount())));
+            }
+        }
+
+        if (ps.getAdvanceDeduction() != null && ps.getAdvanceDeduction().compareTo(BigDecimal.ZERO) > 0) sb.append(
+            rubriqueRow("6000", "AVANCE", "", "", fmt(ps.getAdvanceDeduction()))
+        );
+
+        // Lignes vides pour remplir la page A4
+        int filledRows = 6 + lines.size(); // base + brut + cnss + irpp + gains + deductions
+        int emptyRows = Math.max(18 - filledRows, 3);
+        for (int i = 0; i < emptyRows; i++) sb.append(
+            "<tr style='height:18px'><td class='r'>&nbsp;</td><td class='r'></td><td class='r'></td><td class='r'></td><td class='r'></td></tr>"
         );
 
         // ── NET À PAYER ────────────────────────────────────────────────────────
         sb
             .append("<tr class='net'>")
-            .append("<td class='c bold' colspan='2'>CAISSE</td>")
-            .append("<td class='c'></td>")
-            .append("<td class='c bold' style='text-align:right'>NET A PAYER</td>")
-            .append("<td class='c bold num'>")
+            .append("<td class='c' colspan='3' style='font-size:9pt'>NET A PAYER</td>")
+            .append("<td class='c bold num' colspan='2'>")
             .append(fmt(ps.getNetSalary()))
             .append("</td>")
             .append("</tr></table>");
 
         sb
-            .append("<div style='margin-top:3px;font-size:6.5pt;font-weight:bold'>")
+            .append("<div style='margin-top:8px;font-size:9pt;font-weight:bold'>")
             .append("NOMBRE D'HEURES NORMALES DU MOIS &nbsp;&nbsp; ")
             .append(totalHours)
+            .append("</div>")
+            .append("<div style='margin-top:30px;text-align:right;font-size:9pt;color:#555'>")
+            .append("Document généré par PaieZone RH")
             .append("</div>");
 
         return sb.toString();
@@ -285,19 +288,19 @@ public class PdfExportService {
     private String rubriqueRow(String code, String label, String nbj, String remu, String retenue) {
         return (
             "<tr>" +
-            "<td class='c num'>" +
+            "<td class='r num'>" +
             code +
             "</td>" +
-            "<td class='c'>" +
+            "<td class='r'>" +
             label +
             "</td>" +
-            "<td class='c num'>" +
+            "<td class='r num'>" +
             nbj +
             "</td>" +
-            "<td class='c num'>" +
+            "<td class='r num'>" +
             remu +
             "</td>" +
-            "<td class='c num'>" +
+            "<td class='r num'>" +
             retenue +
             "</td>" +
             "</tr>"
@@ -952,6 +955,347 @@ public class PdfExportService {
             "</body></html>";
 
         log.info("✅ Certificat RI généré pour employé#{} année {}", employeeId, year);
+        return htmlToPdf(html);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    //  7. CNSS PATRONAL (cotisations employeur) — par période
+    // ═══════════════════════════════════════════════════════════════════
+
+    public byte[] generateCnssEmployeur(Long periodId) {
+        PayrollPeriod period = payrollPeriodRepository
+            .findById(periodId)
+            .orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + periodId));
+        Company co = period.getCompany();
+        int year = period.getYear();
+        int q = quarter(period.getMonth());
+        int m1 = (q - 1) * 3 + 1,
+            m2 = m1 + 1,
+            m3 = m1 + 2;
+
+        List<PaySlip> allSlips = new ArrayList<>();
+        allSlips.addAll(paySlipRepository.findByEmployee_Company_IdAndMonthAndYear(co.getId(), m1, year));
+        allSlips.addAll(paySlipRepository.findByEmployee_Company_IdAndMonthAndYear(co.getId(), m2, year));
+        allSlips.addAll(paySlipRepository.findByEmployee_Company_IdAndMonthAndYear(co.getId(), m3, year));
+        if (allSlips.isEmpty()) throw new IllegalStateException("Aucun bulletin pour le trimestre " + q + "/" + year);
+
+        Map<Long, Object[]> empMap = new LinkedHashMap<>();
+        for (PaySlip ps : allSlips) {
+            Employee emp = ps.getEmployee();
+            empMap.computeIfAbsent(emp.getId(), k -> new Object[] { emp, bd0(), bd0(), bd0() });
+            Object[] r = empMap.get(emp.getId());
+            r[1] = ((BigDecimal) r[1]).add(ps.getGrossSalary());
+            r[2] = ((BigDecimal) r[2]).add(nvl(ps.getEmployerCnss()));
+            r[3] = ((BigDecimal) r[3]).add(nvl(ps.getEmployerCavis()));
+        }
+
+        BigDecimal totalBrut = bd0(),
+            totalCnssEmp = bd0(),
+            totalCavisEmp = bd0(),
+            totalAT = bd0();
+        StringBuilder rows = new StringBuilder();
+        for (Object[] r : empMap.values()) {
+            Employee emp = (Employee) r[0];
+            BigDecimal brut = (BigDecimal) r[1];
+            BigDecimal cnssEmp = (BigDecimal) r[2];
+            BigDecimal cavisEmp = (BigDecimal) r[3];
+            BigDecimal at = brut.multiply(TAUX_AT).setScale(3, RoundingMode.HALF_UP);
+            totalBrut = totalBrut.add(brut);
+            totalCnssEmp = totalCnssEmp.add(cnssEmp);
+            totalCavisEmp = totalCavisEmp.add(cavisEmp);
+            totalAT = totalAT.add(at);
+            rows
+                .append("<tr>")
+                .append(td(nvl(emp.getMatricule(), "—")))
+                .append(td(esc(emp.getFirstName() + " " + emp.getLastName())))
+                .append(td(Optional.ofNullable(emp.getCnssNumber()).orElse("—")))
+                .append(tdr(fmt(brut)))
+                .append(tdr(fmt(cnssEmp)))
+                .append(tdr(fmt(cavisEmp)))
+                .append(tdr(fmt(at)))
+                .append("</tr>");
+        }
+        BigDecimal totalAPayer = totalCnssEmp.add(totalCavisEmp).add(totalAT);
+
+        String html =
+            "<!DOCTYPE html><html><head><meta charset='UTF-8'/><style>" +
+            "body{font-family:Arial,sans-serif;font-size:8pt;margin:8mm}" +
+            "table{border-collapse:collapse;width:100%}" +
+            "td.c,th.c{border:1px solid #888;padding:3px 5px}" +
+            "th.c{background:#e0e0e0;font-weight:bold;text-align:center;font-size:7.5pt}" +
+            ".r{text-align:right}.bold{font-weight:bold}.title{font-size:13pt;font-weight:bold;text-align:center;margin:8px 0}" +
+            "</style></head><body>" +
+            "<div class='title'>DÉCLARATION CNSS — PART PATRONALE</div>" +
+            "<div style='text-align:center;font-size:8pt'>Trimestre " +
+            q +
+            " — " +
+            year +
+            "</div>" +
+            "<table style='border:0;width:100%;margin-bottom:8px'><tr>" +
+            "<td><b>Employeur :</b> " +
+            esc(co.getName()) +
+            "</td>" +
+            "<td><b>N° CNSS :</b> " +
+            esc(Optional.ofNullable(co.getCnssId()).orElse("—")) +
+            "</td>" +
+            "<td><b>Trimestre :</b> T" +
+            q +
+            "/" +
+            year +
+            "</td>" +
+            "</tr></table>" +
+            "<table><thead><tr>" +
+            "<th class='c'>Matricule</th><th class='c'>Nom et Prénom</th><th class='c'>N° CNSS</th>" +
+            "<th class='c'>Salaire brut (trim.)</th><th class='c'>CNSS patronal</th><th class='c'>CAVIS patronal</th><th class='c'>Acc. travail</th>" +
+            "</tr></thead><tbody>" +
+            rows +
+            "<tr><td class='c bold' colspan='3'>TOTAL</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalBrut) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalCnssEmp) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalCavisEmp) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalAT) +
+            "</td>" +
+            "</tr></tbody></table>" +
+            "<div style='margin-top:16px;text-align:right'><b>Total à verser à la CNSS : " +
+            fmt(totalAPayer) +
+            " TND</b></div>" +
+            "<div style='margin-top:40px;text-align:right'>Cachet et signature de l'employeur</div>" +
+            "</body></html>";
+
+        log.info("✅ CNSS Patronal Trimestriel PDF généré pour T{}/{}", q, year);
+        return htmlToPdf(html);
+    }
+
+    /**
+     * Retourne true si le code rubrique correspond à une cotisation légale
+     * déjà calculée automatiquement (CNSS, CAVIS, CSS, TFP).
+     * Ces rubriques sont exclues des RETENUES pour éviter la double déduction.
+     */
+    private boolean isSocialContribution(String code) {
+        if (code == null) return false;
+        String c = code.toUpperCase();
+        return c.contains("CNS") || c.contains("CAV") || c.contains("CSS") || c.contains("TFP") || c.contains("IRPP") || c.contains("IMP");
+    }
+
+    private String nvl(String s, String def) {
+        return s != null && !s.isBlank() ? s : def;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    //  8. CAVIS — Déclaration par période
+    // ═══════════════════════════════════════════════════════════════════
+
+    public byte[] generateCavisRecap(Long periodId) {
+        PayrollPeriod period = payrollPeriodRepository
+            .findById(periodId)
+            .orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + periodId));
+        Company co = period.getCompany();
+        int year = period.getYear();
+        int q = quarter(period.getMonth());
+        int m1 = (q - 1) * 3 + 1,
+            m2 = m1 + 1,
+            m3 = m1 + 2;
+
+        List<PaySlip> allSlips = new ArrayList<>();
+        allSlips.addAll(paySlipRepository.findByEmployee_Company_IdAndMonthAndYear(co.getId(), m1, year));
+        allSlips.addAll(paySlipRepository.findByEmployee_Company_IdAndMonthAndYear(co.getId(), m2, year));
+        allSlips.addAll(paySlipRepository.findByEmployee_Company_IdAndMonthAndYear(co.getId(), m3, year));
+        if (allSlips.isEmpty()) throw new IllegalStateException("Aucun bulletin pour le trimestre " + q + "/" + year);
+
+        Map<Long, Object[]> empMap = new LinkedHashMap<>();
+        for (PaySlip ps : allSlips) {
+            Employee emp = ps.getEmployee();
+            empMap.computeIfAbsent(emp.getId(), k -> new Object[] { emp, bd0(), bd0(), bd0() });
+            Object[] r = empMap.get(emp.getId());
+            r[1] = ((BigDecimal) r[1]).add(ps.getGrossSalary());
+            r[2] = ((BigDecimal) r[2]).add(nvl(ps.getCavisAmount()));
+            r[3] = ((BigDecimal) r[3]).add(nvl(ps.getEmployerCavis()));
+        }
+
+        BigDecimal totalBrut = bd0(),
+            totalCavisSal = bd0(),
+            totalCavisEmp = bd0();
+        StringBuilder rows = new StringBuilder();
+        for (Object[] r : empMap.values()) {
+            Employee emp = (Employee) r[0];
+            BigDecimal brut = (BigDecimal) r[1];
+            BigDecimal cavisSal = (BigDecimal) r[2];
+            BigDecimal cavisEmp = (BigDecimal) r[3];
+            totalBrut = totalBrut.add(brut);
+            totalCavisSal = totalCavisSal.add(cavisSal);
+            totalCavisEmp = totalCavisEmp.add(cavisEmp);
+            rows
+                .append("<tr>")
+                .append(td(nvl(emp.getMatricule(), "—")))
+                .append(td(esc(emp.getFirstName() + " " + emp.getLastName())))
+                .append(td(Optional.ofNullable(emp.getCnssNumber()).orElse("—")))
+                .append(tdr(fmt(brut)))
+                .append(tdr(fmt(cavisSal)))
+                .append(tdr(fmt(cavisEmp)))
+                .append(tdr(fmt(cavisSal.add(cavisEmp))))
+                .append("</tr>");
+        }
+        BigDecimal totalCavis = totalCavisSal.add(totalCavisEmp);
+
+        String html =
+            "<!DOCTYPE html><html><head><meta charset='UTF-8'/><style>" +
+            "body{font-family:Arial,sans-serif;font-size:8pt;margin:8mm}" +
+            "table{border-collapse:collapse;width:100%}" +
+            "td.c,th.c{border:1px solid #888;padding:3px 5px}" +
+            "th.c{background:#e0e0e0;font-weight:bold;text-align:center;font-size:7.5pt}" +
+            ".r{text-align:right}.bold{font-weight:bold}.title{font-size:13pt;font-weight:bold;text-align:center;margin:8px 0}" +
+            "</style></head><body>" +
+            "<div class='title'>DÉCLARATION CAVIS — Trimestre " +
+            q +
+            " / " +
+            year +
+            "</div>" +
+            "<div style='font-size:8pt'>(Caisse d'Assurance Vieillesse, Invalidité et Survivants — Loi n° 93-53)</div>" +
+            "<table style='border:0;width:100%;margin:8px 0'><tr>" +
+            "<td><b>Employeur :</b> " +
+            esc(co.getName()) +
+            "</td>" +
+            "<td><b>N° CNSS :</b> " +
+            esc(Optional.ofNullable(co.getCnssId()).orElse("—")) +
+            "</td>" +
+            "<td><b>Trimestre :</b> T" +
+            q +
+            "/" +
+            year +
+            "</td>" +
+            "</tr></table>" +
+            "<table><thead><tr>" +
+            "<th class='c'>Matricule</th><th class='c'>Nom et Prénom</th><th class='c'>N° CNSS</th>" +
+            "<th class='c'>Salaire brut (trim.)</th><th class='c'>CAVIS salarié (1%)</th><th class='c'>CAVIS patronal</th><th class='c'>Total CAVIS</th>" +
+            "</tr></thead><tbody>" +
+            rows +
+            "<tr><td class='c bold' colspan='3'>TOTAL</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalBrut) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalCavisSal) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalCavisEmp) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(totalCavis) +
+            "</td>" +
+            "</tr></tbody></table>" +
+            "<div style='margin-top:16px;text-align:right'><b>Total CAVIS à verser : " +
+            fmt(totalCavis) +
+            " TND</b></div>" +
+            "<div style='margin-top:40px;text-align:right'>Cachet et signature de l'employeur</div>" +
+            "</body></html>";
+
+        log.info("✅ CAVIS Trimestriel PDF généré pour T{}/{}", q, year);
+        return htmlToPdf(html);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    //  9. IRPP ANNUEL — Liste récapitulative tous employés / année
+    // ═══════════════════════════════════════════════════════════════════
+
+    public byte[] generateIrppAnnuel(int year) {
+        List<Employee> employees = employeeRepository.findAll();
+        if (employees.isEmpty()) throw new IllegalStateException("Aucun employé trouvé.");
+
+        Company co = employees.get(0).getCompany();
+        String today = LocalDate.now().format(DATE_FR);
+
+        StringBuilder rows = new StringBuilder();
+        BigDecimal grandTotalBrut = bd0(),
+            grandTotalIrpp = bd0(),
+            grandTotalCss = bd0();
+        int ordre = 1;
+        for (Employee emp : employees) {
+            List<PaySlip> slips = paySlipRepository
+                .findByEmployee_Company_IdAndYear(co.getId(), year)
+                .stream()
+                .filter(ps -> ps.getEmployee().getId().equals(emp.getId()))
+                .toList();
+            if (slips.isEmpty()) continue;
+            BigDecimal annualBrut = slips.stream().map(PaySlip::getGrossSalary).reduce(bd0(), BigDecimal::add);
+            BigDecimal annualIrpp = slips.stream().map(PaySlip::getIrppAmount).reduce(bd0(), BigDecimal::add);
+            BigDecimal annualCss = slips
+                .stream()
+                .map(ps -> nvl(ps.getCssAmount()))
+                .reduce(bd0(), BigDecimal::add);
+            grandTotalBrut = grandTotalBrut.add(annualBrut);
+            grandTotalIrpp = grandTotalIrpp.add(annualIrpp);
+            grandTotalCss = grandTotalCss.add(annualCss);
+            rows
+                .append("<tr>")
+                .append(td(String.valueOf(ordre++)))
+                .append(td(esc(emp.getFirstName() + " " + emp.getLastName())))
+                .append(td(Optional.ofNullable(emp.getCnssNumber()).orElse("—")))
+                .append(td(Optional.ofNullable(emp.getNationalId()).orElse("—")))
+                .append(tdr(fmt(annualBrut)))
+                .append(tdr(fmt(annualIrpp)))
+                .append(tdr(fmt(annualCss)))
+                .append(tdr(fmt(annualIrpp.add(annualCss))))
+                .append("</tr>");
+        }
+        if (rows.isEmpty()) throw new IllegalStateException("Aucun bulletin IRPP pour l'année " + year);
+
+        String html =
+            "<!DOCTYPE html><html><head><meta charset='UTF-8'/><style>" +
+            "body{font-family:Arial,sans-serif;font-size:7.5pt;margin:8mm}" +
+            "table{border-collapse:collapse;width:100%}" +
+            "td.c,th.c{border:1px solid #888;padding:2px 4px}" +
+            "th.c{background:#d0d0d0;font-weight:bold;text-align:center;font-size:7pt}" +
+            ".r{text-align:right}.bold{font-weight:bold}.title{font-size:12pt;font-weight:bold;text-align:center;margin:6px 0}" +
+            "</style></head><body>" +
+            "<div class='title'>DÉCLARATION ANNUELLE DES RETENUES À LA SOURCE — IRPP</div>" +
+            "<div style='text-align:center;font-size:8pt'>Année fiscale : <b>" +
+            year +
+            "</b> — Art. 52 du Code de l'IRPP et de l'IS</div>" +
+            "<table style='border:0;margin:8px 0'><tr>" +
+            "<td><b>Employeur :</b> " +
+            esc(co.getName()) +
+            "</td>" +
+            "<td style='padding-left:30px'><b>Matricule fiscal :</b> " +
+            esc(Optional.ofNullable(co.getTaxId()).orElse("—")) +
+            "</td>" +
+            "<td style='padding-left:30px'><b>Date :</b> " +
+            today +
+            "</td>" +
+            "</tr></table>" +
+            "<table><thead><tr>" +
+            "<th class='c'>N°</th><th class='c'>Nom et Prénom</th><th class='c'>N° CNSS</th><th class='c'>CIN</th>" +
+            "<th class='c'>Salaire brut annuel</th><th class='c'>IRPP retenu</th><th class='c'>CSS retenu</th><th class='c'>Total impôts retenus</th>" +
+            "</tr></thead><tbody>" +
+            rows +
+            "<tr><td class='c bold' colspan='4'>TOTAL</td>" +
+            "<td class='c r bold'>" +
+            fmt(grandTotalBrut) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(grandTotalIrpp) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(grandTotalCss) +
+            "</td>" +
+            "<td class='c r bold'>" +
+            fmt(grandTotalIrpp.add(grandTotalCss)) +
+            "</td>" +
+            "</tr></tbody></table>" +
+            "<div style='margin-top:40px;display:flex;justify-content:space-between'>" +
+            "<div>Cachet et signature de l'employeur</div>" +
+            "<div>Date : " +
+            today +
+            "</div></div>" +
+            "</body></html>";
+
+        log.info("✅ IRPP annuel PDF généré pour année {}", year);
         return htmlToPdf(html);
     }
 

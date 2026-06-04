@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
+import type { LeaveType } from '../../core/types';
+
+type Tab = 'demandes' | 'types';
 
 @Component({
   selector: 'pz-rh-leaves',
@@ -19,115 +22,265 @@ import { ApiService } from '../../core/api.service';
           <div class="pz-muted">{{ filtered().length }} demande(s) · {{ pendingCount() }} en attente de validation</div>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="pz-btn"><pz-icon name="Download" [size]="14" /> Exporter</button>
-          <button class="pz-btn pz-primary" (click)="openCreate()">
-            <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvelle demande
-          </button>
-        </div>
-      </div>
-
-      <div class="filters">
-        <div class="pz-topbar-search" style="width:260px">
-          <pz-icon name="Search" [size]="14" [strokeWidth]="1.6" />
-          <input placeholder="Rechercher un employé…" [value]="q()" (input)="q.set($any($event.target).value)" />
-        </div>
-        <div class="filter-tabs">
-          @for (s of statuses; track s.key) {
-            <button class="filter-tab" [class.active]="statusFilter() === s.key" (click)="statusFilter.set(s.key)">
-              {{ s.label }}
-              @if (s.count() > 0) {
-                <span class="cnt">{{ s.count() }}</span>
-              }
+          @if (activeTab() === 'demandes') {
+            <button class="pz-btn pz-primary" (click)="openCreate()">
+              <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvelle demande
+            </button>
+          }
+          @if (activeTab() === 'types') {
+            <button class="pz-btn pz-primary" (click)="openCreateType()">
+              <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouveau type
             </button>
           }
         </div>
       </div>
 
-      <div class="pz-card">
-        <table class="pz-table">
-          <thead>
-            <tr>
-              <th>Employé</th>
-              <th>Type</th>
-              <th>Du</th>
-              <th>Au</th>
-              <th>Jours</th>
-              <th>Soumis le</th>
-              <th>Statut</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (filtered().length === 0) {
-              <tr>
-                <td colspan="8" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucune demande trouvée</td>
-              </tr>
-            }
-            @for (l of filtered(); track l.id) {
-              @let e = data.empById(l.empId);
-              <tr>
-                <td>
-                  <div style="display:flex;align-items:center;gap:10px">
-                    @if (e) {
-                      <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
-                      <div>
-                        <div style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</div>
-                        <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.dept }}</div>
-                      </div>
-                    } @else {
-                      <span class="pz-muted">—</span>
-                    }
-                  </div>
-                </td>
-                <td>
-                  <span class="pz-pill info">{{ l.type }}</span>
-                </td>
-                <td class="pz-mono" style="font-size:12px">{{ l.from }}</td>
-                <td class="pz-mono" style="font-size:12px">{{ l.to }}</td>
-                <td>
-                  <strong>{{ l.days }}</strong>
-                </td>
-                <td style="color:var(--pz-muted);font-size:12px">{{ l.submitted }}</td>
-                <td>
-                  <span
-                    class="pz-pill"
-                    [class.warn]="l.status === 'pending'"
-                    [class.pos]="l.status === 'approved'"
-                    [class.danger]="l.status === 'rejected'"
-                  >
-                    {{ l.status === 'pending' ? 'En attente' : l.status === 'approved' ? 'Approuvé' : 'Refusé' }}
-                  </span>
-                </td>
-                <td>
-                  @if (l.status === 'pending') {
-                    <div style="display:flex;gap:6px">
-                      <button
-                        class="pz-btn pz-sm"
-                        style="background:var(--pz-pos);color:#fff;border-color:var(--pz-pos)"
-                        [disabled]="busy()"
-                        (click)="approve(l.id)"
-                        title="Approuver"
-                      >
-                        <pz-icon name="Check" [size]="13" [strokeWidth]="1.8" />
-                      </button>
-                      <button
-                        class="pz-btn pz-sm"
-                        style="color:var(--pz-danger-ink)"
-                        [disabled]="busy()"
-                        (click)="openReject(l.id)"
-                        title="Refuser"
-                      >
-                        <pz-icon name="X" [size]="13" [strokeWidth]="1.6" />
-                      </button>
-                    </div>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      <!-- Tabs -->
+      <div class="pz-tabs">
+        <button class="pz-tab" [class.active]="activeTab() === 'demandes'" (click)="activeTab.set('demandes')">
+          <pz-icon name="Calendar" [size]="14" /> Demandes
+          <span class="cnt">{{ data.leaves().length }}</span>
+        </button>
+        <button class="pz-tab" [class.active]="activeTab() === 'types'" (click)="setTypesTab()">
+          <pz-icon name="Tag" [size]="14" /> Types de congé
+          <span class="cnt">{{ leaveTypeList().length }}</span>
+        </button>
       </div>
+
+      <!-- ── TAB: Demandes ─────────────────────────────────────────────────── -->
+      @if (activeTab() === 'demandes') {
+        <div class="filters">
+          <div class="pz-topbar-search" style="width:260px">
+            <pz-icon name="Search" [size]="14" [strokeWidth]="1.6" />
+            <input placeholder="Rechercher un employé…" [value]="q()" (input)="q.set($any($event.target).value)" />
+          </div>
+          <div class="filter-tabs">
+            @for (s of statuses; track s.key) {
+              <button class="filter-tab" [class.active]="statusFilter() === s.key" (click)="statusFilter.set(s.key)">
+                {{ s.label }}
+                @if (s.count() > 0) {
+                  <span class="cnt">{{ s.count() }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="pz-card">
+          <table class="pz-table">
+            <thead>
+              <tr>
+                <th>Employé</th>
+                <th>Type</th>
+                <th>Du</th>
+                <th>Au</th>
+                <th>Jours</th>
+                <th>Soumis le</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (filtered().length === 0) {
+                <tr>
+                  <td colspan="8" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucune demande trouvée</td>
+                </tr>
+              }
+              @for (l of filtered(); track l.id) {
+                @let e = data.empById(l.empId);
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px">
+                      @if (e) {
+                        <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
+                        <div>
+                          <div style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</div>
+                          <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.dept }}</div>
+                        </div>
+                      } @else {
+                        <span class="pz-muted">—</span>
+                      }
+                    </div>
+                  </td>
+                  <td>
+                    <span class="pz-pill info">{{ l.type }}</span>
+                  </td>
+                  <td class="pz-mono" style="font-size:12px">{{ l.from }}</td>
+                  <td class="pz-mono" style="font-size:12px">{{ l.to }}</td>
+                  <td>
+                    <strong>{{ l.days }}</strong>
+                  </td>
+                  <td style="color:var(--pz-muted);font-size:12px">{{ l.submitted }}</td>
+                  <td>
+                    <span
+                      class="pz-pill"
+                      [class.warn]="l.status === 'pending'"
+                      [class.pos]="l.status === 'approved'"
+                      [class.danger]="l.status === 'rejected'"
+                    >
+                      {{ l.status === 'pending' ? 'En attente' : l.status === 'approved' ? 'Approuvé' : 'Refusé' }}
+                    </span>
+                  </td>
+                  <td>
+                    @if (l.status === 'pending') {
+                      <div style="display:flex;gap:6px">
+                        <button
+                          class="pz-btn pz-sm"
+                          style="background:var(--pz-pos);color:#fff;border-color:var(--pz-pos)"
+                          [disabled]="busy()"
+                          (click)="approve(l.id)"
+                          title="Approuver"
+                        >
+                          <pz-icon name="Check" [size]="13" [strokeWidth]="1.8" />
+                        </button>
+                        <button
+                          class="pz-btn pz-sm"
+                          style="color:var(--pz-danger-ink)"
+                          [disabled]="busy()"
+                          (click)="openReject(l.id)"
+                          title="Refuser"
+                        >
+                          <pz-icon name="X" [size]="13" [strokeWidth]="1.6" />
+                        </button>
+                      </div>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- ── TAB: Types de congé ──────────────────────────────────────────── -->
+      @if (activeTab() === 'types') {
+        @if (typesLoading()) {
+          <div class="pz-card" style="padding:40px;text-align:center;color:var(--pz-muted)">Chargement…</div>
+        } @else if (leaveTypeList().length === 0) {
+          <div class="pz-card" style="padding:60px;text-align:center">
+            <pz-icon name="Calendar" [size]="36" [strokeWidth]="1.2" style="color:var(--pz-muted)" />
+            <div style="font-size:15px;font-weight:600;margin-top:14px">Aucun type de congé</div>
+            <div style="font-size:13px;color:var(--pz-muted);margin-top:4px">Créez les types de congé de votre entreprise</div>
+            <button class="pz-btn pz-primary" style="margin-top:16px" (click)="openCreateType()">
+              <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Créer le premier type
+            </button>
+          </div>
+        } @else {
+          <div class="pz-card">
+            <table class="pz-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Max jours/an</th>
+                  <th>Payé</th>
+                  <th>Approbation</th>
+                  <th>Statut</th>
+                  <th style="width:100px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (t of leaveTypeList(); track t.id) {
+                  <tr [style.opacity]="t.active ? 1 : 0.55">
+                    <td>
+                      <span class="pz-mono" style="font-size:12px;color:var(--pz-muted)">{{ t.code || '—' }}</span>
+                    </td>
+                    <td style="font-weight:500;font-size:13px">{{ t.label }}</td>
+                    <td>
+                      <strong class="pz-mono">{{ t.maxDaysPerYear }}</strong> j
+                    </td>
+                    <td>
+                      <span class="pz-pill" [class.pos]="t.paid" [class.warn]="!t.paid">
+                        {{ t.paid ? 'Payé' : 'Non payé' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="pz-pill" [class.pos]="t.requiresApproval" [class.info]="!t.requiresApproval">
+                        {{ t.requiresApproval ? 'Oui' : 'Non' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="pz-pill" [class.pos]="t.active" [class.warn]="!t.active">
+                        {{ t.active ? 'Actif' : 'Inactif' }}
+                      </span>
+                    </td>
+                    <td>
+                      <div style="display:flex;gap:5px">
+                        <button class="pz-btn pz-sm" (click)="openEditType(t)" title="Modifier">
+                          <pz-icon name="Edit" [size]="13" />
+                        </button>
+                        <button class="pz-btn pz-sm" style="color:var(--pz-danger-ink)" (click)="deleteType(t.id)" title="Supprimer">
+                          <pz-icon name="Trash" [size]="13" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
     </div>
+
+    <!-- Modal Nouveau / Modifier type de congé -->
+    @if (showTypeModal()) {
+      <div class="pz-overlay" (click)="closeTypeModal()">
+        <div class="pz-modal" (click)="$event.stopPropagation()">
+          <div class="pz-modal-head">
+            <span>{{ editTypeId() ? 'Modifier le type de congé' : 'Nouveau type de congé' }}</span>
+            <button class="pz-modal-close" (click)="closeTypeModal()"><pz-icon name="X" [size]="16" /></button>
+          </div>
+          <div class="pz-modal-body">
+            <div class="pz-field-row">
+              <div class="pz-field">
+                <label>Code technique</label>
+                <input class="pz-mono" [(ngModel)]="typeForm.code" placeholder="ex: CONGE_ANNUEL" [disabled]="!!editTypeId()" />
+              </div>
+              <div class="pz-field">
+                <label>Libellé *</label>
+                <input [(ngModel)]="typeForm.label" placeholder="ex: Congé annuel payé" />
+              </div>
+            </div>
+            <div class="pz-field">
+              <label>Nombre de jours maximum par an *</label>
+              <input type="number" [(ngModel)]="typeForm.maxDaysPerYear" min="1" max="365" />
+            </div>
+            <div class="pz-field">
+              <label>Description</label>
+              <textarea [(ngModel)]="typeForm.description" rows="2" placeholder="Description optionnelle…"></textarea>
+            </div>
+            <div style="display:flex;gap:18px;flex-wrap:wrap">
+              <div class="pz-field" style="flex-direction:row;align-items:center;gap:8px">
+                <input type="checkbox" [(ngModel)]="typeForm.paid" id="chk-paid" style="width:auto" />
+                <label for="chk-paid" style="font-size:13px;color:var(--pz-ink)">Congé payé</label>
+              </div>
+              <div class="pz-field" style="flex-direction:row;align-items:center;gap:8px">
+                <input type="checkbox" [(ngModel)]="typeForm.requiresApproval" id="chk-approbation" style="width:auto" />
+                <label for="chk-approbation" style="font-size:13px;color:var(--pz-ink)">Approbation requise</label>
+              </div>
+              <div class="pz-field" style="flex-direction:row;align-items:center;gap:8px">
+                <input type="checkbox" [(ngModel)]="typeForm.active" id="chk-type-active" style="width:auto" />
+                <label for="chk-type-active" style="font-size:13px;color:var(--pz-ink)">Actif</label>
+              </div>
+            </div>
+            @if (typeErrMsg()) {
+              <div class="pz-err">{{ typeErrMsg() }}</div>
+            }
+          </div>
+          <div class="pz-modal-foot">
+            <button class="pz-btn" (click)="closeTypeModal()">Annuler</button>
+            <button class="pz-btn pz-primary" [disabled]="busy()" (click)="submitTypeForm()">
+              @if (busy()) {
+                Enregistrement…
+              } @else {
+                <pz-icon name="Check" [size]="14" /> {{ editTypeId() ? 'Enregistrer' : 'Créer' }}
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
 
     <!-- Modal Nouvelle demande -->
     @if (showCreate()) {
@@ -166,6 +319,12 @@ import { ApiService } from '../../core/api.service';
                 <input type="date" [(ngModel)]="form.endDate" />
               </div>
             </div>
+            @if (form.startDate && form.startDate < today) {
+              <div class="pz-warn-past">
+                <pz-icon name="AlertTriangle" [size]="14" />
+                Date de début dans le passé — la demande sera automatiquement refusée.
+              </div>
+            }
             <div class="pz-field">
               <label>Nombre de jours ouvrables</label>
               <input type="number" [(ngModel)]="form.days" min="1" />
@@ -232,6 +391,48 @@ import { ApiService } from '../../core/api.service';
     `
       :host {
         display: block;
+      }
+      .pz-tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid var(--pz-line);
+        padding: 0 4px;
+        margin-bottom: 0;
+      }
+      .pz-tab {
+        height: 38px;
+        padding: 0 14px;
+        border: none;
+        background: transparent;
+        font: inherit;
+        font-size: 13px;
+        color: var(--pz-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+      }
+      .pz-tab:hover {
+        color: var(--pz-ink);
+      }
+      .pz-tab.active {
+        color: var(--pz-primary);
+        border-bottom-color: var(--pz-primary);
+        font-weight: 600;
+      }
+      .pz-tab .cnt {
+        background: var(--pz-surface-3);
+        color: var(--pz-muted);
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 1px 6px;
+        border-radius: 999px;
+      }
+      .pz-tab.active .cnt {
+        background: var(--pz-primary-soft);
+        color: var(--pz-primary);
       }
       .filters {
         display: flex;
@@ -416,6 +617,21 @@ import { ApiService } from '../../core/api.service';
         border-radius: 8px;
         padding: 8px 12px;
       }
+      .pz-pill.info {
+        background: #eff6ff;
+        color: #1d4ed8;
+      }
+      .pz-warn-past {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12.5px;
+        color: #92400e;
+        background: #fef3c7;
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-bottom: 4px;
+      }
     `,
   ],
 })
@@ -423,6 +639,7 @@ export default class RhLeavesComponent {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
   protected readonly q = signal('');
+  protected readonly activeTab = signal<Tab>('demandes');
   protected readonly statusFilter = signal<string>('all');
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
@@ -431,7 +648,16 @@ export default class RhLeavesComponent {
   protected rejectComment = '';
 
   protected leaveTypes = signal<{ id: number; name: string }[]>([]);
+  protected readonly today = new Date().toISOString().slice(0, 10);
   protected form = { leaveTypeId: 0, employeeId: 0, startDate: '', endDate: '', days: 1, comment: '' };
+
+  // Leave type management
+  protected readonly leaveTypeList = signal<LeaveType[]>([]);
+  protected readonly typesLoading = signal(false);
+  protected readonly showTypeModal = signal(false);
+  protected readonly editTypeId = signal<number | null>(null);
+  protected readonly typeErrMsg = signal('');
+  protected typeForm = { code: '', label: '', maxDaysPerYear: 30, paid: true, requiresApproval: true, active: true, description: '' };
 
   protected readonly filtered = computed(() => {
     const q = this.q().toLowerCase();
@@ -529,6 +755,90 @@ export default class RhLeavesComponent {
         this.errMsg.set('Erreur lors du refus.');
         this.busy.set(false);
       },
+    });
+  }
+
+  // ── Leave type management ─────────────────────────────────────────────────
+
+  setTypesTab(): void {
+    this.activeTab.set('types');
+    if (!this.leaveTypeList().length) this.loadLeaveTypes();
+  }
+
+  private loadLeaveTypes(): void {
+    this.typesLoading.set(true);
+    this.api.leaveTypesFull().subscribe({
+      next: list => {
+        this.leaveTypeList.set(list);
+        this.typesLoading.set(false);
+      },
+      error: () => this.typesLoading.set(false),
+    });
+  }
+
+  openCreateType(): void {
+    this.editTypeId.set(null);
+    this.typeForm = { code: '', label: '', maxDaysPerYear: 30, paid: true, requiresApproval: true, active: true, description: '' };
+    this.typeErrMsg.set('');
+    this.showTypeModal.set(true);
+  }
+
+  openEditType(t: LeaveType): void {
+    this.editTypeId.set(t.id);
+    this.typeForm = {
+      code: t.code,
+      label: t.label,
+      maxDaysPerYear: t.maxDaysPerYear,
+      paid: t.paid,
+      requiresApproval: t.requiresApproval,
+      active: t.active,
+      description: t.description,
+    };
+    this.typeErrMsg.set('');
+    this.showTypeModal.set(true);
+  }
+
+  closeTypeModal(): void {
+    this.showTypeModal.set(false);
+    this.editTypeId.set(null);
+  }
+
+  submitTypeForm(): void {
+    if (!this.typeForm.label.trim()) {
+      this.typeErrMsg.set('Le libellé est obligatoire.');
+      return;
+    }
+    if (!this.typeForm.maxDaysPerYear || this.typeForm.maxDaysPerYear < 1) {
+      this.typeErrMsg.set('Le nombre de jours doit être ≥ 1.');
+      return;
+    }
+    this.busy.set(true);
+    this.typeErrMsg.set('');
+    const dto = { ...this.typeForm, label: this.typeForm.label.trim(), code: this.typeForm.code.trim() };
+    const editId = this.editTypeId();
+    const call = editId ? this.api.updateLeaveType(editId, dto) : this.api.createLeaveType(dto);
+    call.subscribe({
+      next: t => {
+        if (editId) {
+          this.leaveTypeList.update(list => list.map(x => (x.id === editId ? t : x)));
+        } else {
+          this.leaveTypeList.update(list => [...list, t]);
+          this.leaveTypes.update(list => [...list, { id: t.id, name: t.label }]);
+        }
+        this.busy.set(false);
+        this.closeTypeModal();
+      },
+      error: (err: any) => {
+        this.typeErrMsg.set(err?.error?.detail ?? 'Erreur lors de la sauvegarde.');
+        this.busy.set(false);
+      },
+    });
+  }
+
+  deleteType(id: number): void {
+    this.api.deleteLeaveType(id).subscribe({
+      next: () => this.leaveTypeList.update(list => list.filter(t => t.id !== id)),
+      error: () => {},
     });
   }
 }

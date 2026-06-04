@@ -29,6 +29,11 @@
             @if (m.cite) {
               <div class="cite"><strong>Source :</strong> {{ m.cite }}</div>
             }
+            @if (m.action) {
+              <button class="chat-action-btn" (click)="navigateTo(m.action.route, m.action.href)">
+                {{ m.action.label }}
+              </button>
+            }
           </div>
         </div>
       }

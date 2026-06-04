@@ -50,6 +50,20 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         Long empId = dto.getEmployee().getId();
         Long ltId = dto.getLeaveType().getId();
 
+        // Rejet automatique si la date de début est dans le passé
+        if (dto.getStartDate().isBefore(LocalDate.now())) {
+            int days = Math.max(countWorkingDays(dto.getStartDate(), dto.getEndDate(), year), 0);
+            LeaveRequest rejected = leaveRequestMapper.toEntity(dto);
+            rejected.setNumberOfDays(days);
+            rejected.setStatus(LeaveStatus.REJECTED);
+            rejected.setRequestedAt(Instant.now());
+            rejected.setProcessedAt(Instant.now());
+            rejected.setManagerComment("Rejet automatique : la date de début (" + dto.getStartDate() + ") est dans le passé.");
+            LeaveRequest saved = leaveRequestRepository.save(rejected);
+            log.warn("⛔ Congé emp#{} rejeté auto : date passée ({} < {})", empId, dto.getStartDate(), LocalDate.now());
+            return leaveRequestMapper.toDto(saved);
+        }
+
         // 1. Obtenir ou créer automatiquement le solde pour cette année
         LeaveBalance balance = leaveBalanceRepository
             .findByEmployeeIdAndLeaveTypeIdAndYear(empId, ltId, year)

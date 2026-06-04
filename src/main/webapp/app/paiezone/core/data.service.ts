@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, computed } from '@angular/core';
 import { ApiService } from './api.service';
 import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
 import type {
@@ -38,7 +38,9 @@ export class DataService {
   // GOLDEN RULE: NEVER modify the fallback rates (CNSS 9.18%, CAVIS 1%, CSS 0.5%)
   readonly regulatoryParams = signal<RegulatoryParam[]>([]);
 
-  readonly irppBrackets = signal([
+  // IRPP brackets: derived from regulatoryParams (category='IRPP').
+  // Falls back to hardcoded LF-2026 values until DB is seeded.
+  static readonly IRPP_FALLBACK = [
     { from: 0, to: 5000, rate: 0, label: 'Tranche exonérée' },
     { from: 5000, to: 10000, rate: 15, label: '15%' },
     { from: 10000, to: 20000, rate: 25, label: '25%' },
@@ -47,7 +49,20 @@ export class DataService {
     { from: 40000, to: 50000, rate: 36, label: '36%' },
     { from: 50000, to: 70000, rate: 38, label: '38%' },
     { from: 70000, to: null, rate: 40, label: '40%' },
-  ]);
+  ];
+
+  readonly irppBrackets = computed(() => {
+    const irppParams = this.regulatoryParams().filter(p => (p.category ?? '').toUpperCase() === 'IRPP' && p.active);
+    if (!irppParams.length) return DataService.IRPP_FALLBACK;
+    return irppParams
+      .map(p => {
+        const parts = (p.stringValue ?? '0|').split('|');
+        const from = parseFloat(parts[0] ?? '0') || 0;
+        const to = parts[1] ? parseFloat(parts[1]) || null : null;
+        return { from, to, rate: p.numericValue ?? 0, label: p.paramLabel };
+      })
+      .sort((a, b) => a.from - b.from);
+  });
 
   readonly planLimits: Record<string, { maxEmployees: number; price: number; label: string }> = {
     STARTER: { maxEmployees: 10, price: 0, label: 'Starter (Essai)' },

@@ -87,6 +87,13 @@ public class ChatbotResource {
         return ResponseEntity.ok(chatbotService.addKnowledge(dto));
     }
 
+    /** Dernier bulletin de paie de l'employé connecté */
+    @GetMapping("/my-bulletin")
+    public ResponseEntity<Map<String, Object>> getMyLatestBulletin() {
+        log.debug("REST GET /api/chatbot/my-bulletin");
+        return ResponseEntity.ok(chatbotService.getMyLatestBulletin());
+    }
+
     /** Health-check rapide pour le frontend */
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> health() {

@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, inject, ViewChild, ElementRef, AfterViewChecked, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import IconComponent from '../../core/icon/icon.component';
 import { RoleService } from '../../core/role.service';
@@ -18,6 +19,7 @@ import type { ChatMessage, Role } from '../../core/types';
 export default class ChatbotComponent implements AfterViewChecked {
   private readonly roleService = inject(RoleService);
   private readonly api = inject(ApiService);
+  private readonly router = inject(Router);
 
   protected readonly open = signal(false);
   protected readonly input = signal('');
@@ -65,6 +67,80 @@ export default class ChatbotComponent implements AfterViewChecked {
       return;
     }
 
+    // Congé redirect
+    if (this.matchLeaveIntent(msg)) {
+      this.messages.update(m => [...m, { role: 'me', text: msg }]);
+      this.input.set('');
+      this.messages.update(m => [
+        ...m,
+        {
+          role: 'bot',
+          text: '📋 Pour poser ou consulter vos congés, rendez-vous sur la page dédiée :',
+          action: { label: 'Mes congés →', route: '/paiezone/emp-leaves' },
+        },
+      ]);
+      return;
+    }
+
+    // Avance redirect
+    if (this.matchAdvanceIntent(msg)) {
+      this.messages.update(m => [...m, { role: 'me', text: msg }]);
+      this.input.set('');
+      this.messages.update(m => [
+        ...m,
+        {
+          role: 'bot',
+          text: '💰 Pour demander une avance sur salaire, rendez-vous ici :',
+          action: { label: 'Mes demandes →', route: '/paiezone/emp-requests' },
+        },
+      ]);
+      return;
+    }
+
+    // Bulletin download
+    if (this.matchBulletinIntent(msg)) {
+      this.messages.update(m => [...m, { role: 'me', text: msg }]);
+      this.input.set('');
+      this.busy.set(true);
+      this.api.getMyLatestBulletin().subscribe({
+        next: res => {
+          this.busy.set(false);
+          if (res.error || !res.id) {
+            this.messages.update(m => [...m, { role: 'bot', text: res.error ?? 'Aucun bulletin disponible.' }]);
+          } else {
+            const MONTHS = [
+              'Janvier',
+              'Février',
+              'Mars',
+              'Avril',
+              'Mai',
+              'Juin',
+              'Juillet',
+              'Août',
+              'Septembre',
+              'Octobre',
+              'Novembre',
+              'Décembre',
+            ];
+            const label = `${MONTHS[(res.month ?? 1) - 1]} ${res.year}`;
+            this.messages.update(m => [
+              ...m,
+              {
+                role: 'bot',
+                text: `📄 Votre dernier bulletin disponible : **${label}**`,
+                action: { label: `Télécharger ${label}`, href: `/api/export/bulletin/${res.id}` },
+              },
+            ]);
+          }
+        },
+        error: () => {
+          this.busy.set(false);
+          this.messages.update(m => [...m, { role: 'bot', text: 'Impossible de récupérer votre bulletin. Réessayez plus tard.' }]);
+        },
+      });
+      return;
+    }
+
     this.messages.update(m => [...m, { role: 'me', text: msg }]);
     this.input.set('');
     this.busy.set(true);
@@ -79,6 +155,15 @@ export default class ChatbotComponent implements AfterViewChecked {
       });
     } else {
       this.callApi(msg);
+    }
+  }
+
+  navigateTo(route?: string, href?: string): void {
+    if (route) {
+      this.router.navigate([route]);
+      this.open.set(false);
+    } else if (href) {
+      window.open(href, '_blank');
     }
   }
 
@@ -119,6 +204,21 @@ export default class ChatbotComponent implements AfterViewChecked {
           ? "Bonjour 👋 Je suis l'assistant PaieZone. Je peux calculer une paie, expliquer un taux légal ou vous aider à valider des demandes."
           : 'Bonjour 👋 Je suis votre assistant RH. Posez-moi une question sur votre paie ou vos congés.';
     this.messages.set([{ role: 'bot', text }]);
+  }
+
+  private matchLeaveIntent(text: string): boolean {
+    const t = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    return /conge|conges|vacance|absence|rti|repos/.test(t);
+  }
+
+  private matchAdvanceIntent(text: string): boolean {
+    const t = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    return /avance|acompte|pret/.test(t);
+  }
+
+  private matchBulletinIntent(text: string): boolean {
+    const t = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    return /bulletin|fiche de paie|fiche paie|telecharger.*paie|paie.*telecharger/.test(t);
   }
 
   // Pure local CNSS calculation (no AI needed, result is deterministic)

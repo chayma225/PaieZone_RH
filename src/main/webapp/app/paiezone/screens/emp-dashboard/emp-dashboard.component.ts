@@ -76,8 +76,12 @@ const LEAVE_LABELS: Record<string, string> = {
                 </div>
               </div>
               <div class="hero-actions">
-                <button class="pz-btn"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /> Voir détail</button>
-                <button class="pz-btn pz-primary"><pz-icon name="Download" [size]="14" [strokeWidth]="1.5" /> Télécharger PDF</button>
+                <button class="pz-btn" (click)="openBulletin(slip.id)">
+                  <pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /> Voir détail
+                </button>
+                <button class="pz-btn pz-primary" (click)="downloadBulletin(slip.id)">
+                  <pz-icon name="Download" [size]="14" [strokeWidth]="1.5" /> Télécharger PDF
+                </button>
               </div>
             </div>
           } @else {
@@ -396,6 +400,31 @@ export default class EmpDashboardComponent implements OnInit {
 
   protected leaveLabel(typeName: string): string {
     return LEAVE_LABELS[typeName] ?? typeName;
+  }
+
+  protected openBulletin(id: number): void {
+    this.api.downloadBulletinBlob(id).subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      },
+    });
+  }
+
+  protected downloadBulletin(id: number): void {
+    const slip = this.lastSlip();
+    const name = slip ? `bulletin-${slip.month}-${slip.year}.pdf` : `bulletin-${id}.pdf`;
+    this.api.downloadBulletinBlob(id).subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      },
+    });
   }
 
   protected usedPct(b: LeaveBalance): number {

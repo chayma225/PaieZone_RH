@@ -25,6 +25,8 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, Long>, JpaSpec
     // ── Listes par période ───────────────────────────────────────────────
     List<PaySlip> findByPayrollPeriodId(Long periodId);
 
+    boolean existsByPayrollPeriodId(Long periodId);
+
     // ── Liste par employé (paginée) ──────────────────────────────────────
     // ✅ Une seule méthode findByEmployeeId avec Pageable (suppression du doublon)
     Page<PaySlip> findByEmployeeId(Long employeeId, Pageable pageable);
@@ -61,6 +63,11 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, Long>, JpaSpec
     void deleteByEmployeeIdAndPayrollPeriodId(@Param("employeeId") Long employeeId, @Param("periodId") Long periodId);
 
     List<PaySlip> findByEmployee_Company_IdAndMonthAndYear(Long companyId, int month, int year);
+
+    @Query("SELECT ps FROM PaySlip ps WHERE ps.employee.company.id = :companyId AND ps.year = :year")
+    List<PaySlip> findByEmployee_Company_IdAndYear(@Param("companyId") Long companyId, @Param("year") int year);
+
+    Optional<PaySlip> findFirstByEmployee_UserProfile_IdOrderByYearDescMonthDesc(Long userProfileId);
 
     /**
      * Agrège gross + employerCnss par (month, year) pour les N derniers mois.

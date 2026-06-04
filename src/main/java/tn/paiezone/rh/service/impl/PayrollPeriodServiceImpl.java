@@ -13,9 +13,11 @@ import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.PayrollPeriod;
 import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.PaySlipRepository;
 import tn.paiezone.rh.repository.PayrollPeriodRepository;
 import tn.paiezone.rh.repository.UserProfileRepository;
 import tn.paiezone.rh.security.SecurityUtils;
+import tn.paiezone.rh.service.AccountingGenerationService;
 import tn.paiezone.rh.service.PayrollCalculationService;
 import tn.paiezone.rh.service.PayrollPeriodService;
 import tn.paiezone.rh.service.TenantContextService;
@@ -30,11 +32,13 @@ import tn.paiezone.rh.service.mapper.PayrollPeriodMapper;
 public class PayrollPeriodServiceImpl implements PayrollPeriodService {
 
     private final PayrollPeriodRepository periodRepository;
+    private final PaySlipRepository paySlipRepository;
     private final PayrollPeriodMapper periodMapper;
     private final CompanyRepository companyRepository;
     private final PayrollCalculationService calculationService;
     private final UserProfileRepository userProfileRepository;
     private final TenantContextService tenantContextService;
+    private final AccountingGenerationService accountingGenerationService;
 
     // ── Récupère la société de l'utilisateur connecté ─────────────
     private Optional<Company> getCurrentCompany() {
@@ -154,6 +158,13 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
         p.setStatus(PayrollStatus.VALIDATED);
         p.setValidatedAt(Instant.now());
         periodRepository.save(p);
+        // Passer tous les bulletins de la période à VALIDATED
+        paySlipRepository
+            .findAllByPeriodIdOrdered(periodId)
+            .forEach(ps -> {
+                ps.setStatus(PayrollStatus.VALIDATED);
+                paySlipRepository.save(ps);
+            });
         log.info("✅ Période {}/{} validée", p.getMonth(), p.getYear());
     }
 
@@ -170,5 +181,6 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
         p.setClosedBy(SecurityUtils.getCurrentUserLogin().orElse("system"));
         periodRepository.save(p);
         log.info("🔒 Période {}/{} clôturée", p.getMonth(), p.getYear());
+        accountingGenerationService.generateForPeriod(p);
     }
 }

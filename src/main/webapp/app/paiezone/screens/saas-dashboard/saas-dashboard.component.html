@@ -18,7 +18,9 @@
       </div>
       <div class="stat-val">{{ data.fmtTND(kpi().mrr) }}</div>
       <div class="stat-foot">
-        <span class="pz-pill">—</span>
+        <span class="pz-pill" [class.pos]="mrrGrowthPct() > 0" [class.danger]="mrrGrowthPct() < 0">
+          {{ mrrGrowthPct() > 0 ? '+' : '' }}{{ mrrGrowthPct() }}%
+        </span>
         <span class="pz-muted">vs mois précédent</span>
       </div>
     </div>
@@ -28,7 +30,9 @@
       </div>
       <div class="stat-val">{{ data.fmtTND(kpi().arr) }}</div>
       <div class="stat-foot">
-        <span class="pz-pill">—</span>
+        <span class="pz-pill" [class.pos]="mrrGrowthPct() > 0" [class.danger]="mrrGrowthPct() < 0">
+          {{ mrrGrowthPct() > 0 ? '+' : '' }}{{ mrrGrowthPct() }}%
+        </span>
         <span class="pz-muted">12 derniers mois</span>
       </div>
     </div>
@@ -38,7 +42,7 @@
       </div>
       <div class="stat-val">{{ kpi().tenants }}</div>
       <div class="stat-foot">
-        <span class="pz-pill">—</span>
+        <span class="pz-pill" [class.pos]="activeCompaniesCount() > 0"> {{ activeCompaniesCount() }} actives </span>
         <span class="pz-muted">ce trimestre</span>
       </div>
     </div>
@@ -48,7 +52,7 @@
       </div>
       <div class="stat-val">{{ kpi().totalEmployees }}</div>
       <div class="stat-foot">
-        <span class="pz-pill">—</span>
+        <span class="pz-pill" [class.pos]="activeEmployeesCount() > 0"> {{ activeEmployeesCount() }} actifs </span>
         <span class="pz-muted">ce mois-ci</span>
       </div>
     </div>

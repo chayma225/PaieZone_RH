@@ -128,6 +128,9 @@
           [class.pz-chatbot__bubble--bot]="msg.role === 'assistant'"
         >
           <div class="pz-chatbot__content" [innerHTML]="formatContent(msg.content)"></div>
+          <button *ngIf="msg.actionLink" class="pz-chatbot__action-btn" (click)="navigateTo(msg.actionLink.route, msg.actionLink.href)">
+            {{ msg.actionLink.label }}
+          </button>
           <div class="pz-chatbot__time">{{ msg.sentAt | date: 'HH:mm' }}</div>
           <!-- Badge escalade -->
           <div class="pz-chatbot__escalation" *ngIf="msg.escalatedToHuman">

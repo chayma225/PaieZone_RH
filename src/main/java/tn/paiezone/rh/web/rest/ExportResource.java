@@ -22,7 +22,7 @@ public class ExportResource {
     }
 
     @GetMapping("/bulletin/{paySlipId}")
-    @PreAuthorize("hasAnyRole('ADMIN','RH','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE','EMPLOYE')")
     public ResponseEntity<byte[]> downloadBulletin(@PathVariable Long paySlipId) {
         log.debug("GET /api/export/bulletin/{}", paySlipId);
         byte[] pdf = pdfExportService.generateBulletin(paySlipId);
@@ -30,7 +30,7 @@ public class ExportResource {
     }
 
     @GetMapping("/bulletin-bulk/{periodId}")
-    @PreAuthorize("hasAnyRole('ADMIN','RH')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE')")
     public ResponseEntity<byte[]> downloadBulkBulletin(@PathVariable Long periodId) {
         log.debug("GET /api/export/bulletin-bulk/{}", periodId);
         byte[] pdf = pdfExportService.generateBulkBulletin(periodId);
@@ -38,7 +38,7 @@ public class ExportResource {
     }
 
     @GetMapping("/attestation/{employeeId}")
-    @PreAuthorize("hasAnyRole('ADMIN','RH','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE','EMPLOYE')")
     public ResponseEntity<byte[]> downloadAttestation(@PathVariable Long employeeId) {
         log.debug("GET /api/export/attestation/{}", employeeId);
         byte[] pdf = pdfExportService.generateAttestationTravail(employeeId);
@@ -46,7 +46,7 @@ public class ExportResource {
     }
 
     @GetMapping("/journal/{periodId}")
-    @PreAuthorize("hasAnyRole('ADMIN','RH')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE')")
     public ResponseEntity<byte[]> downloadJournal(@PathVariable Long periodId) {
         log.debug("GET /api/export/journal/{}", periodId);
         byte[] pdf = pdfExportService.generateJournalPaie(periodId);
@@ -54,7 +54,7 @@ public class ExportResource {
     }
 
     @GetMapping("/cnss-recap/{periodId}")
-    @PreAuthorize("hasAnyRole('ADMIN','RH')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE')")
     public ResponseEntity<byte[]> downloadCnssRecap(@PathVariable Long periodId) {
         log.debug("GET /api/export/cnss-recap/{}", periodId);
         byte[] pdf = pdfExportService.generateCnssRecap(periodId);
@@ -62,15 +62,39 @@ public class ExportResource {
     }
 
     @GetMapping("/declaration-trimestrielle/{periodId}")
-    @PreAuthorize("hasAnyRole('ADMIN','RH')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE')")
     public ResponseEntity<byte[]> downloadDeclarationTrimestrielle(@PathVariable Long periodId) {
         log.debug("GET /api/export/declaration-trimestrielle/{}", periodId);
         byte[] pdf = pdfExportService.generateDeclarationTrimestrielle(periodId);
         return pdfResponse(pdf, "declaration-trimestrielle-periode-" + periodId + ".pdf");
     }
 
+    @GetMapping("/cnss-employeur/{periodId}")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE')")
+    public ResponseEntity<byte[]> downloadCnssEmployeur(@PathVariable Long periodId) {
+        log.debug("GET /api/export/cnss-employeur/{}", periodId);
+        byte[] pdf = pdfExportService.generateCnssEmployeur(periodId);
+        return pdfResponse(pdf, "cnss-patronal-" + periodId + ".pdf");
+    }
+
+    @GetMapping("/cavis-recap/{periodId}")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE')")
+    public ResponseEntity<byte[]> downloadCavisRecap(@PathVariable Long periodId) {
+        log.debug("GET /api/export/cavis-recap/{}", periodId);
+        byte[] pdf = pdfExportService.generateCavisRecap(periodId);
+        return pdfResponse(pdf, "cavis-" + periodId + ".pdf");
+    }
+
+    @GetMapping("/irpp-annuel")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE')")
+    public ResponseEntity<byte[]> downloadIrppAnnuel(@RequestParam int year) {
+        log.debug("GET /api/export/irpp-annuel?year={}", year);
+        byte[] pdf = pdfExportService.generateIrppAnnuel(year);
+        return pdfResponse(pdf, "irpp-annuel-" + year + ".pdf");
+    }
+
     @GetMapping("/certificat-ri/{employeeId}")
-    @PreAuthorize("hasAnyRole('ADMIN','RH','EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','RH_COMPTABLE','EMPLOYE')")
     public ResponseEntity<byte[]> downloadCertificatRI(@PathVariable Long employeeId, @RequestParam(defaultValue = "0") int year) {
         if (year == 0) {
             year = java.time.LocalDate.now().getYear() - 1;

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.AccountingEntry;
 import tn.paiezone.rh.repository.AccountingEntryRepository;
 import tn.paiezone.rh.service.AccountingEntryService;
+import tn.paiezone.rh.service.TenantContextService;
 import tn.paiezone.rh.service.dto.AccountingEntryDTO;
 import tn.paiezone.rh.service.mapper.AccountingEntryMapper;
 
@@ -23,12 +24,17 @@ public class AccountingEntryServiceImpl implements AccountingEntryService {
     private static final Logger LOG = LoggerFactory.getLogger(AccountingEntryServiceImpl.class);
 
     private final AccountingEntryRepository accountingEntryRepository;
-
     private final AccountingEntryMapper accountingEntryMapper;
+    private final TenantContextService tenantContextService;
 
-    public AccountingEntryServiceImpl(AccountingEntryRepository accountingEntryRepository, AccountingEntryMapper accountingEntryMapper) {
+    public AccountingEntryServiceImpl(
+        AccountingEntryRepository accountingEntryRepository,
+        AccountingEntryMapper accountingEntryMapper,
+        TenantContextService tenantContextService
+    ) {
         this.accountingEntryRepository = accountingEntryRepository;
         this.accountingEntryMapper = accountingEntryMapper;
+        this.tenantContextService = tenantContextService;
     }
 
     @Override
@@ -66,6 +72,13 @@ public class AccountingEntryServiceImpl implements AccountingEntryService {
     @Transactional(readOnly = true)
     public Page<AccountingEntryDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all AccountingEntries");
+        Long companyId = tenantContextService.getCurrentCompanyId();
+        if (companyId != null && companyId > 0) {
+            return accountingEntryRepository.findByCompanyId(companyId, pageable).map(accountingEntryMapper::toDto);
+        }
+        if (companyId != null && companyId < 0) {
+            return Page.empty(pageable);
+        }
         return accountingEntryRepository.findAll(pageable).map(accountingEntryMapper::toDto);
     }
 

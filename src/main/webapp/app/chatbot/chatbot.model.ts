@@ -17,6 +17,7 @@ export interface ChatMessage {
   sentAt: string;
   escalatedToHuman: boolean;
   intent?: string;
+  actionLink?: { label: string; route?: string; href?: string };
 }
 
 export interface ChatRequest {

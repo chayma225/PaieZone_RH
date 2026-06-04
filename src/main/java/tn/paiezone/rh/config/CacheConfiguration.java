@@ -106,6 +106,10 @@ public class CacheConfiguration {
             createCache(cm, tn.paiezone.rh.domain.ChatSession.class.getName(), jcacheConfiguration);
             createCache(cm, tn.paiezone.rh.domain.ChatMessage.class.getName(), jcacheConfiguration);
             createCache(cm, tn.paiezone.rh.domain.KnowledgeDocument.class.getName(), jcacheConfiguration);
+            createCache(cm, tn.paiezone.rh.domain.SocialDeclaration.class.getName(), jcacheConfiguration);
+            createCache(cm, tn.paiezone.rh.domain.SocialDeclaration.class.getName() + ".lines", jcacheConfiguration);
+            createCache(cm, tn.paiezone.rh.domain.SocialDeclarationLine.class.getName(), jcacheConfiguration);
+            createCache(cm, tn.paiezone.rh.domain.ChatbotAction.class.getName(), jcacheConfiguration);
             // jhipster-needle-redis-add-entry
         };
     }
@@ -115,11 +119,10 @@ public class CacheConfiguration {
         String cacheName,
         javax.cache.configuration.Configuration<Object, Object> jcacheConfiguration
     ) {
-        javax.cache.Cache<Object, Object> cache = cm.getCache(cacheName);
-        if (cache != null) {
-            cache.clear();
-        } else {
-            cm.createCache(cacheName, jcacheConfiguration);
-        }
+        // Always destroy then recreate to clear any stale Redis data across restarts
+        try {
+            cm.destroyCache(cacheName);
+        } catch (Exception ignored) {}
+        cm.createCache(cacheName, jcacheConfiguration);
     }
 }

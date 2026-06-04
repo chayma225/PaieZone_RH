@@ -147,6 +147,12 @@ const routes: Routes = [
         data: { authorities: RH_UP },
       },
       {
+        path: 'rh-accounting',
+        loadComponent: () => import('./screens/rh-accounting/rh-accounting.component'),
+        title: 'Comptabilité',
+        data: { authorities: RH_UP },
+      },
+      {
         path: 'rh-leaves',
         loadComponent: () => import('./screens/rh-leaves/rh-leaves.component'),
         title: 'Congés',

@@ -20,6 +20,9 @@ import type {
   ActivityItem,
   PayrollChartPoint,
   ContractAlert,
+  AccountPlan,
+  AccountingEntry,
+  LeaveType,
 } from './types';
 
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -81,6 +84,8 @@ export class ApiService {
               name: d.name ?? '',
               head: d.manager ? `${d.manager.firstName ?? ''} ${d.manager.lastName ?? ''}`.trim() : '',
               count: 0,
+              active: d.active ?? true,
+              description: d.description ?? '',
             }) as Department,
         ),
       ),
@@ -126,6 +131,56 @@ export class ApiService {
       .pipe(map(list => list.map(d => ({ id: d.id, name: d.label ?? d.name ?? 'Congé', maxDays: d.maxDaysPerYear ?? 30 }))));
   }
 
+  leaveTypesFull(): Observable<LeaveType[]> {
+    return this.http.get<any[]>('/api/leave-types').pipe(map(list => list.map(d => this.mapLeaveType(d))));
+  }
+
+  createLeaveType(dto: Omit<LeaveType, 'id'>): Observable<LeaveType> {
+    return this.http
+      .post<any>('/api/leave-types', {
+        label: dto.label,
+        code: dto.code,
+        maxDaysPerYear: dto.maxDaysPerYear,
+        paid: dto.paid,
+        requiresApproval: dto.requiresApproval,
+        active: dto.active,
+        description: dto.description || null,
+      })
+      .pipe(map(d => this.mapLeaveType(d)));
+  }
+
+  updateLeaveType(id: number, dto: Omit<LeaveType, 'id'>): Observable<LeaveType> {
+    return this.http
+      .put<any>(`/api/leave-types/${id}`, {
+        id,
+        label: dto.label,
+        code: dto.code,
+        maxDaysPerYear: dto.maxDaysPerYear,
+        paid: dto.paid,
+        requiresApproval: dto.requiresApproval,
+        active: dto.active,
+        description: dto.description || null,
+      })
+      .pipe(map(d => this.mapLeaveType(d)));
+  }
+
+  deleteLeaveType(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/leave-types/${id}`);
+  }
+
+  private mapLeaveType(d: any): LeaveType {
+    return {
+      id: d.id,
+      code: d.code ?? '',
+      label: d.label ?? d.name ?? '',
+      maxDaysPerYear: d.maxDaysPerYear ?? 30,
+      paid: d.paid ?? true,
+      requiresApproval: d.requiresApproval ?? true,
+      active: d.active ?? true,
+      description: d.description ?? '',
+    };
+  }
+
   approveLeave(id: number): Observable<LeaveRequest> {
     return this.http.put<any>(`/api/leave-requests/${id}/approve`, {}).pipe(map(d => this.mapLeave(d)));
   }
@@ -165,6 +220,10 @@ export class ApiService {
     return this.http.post<void>(`/api/payroll-periods/${id}/calculate-all`, {});
   }
 
+  recalculatePayroll(id: number): Observable<void> {
+    return this.http.post<void>(`/api/payroll-periods/${id}/recalculate-all`, {});
+  }
+
   validatePayroll(id: number): Observable<void> {
     return this.http.post<void>(`/api/payroll-periods/${id}/validate`, {});
   }
@@ -200,7 +259,66 @@ export class ApiService {
   createDepartment(code: string, name: string, companyId: number, description = ''): Observable<Department> {
     return this.http
       .post<any>('/api/departments', { code, name, description: description || null, active: true, company: { id: companyId } })
-      .pipe(map(d => ({ id: d.id, code: d.code ?? '', name: d.name ?? '', head: '', count: 0 }) as Department));
+      .pipe(
+        map(
+          d =>
+            ({
+              id: d.id,
+              code: d.code ?? '',
+              name: d.name ?? '',
+              head: '',
+              count: 0,
+              active: true,
+              description: d.description ?? '',
+            }) as Department,
+        ),
+      );
+  }
+
+  updateDepartment(id: number, code: string, name: string, description: string, companyId: number): Observable<Department> {
+    return this.http
+      .put<any>(`/api/departments/${id}`, { id, code, name, description: description || null, active: true, company: { id: companyId } })
+      .pipe(
+        map(
+          d =>
+            ({
+              id: d.id,
+              code: d.code ?? '',
+              name: d.name ?? '',
+              head: '',
+              count: 0,
+              active: d.active ?? true,
+              description: d.description ?? '',
+            }) as Department,
+        ),
+      );
+  }
+
+  patchDepartment(id: number, patch: Record<string, any>): Observable<any> {
+    return this.http.patch<any>(`/api/departments/${id}`, { ...patch, id });
+  }
+
+  updateJobPosition(id: number, dto: Partial<JobPosition>): Observable<JobPosition> {
+    return this.http.put<any>(`/api/job-positions/${id}`, { ...dto, id }).pipe(map(d => this.mapJobPosition(d)));
+  }
+
+  patchJobPosition(id: number, patch: Record<string, any>): Observable<any> {
+    return this.http.patch<any>(`/api/job-positions/${id}`, { ...patch, id });
+  }
+
+  deactivateJhiUser(
+    login: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+    authorities: string[],
+    id?: number,
+  ): Observable<any> {
+    return this.http.put<any>('/api/admin/users', { id, login, email, firstName, lastName, activated: false, langKey: 'fr', authorities });
+  }
+
+  activateJhiUser(login: string, email: string, firstName: string, lastName: string, authorities: string[], id?: number): Observable<any> {
+    return this.http.put<any>('/api/admin/users', { id, login, email, firstName, lastName, activated: true, langKey: 'fr', authorities });
   }
 
   createCompany(dto: Record<string, any>): Observable<Company> {
@@ -221,6 +339,14 @@ export class ApiService {
 
   suspendCompany(companyId: number): Observable<Company> {
     return this.http.patch<any>(`/api/companies/${companyId}/suspend`, {}).pipe(map(d => this.mapCompany(d)));
+  }
+
+  reactivateCompany(companyId: number): Observable<Company> {
+    return this.http.patch<any>(`/api/companies/${companyId}/reactivate`, {}).pipe(map(d => this.mapCompany(d)));
+  }
+
+  cancelSubscription(companyId: number): Observable<Company> {
+    return this.http.patch<any>(`/api/companies/${companyId}/cancel`, {}).pipe(map(d => this.mapCompany(d)));
   }
 
   patchEmployee(id: number, patch: Record<string, any>): Observable<any> {
@@ -292,6 +418,14 @@ export class ApiService {
     return this.http.post<{ content: string }>(`/api/chatbot/sessions/${sessionId}/messages`, { message });
   }
 
+  getMyLatestBulletin(): Observable<{ id?: number; month?: number; year?: number; error?: string }> {
+    return this.http.get<any>('/api/chatbot/my-bulletin');
+  }
+
+  downloadBulletinBlob(id: number): Observable<Blob> {
+    return this.http.get(`/api/export/bulletin/${id}`, { responseType: 'blob' });
+  }
+
   jobPositions(companyId?: number): Observable<JobPosition[]> {
     let params = new HttpParams().set('page', 0).set('size', 200);
     if (companyId) params = params.set('companyId', companyId);
@@ -316,6 +450,10 @@ export class ApiService {
 
   createBonus(dto: Omit<Bonus, 'id' | 'paySlipId'>): Observable<Bonus> {
     return this.http.post<any>('/api/bonuses', dto).pipe(map(d => this.mapBonus(d)));
+  }
+
+  updateBonus(id: number, dto: Omit<Bonus, 'id' | 'paySlipId'>): Observable<Bonus> {
+    return this.http.put<any>(`/api/bonuses/${id}`, { ...dto, id }).pipe(map(d => this.mapBonus(d)));
   }
 
   deleteBonus(id: number): Observable<void> {
@@ -406,8 +544,106 @@ export class ApiService {
     return this.http.get(`/api/export/certificat-ri/${employeeId}?year=${year}`, { responseType: 'blob' });
   }
 
-  downloadCnssTrimestriel(year: number, trimestre: number): Observable<Blob> {
-    return this.http.get(`/api/export/cnss/trimestre?year=${year}&trimestre=${trimestre}`, { responseType: 'blob' });
+  downloadCnssEmployeur(periodId: number): Observable<Blob> {
+    return this.http.get(`/api/export/cnss-employeur/${periodId}`, { responseType: 'blob' });
+  }
+
+  downloadCavisDeclaration(periodId: number): Observable<Blob> {
+    return this.http.get(`/api/export/cavis-recap/${periodId}`, { responseType: 'blob' });
+  }
+
+  downloadIrppDeclaration(year: number): Observable<Blob> {
+    return this.http.get(`/api/export/irpp-annuel?year=${year}`, { responseType: 'blob' });
+  }
+
+  // ── Plan comptable ─────────────────────────────────────────────────────────
+  accountPlans(): Observable<AccountPlan[]> {
+    return this.http.get<any[]>('/api/account-plans').pipe(
+      map(list =>
+        list.map(
+          d =>
+            ({
+              id: d.id,
+              accountCode: d.accountCode ?? '',
+              accountLabel: d.accountLabel ?? '',
+              accountType: d.accountType ?? null,
+              active: d.active ?? true,
+            }) as AccountPlan,
+        ),
+      ),
+    );
+  }
+
+  createAccountPlan(dto: Omit<AccountPlan, 'id'> & { companyId: number }): Observable<AccountPlan> {
+    const body = {
+      accountCode: dto.accountCode,
+      accountLabel: dto.accountLabel,
+      accountType: dto.accountType,
+      active: dto.active,
+      company: { id: dto.companyId },
+    };
+    return this.http
+      .post<any>('/api/account-plans', body)
+      .pipe(
+        map(d => ({
+          id: d.id,
+          accountCode: d.accountCode,
+          accountLabel: d.accountLabel,
+          accountType: d.accountType ?? null,
+          active: d.active,
+        })),
+      );
+  }
+
+  updateAccountPlan(id: number, dto: Omit<AccountPlan, 'id'> & { companyId: number }): Observable<AccountPlan> {
+    const body = {
+      id,
+      accountCode: dto.accountCode,
+      accountLabel: dto.accountLabel,
+      accountType: dto.accountType,
+      active: dto.active,
+      company: { id: dto.companyId },
+    };
+    return this.http
+      .put<any>(`/api/account-plans/${id}`, body)
+      .pipe(
+        map(d => ({
+          id: d.id,
+          accountCode: d.accountCode,
+          accountLabel: d.accountLabel,
+          accountType: d.accountType ?? null,
+          active: d.active,
+        })),
+      );
+  }
+
+  deleteAccountPlan(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/account-plans/${id}`);
+  }
+
+  // ── Écritures comptables ───────────────────────────────────────────────────
+  accountingEntries(size = 500): Observable<AccountingEntry[]> {
+    const params = new HttpParams().set('page', 0).set('size', size).set('sort', 'entryDate,desc');
+    return this.http.get<any[]>('/api/accounting-entries', { params }).pipe(
+      map(list =>
+        list.map(
+          d =>
+            ({
+              id: d.id,
+              entryDate: d.entryDate ?? '',
+              journalRef: d.journalRef ?? '',
+              entryType: d.entryType ?? '',
+              description: d.description ?? '',
+              debitAccount: d.debitAccount ?? '',
+              creditAccount: d.creditAccount ?? '',
+              amount: d.amount != null ? +d.amount : 0,
+              exportedAt: d.exportedAt ?? null,
+              periodLabel: d.payrollPeriod ? `${MONTHS_FR[(d.payrollPeriod.month ?? 1) - 1]} ${d.payrollPeriod.year}` : undefined,
+              periodId: d.payrollPeriod?.id ?? undefined,
+            }) as AccountingEntry,
+        ),
+      ),
+    );
   }
 
   auditLogs(size = 500): Observable<AuditEntry[]> {
@@ -496,6 +732,7 @@ export class ApiService {
       matricule: d.matricule ?? '',
       first: d.firstName ?? '',
       last: d.lastName ?? '',
+      active: d.active ?? true,
       ar: [d.firstNameAr, d.lastNameAr].filter(Boolean).join(' '),
       role: d.position?.title ?? '',
       dept: d.department?.name ?? '',

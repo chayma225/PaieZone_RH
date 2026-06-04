@@ -60,12 +60,18 @@ const ROLE_LABELS: Record<string, string> = {
             }
             @for (e of data.employees(); track e.id) {
               @let sysRole = getSystemRole(e.email);
-              <tr>
+              @let inactive = e.active === false;
+              <tr [style.opacity]="inactive ? '0.55' : '1'">
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
                     <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
                     <div>
-                      <div style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</div>
+                      <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</span>
+                        @if (inactive) {
+                          <span class="pz-pill" style="background:#f1f5f9;color:#64748b;font-size:10px">Inactif</span>
+                        }
+                      </div>
                       <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.role || e.dept }}</div>
                     </div>
                   </div>
@@ -91,9 +97,15 @@ const ROLE_LABELS: Record<string, string> = {
                     <button class="pz-btn pz-sm" title="Modifier" (click)="openEdit(e)">
                       <pz-icon name="Edit" [size]="13" />
                     </button>
-                    <button class="pz-btn pz-sm pz-danger" title="Désactiver" [disabled]="busy()" (click)="confirmLock(e)">
-                      <pz-icon name="Lock" [size]="13" />
-                    </button>
+                    @if (e.active !== false) {
+                      <button class="pz-btn pz-sm pz-danger" title="Désactiver" [disabled]="busy()" (click)="confirmLock(e)">
+                        <pz-icon name="Lock" [size]="13" />
+                      </button>
+                    } @else {
+                      <button class="pz-btn pz-sm pz-success" title="Réactiver" [disabled]="busy()" (click)="reactivate(e)">
+                        <pz-icon name="Unlock" [size]="13" />
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>
@@ -422,6 +434,14 @@ const ROLE_LABELS: Record<string, string> = {
           background: #fecaca;
         }
       }
+      .pz-btn.pz-success {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+        &:hover {
+          background: #bbf7d0;
+        }
+      }
       .pz-ok {
         color: #166534;
         font-size: 12.5px;
@@ -649,7 +669,20 @@ export default class AdminUsersComponent implements OnInit {
     this.errMsg.set('');
     this.api.patchEmployee(e.id, { id: e.id, active: false }).subscribe({
       next: () => {
-        this.data.employees.update(list => list.filter(emp => emp.id !== e.id));
+        this.data.employees.update(list => list.map(emp => (emp.id === e.id ? { ...emp, active: false } : emp)));
+        const userEntry = this.userMap.get((e.email ?? '').toLowerCase());
+        if (userEntry?.login) {
+          this.api
+            .deactivateJhiUser(
+              userEntry.login,
+              e.email,
+              userEntry.firstName,
+              userEntry.lastName,
+              [userEntry.role, 'ROLE_USER'],
+              userEntry.id,
+            )
+            .subscribe();
+        }
         this.closeLock();
         this.busy.set(false);
       },
@@ -657,6 +690,23 @@ export default class AdminUsersComponent implements OnInit {
         this.errMsg.set('Erreur lors de la désactivation.');
         this.busy.set(false);
       },
+    });
+  }
+
+  reactivate(e: Employee) {
+    this.busy.set(true);
+    this.api.patchEmployee(e.id, { id: e.id, active: true }).subscribe({
+      next: () => {
+        this.data.employees.update(list => list.map(emp => (emp.id === e.id ? { ...emp, active: true } : emp)));
+        const userEntry = this.userMap.get((e.email ?? '').toLowerCase());
+        if (userEntry?.login) {
+          this.api
+            .activateJhiUser(userEntry.login, e.email, userEntry.firstName, userEntry.lastName, [userEntry.role, 'ROLE_USER'], userEntry.id)
+            .subscribe();
+        }
+        this.busy.set(false);
+      },
+      error: () => this.busy.set(false),
     });
   }
 }

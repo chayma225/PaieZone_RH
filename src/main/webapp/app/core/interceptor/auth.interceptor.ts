@@ -13,6 +13,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
+  // Ne pas ajouter le Bearer token sur l'endpoint d'authentification
+  if (req.url.includes('api/authenticate')) {
+    return next(req);
+  }
+
   const token = stateStorageService.getAuthenticationToken();
   if (token) {
     req = req.clone({

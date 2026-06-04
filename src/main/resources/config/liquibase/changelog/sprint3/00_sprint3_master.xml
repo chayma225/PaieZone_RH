@@ -63,4 +63,8 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/sprint3/28_fix_irpp_brackets_2026.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/29_fix_irpp_brackets_2026_lf.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/30_fix_social_rates_lf2026.xml"
+           relativeToChangelogFile="false"/>
 </databaseChangeLog>

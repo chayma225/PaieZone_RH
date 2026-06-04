@@ -4,7 +4,6 @@ import tn.paiezone.rh.domain.PaySlip;
 import tn.paiezone.rh.service.dto.BulkCalculationResultDTO;
 
 public interface PayrollCalculationService {
-
     /**
      * Calcule le bulletin de paie pour UN employé sur une période.
      * Peut être appelé plusieurs fois (recalcul) tant que la période n'est pas LOCKED.
@@ -20,4 +19,8 @@ public interface PayrollCalculationService {
     void calculate(Long id);
 
     PaySlip recalculatePaySlip(Long paySlipId);
+
+    BulkCalculationResultDTO forceRecalculateAll(Long periodId);
+
+    java.util.List<BulkCalculationResultDTO> forceRecalculateAllPeriods();
 }

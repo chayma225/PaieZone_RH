@@ -627,12 +627,19 @@ export default class RhDashboardComponent implements OnInit {
   downloadCnss(trimestre: number): void {
     this.cnssLoading.set(true);
     this.cnssErr.set('');
-    this.api.downloadCnssTrimestriel(this.cnssYear, trimestre).subscribe({
+    const months = [(trimestre - 1) * 3 + 1, (trimestre - 1) * 3 + 2, trimestre * 3];
+    const period = this.data.payrollPeriods().find(p => p.year === this.cnssYear && months.includes(p.month));
+    if (!period) {
+      this.cnssErr.set(`Aucune période de paie trouvée pour T${trimestre} ${this.cnssYear}.`);
+      this.cnssLoading.set(false);
+      return;
+    }
+    this.api.downloadDeclarationTrimestrielle(period.id).subscribe({
       next: blob => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `CNSS_T${trimestre}_${this.cnssYear}.xlsx`;
+        a.download = `CNSS_T${trimestre}_${this.cnssYear}.pdf`;
         a.click();
         URL.revokeObjectURL(url);
         this.cnssLoading.set(false);
