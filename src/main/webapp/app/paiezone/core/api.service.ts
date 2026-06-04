@@ -7,6 +7,7 @@ import type {
   ActivitySector,
   SectoralConvention,
   ConventionRule,
+  ConventionImportSuggestion,
   Department,
   PayrollPeriod,
   LeaveRequest,
@@ -260,6 +261,10 @@ export class ApiService {
 
   deleteSectoralConvention(id: number): Observable<void> {
     return this.http.delete<void>(`/api/sectoral-conventions/${id}`);
+  }
+
+  parseConventionDocument(payload: FormData): Observable<ConventionImportSuggestion> {
+    return this.http.post<ConventionImportSuggestion>('/api/conventions/parse-ia', payload);
   }
 
   conventionRules(conventionId: number): Observable<ConventionRule[]> {

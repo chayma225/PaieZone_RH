@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { ApiService } from '../../core/api.service';
-import type { ActivitySector, SectoralConvention, ConventionRule } from '../../core/types';
+import type { ActivitySector, SectoralConvention, ConventionRule, ConventionImportSuggestion, ConventionRuleDraft } from '../../core/types';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const RULE_META: Record<string, { icon: string; label: string; color: string; bg: string; hint: string; unit: string }> = {
   HOLIDAY: {
@@ -75,9 +77,12 @@ const SECTOR_META: Record<string, { icon: string; color: string }> = {
           <div class="pz-crumbs"><strong>Super Admin</strong> <span class="sep">/</span> Conventions Sectorielles</div>
           <h1>Conventions Sectorielles</h1>
         </div>
-        <button class="pz-btn pz-primary" (click)="openCreateSector()">
-          <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouveau secteur
-        </button>
+        <div style="display:flex;gap:8px">
+          <button class="pz-btn pz-ia-btn" (click)="openImportModal()">🤖 Analyser par IA</button>
+          <button class="pz-btn pz-primary" (click)="openCreateSector()">
+            <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouveau secteur
+          </button>
+        </div>
       </div>
 
       <div class="cv-layout">
@@ -225,6 +230,179 @@ const SECTOR_META: Record<string, { icon: string; color: string }> = {
         </main>
       </div>
     </div>
+
+    <!-- ── Modal Import IA ─────────────────────────────────────── -->
+    @if (showImportModal()) {
+      <div class="pz-overlay" (click)="closeImportModal()">
+        <div class="pz-modal pz-modal-import" (click)="$event.stopPropagation()">
+          <div class="pz-modal-head">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:22px">🤖</span>
+              <div>
+                <div style="font-size:15px;font-weight:700">Analyser une convention par IA</div>
+                <div style="font-size:12px;color:var(--pz-muted)">Arabe ou français — PDF, Word, texte</div>
+              </div>
+            </div>
+            <button class="pz-modal-close" (click)="closeImportModal()"><pz-icon name="X" [size]="16" /></button>
+          </div>
+
+          <!-- Étape 1 : saisie du document -->
+          @if (importStep() === 1) {
+            <div class="pz-modal-body">
+              <!-- Zone drag & drop fichier -->
+              <div
+                class="ia-dropzone"
+                [class.drag-over]="dropOver()"
+                (dragover)="$event.preventDefault(); dropOver.set(true)"
+                (dragleave)="dropOver.set(false)"
+                (drop)="onDrop($event)"
+                (click)="fileInput.click()"
+              >
+                <input #fileInput type="file" accept=".pdf,.docx,.txt" style="display:none" (change)="onFileSelected($event)" />
+                @if (importFileName()) {
+                  <div class="ia-file-name">
+                    <span style="font-size:28px">📄</span>
+                    <span>{{ importFileName() }}</span>
+                    <button class="ia-clear-btn" (click)="$event.stopPropagation(); clearFile()">✕</button>
+                  </div>
+                } @else {
+                  <div class="ia-dropzone-inner">
+                    <span style="font-size:36px">📂</span>
+                    <div class="ia-drop-title">Glissez votre fichier ici</div>
+                    <div class="ia-drop-sub">PDF, Word (.docx), TXT · français ou عربي · max 10 Mo</div>
+                    <div class="ia-drop-or">ou cliquez pour parcourir</div>
+                  </div>
+                }
+              </div>
+
+              <!-- Séparateur -->
+              <div class="ia-sep"><span>ou collez le texte directement</span></div>
+
+              <!-- Zone de texte -->
+              <textarea
+                class="ia-textarea"
+                [(ngModel)]="importText"
+                [dir]="importText.length > 0 && /[؀-ۿ]/.test(importText) ? 'rtl' : 'ltr'"
+                placeholder="Collez ici le contenu de votre convention collective (arabe ou français)…"
+                rows="7"
+              ></textarea>
+
+              @if (importErr()) {
+                <div class="cv-err">{{ importErr() }}</div>
+              }
+            </div>
+            <div class="pz-modal-foot">
+              <button class="pz-btn" (click)="closeImportModal()">Annuler</button>
+              <button
+                class="pz-btn pz-primary"
+                [disabled]="importBusy() || (!importFile() && !importText.trim())"
+                (click)="analyzeDocument()"
+              >
+                @if (importBusy()) {
+                  <span class="ia-spinner"></span> Analyse en cours…
+                } @else {
+                  🤖 Analyser →
+                }
+              </button>
+            </div>
+          }
+
+          <!-- Étape 2 : vérification des résultats -->
+          @if (importStep() === 2 && importSuggestion()) {
+            <div class="pz-modal-body">
+              <div class="ia-section-label">Secteur détecté</div>
+              <div class="ia-sector-row">
+                <select class="ia-select" [(ngModel)]="importSuggestion()!.sectorCode" (ngModelChange)="onSectorCodeChange($event)">
+                  <option [value]="originalSectorCode">➕ Créer : {{ originalSectorCode }}</option>
+                  @for (s of sectors(); track s.id) {
+                    <option [value]="s.code">{{ s.label }} ({{ s.code }})</option>
+                  }
+                </select>
+                <input class="ia-input" type="text" [(ngModel)]="importSuggestion()!.sectorLabel" placeholder="Libellé du secteur" />
+              </div>
+
+              <div class="ia-section-label" style="margin-top:12px">Convention</div>
+              <div class="ia-conv-row">
+                <input
+                  class="ia-input ia-flex"
+                  type="text"
+                  [(ngModel)]="importSuggestion()!.conventionLabel"
+                  placeholder="Libellé de la convention"
+                />
+                <input
+                  class="ia-input ia-year"
+                  type="number"
+                  [(ngModel)]="importSuggestion()!.conventionYear"
+                  min="2020"
+                  max="2035"
+                  placeholder="Année"
+                />
+                <input class="ia-input ia-date" type="date" [(ngModel)]="importSuggestion()!.effectiveFrom" style="color-scheme:light" />
+              </div>
+
+              <div class="ia-section-label" style="margin-top:12px">
+                Règles extraites
+                <span class="ia-badge">{{ importSuggestion()!.rules.length }}</span>
+              </div>
+
+              @if (importSuggestion()!.rules.length === 0) {
+                <div class="ia-no-rules">
+                  Aucune règle détectée. Vérifiez votre document ou ajoutez des règles manuellement après import.
+                </div>
+              }
+
+              <div class="ia-rules-list">
+                @for (r of importSuggestion()!.rules; track $index; let i = $index) {
+                  <div class="ia-rule-item">
+                    <div class="ia-rule-type-badge" [style.background]="ruleMeta(r.ruleType).bg" [style.color]="ruleMeta(r.ruleType).color">
+                      {{ ruleMeta(r.ruleType).icon }} {{ ruleMeta(r.ruleType).label }}
+                    </div>
+                    <input class="ia-input ia-flex" type="text" [(ngModel)]="r.label" placeholder="Libellé de la règle" />
+                    <input
+                      class="ia-input ia-val"
+                      [type]="r.ruleType === 'HOLIDAY' ? 'date' : 'number'"
+                      [(ngModel)]="r.value"
+                      [style.color-scheme]="r.ruleType === 'HOLIDAY' ? 'light' : null"
+                      [step]="
+                        r.ruleType === 'OVERTIME_25' || r.ruleType === 'OVERTIME_50' ? '0.05' : r.ruleType === 'PREMIUM_PCT' ? '0.5' : '10'
+                      "
+                    />
+                    <span class="ia-rule-unit">{{
+                      ruleMeta(r.ruleType).unit === 'tnd'
+                        ? 'TND'
+                        : ruleMeta(r.ruleType).unit === 'pct'
+                          ? '%'
+                          : ruleMeta(r.ruleType).unit === 'coeff'
+                            ? '×'
+                            : ''
+                    }}</span>
+                    <button class="ia-del-btn" title="Supprimer" (click)="removeImportRule(i)">✕</button>
+                  </div>
+                }
+              </div>
+
+              <button class="pz-btn pz-sm" style="margin-top:8px;align-self:flex-start" (click)="addImportRule()">
+                <pz-icon name="Plus" [size]="13" /> Ajouter une règle
+              </button>
+
+              @if (importErr()) {
+                <div class="cv-err" style="margin-top:8px">{{ importErr() }}</div>
+              }
+            </div>
+            <div class="pz-modal-foot">
+              <button class="pz-btn" (click)="importStep.set(1)">← Retour</button>
+              <button class="pz-btn pz-primary" [disabled]="importBusy()" (click)="applyImport()">
+                @if (importBusy()) {
+                  <span class="ia-spinner ia-spinner-dark"></span> Import en cours…
+                } @else {
+                  ✅ Importer ({{ importSuggestion()!.rules.length }} règle{{ importSuggestion()!.rules.length !== 1 ? 's' : '' }})
+                }
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
 
     <!-- ── Modal Secteur ─────────────────────────────────────── -->
     @if (showSectorModal()) {
@@ -868,6 +1046,255 @@ const SECTOR_META: Record<string, { icon: string; color: string }> = {
         color: var(--tc);
       }
 
+      /* ── Bouton IA ──────────────────────────────────── */
+      .pz-ia-btn {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: #fff;
+        border-color: transparent;
+        font-weight: 600;
+        transition:
+          opacity 0.15s,
+          transform 0.15s;
+      }
+      .pz-ia-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      /* ── Modal import ────────────────────────────────── */
+      .pz-modal-import {
+        width: 640px;
+      }
+
+      .ia-dropzone {
+        border: 2px dashed var(--pz-line);
+        border-radius: 14px;
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+        background: var(--pz-surface-3);
+      }
+      .ia-dropzone:hover,
+      .ia-dropzone.drag-over {
+        border-color: var(--pz-primary);
+        background: var(--pz-primary-soft);
+      }
+      .ia-dropzone-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+      .ia-drop-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--pz-ink);
+      }
+      .ia-drop-sub {
+        font-size: 12px;
+        color: var(--pz-muted);
+      }
+      .ia-drop-or {
+        margin-top: 4px;
+        font-size: 11.5px;
+        color: var(--pz-primary);
+        font-weight: 600;
+      }
+      .ia-file-name {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        font-weight: 600;
+        color: var(--pz-ink);
+        font-size: 14px;
+      }
+      .ia-clear-btn {
+        background: none;
+        border: 1px solid var(--pz-line);
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+        color: var(--pz-muted);
+        font-size: 11px;
+        display: grid;
+        place-items: center;
+        margin-left: 4px;
+      }
+      .ia-sep {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--pz-muted);
+        font-size: 12px;
+      }
+      .ia-sep::before,
+      .ia-sep::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--pz-line);
+      }
+      .ia-textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--pz-line);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font: inherit;
+        font-size: 13px;
+        resize: vertical;
+        background: var(--pz-surface);
+        color: var(--pz-ink);
+        outline: none;
+        line-height: 1.6;
+        transition: border-color 0.12s;
+      }
+      .ia-textarea:focus {
+        border-color: var(--pz-primary);
+      }
+      .ia-spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: #fff;
+        animation: ia-spin 0.7s linear infinite;
+        vertical-align: middle;
+      }
+      .ia-spinner-dark {
+        border-color: rgba(0, 0, 0, 0.15);
+        border-top-color: var(--pz-primary);
+      }
+      @keyframes ia-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .ia-section-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--pz-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .ia-badge {
+        background: var(--pz-primary);
+        color: #fff;
+        border-radius: 10px;
+        padding: 1px 7px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+      .ia-sector-row,
+      .ia-conv-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .ia-select,
+      .ia-input {
+        border: 1px solid var(--pz-line);
+        border-radius: 8px;
+        padding: 7px 11px;
+        font: inherit;
+        font-size: 13px;
+        background: var(--pz-surface);
+        color: var(--pz-ink);
+        outline: none;
+        transition: border-color 0.12s;
+      }
+      .ia-select:focus,
+      .ia-input:focus {
+        border-color: var(--pz-primary);
+      }
+      .ia-select {
+        flex: 0 0 220px;
+      }
+      .ia-flex {
+        flex: 1;
+        min-width: 0;
+      }
+      .ia-year {
+        width: 80px;
+        flex-shrink: 0;
+      }
+      .ia-date {
+        width: 140px;
+        flex-shrink: 0;
+      }
+      .ia-val {
+        width: 90px;
+        flex-shrink: 0;
+      }
+      .ia-rules-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 8px;
+        max-height: 280px;
+        overflow-y: auto;
+        padding-right: 2px;
+      }
+      .ia-rule-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--pz-surface-3);
+        border: 1px solid var(--pz-line);
+        border-radius: 9px;
+        padding: 7px 10px;
+      }
+      .ia-rule-type-badge {
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 6px;
+        padding: 3px 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .ia-rule-unit {
+        font-size: 11px;
+        color: var(--pz-muted);
+        font-weight: 600;
+        flex-shrink: 0;
+        width: 24px;
+        text-align: center;
+      }
+      .ia-del-btn {
+        background: none;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        color: #b91c1c;
+        cursor: pointer;
+        font-size: 11px;
+        padding: 3px 7px;
+        flex-shrink: 0;
+        transition: background 0.1s;
+      }
+      .ia-del-btn:hover {
+        background: #fee2e2;
+      }
+      .ia-no-rules {
+        font-size: 12.5px;
+        color: var(--pz-muted);
+        background: var(--pz-surface-3);
+        border-radius: 9px;
+        padding: 12px 16px;
+        margin-top: 8px;
+      }
+
       /* ── Boutons danger ──────────────────────────────── */
       .pz-btn.pz-danger {
         color: #b91c1c;
@@ -966,6 +1393,152 @@ export default class ConventionsComponent {
   protected readonly rulesLoading = signal(false);
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
+
+  // ── Import IA ─────────────────────────────────────────────────
+  protected readonly showImportModal = signal(false);
+  protected readonly importStep = signal<1 | 2>(1);
+  protected readonly importBusy = signal(false);
+  protected readonly importErr = signal('');
+  protected readonly importFileName = signal('');
+  protected readonly dropOver = signal(false);
+  protected readonly importSuggestion = signal<ConventionImportSuggestion | null>(null);
+  protected readonly importFile = signal<File | null>(null);
+  protected importText = '';
+  protected originalSectorCode = '';
+
+  openImportModal(): void {
+    this.importStep.set(1);
+    this.importFile.set(null);
+    this.importText = '';
+    this.importFileName.set('');
+    this.importErr.set('');
+    this.importSuggestion.set(null);
+    this.showImportModal.set(true);
+  }
+  closeImportModal(): void {
+    this.showImportModal.set(false);
+  }
+
+  clearFile(): void {
+    this.importFile.set(null);
+    this.importFileName.set('');
+  }
+
+  onFileSelected(event: Event): void {
+    const f = (event.target as HTMLInputElement).files?.[0];
+    if (f) {
+      this.importFile.set(f);
+      this.importFileName.set(f.name);
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.dropOver.set(false);
+    const f = event.dataTransfer?.files?.[0];
+    if (f) {
+      this.importFile.set(f);
+      this.importFileName.set(f.name);
+    }
+  }
+
+  analyzeDocument(): void {
+    this.importErr.set('');
+    this.importBusy.set(true);
+    const fd = new FormData();
+    if (this.importFile()) {
+      fd.append('file', this.importFile()!);
+    } else {
+      fd.append('text', this.importText.trim());
+    }
+    this.api.parseConventionDocument(fd).subscribe({
+      next: suggestion => {
+        this.originalSectorCode = suggestion.sectorCode;
+        this.importSuggestion.set(suggestion);
+        this.importStep.set(2);
+        this.importBusy.set(false);
+      },
+      error: (e: any) => {
+        this.importErr.set(e?.error?.detail ?? "L'IA n'a pas pu analyser le document. Vérifiez le fichier ou collez le texte directement.");
+        this.importBusy.set(false);
+      },
+    });
+  }
+
+  onSectorCodeChange(code: string): void {
+    const found = this.sectors().find(s => s.code === code);
+    if (found && this.importSuggestion()) {
+      this.importSuggestion.update(s => (s ? { ...s, sectorLabel: found.label } : s));
+    }
+  }
+
+  removeImportRule(index: number): void {
+    this.importSuggestion.update(s => (s ? { ...s, rules: s.rules.filter((_, i) => i !== index) } : s));
+  }
+
+  addImportRule(): void {
+    const newRule: ConventionRuleDraft = { ruleType: 'PREMIUM', label: '', value: '' };
+    this.importSuggestion.update(s => (s ? { ...s, rules: [...s.rules, newRule] } : s));
+  }
+
+  applyImport(): void {
+    const sug = this.importSuggestion();
+    if (!sug) return;
+    if (!sug.conventionLabel.trim()) {
+      this.importErr.set('Le libellé de la convention est obligatoire.');
+      return;
+    }
+    this.importBusy.set(true);
+    this.importErr.set('');
+
+    const existingSector = this.sectors().find(s => s.code === sug.sectorCode);
+    const sectorObs = existingSector
+      ? of(existingSector)
+      : this.api.createActivitySector({ code: sug.sectorCode, label: sug.sectorLabel, description: null, active: true });
+
+    sectorObs
+      .pipe(
+        switchMap(sector => {
+          if (!existingSector) this.sectors.update(l => [...l, sector]);
+          return this.api.createSectoralConvention({
+            sectorId: sector.id,
+            year: sug.conventionYear,
+            label: sug.conventionLabel,
+            effectiveFrom: sug.effectiveFrom || undefined,
+          });
+        }),
+        switchMap(convention => {
+          if (sug.rules.length === 0) return of(convention);
+          const ruleObs = sug.rules.map(r =>
+            this.api.createConventionRule({ conventionId: convention.id, ruleType: r.ruleType, label: r.label, value: String(r.value) }),
+          );
+          return forkJoin(ruleObs).pipe(switchMap(() => of(convention)));
+        }),
+      )
+      .subscribe({
+        next: convention => {
+          this.importBusy.set(false);
+          this.closeImportModal();
+          const targetSector = this.sectors().find(s => s.code === sug.sectorCode);
+          if (targetSector) {
+            this.selectedSector.set(targetSector);
+            this.selectedConvention.set(null);
+            this.rules.set([]);
+            this.api.sectoralConventions(targetSector.id).subscribe({
+              next: convs => {
+                this.conventions.set(convs);
+                const created = convs.find(c => c.id === convention.id);
+                if (created) this.selectConvention(created);
+              },
+            });
+          }
+        },
+        error: (e: any) => {
+          this.importErr.set(e?.error?.detail ?? "Erreur lors de l'import. Vérifiez les données et réessayez.");
+          this.importBusy.set(false);
+        },
+      });
+  }
 
   protected readonly showSectorModal = signal(false);
   protected readonly editSectorId = signal<number | null>(null);

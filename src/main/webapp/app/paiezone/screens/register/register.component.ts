@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { ActivitySector } from 'app/paiezone/core/types';
 
 interface Step1Data {
   plan: string;
@@ -14,6 +15,7 @@ interface Step2Data {
   cnssId: string;
   city: string;
   phone: string;
+  activitySectorId: number | null;
 }
 interface Step3Data {
   firstName: string;
@@ -647,6 +649,15 @@ interface Step3Data {
               <input id="su-cnss" class="input" type="text" placeholder="12500-0001" [(ngModel)]="step2.cnssId" name="cnssId" />
             </div>
           </div>
+          <div class="field">
+            <label for="su-sector">Secteur d'activité</label>
+            <select id="su-sector" class="input" [(ngModel)]="step2.activitySectorId" name="activitySectorId">
+              <option [ngValue]="null">— Sélectionner un secteur —</option>
+              @for (s of sectors(); track s.id) {
+                <option [ngValue]="s.id">{{ s.label }}</option>
+              }
+            </select>
+          </div>
           <div class="two-col">
             <div class="field">
               <label for="su-city">Ville <span class="req">*</span></label>
@@ -857,6 +868,12 @@ interface Step3Data {
             <span class="lbl">Ville</span>
             <span class="val">{{ step2.city }}</span>
           </div>
+          @if (step2.activitySectorId) {
+            <div class="confirm-row">
+              <span class="lbl">Secteur</span>
+              <span class="val">{{ sectors().find(s => s.id === step2.activitySectorId)?.label }}</span>
+            </div>
+          }
           <div class="confirm-row">
             <span class="lbl">Admin</span>
             <span class="val">{{ step3.firstName }} {{ step3.lastName }}</span>
@@ -881,7 +898,7 @@ interface Step3Data {
     </div>
   `,
 })
-export default class RegisterComponent {
+export default class RegisterComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly appConfig = inject(ApplicationConfigService);
   private readonly router = inject(Router);
@@ -891,8 +908,16 @@ export default class RegisterComponent {
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
   protected readonly showPwd = signal(false);
+  protected readonly sectors = signal<ActivitySector[]>([]);
 
-  protected step2: Step2Data = { companyName: '', taxId: '', cnssId: '', city: '', phone: '' };
+  protected step2: Step2Data = { companyName: '', taxId: '', cnssId: '', city: '', phone: '', activitySectorId: null };
+
+  ngOnInit(): void {
+    this.http.get<ActivitySector[]>(this.appConfig.getEndpointFor('api/activity-sectors')).subscribe({
+      next: list => this.sectors.set(list.filter(s => s.active)),
+      error: () => {},
+    });
+  }
   protected step3: Step3Data = { firstName: '', lastName: '', email: '', password: '' };
 
   protected readonly PLANS = [
@@ -961,6 +986,7 @@ export default class RegisterComponent {
       cnssId: this.step2.cnssId,
       city: this.step2.city,
       phone: this.step2.phone,
+      activitySectorId: this.step2.activitySectorId,
       companyEmail: this.step3.email,
       plan: this.selectedPlan(),
     };

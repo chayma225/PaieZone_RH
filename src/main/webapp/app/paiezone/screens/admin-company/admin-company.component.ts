@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
+import { ActivitySector } from '../../core/types';
 
 @Component({
   selector: 'pz-admin-company',
@@ -54,6 +55,10 @@ import { ApiService } from '../../core/api.service';
                 <div class="info-row">
                   <span class="lbl">Activité principale</span>
                   <span class="val">{{ company()?.mainActivity || '—' }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="lbl">Secteur d'activité</span>
+                  <span class="val">{{ sectorLabel() }}</span>
                 </div>
               </div>
             </div>
@@ -334,6 +339,15 @@ import { ApiService } from '../../core/api.service';
             <div class="pz-field">
               <label>Activité principale</label>
               <input type="text" [(ngModel)]="editForm.mainActivity" placeholder="ex: Développement logiciel" />
+            </div>
+            <div class="pz-field">
+              <label>Secteur d'activité</label>
+              <select [(ngModel)]="editForm.activitySectorId" name="activitySectorId">
+                <option [ngValue]="null">— Sélectionner un secteur —</option>
+                @for (s of sectors(); track s.id) {
+                  <option [ngValue]="s.id">{{ s.label }}</option>
+                }
+              </select>
             </div>
 
             <div class="modal-section-label">Identifiants</div>
@@ -732,7 +746,7 @@ import { ApiService } from '../../core/api.service';
     `,
   ],
 })
-export default class AdminCompanyComponent {
+export default class AdminCompanyComponent implements OnInit {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
   protected readonly busy = signal(false);
@@ -740,6 +754,7 @@ export default class AdminCompanyComponent {
   protected readonly showEdit = signal(false);
   protected readonly logoUploading = signal(false);
   protected readonly logoErr = signal('');
+  protected readonly sectors = signal<ActivitySector[]>([]);
 
   // ── Plan modal ──────────────────────────────────────────────────
   protected readonly showPlanModal = signal(false);
@@ -771,6 +786,16 @@ export default class AdminCompanyComponent {
 
   protected readonly company = computed(() => this.data.companies()[0]);
 
+  ngOnInit(): void {
+    this.api.activitySectors().subscribe(list => this.sectors.set(list.filter(s => s.active)));
+  }
+
+  protected readonly sectorLabel = computed(() => {
+    const id = this.company()?.activitySectorId;
+    if (!id) return '—';
+    return this.sectors().find(s => s.id === id)?.label ?? '—';
+  });
+
   protected readonly initials = computed(() => {
     const n = this.company()?.name ?? '';
     return (
@@ -791,6 +816,7 @@ export default class AdminCompanyComponent {
     legalForm: '',
     capitalSocial: null as number | null,
     mainActivity: '',
+    activitySectorId: null as number | null,
     city: '',
     postalCode: '',
     gouvernorat: '',
@@ -904,6 +930,7 @@ export default class AdminCompanyComponent {
       legalForm: c.legalForm ?? '',
       capitalSocial: c.capitalSocial ?? null,
       mainActivity: c.mainActivity ?? '',
+      activitySectorId: c.activitySectorId ?? null,
       city: c.city ?? '',
       postalCode: c.postalCode ?? '',
       gouvernorat: c.gouvernorat ?? '',
@@ -938,6 +965,7 @@ export default class AdminCompanyComponent {
         legalForm: this.editForm.legalForm || null,
         capitalSocial: this.editForm.capitalSocial ?? null,
         mainActivity: this.editForm.mainActivity.trim() || null,
+        activitySectorId: this.editForm.activitySectorId ?? null,
         city: this.editForm.city.trim() || null,
         postalCode: this.editForm.postalCode.trim() || null,
         gouvernorat: this.editForm.gouvernorat.trim() || null,

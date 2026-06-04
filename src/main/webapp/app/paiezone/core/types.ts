@@ -42,6 +42,8 @@ export interface Company {
   createdAt: string;
   mrr: number;
   logoUrl: string | null;
+  activitySectorId?: number | null;
+  activitySector?: ActivitySector | null;
 }
 
 export interface Employee {
@@ -336,6 +338,21 @@ export interface ConventionRule {
   label: string;
   value: string;
   active: boolean;
+}
+
+export interface ConventionRuleDraft {
+  ruleType: string;
+  label: string;
+  value: string;
+}
+
+export interface ConventionImportSuggestion {
+  sectorCode: string;
+  sectorLabel: string;
+  conventionYear: number;
+  conventionLabel: string;
+  effectiveFrom: string | null;
+  rules: ConventionRuleDraft[];
 }
 
 export interface PublicHoliday {

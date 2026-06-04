@@ -48,6 +48,11 @@ public class OllamaService {
         return callOllama(messages, 0.7, maxTokens);
     }
 
+    /** Appel à température basse (0.1) pour les sorties JSON structurées. */
+    public String chatJson(List<OllamaMessage> messages) {
+        return callOllama(messages, 0.1, 1500);
+    }
+
     // ──────────────────────────────────────────────────────────────────────────
     //  Mode Text-to-SQL (température très basse → SQL déterministe)
     // ──────────────────────────────────────────────────────────────────────────
