@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.*;
 import tn.paiezone.rh.domain.enumeration.AdvanceStatus;
 import tn.paiezone.rh.domain.enumeration.ContractStatus;
+import tn.paiezone.rh.domain.enumeration.ConventionRuleType;
 import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 import tn.paiezone.rh.domain.enumeration.RubriqueType;
 import tn.paiezone.rh.repository.*;
@@ -54,6 +55,8 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
     private final TimeEntryRepository timeEntryRepository;
     private final PublicHolidayRepository publicHolidayRepository;
     private final LeaveRequestRepository leaveRequestRepository;
+    private final SectoralConventionRepository sectoralConventionRepository;
+    private final ConventionRuleRepository conventionRuleRepository;
 
     // ═══════════════════════════════════════════════════════════════
     //  CALCUL D'UN BULLETIN — Ordre légal tunisien
@@ -97,6 +100,24 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
             .stream()
             .map(PublicHoliday::getHolidayDate)
             .collect(Collectors.toSet());
+
+        // Fusion avec les jours fériés de la convention sectorielle
+        if (employee.getCompany().getActivitySector() != null) {
+            Long sectorId = employee.getCompany().getActivitySector().getId();
+            sectoralConventionRepository
+                .findBySector_IdAndYearAndActiveTrue(sectorId, year)
+                .ifPresent(convention ->
+                    conventionRuleRepository
+                        .findByConvention_IdAndRuleTypeAndActiveTrue(convention.getId(), ConventionRuleType.HOLIDAY)
+                        .forEach(rule -> {
+                            try {
+                                holidays.add(LocalDate.parse(rule.getValue()));
+                            } catch (Exception e) {
+                                log.warn("Date invalide dans convention rule {}: {}", rule.getId(), rule.getValue());
+                            }
+                        })
+                );
+        }
 
         LocalDate contractStart = contract.getStartDate().isAfter(periodStart) ? contract.getStartDate() : periodStart;
         LocalDate contractEnd = (contract.getEndDate() != null && contract.getEndDate().isBefore(periodEnd))

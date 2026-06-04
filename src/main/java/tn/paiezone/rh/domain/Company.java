@@ -105,6 +105,11 @@ public class Company implements Serializable {
     @Column(name = "main_activity", length = 255)
     private String mainActivity;
 
+    @ManyToOne
+    @JoinColumn(name = "activity_sector_id")
+    @JsonIgnoreProperties(value = { "description" }, allowSetters = true)
+    private ActivitySector activitySector;
+
     @Size(max = 255)
     @Column(name = "website", length = 255)
     private String website;
@@ -372,6 +377,14 @@ public class Company implements Serializable {
 
     public void setMainActivity(String mainActivity) {
         this.mainActivity = mainActivity;
+    }
+
+    public ActivitySector getActivitySector() {
+        return activitySector;
+    }
+
+    public void setActivitySector(ActivitySector activitySector) {
+        this.activitySector = activitySector;
     }
 
     public String getWebsite() {

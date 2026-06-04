@@ -1,12 +1,12 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
-import type { Bonus, Rubrique, PaySlip } from '../../core/types';
+import type { Bonus, Rubrique, PaySlip, PublicHoliday } from '../../core/types';
 
-type Tab = 'periods' | 'bonuses' | 'rubriques';
+type Tab = 'periods' | 'bonuses' | 'rubriques' | 'holidays';
 
 const BONUS_TYPES = ['PERFORMANCE', 'TRANSPORT', 'MEAL', 'RAMADAN', 'END_OF_YEAR', 'SENIORITY', 'EXCEPTIONAL', 'OTHER'];
 const BONUS_LABELS: Record<string, string> = {
@@ -49,6 +49,11 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
               <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvelle rubrique
             </button>
           }
+          @if (activeTab() === 'holidays') {
+            <button class="pz-btn pz-primary" (click)="openCreateHoliday()">
+              <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Ajouter jour férié
+            </button>
+          }
         </div>
       </div>
 
@@ -62,6 +67,9 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
         </button>
         <button class="pz-tab" [class.active]="activeTab() === 'rubriques'" (click)="setTab('rubriques')">
           <pz-icon name="List" [size]="14" /> Rubriques
+        </button>
+        <button class="pz-tab" [class.active]="activeTab() === 'holidays'" (click)="setTab('holidays')">
+          <pz-icon name="CalendarDays" [size]="14" /> Jours Fériés
         </button>
       </div>
 
@@ -334,6 +342,116 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
           </table>
         </div>
       }
+
+      <!-- TAB: Jours Fériés -->
+      @if (activeTab() === 'holidays') {
+        <!-- Sélecteur d'année -->
+        <div class="hol-year-bar">
+          @for (y of holidayYears; track y) {
+            <button class="hol-year-btn" [class.active]="holidayYear === y" (click)="setHolidayYear(y)">{{ y }}</button>
+          }
+        </div>
+
+        <!-- Stats -->
+        <div class="hol-stats">
+          <div class="hol-stat">
+            <div class="hol-stat-num">{{ holidays().length }}</div>
+            <div class="hol-stat-lbl">Jours fériés</div>
+          </div>
+          <div class="hol-stat green">
+            <div class="hol-stat-num">{{ fixedCount() }}</div>
+            <div class="hol-stat-lbl">Dates fixes 📅</div>
+          </div>
+          <div class="hol-stat orange">
+            <div class="hol-stat-num">{{ variableCount() }}</div>
+            <div class="hol-stat-lbl">Dates variables ☽</div>
+          </div>
+          <div class="hol-stat blue">
+            <div class="hol-stat-num">{{ monthsWithHolidays().length }}</div>
+            <div class="hol-stat-lbl">Mois concernés</div>
+          </div>
+        </div>
+
+        <!-- Grille des 12 mois -->
+        @if (holidayLoading()) {
+          <div style="text-align:center;padding:60px;color:var(--pz-muted)">Chargement…</div>
+        } @else {
+          <div class="hol-grid">
+            @for (m of allMonths(); track m.num) {
+              <div class="hol-month" [class.hol-month-active]="m.holidays.length > 0">
+                <div class="hol-month-name">{{ m.name }}</div>
+                @if (m.holidays.length === 0) {
+                  <div class="hol-month-empty">Pas de férié</div>
+                } @else {
+                  @for (h of m.holidays; track h.id) {
+                    <div
+                      class="hol-badge"
+                      [class.hol-badge-var]="!h.isRecurring"
+                      (click)="openEditHoliday(h)"
+                      title="Cliquer pour modifier"
+                    >
+                      <span class="hol-badge-day">{{ dayNum(h.holidayDate) }}</span>
+                      <span class="hol-badge-txt">{{ h.name }}</span>
+                      @if (!h.isRecurring) {
+                        <span>☽</span>
+                      }
+                    </div>
+                  }
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Liste détaillée -->
+          @if (holidays().length > 0) {
+            <div class="pz-card" style="margin-top:20px">
+              <div class="card-head" style="display:flex;align-items:center;justify-content:space-between">
+                <div class="card-title">Détail — {{ holidayYear }}</div>
+                <span style="font-size:12px;color:var(--pz-muted)">Cliquez sur un jour dans le calendrier ou modifiez ici</span>
+              </div>
+              <table class="pz-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Libellé</th>
+                    <th style="direction:rtl;text-align:right">الاسم بالعربية</th>
+                    <th>Type</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (h of holidays(); track h.id) {
+                    <tr>
+                      <td>
+                        <span class="hol-date-pill" [class.hol-date-var]="!h.isRecurring">
+                          {{ formatDate(h.holidayDate) }}
+                        </span>
+                      </td>
+                      <td style="font-weight:500">{{ h.name }}</td>
+                      <td style="font-family:serif;direction:rtl;text-align:right;color:var(--pz-muted)">{{ h.nameAr ?? '—' }}</td>
+                      <td>
+                        @if (h.isRecurring) {
+                          <span class="pz-pill pos" style="font-size:11px">Fixe</span>
+                        } @else {
+                          <span class="pz-pill warn" style="font-size:11px">Variable ☽</span>
+                        }
+                      </td>
+                      <td>
+                        <div style="display:flex;gap:5px">
+                          <button class="pz-btn pz-sm" (click)="openEditHoliday(h)"><pz-icon name="Edit" [size]="13" /></button>
+                          <button class="pz-btn pz-sm pz-danger" (click)="deleteHoliday(h.id)">
+                            <pz-icon name="Trash2" [size]="13" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      }
     </div>
 
     <!-- Modal Bulletins -->
@@ -598,6 +716,66 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
         </div>
       </div>
     }
+
+    <!-- Modal Ajouter / Modifier jour férié -->
+    @if (showCreateHoliday()) {
+      <div class="pz-overlay" (click)="closeCreateHoliday()">
+        <div class="pz-modal" (click)="$event.stopPropagation()">
+          <div class="pz-modal-head">
+            <span>{{ editHolidayId() ? 'Modifier le jour férié' : 'Ajouter un jour férié' }}</span>
+            <button class="pz-modal-close" (click)="closeCreateHoliday()"><pz-icon name="X" [size]="16" /></button>
+          </div>
+          <div class="pz-modal-body">
+            <div class="pz-field">
+              <label>Libellé (français) *</label>
+              <input type="text" [(ngModel)]="holidayForm.name" placeholder="ex: Aïd el-Adha" />
+            </div>
+            <div class="pz-field">
+              <label>Libellé (arabe)</label>
+              <input type="text" [(ngModel)]="holidayForm.nameAr" placeholder="ex: عيد الأضحى" style="direction:rtl" />
+            </div>
+            <div class="pz-field-row">
+              <div class="pz-field">
+                <label>Date *</label>
+                <input type="date" [(ngModel)]="holidayForm.holidayDate" />
+              </div>
+              <div class="pz-field" style="flex:0 0 90px">
+                <label>Année</label>
+                <input type="number" [(ngModel)]="holidayForm.year" min="2020" max="2035" />
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px">
+                <input type="checkbox" [(ngModel)]="holidayForm.isRecurring" style="width:auto" />
+                Date fixe chaque année (ex: 1er janvier)
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px">
+                <input type="checkbox" [(ngModel)]="holidayForm.active" style="width:auto" />
+                Actif
+              </label>
+            </div>
+            @if (!holidayForm.isRecurring) {
+              <div style="background:#fef9c3;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e">
+                ☽ Fête islamique — la date change chaque année selon le calendrier lunaire.
+              </div>
+            }
+            @if (holidayErrMsg()) {
+              <div class="pz-err">{{ holidayErrMsg() }}</div>
+            }
+          </div>
+          <div class="pz-modal-foot">
+            <button class="pz-btn" (click)="closeCreateHoliday()">Annuler</button>
+            <button class="pz-btn pz-primary" [disabled]="busy()" (click)="submitHoliday()">
+              @if (busy()) {
+                Enregistrement…
+              } @else {
+                {{ editHolidayId() ? 'Enregistrer' : 'Ajouter' }}
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   `,
   styles: [
     `
@@ -777,6 +955,160 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
       .pz-field select:focus {
         border-color: var(--pz-primary);
       }
+      /* ── Jours Fériés ─────────────────────────── */
+      .hol-year-bar {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+      .hol-year-btn {
+        padding: 7px 20px;
+        border-radius: 20px;
+        border: 1.5px solid var(--pz-line);
+        background: var(--pz-surface);
+        color: var(--pz-muted);
+        cursor: pointer;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.15s;
+      }
+      .hol-year-btn:hover {
+        border-color: var(--pz-primary);
+        color: var(--pz-primary);
+      }
+      .hol-year-btn.active {
+        background: var(--pz-primary);
+        border-color: var(--pz-primary);
+        color: #fff;
+        font-weight: 700;
+      }
+      .hol-stats {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .hol-stat {
+        flex: 1;
+        min-width: 120px;
+        background: var(--pz-surface);
+        border: 1px solid var(--pz-line);
+        border-radius: 12px;
+        padding: 14px 18px;
+        text-align: center;
+        border-top: 3px solid var(--pz-primary);
+      }
+      .hol-stat.green {
+        border-top-color: #16a34a;
+      }
+      .hol-stat.orange {
+        border-top-color: #d97706;
+      }
+      .hol-stat.blue {
+        border-top-color: #2563eb;
+      }
+      .hol-stat-num {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--pz-ink);
+        line-height: 1.1;
+      }
+      .hol-stat-lbl {
+        font-size: 11.5px;
+        color: var(--pz-muted);
+        margin-top: 3px;
+      }
+      .hol-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 4px;
+      }
+      .hol-month {
+        background: var(--pz-surface-3);
+        border: 1px solid var(--pz-line);
+        border-radius: 12px;
+        padding: 12px;
+        min-height: 90px;
+        transition: all 0.15s;
+      }
+      .hol-month-active {
+        background: var(--pz-surface);
+        border-color: #c7d2fe;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+      }
+      .hol-month-name {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--pz-muted);
+        margin-bottom: 8px;
+      }
+      .hol-month-active .hol-month-name {
+        color: var(--pz-primary);
+      }
+      .hol-month-empty {
+        font-size: 11px;
+        color: var(--pz-muted);
+        font-style: italic;
+      }
+      .hol-badge {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: #dcfce7;
+        border-radius: 6px;
+        padding: 4px 7px;
+        margin-bottom: 4px;
+        cursor: pointer;
+        font-size: 11.5px;
+        transition: background 0.1s;
+      }
+      .hol-badge:hover {
+        background: #bbf7d0;
+      }
+      .hol-badge-var {
+        background: #fef3c7;
+      }
+      .hol-badge-var:hover {
+        background: #fde68a;
+      }
+      .hol-badge-day {
+        font-weight: 700;
+        font-size: 13px;
+        color: #166534;
+        min-width: 18px;
+      }
+      .hol-badge-var .hol-badge-day {
+        color: #92400e;
+      }
+      .hol-badge-txt {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #166534;
+      }
+      .hol-badge-var .hol-badge-txt {
+        color: #92400e;
+      }
+      .hol-date-pill {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1e40af;
+        border-radius: 6px;
+        padding: 2px 8px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .hol-date-var {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      /* ─────────────────────────────────────────── */
       .pz-err {
         color: #b91c1c;
         font-size: 12.5px;
@@ -859,6 +1191,7 @@ export default class RhPayrollComponent {
     this.activeTab.set(tab);
     if (tab === 'bonuses' && this.bonuses().length === 0) this.loadBonuses();
     if (tab === 'rubriques' && this.rubriques().length === 0) this.loadRubriques();
+    if (tab === 'holidays') this.loadHolidays();
   }
 
   statusLabel(s: string): string {
@@ -1153,6 +1486,149 @@ export default class RhPayrollComponent {
   deleteRubrique(id: number) {
     if (!confirm('Désactiver cette rubrique ?')) return;
     this.api.deleteRubrique(id).subscribe({ next: () => this.rubriques.update(list => list.filter(r => r.id !== id)) });
+  }
+
+  // ── Jours fériés ──────────────────────────────────────────────
+  protected readonly holidays = signal<PublicHoliday[]>([]);
+  protected readonly holidayLoading = signal(false);
+  protected readonly showCreateHoliday = signal(false);
+  protected readonly editHolidayId = signal<number | null>(null);
+  protected readonly holidayErrMsg = signal('');
+  protected holidayYear = new Date().getFullYear();
+  protected readonly holidayYears = [2024, 2025, 2026, 2027, 2028];
+
+  protected readonly fixedCount = computed(() => this.holidays().filter(h => h.isRecurring).length);
+  protected readonly variableCount = computed(() => this.holidays().filter(h => !h.isRecurring).length);
+
+  private readonly MONTH_NAMES = [
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+  ];
+
+  protected readonly allMonths = computed(() => {
+    const list = this.holidays();
+    return this.MONTH_NAMES.map((name, i) => ({
+      num: i + 1,
+      name,
+      holidays: list.filter(h => {
+        const m = h.holidayDate ? +h.holidayDate.split('-')[1] : 0;
+        return m === i + 1;
+      }),
+    }));
+  });
+
+  protected readonly monthsWithHolidays = computed(() => this.allMonths().filter(m => m.holidays.length > 0));
+
+  protected holidayForm = {
+    name: '',
+    nameAr: '',
+    holidayDate: '',
+    year: new Date().getFullYear(),
+    isRecurring: true,
+    active: true,
+  };
+
+  setHolidayYear(y: number) {
+    this.holidayYear = y;
+    this.loadHolidays();
+  }
+
+  loadHolidays() {
+    this.holidayLoading.set(true);
+    this.api.publicHolidays(this.holidayYear).subscribe({
+      next: list => {
+        this.holidays.set(list);
+        this.holidayLoading.set(false);
+      },
+      error: () => this.holidayLoading.set(false),
+    });
+  }
+
+  openCreateHoliday() {
+    this.editHolidayId.set(null);
+    this.holidayForm = { name: '', nameAr: '', holidayDate: '', year: this.holidayYear, isRecurring: false, active: true };
+    this.holidayErrMsg.set('');
+    this.showCreateHoliday.set(true);
+  }
+
+  openEditHoliday(h: PublicHoliday) {
+    this.editHolidayId.set(h.id);
+    this.holidayForm = {
+      name: h.name,
+      nameAr: h.nameAr ?? '',
+      holidayDate: h.holidayDate,
+      year: h.year,
+      isRecurring: h.isRecurring,
+      active: h.active,
+    };
+    this.holidayErrMsg.set('');
+    this.showCreateHoliday.set(true);
+  }
+
+  closeCreateHoliday() {
+    this.showCreateHoliday.set(false);
+    this.editHolidayId.set(null);
+  }
+
+  submitHoliday() {
+    if (!this.holidayForm.name.trim()) {
+      this.holidayErrMsg.set('Le libellé est obligatoire.');
+      return;
+    }
+    if (!this.holidayForm.holidayDate) {
+      this.holidayErrMsg.set('La date est obligatoire.');
+      return;
+    }
+    this.busy.set(true);
+    this.holidayErrMsg.set('');
+    const dto = {
+      name: this.holidayForm.name.trim(),
+      nameAr: this.holidayForm.nameAr.trim() || null,
+      holidayDate: this.holidayForm.holidayDate,
+      year: this.holidayForm.year,
+      isRecurring: this.holidayForm.isRecurring,
+      active: this.holidayForm.active,
+    };
+    const id = this.editHolidayId();
+    const call = id ? this.api.updatePublicHoliday(id, dto) : this.api.createPublicHoliday(dto);
+    call.subscribe({
+      next: h => {
+        if (id) this.holidays.update(list => list.map(x => (x.id === id ? h : x)));
+        else this.holidays.update(list => [...list, h].sort((a, b) => a.holidayDate.localeCompare(b.holidayDate)));
+        this.busy.set(false);
+        this.closeCreateHoliday();
+      },
+      error: (err: any) => {
+        this.holidayErrMsg.set(err?.error?.detail ?? 'Erreur.');
+        this.busy.set(false);
+      },
+    });
+  }
+
+  deleteHoliday(id: number) {
+    if (!confirm('Supprimer ce jour férié ?')) return;
+    this.api.deletePublicHoliday(id).subscribe({ next: () => this.holidays.update(list => list.filter(h => h.id !== id)) });
+  }
+
+  formatDate(d: string): string {
+    if (!d) return '';
+    const [, m, day] = d.split('-');
+    return `${day}/${m}`;
+  }
+
+  dayNum(d: string): string {
+    if (!d) return '';
+    return d.split('-')[2] ?? '';
   }
 
   // PDF exports

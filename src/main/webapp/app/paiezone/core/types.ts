@@ -311,6 +311,43 @@ export interface AccountingEntry {
   periodId?: number;
 }
 
+export interface ActivitySector {
+  id: number;
+  code: string;
+  label: string;
+  description: string | null;
+  active: boolean;
+}
+
+export interface SectoralConvention {
+  id: number;
+  sector: ActivitySector;
+  year: number;
+  label: string;
+  active: boolean;
+  effectiveFrom: string | null;
+  effectiveTo: string | null;
+}
+
+export interface ConventionRule {
+  id: number;
+  convention: { id: number; label: string };
+  ruleType: 'HOLIDAY' | 'OVERTIME_25' | 'OVERTIME_50' | 'PREMIUM' | 'PREMIUM_PCT';
+  label: string;
+  value: string;
+  active: boolean;
+}
+
+export interface PublicHoliday {
+  id: number;
+  name: string;
+  nameAr: string | null;
+  holidayDate: string;
+  year: number;
+  isRecurring: boolean;
+  active: boolean;
+}
+
 export interface LeaveType {
   id: number;
   code: string;

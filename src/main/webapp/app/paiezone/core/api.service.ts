@@ -4,6 +4,9 @@ import { Observable, map } from 'rxjs';
 import type {
   Employee,
   Company,
+  ActivitySector,
+  SectoralConvention,
+  ConventionRule,
   Department,
   PayrollPeriod,
   LeaveRequest,
@@ -23,6 +26,7 @@ import type {
   AccountPlan,
   AccountingEntry,
   LeaveType,
+  PublicHoliday,
 } from './types';
 
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -222,6 +226,90 @@ export class ApiService {
 
   recalculatePayroll(id: number): Observable<void> {
     return this.http.post<void>(`/api/payroll-periods/${id}/recalculate-all`, {});
+  }
+
+  // ── Conventions sectorielles ──────────────────────────────────
+  activitySectors(): Observable<ActivitySector[]> {
+    return this.http.get<ActivitySector[]>('/api/activity-sectors');
+  }
+
+  createActivitySector(dto: Omit<ActivitySector, 'id'>): Observable<ActivitySector> {
+    return this.http.post<ActivitySector>('/api/activity-sectors', dto);
+  }
+
+  updateActivitySector(id: number, dto: Partial<ActivitySector>): Observable<ActivitySector> {
+    return this.http.put<ActivitySector>(`/api/activity-sectors/${id}`, { ...dto, id });
+  }
+
+  deleteActivitySector(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/activity-sectors/${id}`);
+  }
+
+  sectoralConventions(sectorId?: number): Observable<SectoralConvention[]> {
+    if (sectorId) return this.http.get<SectoralConvention[]>(`/api/sectoral-conventions/by-sector/${sectorId}`);
+    return this.http.get<SectoralConvention[]>('/api/sectoral-conventions');
+  }
+
+  createSectoralConvention(dto: { sectorId: number; year: number; label: string; effectiveFrom?: string }): Observable<SectoralConvention> {
+    return this.http.post<SectoralConvention>('/api/sectoral-conventions', dto);
+  }
+
+  updateSectoralConvention(id: number, dto: Partial<{ label: string; year: number; active: boolean }>): Observable<SectoralConvention> {
+    return this.http.put<SectoralConvention>(`/api/sectoral-conventions/${id}`, dto);
+  }
+
+  deleteSectoralConvention(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/sectoral-conventions/${id}`);
+  }
+
+  conventionRules(conventionId: number): Observable<ConventionRule[]> {
+    return this.http.get<ConventionRule[]>(`/api/convention-rules/by-convention/${conventionId}`);
+  }
+
+  createConventionRule(dto: { conventionId: number; ruleType: string; label: string; value: string }): Observable<ConventionRule> {
+    return this.http.post<ConventionRule>('/api/convention-rules', dto);
+  }
+
+  updateConventionRule(id: number, dto: Partial<{ label: string; value: string; active: boolean }>): Observable<ConventionRule> {
+    return this.http.put<ConventionRule>(`/api/convention-rules/${id}`, dto);
+  }
+
+  deleteConventionRule(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/convention-rules/${id}`);
+  }
+
+  updateCompanySector(companyId: number, sectorId: number | null): Observable<any> {
+    return this.http.patch<any>(`/api/companies/${companyId}`, { activitySectorId: sectorId });
+  }
+
+  publicHolidays(year?: number): Observable<PublicHoliday[]> {
+    let params = new HttpParams().set('page', 0).set('size', 500).set('sort', 'year,asc').append('sort', 'holidayDate,asc');
+    if (year) params = params.set('year.equals', year);
+    return this.http.get<any[]>('/api/public-holidays', { params }).pipe(map(list => list.map(d => this.mapPublicHoliday(d))));
+  }
+
+  createPublicHoliday(dto: Omit<PublicHoliday, 'id'>): Observable<PublicHoliday> {
+    return this.http.post<any>('/api/public-holidays', dto).pipe(map(d => this.mapPublicHoliday(d)));
+  }
+
+  updatePublicHoliday(id: number, dto: Omit<PublicHoliday, 'id'>): Observable<PublicHoliday> {
+    return this.http.put<any>(`/api/public-holidays/${id}`, { ...dto, id }).pipe(map(d => this.mapPublicHoliday(d)));
+  }
+
+  deletePublicHoliday(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/public-holidays/${id}`);
+  }
+
+  private mapPublicHoliday(d: any): PublicHoliday {
+    return {
+      id: d.id,
+      name: d.name ?? '',
+      nameAr: d.nameAr ?? null,
+      holidayDate: d.holidayDate ?? '',
+      year: d.year ?? new Date().getFullYear(),
+      isRecurring: d.isRecurring ?? true,
+      active: d.active ?? true,
+    };
   }
 
   validatePayroll(id: number): Observable<void> {
@@ -582,17 +670,15 @@ export class ApiService {
       active: dto.active,
       company: { id: dto.companyId },
     };
-    return this.http
-      .post<any>('/api/account-plans', body)
-      .pipe(
-        map(d => ({
-          id: d.id,
-          accountCode: d.accountCode,
-          accountLabel: d.accountLabel,
-          accountType: d.accountType ?? null,
-          active: d.active,
-        })),
-      );
+    return this.http.post<any>('/api/account-plans', body).pipe(
+      map(d => ({
+        id: d.id,
+        accountCode: d.accountCode,
+        accountLabel: d.accountLabel,
+        accountType: d.accountType ?? null,
+        active: d.active,
+      })),
+    );
   }
 
   updateAccountPlan(id: number, dto: Omit<AccountPlan, 'id'> & { companyId: number }): Observable<AccountPlan> {
@@ -604,17 +690,15 @@ export class ApiService {
       active: dto.active,
       company: { id: dto.companyId },
     };
-    return this.http
-      .put<any>(`/api/account-plans/${id}`, body)
-      .pipe(
-        map(d => ({
-          id: d.id,
-          accountCode: d.accountCode,
-          accountLabel: d.accountLabel,
-          accountType: d.accountType ?? null,
-          active: d.active,
-        })),
-      );
+    return this.http.put<any>(`/api/account-plans/${id}`, body).pipe(
+      map(d => ({
+        id: d.id,
+        accountCode: d.accountCode,
+        accountLabel: d.accountLabel,
+        accountType: d.accountType ?? null,
+        active: d.active,
+      })),
+    );
   }
 
   deleteAccountPlan(id: number): Observable<void> {

@@ -12,6 +12,7 @@ const ROLES: Record<Role, RoleConfig> = {
       { id: 'saas-dash', label: 'Tableau de bord', icon: 'Home' },
       { id: 'tenants', label: 'Entreprises clientes', icon: 'Building' },
       { id: 'regulatory', label: 'Réglementaire', icon: 'Shield' },
+      { id: 'conventions', label: 'Conventions sectorielles', icon: 'Layers' },
     ],
     default: 'saas-dash',
   },

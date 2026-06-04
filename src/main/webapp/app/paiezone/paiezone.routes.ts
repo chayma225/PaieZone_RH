@@ -88,6 +88,12 @@ const routes: Routes = [
         title: 'Réglementaire',
         data: { authorities: SUPER_ADMIN },
       },
+      {
+        path: 'conventions',
+        loadComponent: () => import('./screens/conventions/conventions.component'),
+        title: 'Conventions sectorielles',
+        data: { authorities: SUPER_ADMIN },
+      },
 
       // ── Admin entreprise ──────────────────────────────────────────────────
       {

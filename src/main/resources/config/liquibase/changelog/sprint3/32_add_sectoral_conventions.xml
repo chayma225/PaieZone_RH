@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-create-activity-sector" author="dev">
+    <preConditions onFail="MARK_RAN"><not><tableExists tableName="activity_sector"/></not></preConditions>
+    <createTable tableName="activity_sector">
+      <column name="id" type="bigint"><constraints primaryKey="true" nullable="false"/></column>
+      <column name="code" type="varchar(30)"><constraints nullable="false" unique="true"/></column>
+      <column name="label" type="varchar(150)"><constraints nullable="false"/></column>
+      <column name="description" type="varchar(500)"/>
+      <column name="active" type="boolean" defaultValueBoolean="true"><constraints nullable="false"/></column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="sprint3-create-sectoral-convention" author="dev">
+    <preConditions onFail="MARK_RAN"><not><tableExists tableName="sectoral_convention"/></not></preConditions>
+    <createTable tableName="sectoral_convention">
+      <column name="id" type="bigint"><constraints primaryKey="true" nullable="false"/></column>
+      <column name="sector_id" type="bigint"><constraints nullable="false"/></column>
+      <column name="year" type="integer"><constraints nullable="false"/></column>
+      <column name="label" type="varchar(200)"><constraints nullable="false"/></column>
+      <column name="active" type="boolean" defaultValueBoolean="true"><constraints nullable="false"/></column>
+      <column name="effective_from" type="date"/>
+      <column name="effective_to" type="date"/>
+    </createTable>
+    <addForeignKeyConstraint
+      baseTableName="sectoral_convention" baseColumnNames="sector_id"
+      referencedTableName="activity_sector" referencedColumnNames="id"
+      constraintName="fk_convention_sector"/>
+  </changeSet>
+
+  <changeSet id="sprint3-create-convention-rule" author="dev">
+    <preConditions onFail="MARK_RAN"><not><tableExists tableName="convention_rule"/></not></preConditions>
+    <createTable tableName="convention_rule">
+      <column name="id" type="bigint"><constraints primaryKey="true" nullable="false"/></column>
+      <column name="convention_id" type="bigint"><constraints nullable="false"/></column>
+      <column name="rule_type" type="varchar(30)"><constraints nullable="false"/></column>
+      <column name="label" type="varchar(200)"><constraints nullable="false"/></column>
+      <column name="value" type="varchar(100)"><constraints nullable="false"/></column>
+      <column name="active" type="boolean" defaultValueBoolean="true"><constraints nullable="false"/></column>
+    </createTable>
+    <addForeignKeyConstraint
+      baseTableName="convention_rule" baseColumnNames="convention_id"
+      referencedTableName="sectoral_convention" referencedColumnNames="id"
+      constraintName="fk_rule_convention"/>
+  </changeSet>
+
+  <changeSet id="sprint3-add-sector-to-company" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <not><columnExists tableName="company" columnName="activity_sector_id"/></not>
+    </preConditions>
+    <addColumn tableName="company">
+      <column name="activity_sector_id" type="bigint"/>
+    </addColumn>
+    <addForeignKeyConstraint
+      baseTableName="company" baseColumnNames="activity_sector_id"
+      referencedTableName="activity_sector" referencedColumnNames="id"
+      constraintName="fk_company_sector"/>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-activity-sectors" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="GENERAL"/><column name="label" value="Régime Général"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="BANQUE"/><column name="label" value="Secteur Bancaire"/><column name="description" value="Banques, établissements financiers, assurances"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="TEXTILE"/><column name="label" value="Textile et Habillement"/><column name="description" value="Industrie textile, confection, cuir"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="BTP"/><column name="label" value="Bâtiment et Travaux Publics"/><column name="description" value="Construction, génie civil, immobilier"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="HOTELLERIE"/><column name="label" value="Hôtellerie et Tourisme"/><column name="description" value="Hôtels, restaurants, agences de voyages"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="COMMERCE"/><column name="label" value="Commerce et Distribution"/><column name="description" value="Commerce de détail, grande distribution"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="TRANSPORT"/><column name="label" value="Transport et Logistique"/><column name="description" value="Transport routier, maritime, aérien, logistique"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="IT"/><column name="label" value="Technologies de l'Information"/><column name="description" value="Informatique, télécommunications, numérique"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="SANTE"/><column name="label" value="Santé et Pharmaceutique"/><column name="description" value="Cliniques, pharmacies, para-pharmaceutique"/><column name="active" valueBoolean="true"/></insert>
+    <insert tableName="activity_sector"><column name="id" valueComputed="nextval('sequence_generator')"/><column name="code" value="EDUCATION"/><column name="label" value="Enseignement et Formation"/><column name="description" value="Écoles privées, centres de formation, universités"/><column name="active" valueBoolean="true"/></insert>
+  </changeSet>
+
+</databaseChangeLog>
