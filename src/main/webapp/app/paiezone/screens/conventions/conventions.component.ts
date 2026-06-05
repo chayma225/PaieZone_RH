@@ -63,6 +63,13 @@ const SECTOR_META: Record<string, { icon: string; color: string }> = {
   SANTE: { icon: '🏥', color: '#dc2626' },
   EDUCATION: { icon: '🎓', color: '#0d9488' },
   GENERAL: { icon: '⚖️', color: '#64748b' },
+  BOIS: { icon: '🪵', color: '#854d0e' },
+  CONFISERIE: { icon: '🍫', color: '#be185d' },
+  CONST_METAL: { icon: '🔩', color: '#475569' },
+  CUIRS_PEAUX: { icon: '👜', color: '#92400e' },
+  PARFUMERIE: { icon: '🧴', color: '#a855f7' },
+  FONDERIE: { icon: '⚙️', color: '#374151' },
+  EXPLOSIFS: { icon: '⚠️', color: '#dc2626' },
 };
 
 @Component({
@@ -78,7 +85,7 @@ const SECTOR_META: Record<string, { icon: string; color: string }> = {
           <h1>Conventions Sectorielles</h1>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="pz-btn pz-ia-btn" (click)="openImportModal()">🤖 Analyser par IA</button>
+          <button class="pz-btn" (click)="openImportModal()">🤖 Analyser par IA</button>
           <button class="pz-btn pz-primary" (click)="openCreateSector()">
             <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouveau secteur
           </button>
@@ -920,10 +927,6 @@ const SECTOR_META: Record<string, { icon: string; color: string }> = {
       .cv-rule-actions {
         display: flex;
         gap: 4px;
-        opacity: 0;
-        transition: opacity 0.1s;
-      }
-      .cv-rule-row:hover .cv-rule-actions {
         opacity: 1;
       }
 

@@ -65,4 +65,14 @@ public interface ContractRepository extends JpaRepository<Contract, Long>, JpaSp
         @Param("end") LocalDate end,
         @Param("companyId") Long companyId
     );
+
+    @Query(
+        "SELECT c FROM Contract c JOIN FETCH c.employee WHERE c.status = :status AND c.trialPeriodMonths IS NOT NULL AND c.trialPeriodMonths > 0 AND c.employee.company.id = :companyId"
+    )
+    List<Contract> findActiveWithTrialByCompany(@Param("status") ContractStatus status, @Param("companyId") Long companyId);
+
+    @Query(
+        "SELECT c FROM Contract c JOIN FETCH c.employee WHERE c.status = :status AND c.trialPeriodMonths IS NOT NULL AND c.trialPeriodMonths > 0"
+    )
+    List<Contract> findActiveWithTrial(@Param("status") ContractStatus status);
 }

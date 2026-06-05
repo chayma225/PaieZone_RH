@@ -1,0 +1,5534 @@
+
+===== PAGE 1 =====
+Code du projet : ............
+PROJET
+DE FIN D’ÉTUDES
+DIPLÔME NATIONAL DE LICENCE
+En Technologies de l’Informatique
+Parcours : Développement des Systèmes d’Information
+Thème du projet : PaieZone RH
+Réalisé par :
+Chayma Bouguerra
+&
+Takwa Boughmadi
+SOUTENU LE ../../2026 DEVANT LE JURY D’EXAMEN :
+M.
+....................
+Président
+M.
+....................
+Rapporteur
+Mme
+Amina HECHKEL
+Encadrant-ISET
+M.
+Salim HMIDI
+Encadrant-Entreprise
+A.U. : 2025-2026
+ISET Mahdia, Avenue Elmourouj 5111 Hiboun Mahdia Tunisie
+Tél : (+216)73 68 34 07 - (+216)73 68 34 10 Fax : (+216)73 68 33 99
+
+===== PAGE 2 =====
+Table des matières
+Liste des Figures
+6
+Liste des Tableaux
+8
+1.1
+Organisme d’accueil : Grow Up Technologies . . . . . . . . . . . . . . . . .
+10
+1.2
+Présentation du Projet . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+10
+1.2.1
+Analyse de l’Existant . . . . . . . . . . . . . . . . . . . . . . . . . .
+11
+1.2.2
+État de l’art : Le marché de la gestion RH et paie en Tunisie . . . .
+11
+1.2.3
+Critique de l’Existant . . . . . . . . . . . . . . . . . . . . . . . . . .
+12
+1.2.4
+Solution Proposée : La Plateforme PaieZone RH . . . . . . . . . . .
+13
+1.2.5
+Comparaison avec l’existant . . . . . . . . . . . . . . . . . . . . . .
+14
+1.3
+Démarche Adoptée . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+15
+1.3.1
+Choix du cadre méthodologique . . . . . . . . . . . . . . . . . . . .
+16
+1.3.2
+Présentation de Scrum . . . . . . . . . . . . . . . . . . . . . . . . .
+16
+1.3.3
+Raisons du choix de Scrum . . . . . . . . . . . . . . . . . . . . . . .
+17
+1.3.4
+Les rôles Scrum . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+17
+1.4
+Langage de modélisation UML . . . . . . . . . . . . . . . . . . . . . . . . .
+17
+2.5
+Identification des acteurs . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+20
+2.6
+Spécification des besoins . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+21
+2.6.1
+Besoins fonctionnels
+. . . . . . . . . . . . . . . . . . . . . . . . . .
+21
+2.6.2
+Besoins non fonctionnels . . . . . . . . . . . . . . . . . . . . . . . .
+24
+2.7
+Pilotage du projet avec Scrum . . . . . . . . . . . . . . . . . . . . . . . . .
+25
+2.7.1
+Équipe et rôles Scrum
+. . . . . . . . . . . . . . . . . . . . . . . . .
+25
+2.8
+Backlog du Produit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+25
+2.9
+Diagramme de cas d’utilisation global . . . . . . . . . . . . . . . . . . . . .
+34
+2.10 Planification préliminaire des sprints
+. . . . . . . . . . . . . . . . . . . . .
+34
+2.11 Environnement de travail . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+36
+2.11.1 Environnement matériel
+. . . . . . . . . . . . . . . . . . . . . . . .
+36
+2.11.2 Environnement logiciel . . . . . . . . . . . . . . . . . . . . . . . . .
+37
+2.12 Architecture du projet
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+37
+2.12.1 Architecture physique (déploiement)
+. . . . . . . . . . . . . . . . .
+37
+2.12.2 Architecture logique du système . . . . . . . . . . . . . . . . . . . .
+37
+1
+
+===== PAGE 3 =====
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+43
+3.1
+User Stories du premier sprint . . . . . . . . . . . . . . . . . . . . . . . . .
+43
+3.2
+Backlog du premier Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . .
+45
+3.3
+Spécification fonctionnelle du premier Sprint . . . . . . . . . . . . . . . . .
+48
+3.3.1
+Diagramme de cas d’utilisation du premier Sprint . . . . . . . . . .
+48
+3.3.2
+Description textuelle des cas d’utilisation . . . . . . . . . . . . . . .
+50
+3.4
+Conception du premier Sprint . . . . . . . . . . . . . . . . . . . . . . . . .
+52
+3.4.1
+Diagramme de classes
+. . . . . . . . . . . . . . . . . . . . . . . . .
+53
+3.4.2
+Diagramme de séquences
+. . . . . . . . . . . . . . . . . . . . . . .
+53
+3.5
+Etude et réalisation du premier sprint . . . . . . . . . . . . . . . . . . . . .
+55
+3.5.1
+Inscription et initialisation de l’espace société
+. . . . . . . . . . . .
+56
+3.5.2
+Authentification et accès . . . . . . . . . . . . . . . . . . . . . . . .
+56
+3.5.3
+Gestion des utilisateurs . . . . . . . . . . . . . . . . . . . . . . . . .
+59
+3.5.4
+Journal d’audit . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+61
+3.5.5
+Gestion Organisationnelle
+. . . . . . . . . . . . . . . . . . . . . . .
+61
+3.6
+Tests et Validation
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+62
+3.6.1
+Plan de tests
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+62
+3.7
+Rituels Agiles et Clôture du Sprint
+. . . . . . . . . . . . . . . . . . . . . .
+63
+3.7.1
+Revue du Sprint (Sprint Review)
+. . . . . . . . . . . . . . . . . . .
+64
+3.7.2
+Rétrospective du Sprint (Sprint Retrospective) . . . . . . . . . . . .
+64
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+64
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+67
+4.1
+User Stories du deuxième sprint . . . . . . . . . . . . . . . . . . . . . . . .
+67
+4.2
+Backlog du deuxième Sprint . . . . . . . . . . . . . . . . . . . . . . . . . .
+68
+4.3
+Spécification fonctionnelle du deuxième Sprint . . . . . . . . . . . . . . . .
+70
+4.3.1
+Diagramme de cas d’utilisation du deuxième Sprint . . . . . . . . .
+70
+4.3.2
+Description textuelle des cas d’utilisation . . . . . . . . . . . . . . .
+72
+4.4
+Conception du deuxième Sprint . . . . . . . . . . . . . . . . . . . . . . . .
+74
+4.4.1
+Diagramme de classes
+. . . . . . . . . . . . . . . . . . . . . . . . .
+74
+4.4.2
+Diagrammes de séquences
+. . . . . . . . . . . . . . . . . . . . . . .
+75
+4.5
+Etude et réalisation du deuxième sprint . . . . . . . . . . . . . . . . . . . .
+78
+4.5.1
+Gestion des employés . . . . . . . . . . . . . . . . . . . . . . . . . .
+78
+4.5.2
+Gestion des contrats de travail . . . . . . . . . . . . . . . . . . . . .
+80
+4.5.3
+Gestion des documents administratifs . . . . . . . . . . . . . . . . .
+80
+4.5.4
+Historique des fiches de paie . . . . . . . . . . . . . . . . . . . . . .
+81
+4.6
+Tests et Validation
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+82
+4.6.1
+Plan de tests
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+82
+4.7
+Rituels Agiles et Clôture du Sprint
+. . . . . . . . . . . . . . . . . . . . . .
+83
+4.7.1
+Revue du Sprint (Sprint Review)
+. . . . . . . . . . . . . . . . . . .
+83
+2
+
+===== PAGE 4 =====
+4.7.2
+Rétrospective du Sprint (Sprint Retrospective) . . . . . . . . . . . .
+84
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+84
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+86
+5.1
+Spécification fonctionnelle du Sprint 3 . . . . . . . . . . . . . . . . . . . . .
+86
+5.1.1
+User Stories du Sprint 3
+. . . . . . . . . . . . . . . . . . . . . . . .
+86
+5.1.2
+Backlog du Sprint 3 . . . . . . . . . . . . . . . . . . . . . . . . . . .
+88
+5.1.3
+Modélisation fonctionnelle . . . . . . . . . . . . . . . . . . . . . . .
+92
+5.2
+Conception du Sprint 3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+97
+5.2.1
+Diagramme de classes
+. . . . . . . . . . . . . . . . . . . . . . . . .
+97
+5.2.2
+Diagrammes de séquences
+. . . . . . . . . . . . . . . . . . . . . . .
+99
+5.3
+Étude et réalisation du troisième sprint . . . . . . . . . . . . . . . . . . . . 103
+5.3.1
+Gestion des paramètres réglementaires
+. . . . . . . . . . . . . . . . 103
+5.3.2
+Gestion des périodes de paie . . . . . . . . . . . . . . . . . . . . . . 103
+5.3.3
+Calcul et visualisation des bulletins de paie . . . . . . . . . . . . . . 103
+5.3.4
+Gestion des primes et des avances . . . . . . . . . . . . . . . . . . . 105
+5.3.5
+Gestion des congés et des absences
+. . . . . . . . . . . . . . . . . . 105
+5.4
+Tests et Validation
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
+5.4.1
+Plan de tests
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 106
+5.5
+Rituels Agiles et Clôture du Sprint
+. . . . . . . . . . . . . . . . . . . . . . 108
+5.5.1
+Revue du Sprint (Sprint Review)
+. . . . . . . . . . . . . . . . . . . 108
+5.5.2
+Rétrospective du Sprint (Sprint Retrospective) . . . . . . . . . . . . 108
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 109
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 111
+6.1
+User Stories du quatrième sprint . . . . . . . . . . . . . . . . . . . . . . . . 111
+6.2
+Backlog du quatrième Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . 112
+6.3
+Spécification fonctionnelle du quatrième Sprint . . . . . . . . . . . . . . . . 115
+6.3.1
+Diagramme de cas d’utilisation du quatrième Sprint . . . . . . . . . 115
+6.3.2
+Description textuelle des cas d’utilisation . . . . . . . . . . . . . . . 117
+6.4
+Conception du quatrième Sprint . . . . . . . . . . . . . . . . . . . . . . . . 119
+6.4.1
+Diagramme de classes
+. . . . . . . . . . . . . . . . . . . . . . . . . 119
+6.4.2
+Diagrammes de séquences
+. . . . . . . . . . . . . . . . . . . . . . . 120
+6.5
+Étude et réalisation du quatrième sprint
+. . . . . . . . . . . . . . . . . . . 124
+6.5.1
+Gestion comptable et export SAGE . . . . . . . . . . . . . . . . . . 124
+6.5.2
+Conformité réglementaire . . . . . . . . . . . . . . . . . . . . . . . . 124
+6.5.3
+Documents administratifs RH . . . . . . . . . . . . . . . . . . . . . 125
+6.5.4
+Assistant conversationnel RH (Chatbot)
+. . . . . . . . . . . . . . . 126
+6.6
+Tests et Validation
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 126
+6.6.1
+Plan de tests
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 126
+6.7
+Rituels Agiles et Clôture du Sprint
+. . . . . . . . . . . . . . . . . . . . . . 128
+3
+
+===== PAGE 5 =====
+6.7.1
+Revue du Sprint (Sprint Review)
+. . . . . . . . . . . . . . . . . . . 128
+6.7.2
+Rétrospective du Sprint (Sprint Retrospective) . . . . . . . . . . . . 129
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 129
+Bibliographie et Webographie
+130
+4
+
+===== PAGE 6 =====
+Liste des Figures
+1.1
+Logo de Grow Up Technologies
+. . . . . . . . . . . . . . . . . . . . . . . .
+11
+1.2
+Paie tunisie . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+12
+1.3
+Diagramme du cycle Scrum
+. . . . . . . . . . . . . . . . . . . . . . . . . .
+16
+1.4
+Langage de modélisation UML . . . . . . . . . . . . . . . . . . . . . . . . .
+18
+2.5
+Diagramme de cas d’utilisation global de PaieZone RH . . . . . . . . . . .
+34
+2.6
+Architecture physique (déploiement) de PaieZone
+. . . . . . . . . . . . . .
+40
+2.7
+Architecture logique N-tiers de PaieZone (Spring Boot / Angular) . . . . .
+41
+3.1
+Diagramme de cas d’utilisation raffiné du Sprint 1 . . . . . . . . . . . . . .
+49
+3.2
+Diagramme de classes du Sprint 1 . . . . . . . . . . . . . . . . . . . . . . .
+53
+3.3
+Diagramme de séquence Authentification . . . . . . . . . . . . . . . . . . .
+54
+3.4
+Diagramme de séquence Création d’un utilisateur avec enregistrement
+d’audit
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+55
+3.5
+Formulaire d’inscription — Informations personnelles et informations de la
+société . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+56
+3.6
+Page de connexion de PaieZone RH . . . . . . . . . . . . . . . . . . . . . .
+57
+3.7
+Tableau de bord — Vue SuperAdmin après authentification . . . . . . . . .
+57
+3.8
+Tableau de bord — Vue Administrateur après authentification . . . . . . .
+58
+3.9
+Tableau de bord — Vue Employé après authentification . . . . . . . . . . .
+58
+3.10 Tableau de bord — Vue RH après authentification . . . . . . . . . . . . . .
+59
+3.11 Liste des utilisateurs
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+60
+3.12 Formulaire d’ajout et de modification d’un utilisateur . . . . . . . . . . . .
+60
+3.13 Journal d’audit — Liste des actions enregistrées . . . . . . . . . . . . . . .
+61
+3.14 Interface de gestion des départements et postes
+. . . . . . . . . . . . . . .
+62
+4.1
+Diagramme de cas d’utilisation du Sprint 2 . . . . . . . . . . . . . . . . . .
+71
+4.2
+Diagramme de classes du Sprint 2 . . . . . . . . . . . . . . . . . . . . . . .
+75
+4.3
+Diagramme de séquence — Création d’un employé . . . . . . . . . . . . . .
+76
+4.4
+Diagramme de séquence — Association d’un contrat à un employé . . . . .
+77
+4.5
+Liste des employés — Vue d’ensemble du personnel . . . . . . . . . . . . .
+78
+4.6
+Formulaire de création et de modification d’un employé . . . . . . . . . . .
+79
+4.7
+Vue détaillée du profil employé . . . . . . . . . . . . . . . . . . . . . . . . .
+79
+4.8
+Section Contrats du dossier employé . . . . . . . . . . . . . . . . . . . . . .
+80
+5
+
+===== PAGE 7 =====
+4.9
+Section Documents du dossier employé — Upload et consultation
+. . . . .
+81
+4.10 Interface de l’historique de paie d’un employé
+. . . . . . . . . . . . . . . .
+81
+5.1
+Diagramme de cas d’utilisation du Sprint 3 . . . . . . . . . . . . . . . . . .
+93
+5.2
+Diagramme de classes du Sprint 3 — PaieZone . . . . . . . . . . . . . . . .
+98
+5.3
+Diagramme de séquence — Lancer le calcul des bulletins de paie . . . . . .
+99
+5.4
+Diagramme de séquence — Clôturer une période de paie — PaieZone . . . 100
+5.5
+Diagramme de séquence — Demande et traitement d’une avance sur salaire 101
+5.6
+Diagramme de séquence — Demande et validation d’un congé
+. . . . . . . 102
+5.7
+Interface de gestion des paramètres réglementaires . . . . . . . . . . . . . . 103
+5.8
+Interface de gestion des périodes de paie
+. . . . . . . . . . . . . . . . . . . 104
+5.9
+Interface de calcul et de visualisation des bulletins de paie
+. . . . . . . . . 104
+5.10 Interface de gestion des primes et des avances
+. . . . . . . . . . . . . . . . 105
+5.11 Interface de gestion des congés et des absences . . . . . . . . . . . . . . . . 106
+6.1
+Diagramme de cas d’utilisation du Sprint 4 . . . . . . . . . . . . . . . . . . 116
+6.2
+Diagramme de classes du Sprint 4 . . . . . . . . . . . . . . . . . . . . . . . 121
+6.3
+Diagramme de séquence — Générer une déclaration de conformité . . . . . 122
+6.4
+Diagramme de séquence — Interaction avec le chatbot RH . . . . . . . . . 123
+6.5
+Interface de gestion du plan comptable et export SAGE . . . . . . . . . . . 124
+6.6
+Interface de l’onglet Conformité — Déclarations CNSS, CAVIS et IRPP . . 125
+6.7
+Génération de l’attestation de salaire et du certificat de travail . . . . . . . 125
+6.8
+Composant chatbot RH flottant — Détection d’intentions et actions contextuelles126
+6
+
+===== PAGE 8 =====
+Liste des Tableaux
+1.1
+Étude comparative détaillée des solutions de gestion RH et paie . . . . . .
+14
+2.2
+Tableau des acteurs et responsabilités . . . . . . . . . . . . . . . . . . . . .
+21
+2.3
+Tableau des besoins fonctionnels par acteur . . . . . . . . . . . . . . . . . .
+24
+2.4
+Équipe Scrum du projet PaieZone RH
+. . . . . . . . . . . . . . . . . . . .
+25
+2.6
+Tableau de planification préliminaire des sprints . . . . . . . . . . . . . . .
+35
+2.7
+Caractéristiques matérielles et aperçu du poste n°1
+. . . . . . . . . . . . .
+36
+2.8
+Caractéristiques matérielles et aperçu du poste n°2
+. . . . . . . . . . . . .
+36
+2.9
+Outils et technologies — Partie 1 . . . . . . . . . . . . . . . . . . . . . . .
+38
+2.10 Outils et technologies — Partie 2 . . . . . . . . . . . . . . . . . . . . . . .
+39
+3.1
+User Stories sélectionnées pour le premier sprint . . . . . . . . . . . . . . .
+44
+3.2
+Backlog détaillé du premier Sprint . . . . . . . . . . . . . . . . . . . . . . .
+45
+3.2
+Backlog détaillé du premier Sprint . . . . . . . . . . . . . . . . . . . . . . .
+46
+3.2
+Backlog détaillé du premier Sprint . . . . . . . . . . . . . . . . . . . . . . .
+47
+3.2
+Backlog détaillé du premier Sprint . . . . . . . . . . . . . . . . . . . . . . .
+48
+3.3
+Description textuelle du cas d’utilisation S’authentifier
+. . . . . . . . . . .
+50
+3.4
+Description textuelle du cas d’utilisation S’inscrire et enregistrer la société
+51
+3.5
+Description textuelle du cas d’utilisation Gérer les utilisateurs
+. . . . . . .
+52
+3.1
+Récapitulatif des cas de test du Sprint 1
+. . . . . . . . . . . . . . . . . . .
+63
+4.2
+User Stories sélectionnées pour le deuxième sprint . . . . . . . . . . . . . .
+67
+4.2
+User Stories sélectionnées pour le deuxième sprint . . . . . . . . . . . . . .
+68
+4.3
+Backlog détaillé du deuxième Sprint . . . . . . . . . . . . . . . . . . . . . .
+68
+4.3
+Backlog détaillé du deuxième Sprint . . . . . . . . . . . . . . . . . . . . . .
+69
+4.3
+Backlog détaillé du deuxième Sprint . . . . . . . . . . . . . . . . . . . . . .
+70
+4.4
+Description textuelle du cas d’utilisation Créer un employé . . . . . . . . .
+72
+4.5
+Description textuelle du cas d’utilisation Gérer les contrats de travail
+. . .
+73
+4.6
+Description textuelle du cas d’utilisation Déposer un document administratif 74
+4.2
+Récapitulatif des cas de test du Sprint 2
+. . . . . . . . . . . . . . . . . . .
+82
+5.1
+User Stories du Sprint 3 — PaieZone . . . . . . . . . . . . . . . . . . . . .
+86
+5.2
+Backlog détaillé du troisième Sprint . . . . . . . . . . . . . . . . . . . . . .
+88
+5.3
+Description textuelle du cas d’utilisation Lancer le calcul des bulletins de paie 94
+5.4
+Description textuelle du cas d’utilisation Clôturer une période de paie . . .
+95
+7
+
+===== PAGE 9 =====
+5.5
+Description textuelle du cas d’utilisation Demande et traitement d’une
+avance sur salaire . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+96
+5.6
+Plan de tests du Sprint 3 — PaieZone . . . . . . . . . . . . . . . . . . . . . 106
+5.7
+Rétrospective du Sprint 3 — PaieZone
+. . . . . . . . . . . . . . . . . . . . 109
+6.1
+User Stories sélectionnées pour le quatrième sprint . . . . . . . . . . . . . . 111
+6.2
+Backlog détaillé du quatrième Sprint
+. . . . . . . . . . . . . . . . . . . . . 113
+6.3
+Description textuelle du cas d’utilisation Générer les déclarations de conformité117
+6.4
+Description textuelle du cas d’utilisation Interagir avec le chatbot RH . . . 118
+6.2
+Récapitulatif des cas de test du Sprint 4
+. . . . . . . . . . . . . . . . . . . 127
+8
+
+===== PAGE 10 =====
+Chapitre 1
+CONTEXTE GÉNÉRAL
+Plan
+1
+Organisme d’accueil . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+2
+Présentation du projet . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+3
+La démarche adoptée . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+4
+Langage de Modélisation UML . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+
+===== PAGE 11 =====
+Introduction
+Dans ce chapitre, nous présenterons tout d’abord l’entreprise d’accueil dans laquelle
+nous avons effectué notre stage de fin d’études. Nous procéderons ensuite à une analyse de
+l’existant sur le marché, afin d’identifier les pratiques et solutions actuellement utilisées.
+Enfin, nous détaillerons la démarche méthodologique adoptée pour la conception et le
+développement de notre projet.
+1.1
+Organisme d’accueil : Grow Up Technologies
+Le présent projet de fin d’études a été réalisé au sein de Grow Up Technologies, une
+entreprise tunisienne innovante spécialisée dans le développement de solutions logicielles
+sur mesure. En se positionnant comme un partenaire technologique agile, l’entreprise
+se distingue par l’intégration systématique de l’Intelligence Artificielle (IA) au cœur
+de ses processus, accompagnant ainsi les PME et les grandes organisations dans leur
+transformation numérique à travers la Tunisie, l’Europe (France, Belgique, Suisse) et
+l’Amérique du Nord (Québec).
+L’expertise de l’entreprise s’articule autour de quatre axes majeurs :
+• Ingénierie logicielle Web et Mobile : Conception d’applications personnalisées,
+performantes et évolutives, répondant aux exigences spécifiques de chaque secteur
+d’activité.
+• Automatisation des processus : Mise en œuvre de solutions intelligentes
+visant à optimiser la productivité opérationnelle en réduisant les tâches manuelles
+chronophages.
+• Chatbots et agents IA : Développement de systèmes conversationnels avancés
+pour fluidifier les interactions utilisateurs et moderniser le support client.
+• Solutions d’IA générative : Exploitation de modèles de pointe pour la production
+de contenus et l’aide à la décision dans divers contextes professionnels.
+La vision de Grow Up Technologies repose sur la fusion entre l’ingénierie logicielle classique
+et les technologies de rupture. Cette synergie permet de transformer des problématiques
+complexes en leviers de croissance concrets, tout en démocratisant l’accès aux outils
+d’intelligence artificielle pour l’ensemble de ses partenaires francophones.
+1.2
+Présentation du Projet
+PaieZone RH est un module métier développé dans le cadre de la plateforme SaaS
+ComptaZone, une solution intégrée destinée aux experts-comptables et aux cabinets
+10
+
+===== PAGE 12 =====
+Figure 1.1 – Logo de Grow Up Technologies
+comptables tunisiens. ComptaZone a pour ambition de centraliser l’ensemble des outils
+de gestion utilisés par les professionnels du chiffre — comptabilité générale, facturation,
+déclarations fiscales, gestion RH et paie — au sein d’une seule plateforme en ligne, accessible
+depuis n’importe quel appareil et en tout lieu.
+1.2.1
+Analyse de l’Existant
+Il est nécessaire, avant la réalisation d’un tel projet, d’étudier les projets similaires
+dans le but de profiter de leurs avantages et de dégager leurs inconvénients.
+1.2.2
+État de l’art : Le marché de la gestion RH et paie en
+Tunisie
+L’analyse du marché tunisien révèle une coexistence entre méthodes traditionnelles et
+solutions numériques émergentes. Ces approches peuvent être classifiées en trois catégories
+principales selon leur maturité technologique et leur accessibilité.
+1. Les feuilles de calcul (Approche manuelle)
+Excel reste la solution la plus répandue dans les PME tunisiennes pour le calcul de la paie.
+Son utilisation est souvent le résultat d’un manque de budget ou d’une méconnaissance
+des outils spécialisés. Le comptable crée manuellement des formules de calcul CNSS et
+IRPP, maintient des tableaux de suivi des congés et génère des bulletins en formatant
+manuellement des cellules.
+2. Les logiciels Desktop (Solutions locales spécialisées)
+Plusieurs logiciels de gestion de paie desktop sont disponibles sur le marché tunisien.
+Parmi les plus utilisés, on retrouve des solutions comme les logiciels proposés par Megasoft
+ERP, PGPRO Tunisie, DSPAYE et d’autres éditeurs locaux. Ces solutions offrent des
+fonctionnalités de calcul de bulletin de paie, de gestion des cotisations CNSS, de gestion
+des congés et d’édition de déclarations. Elles sont généralement installées sur un poste de
+travail et fonctionnent avec une base de données locale (SQL Server, Access).
+11
+
+===== PAGE 13 =====
+3. Les solutions Cloud et Plateformes (SaaS)
+Paie-tunisie.com est décrit comme le premier site tunisien dédié à la gestion en ligne
+de la paie et aux informations juridico-sociales. Lancé par des experts comptables et
+des compétences en ingénierie informatique, il permet aux PME, professions libérales et
+structures moyennes de gérer en ligne l’édition de fiches de paie. La plateforme propose
+un simulateur de paie intégrant le barème d’imposition de la Loi de Finances 2026, une
+solution d’essai gratuite d’un mois, et des solutions payantes avec abonnement mensuel.
+Elle inclut également une base documentaire sur les réglementations (code du travail,
+conventions collectives, CNSS, lois de finances).
+Figure 1.2 – Paie tunisie
+1.2.3
+Critique de l’Existant
+L’analyse des solutions de gestion RH et paie disponibles sur le marché tunisien met
+en évidence plusieurs lacunes technologiques et fonctionnelles qui freinent l’efficacité
+opérationnelle des entreprises.
+• Absence d’IA et d’automatisation intelligente : Aucune solution locale
+n’intègre actuellement d’intelligence artificielle. Les interactions restent purement
+manuelles : l’employé doit solliciter directement le service RH pour chaque besoin
+(attestations, bulletins, congés). L’absence de chatbots ou d’agents conversationnels
+s’exprimant en langage naturel s’accompagne d’une surcharge de travail pour les
+gestionnaires et d’une expérience utilisateur limitée.
+• Déficit de mobilité et de flexibilité (Cloud/SaaS) : La prédominance des
+logiciels desktop restreint l’accès aux données à un poste de travail physique unique.
+Cette architecture interdit le travail à distance pour le comptable, la validation
+mobile pour le manager et la consultation en libre-service pour l’employé. De plus,
+12
+
+===== PAGE 14 =====
+le manque d’architecture multi-tenant empêche une gestion unifiée de plusieurs
+portefeuilles clients pour les cabinets d’expertise.
+• Lourdeur des processus administratifs : La gestion des dossiers (contrats,
+documents administratifs, pointages) repose encore sur de nombreuses saisies
+répétitives. Les solutions actuelles manquent de workflows de validation multi-niveaux
+automatisés (Employé →Manager →RH) et de systèmes de notifications intelligentes
+pour les événements critiques, tels que l’expiration des contrats CDD ou les
+reliquats de congés.
+• Complexité des mises à jour réglementaires : L’évolution annuelle de la
+législation (notamment la Loi de Finances 2026) impose une veille constante.
+Sur les logiciels classiques, la mise à jour des barèmes IRPP, des taux CNSS ou
+du SMIG nécessite une intervention manuelle ou une réinstallation logicielle. Ce
+processus rigide augmente le risque d’erreurs de calcul, pouvant entraîner des
+bulletins non conformes et des sanctions fiscales.
+Ces insuffisances justifient le besoin d’une solution moderne, centrée sur l’automatisation
+par l’IA et l’accessibilité SaaS, afin de répondre aux exigences de conformité et de
+productivité des organisations tunisiennes.
+1.2.4
+Solution Proposée : La Plateforme PaieZone RH
+Pour répondre aux lacunes du marché, nous proposons le développement de PaieZone
+RH, une solution SaaS multi-tenant nativement conçue pour moderniser la gestion sociale
+en Tunisie.
+1.2.4.1
+Description et Périmètre Fonctionnel
+L’application repose sur une architecture moderne de microservices logiques. Elle
+centralise l’intégralité du cycle RH à travers les axes suivants :
+• Gestion administrative et contractuelle : Suivi exhaustif des dossiers employés
+et pilotage des contrats spécifiques au droit tunisien (CDI, CDD, CIVP, KARAMA,
+Stage).
+• Moteur de paie conforme : Calcul automatisé intégrant les règles fiscales et
+sociales de la Loi de Finances 2026 (CNSS, CAVIS, IRPP).
+• Pilotage des temps et activités : Gestion dématérialisée des congés avec
+workflows de validation et suivi automatisé du pointage.
+• Déclarations et comptabilité : Génération automatique des documents légaux
+et intégration fluide des écritures comptables.
+• Innovation IA : Intégration d’un Chatbot RH intelligent basé sur une architecture
+13
+
+===== PAGE 15 =====
+RAG (Retrieval Augmented Generation), permettant une interaction en langage
+naturel avec la base documentaire de l’entreprise.
+1.2.4.2
+Valeur ajoutée du modèle SaaS et de l’IA
+L’adoption d’une architecture Cloud couplée à l’intelligence artificielle offre des avantages
+stratégiques déterminants :
+• Accessibilité et Mobilité : Disponibilité universelle sur tous les terminaux,
+éliminant les contraintes d’installation locale et favorisant le travail collaboratif.
+• Efficience Multi-tenant : Capacité pour un cabinet comptable ou une direction
+RH de piloter plusieurs entités (tenants) via une interface unique, sécurisée et
+isolée au niveau de la base de données.
+• Agilité Réglementaire : Déploiement centralisé et instantané des mises à jour
+fiscales, garantissant une conformité permanente sans intervention manuelle des
+utilisateurs.
+• Self-service Employé par l’IA : L’intégration du Chatbot RH IA apporte une
+dimension innovante au self-service employé en garantissant une disponibilité
+continue 24h/24. Cette réactivité permet aux salariés d’obtenir un support
+immédiat pour leurs requêtes courantes sans solliciter directement les gestionnaires
+RH, optimisant ainsi le temps de chacun. Au-delà de la simple assistance, le chatbot
+est capable d’effectuer des automatisations directes, telles que la soumission d’une
+demande de congé ou la récupération instantanée d’un bulletin de paie. Enfin, grâce
+au système RAG, l’outil fait preuve d’une véritable intelligence documentaire en
+interprétant de manière précise le règlement intérieur et les conventions collectives
+de l’entreprise pour fournir des réponses contextualisées et fiables.
+• Sécurité et Flexibilité : Protection renforcée des données et modèle économique
+évolutif (Starter, PME, Business) adapté à la croissance de l’organisation.
+1.2.5
+Comparaison avec l’existant
+Table 1.1: Étude comparative détaillée des solutions de
+gestion RH et paie
+Critères de
+comparaison
+Excel
+Logiciel
+Desktop
+paie-tunisie.com PaieZone RH
+Accessibilité
+Local
+uniquement
+Local
+uniquement
+Web
+navigateur
+Web et API
+14
+
+===== PAGE 16 =====
+Critères de
+comparaison
+Excel
+Logiciel
+Desktop
+paie-tunisie.com PaieZone RH
+Multi-tenant
+(Cabinet)
+Non
+Non
+Non
+Oui (Schéma
+dédié)
+Calcul CNSS /
+IRPP
+Manuel
+(formules)
+Automatique
+Automatique
+Automatique
++ versionné
+Mise à jour (Loi
+2026)
+Manuelle
+Mise à jour
+éditeur
+Partielle
+Automatique
+centralisée
+Gestion des
+congés
+Tableau
+manuel
+Basique
+Basique
+Workflow
+multi-niveaux
+Pointage et
+Temps
+Non
+Partiel
+Non
+Complet
+(Badge,
+Import)
+GED /
+Documents RH
+Non
+Non
+Non
+Oui
+(Archivage +
+Expiry)
+Intégration
+comptable
+Non
+Partielle
+Non
+Auto (Plan
+comptable)
+Déclarations
+officielles
+Non
+Oui
+CNSS
+uniquement
+CNSS, CAVIS,
+IRPP
+Chatbot IA /
+RAG
+Non
+Non
+Non
+Oui
+(Multi-canal)
+Authentification
+2FA
+Non
+Non
+Non
+Oui (TOTP)
+Journal d’audit
+Non
+Non
+Non
+Complet
+(Toutes
+actions)
+API REST
+documentée
+Non
+Non
+Non
+Oui (Swagger)
+1.3
+Démarche Adoptée
+Dans un contexte marqué par la complexité croissante des systèmes informatiques,
+le recours à des méthodologies de développement adaptées devient indispensable. Ces
+dernières visent à assurer un suivi continu du projet durant tout son cycle de vie, dans le
+but de produire un logiciel de haute qualité, fiable et conforme aux exigences des clients.
+15
+
+===== PAGE 17 =====
+1.3.1
+Choix du cadre méthodologique
+Le développement de PaieZone RH s’inscrit dans un contexte d’incertitude partielle sur
+les priorités fonctionnelles et de contraintes réglementaires évolutives. Face à cette réalité,
+la méthodologie agile Scrum a été choisie pour sa capacité à livrer de la valeur de manière
+incrémentale, à s’adapter aux changements réglementaires en cours de développement, et
+à impliquer régulièrement les parties prenantes dans la validation des fonctionnalités.
+1.3.2
+Présentation de Scrum
+Scrum est un framework agile de gestion de projet utilisé pour le développement de
+produits complexes et innovants. Contrairement aux méthodes traditionnelles en cascade,
+Scrum repose sur une approche itérative et incrémentale, ce qui permet à l’équipe de livrer
+progressivement des fonctionnalités tout en s’adaptant aux changements et aux retours
+des parties prenantes.
+Le cœur de Scrum repose sur les sprints, des cycles de travail courts et réguliers au
+cours desquels l’équipe progresse de manière itérative pour atteindre des objectifs précis.
+À la fin de chaque sprint, un incrément fonctionnel du produit est livré, permettant de
+recueillir des retours et d’ajuster le projet si nécessaire.
+Figure 1.3 – Diagramme du cycle Scrum
+16
+
+===== PAGE 18 =====
+1.3.3
+Raisons du choix de Scrum
+Le choix de Scrum pour ce projet repose sur plusieurs avantages clés :
+• Livraison continue et incréments testables : Chaque sprint produit un
+incrément fonctionnel et vérifiable, réduisant le risque de livrer un produit non
+conforme aux attentes.
+• Flexibilité : Scrum permet d’intégrer facilement les changements et les nouvelles
+exigences tout au long du projet, sans perturber l’avancement global.
+• Transparence : Les cérémonies régulières (revue, rétrospective, daily stand-up)
+assurent une visibilité claire sur l’état du projet et favorisent une communication
+fluide entre les parties prenantes.
+• Satisfaction client : L’approche itérative et centrée sur la valeur métier garantit
+la livraison rapide de fonctionnalités utiles et adaptées aux besoins réels des clients.
+• Engagement de l’équipe : Scrum encourage la collaboration, l’auto-organisation
+et l’amélioration continue, renforçant la motivation et l’implication des membres
+de l’équipe.
+1.3.4
+Les rôles Scrum
+• Product Owner (PO) : Responsable de maximiser la valeur du produit, il gère
+le backlog produit, définit les priorités selon la valeur métier et communique les
+besoins des parties prenantes à l’équipe de développement.
+• Scrum Master (SM) : Garant de l’application de Scrum, il facilite les cérémonies,
+supprime les obstacles rencontrés par l’équipe et accompagne celle-ci dans l’amélioration
+continue de ses pratiques.
+• Équipe de développement : Composée de professionnels multidisciplinaires,
+elle est auto-organisée et responsable de la réalisation des incréments de produit
+à chaque sprint. L’équipe décide collectivement de la meilleure manière de
+transformer les éléments du backlog en fonctionnalités livrables.
+1.4
+Langage de modélisation UML
+Dans le cadre de la formalisation et du développement de nos idées, UML (Unified
+Modeling Language) constitue un langage de modélisation graphique standardisé par
+l’Object Management Group. Il permet de structurer, représenter et documenter un
+système logiciel de manière indépendante du langage de programmation utilisé. UML
+est également un outil de communication efficace entre les acteurs techniques et métier,
+offrant une représentation claire de la structure statique et du comportement dynamique
+des systèmes à travers différents types de diagrammes.
+17
+
+===== PAGE 19 =====
+• Diagramme de cas d’utilisation : Le diagramme de cas d’utilisation illustre
+les interactions entre les acteurs et le système. Il identifie les utilisateurs (acteurs)
+et les fonctionnalités accessibles (cas d’utilisation). Les relations include et extend
+permettent de gérer les comportements communs ou optionnels. Ce diagramme
+constitue généralement le premier livrable dans l’analyse fonctionnelle, définissant
+le périmètre du système.
+• Diagramme de classes : Le diagramme de classes représente la structure statique
+d’un système. Il décrit les classes, leurs attributs, leurs méthodes ainsi que les
+relations qui les unissent (associations, héritage, composition, agrégation). Ce
+diagramme sert souvent de référence pour la conception de la base de données et
+pour guider la génération du code.
+• Diagramme de séquence : Le diagramme de séquence décrit la dynamique
+des interactions entre les composants du système dans le temps. Il montre l’ordre
+chronologique des messages échangés entre acteurs, objets et services pour réaliser
+un scénario donné. Ce diagramme est particulièrement utile pour modéliser des
+flux complexes incluant conditions, boucles et appels à des services externes.
+Figure 1.4 – Langage de modélisation UML
+Conclusion
+Ce chapitre a présenté le contexte du projet, analysé les limites des solutions existantes
+et justifié les choix méthodologiques adoptés. Ces éléments constituent le cadre de référence
+sur lequel s’appuie l’ensemble du travail de conception et de développement présenté dans
+les chapitres suivants.
+18
+
+===== PAGE 20 =====
+Chapitre 2
+ANALYSE ET PLANIFICATION
+Plan
+1
+Identification des acteurs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .20
+2
+Spécification des besoins . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+3
+Méthodologie et pilotage . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+4
+Backlog et planification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+5
+Environnement technique . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+6
+Architectures du projet . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .37
+
+===== PAGE 21 =====
+Introduction
+Ce chapitre constitue la phase de transition entre la compréhension du contexte
+et la réalisation technique. Il s’articule autour de l’analyse rigoureuse des besoins des
+utilisateurs de la plateforme PaieZone RH et de la planification des étapes de développement.
+Nous définirons ici les fondations sur lesquelles repose la solution, notamment à travers
+l’identification des acteurs, l’établissement du backlog produit et le choix des architectures
+logicielles et physiques.
+2.5
+Identification des acteurs
+L’identification des acteurs permet de comprendre qui interagit avec le système et
+quelles sont leurs responsabilités respectives au sein de la solution SaaS.
+NB : Il est à noter que l’acteur Admin hérite de la totalité des fonctionnalités et
+des droits d’accès attribués à l’acteur RH, lui permettant ainsi d’exécuter l’ensemble des
+tâches de ce dernier en plus de ses propres prérogatives d’administration.
+Acteur
+Description et responsabilités
+Super Admin
+• Visualisation et supervision des tenants (entreprises clientes).
+• Gestion des abonnements et des quotas de la plateforme SaaS.
+• Maintenance globale du système.
+• Configuration et mise à jour des paramètres réglementaires
+globaux.
+• Gestion et injection automatisée par IA des matrices de
+conventions collectives sectorielles tunisiennes.
+Admin
+Entreprise
+• Gestion des utilisateurs internes / employés.
+• Suivi des journaux d’audit.
+• Paramétrage et modification des informations légales de
+l’entreprise (Raison sociale, identifiant unique).
+• Supervision et suivi du type d’abonnement souscrit et des quotas
+d’utilisation de la plateforme.
+20
+
+===== PAGE 22 =====
+Acteur
+Description et responsabilités
+RH Comptable
+• Paramétrage de la structure de l’entreprise (départements,
+postes).
+• Gestion des dossiers salariés et des contrats .
+• Supervision de la gestion opérationnelle : validation des
+demandes d’avances, des congés et suivi des absences.
+• Supervision du moteur de calcul de la paie et validation finale
+des bulletins mensuels.
+• Configuration de l’intégration comptable : paramétrage du plan
+comptable et génération automatique des écritures comptables
+et de conformité.
+• Interaction avec le chatbot IA pour le support interne.
+Employé
+• Consultation de l’espace personnel et soumission des demandes
+de congés et avances.
+• Interaction avec le chatbot IA pour le support interne.
+• Visualisation et téléchargement de ses bulletins de paie.
+Table 2.2: Tableau des acteurs et responsabilités
+2.6
+Spécification des besoins
+Dans cette section, nous allons nous intéresser aux besoins des utilisateurs de notre
+plateforme en définissant les spécifications fonctionnelles et non fonctionnelles. L’objectif
+est de concevoir une application performante et adaptée aux attentes du client, afin
+d’élaborer le Backlog du produit de manière claire et structurée.
+2.6.1
+Besoins fonctionnels
+Les besoins fonctionnels de PaieZone ont été identifiés et organisés par acteur. Le
+tableau suivant présente, pour chaque acteur, l’ensemble des fonctionnalités attendues du
+système.
+21
+
+===== PAGE 23 =====
+Acteur
+Fonctionnalité
+Utilisateur
+S’authentifier au système (2FA pour comptes sensibles)
+Super Admin
+Visualiser et superviser les tenants (entreprises clientes)
+Gérer les entreprises (supprimer, suspendre, réactiver)
+Gérer les abonnements (affecter, modifier)
+Gérer les paramètres réglementaires (consulter, ajouter, modifier,
+consulter l’historique)
+Gérer les abonnements (affecter, modifier)
+Gérer le référentiel des conventions sectorielles (consultation,
+modification et ajout intelligent par IA)
+Admin
+Entreprise
+Créer et enregistrer une entreprise
+Modifier les informations légales de l’entreprise (raison sociale,
+identifiant unique)
+Superviser et suivre le type d’abonnement souscrit
+Gérer les utilisateurs internes (créer, modifier, désactiver)
+Consulter et filtrer le journal d’audit
+Gérer la structure organisationnelle (départements, postes)
+Gérer les employés (créer, modifier, désactiver, consulter)
+Gérer les contrats de travail (associer, modifier, résilier)
+Gérer les documents administratifs et légaux
+Gérer les périodes de paie (créer, modifier, clôturer)
+Gérer les rubriques et primes de paie
+22
+
+===== PAGE 24 =====
+Acteur
+Fonctionnalité
+Gérer les demandes d’avance (valider, refuser)
+Générer les bulletins de paie
+Gérer les congés et absences (types, validation, jours fériés)
+Configurer et exporter les données comptables
+Générer les déclarations réglementaires (CNSS, CAVIS, IRPP)
+Générer les documents officiels (attestation de salaire, certificat
+de travail)
+RH / Comptable
+Gérer la structure organisationnelle (départements, postes)
+Gérer les employés (créer, modifier, désactiver, consulter)
+Gérer les contrats de travail (associer, modifier, résilier)
+Gérer les documents administratifs et légaux
+Consulter l’historique des modifications du dossier employé
+Gérer les périodes de paie (créer, modifier, clôturer)
+Gérer les rubriques et primes de paie
+Gérer les demandes d’avance (valider, refuser)
+Générer les bulletins de paie
+Gérer les congés et absences (types, validation, jours fériés)
+Configurer et exporter les données comptables
+Générer les déclarations réglementaires (CNSS salarié, CNSS
+employeur, CAVIS, IRPP)
+23
+
+===== PAGE 25 =====
+Acteur
+Fonctionnalité
+Générer les documents officiels (attestation de salaire, certificat
+de travail)
+Employé
+Consulter
+son
+espace
+personnel
+(profil,
+informations
+contractuelles)
+Visualiser et télécharger ses bulletins de paie
+Soumettre et suivre ses demandes de congés
+Consulter son solde de congés
+Soumettre une demande d’avance sur salaire
+Accéder aux services RH via le chatbot intelligent (questions RH,
+demandes)
+Table 2.3: Tableau des besoins fonctionnels par acteur
+2.6.2
+Besoins non fonctionnels
+Au-delà des fonctionnalités métier, la qualité d’une plateforme SaaS repose sur un
+ensemble de contraintes non fonctionnelles qui conditionnent sa fiabilité, sa sécurité et son
+acceptabilité par les utilisateurs. Les exigences non fonctionnelles de PaieZone sont les
+suivantes :
+• Confidentialité : Chaque entreprise cliente (tenant) bénéficie d’une isolation
+totale de ses données par rapport aux autres tenants, implémentée via un schéma
+PostgreSQL dédié par entreprise. Aucun utilisateur ne peut accéder aux données
+d’un autre tenant.
+• Sécurité : L’authentification est basée sur des tokens JSON Web Token (JWT)
+à durée de vie limitée. Le contrôle d’accès est implémenté selon le modèle RBAC
+(Role-Based Access Control) avec annotation @PreAuthorize au niveau des services
+Spring Boot. L’authentification à deux facteurs (2FA) est disponible pour les
+comptes à accès sensible (Super Admin, Admin). Un journal d’audit immuable
+(append-only) enregistre toutes les actions avec horodatage, identifiant de l’auteur
+et valeurs avant/après.
+• Responsivité : L’application Angular est une SPA responsive. Les temps de
+24
+
+===== PAGE 26 =====
+réponse doivent être inférieurs à 2 secondes et le moteur de paie doit traiter 500
+employés en moins de 30 secondes.
+• Extensibilité : L’architecture modulaire permet d’ajouter des modules ou des
+types de déclarations sans modifier l’existant. Les taux légaux sont stockés en
+base de données pour une mise à jour facile et modifiables via l’interface sans
+redéploiement applicatif, garantissant l’adaptation annuelle aux évolutions de la
+Loi de Finances tunisienne.
+• Performance : Utilisation du connection pooling HikariCP et d’Apache Kafka
+pour le traitement asynchrone des événements, garantissant la fluidité même avec
+plusieurs dizaines de tenants actifs.
+2.7
+Pilotage du projet avec Scrum
+2.7.1
+Équipe et rôles Scrum
+Le tableau suivant présente la composition de l’équipe projet et l’attribution des rôles
+selon le cadre Scrum :
+Rôle Scrum
+Membre(s) de l’équipe
+Product Owner (PO)
+Hadj Amor Ramzi
+Scrum Master (SM)
+Hmidi Salim
+Équipe de développement
+Chayma Bouguerra et Takwa Boughmadi
+Table 2.4 – Équipe Scrum du projet PaieZone RH
+2.8
+Backlog du Produit
+Le Product Backlog est l’artefact central de la méthode Scrum. Il constitue la liste
+ordonnée de tout ce qui est connu comme étant nécessaire dans le produit, et représente la
+seule source des exigences pour tout changement à apporter au produit. Il est la propriété
+exclusive du Product Owner, qui en assure la priorisation et le raffinement continu au fil
+du projet.
+25
+
+===== PAGE 27 =====
+Voici une explication détaillée des différents termes utilisés dans le Product Backlog :
+• ID : Identifiant unique de la User Story, permettant de la référencer sans ambiguïté
+dans le Product Backlog.
+• Épic : Thème fonctionnel majeur regroupant plusieurs User Stories liées à un
+même domaine métier.
+• User Story : Exigence fonctionnelle exprimée du point de vue de l’utilisateur,
+selon le format canonique : « En tant que [acteur], je veux [action] afin de [bénéfice
+métier]. »
+• Description : Précisions contextuelles complémentaires à la User Story, incluant
+les critères d’acceptation, les règles métier applicables et les contraintes techniques
+à respecter.
+• Priorité : Niveau d’importance de la User Story pour la réussite du produit,
+déterminé par le Product Owner selon la valeur métier et les dépendances
+techniques. Quatre niveaux : Critique, Haute, Moyenne, Faible.
+ID
+Épic
+User Story
+Description
+Priorité
+1
+Gestion
+de
+l’authentification et
+des accès
+En tant qu’utilisateur, je
+veux m’authentifier
+Afin d’accéder au système
+Critique
+2
+Gestion des
+entreprises
+En tant qu’Admin, je
+veux créer une entreprise
+Afin de l’enregistrer dans le
+système
+Critique
+En
+tant
+qu’Admin,
+je
+veux
+modifier
+une
+entreprise
+Afin de mettre à jour ses
+informations
+Haute
+En tant qu’Admin, je
+veux
+désactiver
+une
+entreprise
+Afin de suspendre son accès
+Haute
+Suite page suivante...
+26
+
+===== PAGE 28 =====
+ID
+Épic
+User Story
+Description
+Priorité
+En
+tant
+que
+Super
+Admin, je veux affecter
+un abonnement
+Afin de gérer les droits
+Critique
+En
+tant
+que
+Super
+Admin, je veux modifier
+un abonnement
+Afin de changer le plan
+Moyenne
+En
+tant
+que
+Super
+Admin, je veux résilier
+un abonnement
+Afin d’arrêter le service
+Moyenne
+3
+Gestion des
+utilisateurs et des
+habilitations
+En tant qu’Admin, je
+veux créer un utilisateur
+Afin de lui donner un accès
+Critique
+En
+tant
+qu’Admin,
+je
+veux
+modifier
+un
+utilisateur
+Afin de mettre à jour ses
+données et ses accès
+Haute
+En
+tant
+qu’Admin,
+je
+veux
+désactiver
+un
+utilisateur
+Afin de retirer son accès
+Haute
+4
+Traçabilité et
+journal d’audit
+système
+En tant qu’Admin, je
+veux consulter le journal
+d’audit
+Afin de voir les actions
+effectuées
+Haute
+En tant qu’Admin, je
+veux
+filtrer
+le
+journal
+d’audit
+Afin
+de
+rechercher
+des
+actions spécifiques
+Moyenne
+Suite page suivante...
+27
+
+===== PAGE 29 =====
+ID
+Épic
+User Story
+Description
+Priorité
+5
+Gestion de la
+structure
+organisationnelle
+En tant qu’Admin/RH,
+je
+veux
+créer
+un
+département
+Afin
+de
+structurer
+l’entreprise
+Haute
+En tant qu’Admin/RH,
+je
+veux
+modifier
+un
+département
+Afin de mettre à jour la
+structure
+Haute
+En tant qu’Admin/RH,
+je
+veux
+désactiver
+un
+département
+Afin de le retirer de la
+structure
+Moyenne
+En tant qu’Admin/RH, je
+veux créer un poste
+Afin de définir un rôle
+Haute
+En tant qu’Admin/RH, je
+veux modifier un poste
+Afin de l’adapter
+Moyenne
+En tant qu’Admin/RH, je
+veux désactiver un poste
+Afin de le supprimer
+Moyenne
+6
+Gestion du capital
+humain
+En tant qu’Admin/RH, je
+veux consulter la liste des
+employés
+Afin
+d’avoir
+une
+vue
+d’ensemble du personnel
+Haute
+En tant qu’Admin/RH, je
+veux créer un employé
+Afin de l’ajouter au système
+Critique
+En tant qu’Admin/RH, je
+veux consulter le profil
+d’un employé
+Afin de voir ses informations
+Haute
+Suite page suivante...
+28
+
+===== PAGE 30 =====
+ID
+Épic
+User Story
+Description
+Priorité
+En tant qu’Admin/RH, je
+veux modifier un employé
+Afin de mettre à jour ses
+données
+Haute
+En tant qu’Admin/RH,
+je
+veux
+désactiver
+un
+employé
+Afin de gérer sa sortie
+Haute
+7
+Gestion du cycle de
+vie des contrats de
+travail
+En tant que RH, je veux
+associer un contrat à un
+employé
+Afin de formaliser la relation
+de travail
+Critique
+En tant que RH, je veux
+modifier un contrat
+Afin
+de
+changer
+ses
+conditions
+Haute
+En tant que RH, je veux
+résilier un contrat
+Afin
+de
+terminer
+une
+relation de travail
+Haute
+8
+Gestion
+des
+documents
+administratifs
+et légaux
+En tant que RH, je veux
+uploader un document
+Afin de le stocker dans le
+dossier employé
+Moyenne
+9
+Historisation
+et
+suivi
+En tant qu’Admin/RH,
+je
+veux
+consulter
+l’historique
+des
+modifications
+Afin
+de
+tracer
+les
+changements
+du
+dossier
+employé
+Haute
+10
+Gestion des
+parametres
+réglementaires
+En
+tant
+que
+Super
+Admin, je veux consulter
+la liste des paramètres
+réglementaires
+Afin de vérifier les taux
+légaux
+Haute
+Suite page suivante...
+29
+
+===== PAGE 31 =====
+ID
+Épic
+User Story
+Description
+Priorité
+En
+tant
+que
+Super
+Admin, je veux ajouter
+un nouveau paramètre
+réglementaire
+Afin d’intégrer une nouvelle
+règle légale
+Haute
+En tant que Super Admin,
+je
+veux
+modifier
+un
+paramètre réglementaire
+Afin de mettre à jour les lois
+Haute
+En
+tant
+que
+Super
+Admin,
+je
+veux
+consulter
+l’historique
+des
+modifications
+des
+paramètres
+Afin
+de
+garantir
+la
+traçabilité
+Moyenne
+11
+Gestion de la paie
+En tant que RH, je veux
+créer une période de paie
+Afin de lancer la paie
+Critique
+En tant que RH, je veux
+modifier une période de
+paie
+Afin de corriger les données
+Haute
+En tant que RH, je veux
+clôturer une période de
+paie
+Afin de valider les calculs
+Critique
+En tant que RH, je veux
+lancer le calcul de tous les
+bulletins d’une période
+Afin de générer les salaires
+nets
+Critique
+En tant que RH, je veux
+créer une rubrique de paie
+Afin de structurer le calcul
+Haute
+Suite page suivante...
+30
+
+===== PAGE 32 =====
+ID
+Épic
+User Story
+Description
+Priorité
+En tant que RH, je veux
+modifier une rubrique de
+paie
+Afin de l’adapter
+Moyenne
+En tant que RH, je veux
+ajouter une prime
+Afin
+d’augmenter
+la
+rémunération d’un employé
+Haute
+En tant que RH, je veux
+modifier une prime
+Afin d’ajuster son montant
+Moyenne
+En
+tant
+que
+RH,
+je
+veux valider une demande
+d’avance
+Afin d’accorder le soutien
+financier
+Haute
+En
+tant
+que
+RH,
+je
+veux refuser une demande
+d’avance
+Afin d’informer l’employé du
+rejet
+Haute
+En
+tant
+qu’employé,
+je veux demander une
+avance
+Afin de recevoir un soutien
+financier
+Haute
+En tant que RH, je veux
+générer un bulletin de
+paie
+Afin
+de
+le
+distribuer
+à
+l’employé
+Critique
+En tant que RH, je veux
+générer un fichier CNSS
+Afin de déclarer les salariés
+Critique
+12
+Gestion des congés
+et des absences
+En tant que RH, je veux
+créer un type de congé
+Afin de définir les règles
+associées
+Haute
+Suite page suivante...
+31
+
+===== PAGE 33 =====
+ID
+Épic
+User Story
+Description
+Priorité
+En tant qu’employé, je
+veux demander un congé
+Afin
+de
+m’absenter
+légitimement
+Haute
+En tant que RH, je veux
+valider un congé
+Afin de gérer la disponibilité
+de l’équipe
+Haute
+En tant qu’employé, je
+veux consulter mon solde
+de congé
+Afin
+de
+planifier
+mes
+absences
+Haute
+En tant que RH, je veux
+gérer les jours fériés
+Afin de les intégrer dans le
+calcul de paie
+Moyenne
+13
+Intégration
+comptable et
+finance RH
+En
+tant
+que
+RH,
+je
+veux configurer le plan
+comptable
+Afin
+de
+structurer
+la
+comptabilité
+Haute
+En
+tant
+que
+RH,
+je
+veux exporter les données
+comptables
+Afin de les synchroniser avec
+le système finance
+Haute
+14
+Conformité et
+déclarations
+réglementaires
+En tant que RH, je veux
+générer une déclaration
+CNSS salarié
+Afin de respecter la loi
+Critique
+En tant que RH, je veux
+générer une déclaration
+CNSS employeur
+Afin de respecter la loi
+Critique
+En tant que RH, je veux
+générer une déclaration
+CAVIS
+Afin
+de
+respecter
+la
+réglementation
+Haute
+Suite page suivante...
+32
+
+===== PAGE 34 =====
+ID
+Épic
+User Story
+Description
+Priorité
+En tant que RH, je veux
+générer une déclaration
+IRPP
+Afin de déclarer les impôts
+Critique
+15
+Génération des
+documents officiels
+RH
+En tant que RH, je veux
+générer une attestation
+de salaire
+Afin de justifier les revenus
+d’un employé
+Haute
+En tant que RH, je veux
+générer un certificat de
+travail
+Afin de prouver l’emploi
+Haute
+16
+Assistant RH
+intelligent
+En tant qu’employé, je
+veux utiliser un chatbot
+RH
+Afin d’obtenir des réponses
+à mes questions
+Moyenne
+En tant qu’employé, je
+veux demander un congé
+via le chatbot
+Afin
+de
+simplifier
+la
+demande
+Moyenne
+En
+tant
+qu’employé,
+je veux consulter mon
+bulletin via le chatbot
+Afin d’y accéder rapidement
+Moyenne
+33
+
+===== PAGE 35 =====
+2.9
+Diagramme de cas d’utilisation global
+Le diagramme de cas d’utilisation global constitue une représentation synthétique des
+interactions entre l’ensemble des acteurs et le système PaieZone RH. Il offre une vue de
+haut niveau du périmètre fonctionnel de la plateforme.
+Figure 2.5 – Diagramme de cas d’utilisation global de PaieZone RH
+2.10
+Planification préliminaire des sprints
+La planification des sprints a été établie en tenant compte de deux contraintes majeures :
+les dépendances techniques entre les modules et la valeur métier livrable à chaque itération.
+34
+
+===== PAGE 36 =====
+Le projet est découpé en 4 sprints de 3 semaines chacun.
+Sprint / Itération
+Objectifs et Fonctionnalités
+Socle & Sécurité
+– Authentification
+– Inscription des entreprises
+– Gestion des rôles et permissions
+– Approbation du compte utilisateur
+– Gestion du profil utilisateur
+– Gestion des départements et postes
+Gestion
+Administrative
+– Création et suivi des dossiers employés
+– Gestion des contrats de travail
+– Alertes d’expiration de contrats
+– Historique des modifications
+Paie & Congés
+– Calcul automatique de la paie
+– Gestion des congés et absences
+– Génération des bulletins de paie
+– Workflow de validation des congés
+Conformité & IA
+– Déclarations sociales (CNSS, IRPP)
+– Génération des écritures comptables
+– Chatbot RH intelligent
+– Recommandations et assistance intelligente
+Table 2.6 – Tableau de planification préliminaire des sprints
+35
+
+===== PAGE 37 =====
+2.11
+Environnement de travail
+2.11.1
+Environnement matériel
+2.11.1.1
+Poste de travail n°1
+Le tableau suivant détaille les caractéristiques techniques du premier poste de travail :
+Composant
+Spécification
+Marque
+ASUS TUF Gaming F15
+Processeur
+Intel Core i7-13620H
+Mémoire RAM
+16 Go DDR4
+Disque dur
+SSD NVMe 512 Go
+Système d’exploitation
+Windows 11 Famille
+Table 2.7 – Caractéristiques matérielles et aperçu du poste n°1
+2.11.1.2
+Poste de travail n°2
+Le tableau suivant détaille les caractéristiques techniques du second poste de travail :
+Composant
+Spécification
+Marque
+ASUS VivoBook X515EP
+Processeur
+Intel Core i5-1135G7
+Mémoire RAM
+16 Go
+Disque dur
+SSD NVMe 512 Go
+Système d’exploitation
+Windows 11 Famille
+Table 2.8 – Caractéristiques matérielles et aperçu du poste n°2
+36
+
+===== PAGE 38 =====
+2.11.2
+Environnement logiciel
+Le tableau suivant recense l’ensemble des outils et technologies utilisés pour le développement
+de la plateforme PaieZone RH :
+2.12
+Architecture du projet
+L’architecture d’un système logiciel définit l’organisation structurelle de ses composants
+et les principes régissant leurs interactions. Pour PaieZone, deux niveaux d’architecture ont
+été définis : une architecture physique qui décrit l’organisation des composants matériels
+et réseau, et une architecture logique qui précise la structure interne du code et les couches
+applicatives.
+2.12.1
+Architecture physique (déploiement)
+L’architecture physique de PaieZone s’appuie sur un modèle trois-tiers classique,
+organisé en trois couches distinctes et indépendantes :
+Couche Client (Tier 1) :
+Navigateurs web des utilisateurs finaux (Chrome, Firefox, Edge) accédant à l’interface
+Angular via HTTPS. L’application est une SPA : après le chargement initial, toutes
+les interactions avec le serveur transitent par des appels API REST asynchrones
+(sans rechargement de page), garantissant une expérience utilisateur fluide.
+Couche Serveur Applicatif (Tier 2) :
+Serveur hébergeant le backend Spring Boot (JAR exécutable dans un conteneur
+Docker). Il expose une API REST documentée via Swagger/OpenAPI 3, sécurisée
+par tokens JWT. Ce niveau intègre également Redis (cache distribué pour les sessions
+et données fréquentes) et Apache Kafka (broker de messages pour les événements
+asynchrones : alertes d’expiration, notifications, escalades chatbot).
+Couche Persistance (Tier 3) :
+Serveur PostgreSQL 15, organisé en schémas multiples : un schéma public pour
+les données de gouvernance SaaS (tenants, abonnements, Super Admin) et un
+schéma dédié (ex : tn_acme_sa) pour les données métier de chaque entreprise cliente.
+Liquibase assure les migrations de schéma de manière versionnée.
+2.12.2
+Architecture logique du système
+PaieZone est développé selon une architecture N-tiers (architecture en couches),
+conforme aux recommandations JHipster et aux bonnes pratiques du développement
+37
+
+===== PAGE 39 =====
+Outil & Version
+Description et rôle
+Logo
+JHipster 9.x
+Générateur Full-stack utilisé pour le squelette
+applicatif, la sécurité JWT et les migrations
+Liquibase.
+Angular 18.x
+Framework frontend pour la SPA. Utilisation
+des signals et de l’internationalisation FR/AR.
+Spring Boot 4.0
+Backend REST sécurisé (JWT + RBAC).
+Gestion de l’audit et de l’envoi d’emails.
+PostgreSQL 15.x
+Base
+de
+données
+relationnelle.
+Isolation
+multi-tenant
+via
+un
+schéma
+dédié
+par
+entreprise.
+IntelliJ IDEA
+Environnement de développement intégré
+(IDE) principal pour le backend Spring
+Boot/Java. Offre la complétion de code, le
+débogage avancé, l’intégration Git native et le
+support du framework Spring.
+GitHub
+Plateforme de gestion de versions et de
+collaboration. Utilisée pour le contrôle des
+sources, les branches de fonctionnalités et la
+revue de code via Pull Requests.
+Draw.io
+Outil de diagrammatique en ligne utilisé pour
+la conception des diagrammes UML (cas
+d’utilisation, séquence, classes) et des schémas
+d’architecture.
+Table 2.9 – Outils et technologies — Partie 1
+38
+
+===== PAGE 40 =====
+Outil & Version
+Description et rôle
+Logo
+Google Meet
+Outil de visioconférence utilisé pour les
+réunions d’équipe à distance, les sprints
+reviews et les points de synchronisation avec
+l’encadrant.
+Google Chat
+Messagerie instantanée d’équipe. Utilisée pour
+les communications quotidiennes et le partage
+de ressources entre les membres du projet.
+Docker 24.x
+Conteneurisation de tous les services pour un
+déploiement unifié et reproductible (backend,
+base de données, broker Kafka).
+Lucidchart
+Outil
+de
+modélisation
+visuelle
+utilisé
+en
+complément
+pour
+la
+conception
+des
+diagrammes de flux et des wireframes de
+l’interface.
+LATEX
+Système de composition typographique utilisé
+pour la rédaction du présent rapport de PFE,
+garantissant une mise en page professionnelle
+et reproductible.
+Table 2.10 – Outils et technologies — Partie 2
+39
+
+===== PAGE 41 =====
+Figure 2.6 – Architecture physique (déploiement) de PaieZone
+Spring Boot. Cette architecture s’articule autour de cinq couches verticales, traversées par
+deux couches transversales.
+• Couche Présentation (Web Layer) : Assurée par les contrôleurs REST Spring
+Boot (@RestController), elle expose les endpoints HTTP sous le préfixe /api/pz/.
+Elle gère la validation (@Valid), la sérialisation JSON (Jackson) et la pagination.
+• Couche Service (Business Layer) : Cœur de la logique métier (annotée @Service).
+Elle contient les règles de calcul de paie (Loi de Finances 2026), les workflows
+d’approbation et la logique multi-tenant. La cohérence est garantie par @Transactional.
+• Couche Accès aux Données (Repository Layer) : Implémentée via Spring
+Data JPA. L’isolation multi-tenant est assurée par un filtre Hibernate configuré
+dynamiquement selon le token JWT.
+• Couche Modèle (Domain Layer) : Contient les entités JPA (Employee, Contract,
+Payslip, etc.) et les DTO assurant le découplage entre persistance et présentation.
+• Couches transversales : La Sécurité (Spring Security) valide les tokens JWT et
+les rôles (@PreAuthorize), tandis que l’Audit (Spring AOP) enregistre toutes les
+écritures dans un journal immuable.
+40
+
+===== PAGE 42 =====
+Figure 2.7 – Architecture logique N-tiers de PaieZone (Spring Boot / Angular)
+Conclusion
+Ce chapitre a posé les fondements analytiques et méthodologiques du projet PaieZone.
+Nous avons identifié les six acteurs du système et défini leurs besoins via un Product
+Backlog de 61 User Stories. L’architecture N-tiers adoptée fournit une base solide pour
+le développement. Le chapitre suivant s’attachera à la conception détaillée du système à
+travers les diagrammes UML.
+41
+
+===== PAGE 43 =====
+Chapitre 3
+ETUDE DE SPRINT 1
+Plan
+1
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+2
+User Stories du premier sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+3
+Backlog du premier Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+4
+Spécification fonctionnelle . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .48
+5
+Conception du premier Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52
+6
+Etude et réalisation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .55
+7
+Tests et Validation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
+8
+Rituels Agiles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
+9
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+
+===== PAGE 44 =====
+Introduction
+Suite à une analyse approfondie et à la définition des objectifs stratégiques de notre
+solution, ce chapitre détaille les phases clés du premier sprint de développement. L’objectif
+principal de ce sprint était d’implémenter un ensemble de fonctionnalités fondamentales,
+essentielles à l’architecture et à l’opérabilité du système. Ces fonctionnalités incluent
+un mécanisme d’authentification multi-rôles robuste, une gestion complète des entités
+d’entreprise et de leurs abonnements SaaS associés, une administration efficace des
+utilisateurs, un système de traçabilité des actions via un journal d’audit, et une structuration
+organisationnelle modulaire comprenant la gestion des départements et des postes. La
+démarche adoptée pour ce sprint débute par la spécification et l’analyse rigoureuse des
+besoins, suivie par l’élaboration de cas d’utilisation détaillés et de diagrammes de séquence,
+culminant avec la phase de réalisation technique.
+3.1
+User Stories du premier sprint
+Conformément aux méthodologies agiles, l’équipe Scrum a initié ce sprint par une
+réunion de planification dédiée à la formulation de l’objectif du sprint. Cet objectif, exprimé
+en termes métier, vise à garantir une compréhension unifiée et partagée par toutes les
+parties prenantes, internes comme externes à l’équipe de développement.
+La question fondamentale à laquelle ce sprint répond est « Quelle valeur métier ce
+sprint apporte-t-il ? ». Pour ce premier incrément, l’objectif était de concrétiser les six
+éléments suivants du backlog, jugés prioritaires pour établir les fondations du système :
+• Authentification Multi-Rôles
+• Gestion des Entreprises
+• Gestion des Abonnements SaaS
+• Gestion des Utilisateurs
+• Journal d’Audit et Traçabilité
+• Gestion de la Structure Organisationnelle
+Les besoins fonctionnels du premier sprint ont été formalisés sous forme de User Stories.
+L’intégralité de ces User Stories, incluant leurs identifiants, critères d’acceptation et niveaux
+de priorité, est détaillée dans le Tableau 3.1.
+43
+
+===== PAGE 45 =====
+Table 3.1 – User Stories sélectionnées pour le premier sprint
+ID
+User Story
+1.1
+En tant qu’utilisateur, je veux m’authentifier afin d’accéder au système.
+1.2
+En tant qu’Admin, je veux m’inscrire en fournissant mes informations et
+celles de ma société, afin de créer mon espace de gestion et d’en devenir
+le responsable.
+2.1
+En tant qu’Admin, je veux modifier une entreprise, afin de mettre à jour
+ses informations.
+2.2
+En tant qu’Admin, je veux désactiver une entreprise, afin de suspendre
+son accès.
+2.3
+En tant que Super Admin, je veux affecter un abonnement, afin de gérer
+les droits.
+2.4
+En tant que Super Admin, je veux modifier un abonnement, afin de
+changer le plan.
+2.5
+En tant que Super Admin, je veux résilier un abonnement, afin d’arrêter
+le service.
+3.1
+En tant qu’Admin, je veux créer un utilisateur, afin de lui donner un
+accès.
+3.2
+En tant qu’Admin, je veux modifier un utilisateur, afin de mettre à jour
+ses données et ses accès.
+3.3
+En tant qu’Admin, je veux désactiver un utilisateur, afin de retirer son
+accès.
+4.1
+En tant qu’Admin, je veux consulter le journal d’audit, afin de voir les
+actions effectuées.
+4.2
+En tant qu’Admin, je veux filtrer le journal d’audit, afin de rechercher
+des actions spécifiques.
+5.1
+En tant qu’Admin ou RH, je veux créer un département, afin de structurer
+l’entreprise.
+5.2
+En tant qu’Admin/RH, je veux modifier un département, afin de mettre
+à jour la structure.
+5.3
+En tant qu’Admin/RH, je veux désactiver un département, afin de le
+retirer de la structure.
+5.4
+En tant qu’Admin/RH, je veux créer un poste, afin de définir un rôle.
+5.5
+En tant qu’Admin/RH, je veux modifier un poste, afin de l’adapter.
+5.6
+En tant qu’Admin/RH, je veux désactiver un poste, afin de le retirer de
+la structure.
+44
+
+===== PAGE 46 =====
+3.2
+Backlog du premier Sprint
+Le Backlog du produit de PaieZone, regroupant fonctionnalités et améliorations, est
+formalisé en User Stories organisées par thèmes fonctionnels. Le Tableau 3.2 détaille ce
+backlog pour le premier sprint, incluant les tâches techniques et leurs estimations en jours.
+Table 3.2: Backlog détaillé du premier Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+Authentifica-
+tion &
+Inscription
+1.1 En tant qu’utilisateur, je souhaite
+m’authentifier à travers un login et
+un mot de passe afin d’accéder au
+système.
+- Créer l’interface de la page de
+connexion (formulaire).
+-
+Implémenter
+la
+logique
+d’authentification (JWT / Spring
+Security).
+- Tester l’authentification selon les
+différents rôles.
+2
+1.2 En tant qu’Admin, je souhaite
+m’inscrire
+en
+fournissant
+mes
+informations et celles de ma société
+afin de créer mon espace de gestion
+et d’en devenir le responsable.
+-
+Créer
+l’interface
+de
+la
+page
+d’inscription (formulaire).
+-
+Gérer
+la
+logique
+de
+création
+simultanée du compte Admin et de
+la Société (Tenant Provisioning).
+- Tester la procédure d’inscription
+complète.
+3
+Gestion de
+l’Entreprise
+2.1 En tant qu’Admin, je souhaite
+modifier une entreprise afin de mettre
+à jour ses informations.
+- Développer l’interface de mise à
+jour des données de l’entreprise.
+- Implémenter l’API backend pour la
+modification des informations de la
+société.
+-
+Tester
+la
+persistance
+des
+modifications en base de données.
+1.5
+2.2 En tant qu’Admin, je souhaite
+désactiver une entreprise afin de
+suspendre son accès.
+-
+Implémenter
+la
+logique
+de
+désactivation / blocage de l’accès au
+niveau backend.
+- Tester l’impact de la désactivation
+sur
+les
+accès
+de
+l’ensemble
+des
+utilisateurs de cette entreprise.
+1.5
+45
+
+===== PAGE 47 =====
+Table 3.2: Backlog détaillé du premier Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+Gestion des
+Abonnements
+(SaaS)
+2.3 En tant que Super Admin, je
+souhaite affecter un abonnement afin
+de gérer les droits.
+- Concevoir l’interface de gestion des
+plans d’abonnements pour le Super
+Admin.
+- Implémenter la logique d’affectation
+initiale d’un plan à une entreprise.
+1.5
+2.4 En tant que Super Admin, je
+souhaite modifier un abonnement afin
+de changer le plan.
+- Ajouter les contrôles de modification
+de forfait sur l’interface.
+- Implémenter les règles de gestion
+des paliers et des restrictions d’accès
+selon le nouveau plan.
+-
+Tester
+le
+passage
+fonctionnel
+d’un
+plan
+à
+un
+autre
+(upgrade/downgrade).
+1.5
+2.5 En tant que Super Admin, je
+souhaite résilier un abonnement afin
+d’arrêter le service.
+- Développer la logique backend de
+coupure ou suspension des droits
+d’accès après résiliation.
+-
+Tester
+le
+blocage
+effectif
+des
+fonctionnalités de la plateforme.
+1
+Gestion des
+Utilisateurs
+3.1 En tant qu’Admin, je souhaite
+créer un utilisateur afin de lui donner
+un accès.
+- Concevoir l’interface du formulaire
+d’ajout d’un nouvel utilisateur.
+-
+Développer
+l’API
+REST
+pour
+l’insertion de l’utilisateur lié à la
+société.
+1.5
+3.2 En tant qu’Admin, je souhaite
+modifier un utilisateur afin de mettre
+à jour ses données et ses accès.
+- Concevoir l’interface de modification
+et
+la
+table
+de
+consultation
+des
+utilisateurs.
+- Développer l’API REST pour la mise
+à jour des profils.
+- Tester l’attribution et la modification
+des rôles.
+1.5
+3.3 En tant qu’Admin, je souhaite
+désactiver un utilisateur afin de retirer
+son accès.
+- Implémenter la logique backend de
+désactivation du compte utilisateur.
+- Tester le refus d’accès pour un
+utilisateur désactivé.
+1
+46
+
+===== PAGE 48 =====
+Table 3.2: Backlog détaillé du premier Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+Journal
+d’Audit
+4.1 En tant qu’Admin, je souhaite
+consulter le journal d’audit afin de
+voir les actions effectuées.
+- Créer le composant d’affichage de
+l’historique des actions (tableau UI).
+-
+Implémenter
+le
+système
+d’interception
+et
+d’enregistrement
+automatique des actions (AOP /
+Spring).
+1.5
+4.2 En tant qu’Admin, je souhaite
+filtrer le journal d’audit afin de
+rechercher des actions spécifiques.
+- Mettre en place les composants
+graphiques des filtres (par date, par
+utilisateur, par action).
+- Développer la logique de filtrage des
+requêtes côté backend.
+1.5
+Gestion
+Organisa-
+tionnelle
+(Départements
+& Postes)
+5.1
+En
+tant
+qu’Admin/RH,
+je
+souhaite créer un département afin
+de structurer l’entreprise.
+- Concevoir l’interface de création
+d’un département.
+-
+Développer
+le
+service
+backend
+d’insertion
+avec
+les
+validations
+nécessaires.
+1
+5.2
+En
+tant
+qu’Admin/RH,
+je
+souhaite modifier un département afin
+de mettre à jour la structure.
+- Créer l’interface de modification des
+informations d’un département.
+- Mettre à jour le service backend
+correspondant.
+1
+5.3
+En
+tant
+qu’Admin/RH,
+je
+souhaite désactiver un département
+afin de le retirer de la structure.
+-
+Implémenter
+la
+logique
+de
+désactivation
+logique
+d’un
+département.
+-
+Tester
+la
+désactivation
+d’un
+département contenant encore des
+postes actifs.
+1
+5.4
+En
+tant
+qu’Admin/RH,
+je
+souhaite créer un poste afin de définir
+un rôle.
+- Concevoir l’interface de création
+d’un
+poste
+(rattaché
+à
+un
+département).
+- Développer le service d’insertion
+backend pour les postes.
+1
+47
+
+===== PAGE 49 =====
+Table 3.2: Backlog détaillé du premier Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+5.5
+En
+tant
+qu’Admin/RH,
+je
+souhaite modifier un poste afin de
+l’adapter.
+- Créer l’interface de modification des
+données d’un poste.
+- Implémenter la mise à jour des
+données en base.
+1
+5.6
+En
+tant
+qu’Admin/RH,
+je
+souhaite désactiver un poste afin de
+le supprimer.
+- Implémenter la logique backend de
+retrait/désactivation d’un poste.
+-
+Tester
+la
+cohérence
+de
+l’organigramme
+suite
+à
+cette
+suppression.
+1
+3.3
+Spécification fonctionnelle du premier Sprint
+La modélisation fonctionnelle de PaieZone a été réalisée via des diagrammes de cas
+d’utilisation UML, offrant une vue globale des fonctionnalités du Sprint 1, complétés par
+des descriptions textuelles détaillant les scénarios d’interaction. Cette approche permet de
+représenter visuellement le périmètre du système et les interactions clés.
+3.3.1
+Diagramme de cas d’utilisation du premier Sprint
+La Figure 3.1 présente le diagramme de cas d’utilisation global du Sprint 1 de PaieZone.
+48
+
+===== PAGE 50 =====
+Figure 3.1 – Diagramme de cas d’utilisation raffiné du Sprint 1
+Le diagramme de cas d’utilisation de PaieZone présente les fonctionnalités majeures
+du système, structurées autour de la gestion des accès, de l’administration des entreprises
+et de l’organisation des ressources humaines. Cette modélisation détaille les capacités
+opérationnelles offertes à chaque profil d’utilisateur pour assurer la gestion complète
+et sécurisée de la plateforme. Les responsabilités et fonctionnalités par acteur sont les
+suivantes :
+UTILISATEUR :
+• Ce rôle général inclut tout utilisateur ayant réussi l’authentification.
+49
+
+===== PAGE 51 =====
+ADMIN : Le rôle d’Administrateur est obtenu par le Visiteur via une inscription
+simultanée (personnelle et entreprise). En tant que créateur de l’espace, il peut :
+• Inscrire la société sur la plateforme.
+• Mettre à jour les informations de l’entreprise.
+• Administrer les comptes des utilisateurs (création, modification, suspension).
+• Configurer la structure interne (départements et postes).
+• Consulter le journal d’audit pour suivre les actions effectuées sur le système.
+SUPER ADMIN :
+• Piloter la gestion des abonnements SaaS.
+• Affecter, modifier et résilier les plans de service des entreprises clientes.
+RH (RESSOURCES HUMAINES) :
+• Intervenir dans la structuration organisationnelle de l’entreprise.
+• Créer et gérer les départements ainsi que les postes au sein de l’entité.
+3.3.2
+Description textuelle des cas d’utilisation
+Les descriptions textuelles détaillent les préconditions et scénarios (nominaux et
+alternatifs) des cas d’utilisation. Elles servent de référence contractuelle pour valider
+les fonctionnalités du sprint avec le Product Owner.
+3.3.2.1
+Cas d’utilisation 1 : S’authentifier
+Le tableau 3.3 présente la description textuelle détaillée du cas d’utilisation «S’authentifier».
+Table 3.3: Description textuelle du cas d’utilisation
+S’authentifier
+Élément
+Description
+Titre
+S’authentifier
+Acteur principal
+Utilisateur (Admin, RH, Super Admin)
+Préconditions
+L’utilisateur possède un compte actif et ses identifiants de
+connexion.
+Postconditions
+L’utilisateur est connecté et accède à son espace de travail
+personnalisé.
+50
+
+===== PAGE 52 =====
+Scénario principal
+1. L’utilisateur accède à l’interface de connexion.
+2. Il saisit ses identifiants (e-mail et mot de passe).
+3. Le système vérifie la validité des informations fournies.
+4. Le système identifie le rôle et l’entreprise (tenant) de
+l’utilisateur.
+5. L’utilisateur est redirigé vers son tableau de bord.
+Scénarios alternatifs
+A1 : Identifiants incorrects →Le système affiche un
+message d’erreur et invite à une nouvelle saisie.
+A2 : Compte suspendu →Le système informe l’utilisateur
+que son accès est désactivé.
+3.3.2.2
+Cas d’utilisation 2 : S’inscrire et enregistrer la société
+Le tableau 3.4 présente la description textuelle détaillée du cas d’utilisation « S’inscrire
+et enregistrer la société ».
+Table 3.4 – Description textuelle du cas d’utilisation S’inscrire et enregistrer la société
+Élément
+Description
+Titre
+S’inscrire et enregistrer la société
+Acteur principal
+Visiteur
+Préconditions
+Le visiteur n’a pas de compte PaieZone et l’adresse e-mail
+renseignée n’est pas déjà utilisée.
+Postconditions
+Un espace dédié est créé pour la société. Le visiteur devient
+l’Administrateur responsable de cet espace et son compte est
+activé. Un e-mail de confirmation est envoyé.
+Scénario principal
+1. Le visiteur accède au formulaire d’inscription.
+2. Il renseigne ses informations personnelles et celles de sa
+société.
+3. Le système valide les données transmises.
+4. Un espace dédié et isolé pour la société est initialisé.
+5. Un compte Administrateur est créé pour le visiteur et
+associé à la société.
+6. Un e-mail de confirmation d’inscription est envoyé.
+7. Le visiteur (désormais Administrateur) est redirigé vers la
+page de connexion.
+Scénarios alternatifs
+A1 : Adresse e-mail déjà utilisée →Le système affiche
+un message d’erreur indiquant que l’e-mail est déjà associé à
+un compte existant.
+A2 : Données invalides →Le système affiche les erreurs
+de validation spécifiques sur le formulaire d’inscription.
+51
+
+===== PAGE 53 =====
+3.3.2.3
+Cas d’utilisation 3 : Gérer les utilisateurs
+Le tableau 3.5 présente la description textuelle détaillée du cas d’utilisation « Gérer
+les utilisateurs ».
+Table 3.5 – Description textuelle du cas d’utilisation Gérer les utilisateurs
+Élément
+Description
+Titre
+Gérer les utilisateurs (Créer / Modifier / Désactiver)
+Acteur principal
+Admin
+Préconditions
+L’Administrateur est authentifié et dispose des droits
+nécessaires sur sa session.
+Postconditions
+L’utilisateur ciblé est créé, modifié ou désactivé dans le
+système. L’action est enregistrée dans le journal d’audit.
+Scénario principal
+1. L’Administrateur accède à l’interface de gestion des
+utilisateurs.
+2. Il consulte la liste exhaustive des utilisateurs de sa société.
+3. Il sélectionne l’action souhaitée : création, modification ou
+désactivation.
+4. Il renseigne ou met à jour les informations requises dans le
+formulaire.
+5. Le système valide les données et applique les changements
+en base de données.
+6. L’action effectuée est automatiquement enregistrée dans le
+journal d’audit de l’entreprise.
+7. Un message de confirmation de succès est affiché à l’écran.
+Scénarios alternatifs
+A1 : Utilisateur introuvable →Le système affiche un
+message d’erreur indiquant que l’utilisateur ciblé n’existe pas
+ou a été supprimé.
+A2 : Droits insuffisants →Le système lève une exception
+et affiche un message d’erreur indiquant un manque de
+permissions.
+A3 : E-mail déjà utilisé (lors de la création) →Le système
+bloque l’enregistrement et renvoie un message d’erreur de
+validation.
+3.4
+Conception du premier Sprint
+La conception technique de PaieZone matérialise les besoins métiers à travers des
+modèles structurants qui guident le développement. Cette section s’articule autour de deux
+axes complémentaires le diagramme de classes et les diagrammes de séquences.
+52
+
+===== PAGE 54 =====
+3.4.1
+Diagramme de classes
+Le diagramme de classes modélise l’architecture statique du système. Il définit la
+structure des données en précisant les entités, leurs attributs et les relations de dépendance
+qui les unissent, offrant ainsi une vue d’ensemble de l’organisation logique de PaieZone.
+La figure 3.2 présente le diagramme de classes du Sprint 1, illustrant la structure
+statique des données et les relations entre les entités principales de PaieZone.
+Figure 3.2 – Diagramme de classes du Sprint 1
+3.4.2
+Diagramme de séquences
+Le diagramme de séquences illustre la dynamique du système en détaillant les interactions
+chronologiques entre les objets. Il permet de visualiser le flux de messages échangés pour
+53
+
+===== PAGE 55 =====
+réaliser un cas d’utilisation spécifique, précisant ainsi le comportement temporel des
+composants.
+3.4.2.1
+Diagramme de séquence : Authentification
+La figure 3.3 illustre le flux d’authentification sécurisé de PaieZone.
+Figure 3.3 – Diagramme de séquence Authentification
+3.4.2.2
+Diagramme de séquence : Création d’un utilisateur avec enregistrement
+d’audit
+La figure 3.4 illustre le flux de création d’un utilisateur dans PaieZone, incluant le
+déclenchement automatique de l’enregistrement d’audit. sécurisé de PaieZone.
+54
+
+===== PAGE 56 =====
+Figure 3.4 – Diagramme de séquence Création d’un utilisateur avec enregistrement
+d’audit
+3.5
+Etude et réalisation du premier sprint
+Cette section détaille les réalisations concrètes du premier sprint, marquant le passage
+des spécifications à une solution logicielle fonctionnelle. Les travaux ont porté sur la
+mise en place de l’infrastructure technique, l’implémentation du socle de sécurité et le
+développement des premières interfaces utilisateurs. Cette étape matérialise la validation
+des User Stories prioritaires, notamment la gestion des accès et l’isolation des données,
+posant ainsi les fondations robustes de la plateforme PaieZone.
+55
+
+===== PAGE 57 =====
+3.5.1
+Inscription et initialisation de l’espace société
+Le flux d’inscription de PaieZone est conçu pour permettre à un nouveau client (Visiteur)
+de créer simultanément son compte administrateur et l’espace isolé de sa société en une
+seule démarche guidée.
+Figure 3.5 – Formulaire d’inscription — Informations personnelles et informations de la
+société
+La figure 3.5 illustre le formulaire d’inscription de PaieZone, regroupant les données
+personnelles de l’administrateur et les informations légales de l’entreprise. La validation
+de ce formulaire déclenche automatiquement le provisionnement d’un espace de stockage
+dédié, garantissant l’isolation des données de la société au sein de la base PostgreSQL.
+3.5.2
+Authentification et accès
+L’authentification constitue le point d’entrée unique de la plateforme PaieZone. Le
+système implémente un mécanisme de connexion sécurisé basé sur le standard JWT (JSON
+Web Token), complété par une redirection intelligente vers le tableau de bord correspondant
+au rôle de l’utilisateur connecté.
+56
+
+===== PAGE 58 =====
+Figure 3.6 – Page de connexion de PaieZone RH
+La figure 3.6 présente la page de connexion de PaieZone RH. Le formulaire collecte
+l’adresse e-mail et le mot de passe de l’utilisateur. En cas d’échec d’authentification, un
+message d’erreur explicite est affiché.
+Figure 3.7 – Tableau de bord — Vue SuperAdmin après authentification
+57
+
+===== PAGE 59 =====
+Figure 3.8 – Tableau de bord — Vue Administrateur après authentification
+Figure 3.9 – Tableau de bord — Vue Employé après authentification
+58
+
+===== PAGE 60 =====
+Figure 3.10 – Tableau de bord — Vue RH après authentification
+Les figures 3.7, 3.8, 3.9 et 3.10 illustrent la redirection différenciée par rôle implémentée
+dans PaieZone RH.
+Après une authentification réussie, le système identifie le rôle de l’utilisateur (ROLE_SUPERADMIN,
+ROLE_ADMIN, ROLE_RH ou ROLE_EMPLOYE) et le redirige vers le tableau de bord correspondant,
+affichant uniquement les modules auxquels il est autorisé à accéder.
+3.5.3
+Gestion des utilisateurs
+Le module de gestion des utilisateurs, pilier central du premier sprint, permet à
+l’Administrateur de piloter l’ensemble des comptes collaborateurs (création, modification
+et désactivation).
+59
+
+===== PAGE 61 =====
+Figure 3.11 – Liste des utilisateurs
+La figure 3.11 illustre l’interface de consultation, où les utilisateurs sont listés avec
+leurs informations clés : identité, rôle et statut. Pour optimiser l’expérience de gestion,
+cette table intègre des fonctions de recherche et de pagination, facilitant la navigation au
+sein des effectifs de l’entreprise.
+Figure 3.12 – Formulaire d’ajout et de modification d’un utilisateur
+En complément, la figure 3.12 présente le formulaire de saisie dédié à l’ajout ou à la mise
+à jour des profils. L’Administrateur peut y renseigner les coordonnées du collaborateur
+et lui assigner un rôle spécifique (Admin, RH ou Employé). La fiabilité des données est
+assurée par un double mécanisme de validation, appliqué tant au niveau de l’interface
+utilisateur que du serveur.
+60
+
+===== PAGE 62 =====
+3.5.4
+Journal d’audit
+Le journal d’audit est le module de traçabilité de PaieZone. Il enregistre automatiquement
+chaque action sensible effectuée sur la plateforme et la rend consultable et filtrable par les
+utilisateurs disposant des droits appropriés
+Figure 3.13 – Journal d’audit — Liste des actions enregistrées
+La figure 3.14 illustre línterface de gestion organisationnelle, centralisant la définition
+et la maintenance de la structure hiérarchique de léntreprise. Elle permet de visualiser
+et de gérer les départements et les postes, incluant leurs attributs et leurs relations.
+Cette interface intuitive assure une administration efficace et une représentation fidèle de
+lórganisation interne.
+3.5.5
+Gestion Organisationnelle
+Le module de gestion organisationnelle de PaieZone est conçu pour permettre aux
+administrateurs de définir et de maintenir la structure hiérarchique de l’entreprise, assurant
+ainsi une représentation fidèle de son organisation interne.
+61
+
+===== PAGE 63 =====
+Figure 3.14 – Interface de gestion des départements et postes
+Comme illustré par la figure 3.14, cette interface habilite spécifiquement les rôles
+Admin et RH à gérer de manière exhaustive les départements et les postes. Cela inclut la
+création de nouvelles entités, la modification de leurs attributs, et leur gestion au sein de
+la hiérarchie.
+3.6
+Tests et Validation
+La phase de tests et de validation constitue une composante essentielle du cycle de
+développement agile. Elle vise à vérifier la conformité des fonctionnalités implémentées
+par rapport aux User Stories initialement définies, à identifier et corriger les anomalies
+avant la livraison au Product Owner, et à garantir la fiabilité, la robustesse et la qualité
+globale de la solution PaieZone.
+3.6.1
+Plan de tests
+Afin de garantir la qualité logicielle du projet PaieZone RH, une stratégie de test
+multiniveaux a été adoptée lors du Sprint 1. Cette approche s’articule autour des axes
+suivants :
+• Tests unitaires : Validation de la logique métier isolée, notamment les mécanismes
+d’authentification et les règles de gestion des contrats.
+• Tests d’intégration : Vérification de la cohérence des flux entre les couches applicatives
+et la base de données de test, incluant la gestion du multi-tenant et la persistance des
+journaux d’audit.
+• Tests fonctionnels : Évaluation du système du point de vue de l’utilisateur final pour
+s’assurer de la conformité des interfaces et des fonctionnalités de consultation.
+62
+
+===== PAGE 64 =====
+Cette démarche structurée permet d’assurer la robustesse technique et l’adéquation
+fonctionnelle des livrables par rapport aux exigences spécifiées.
+Le Tableau 3.1 synthétise les cas de test principaux réalisés pour ce sprint.
+Table 3.1: Récapitulatif des cas de test du Sprint 1
+ID Test
+Description du cas de test
+Résultat attendu
+Statut
+T-1.1
+Authentification avec des identifiants valides
+Accès autorisé, Token
+JWT généré
+OK
+T-1.2
+Authentification avec un compte désactivé ou
+invalide
+Accès refusé, message
+d’erreur explicite
+OK
+T-2.1
+Inscription d’une nouvelle entreprise (Tenant
+Provisioning)
+Société
+créée
+avec
+schéma
+de
+base
+de
+données isolé
+OK
+T-3.1
+Création
+d’un
+nouvel
+utilisateur
+avec
+attribution de rôle
+Utilisateur persisté en
+base avec les droits
+associés
+OK
+T-3.2
+Désactivation d’un utilisateur actif
+Accès
+révoqué
+immédiatement,
+statut mis à jour
+OK
+T-4.1
+Enregistrement automatique des actions dans
+le journal d’audit
+Trace
+créée
+avec
+détails (User, Action,
+Date, IP)
+OK
+T-5.1
+Création d’un département et d’un poste
+rattaché
+Structure
+organisationnelle
+mise à jour avec succès
+OK
+T-5.2
+Tentative de suppression d’un département
+avec postes actifs
+Blocage de l’opération
+avec alerte de sécurité
+OK
+3.7
+Rituels Agiles et Clôture du Sprint
+La méthodologie Scrum impose, à la fin de chaque sprint, la tenue de deux rituels
+essentiels : la Sprint Review et la Sprint Retrospective. Ces cérémonies garantissent
+la transparence et l’amélioration continue au sein de l’équipe PaieZone, en permettant
+respectivement d’inspecter le travail accompli et d’adapter les pratiques pour le sprint
+suivant.
+63
+
+===== PAGE 65 =====
+3.7.1
+Revue du Sprint (Sprint Review)
+La Sprint Review a réuni l’équipe de développement, le Product Owner et les parties
+prenantes. Les User Stories du sprint ont été présentées et démontrées en conditions réelles
+à travers l’interface Angular :
+• Démonstration du flux d’authentification et d’inscription : Validation du
+mécanisme de création de société avec provisionnement automatique du schéma de
+base de données (Multi-tenancy).
+• Présentation de la gestion organisationnelle : Démonstration de la création et de
+la modification des départements et des postes avec contrôle des contraintes métier.
+• Démonstration du journal d’audit : Validation de l’interception automatique des
+actions et de la fluidité des filtres de recherche.
+• Gestion des abonnements : Présentation de l’interface Super Admin permettant
+l’affectation et la modification des plans SaaS.
+L’ensemble des 18 User Stories planifiées a été validé par le Product Owner, confirmant
+la conformité des livrables aux critères d’acceptation et la robustesse du socle technique
+établi.
+3.7.2
+Rétrospective du Sprint (Sprint Retrospective)
+La Sprint Retrospective a permis à l’équipe de réfléchir collectivement sur les pratiques
+du sprint écoulé autour de trois axes :
+• Ce qui a bien fonctionné : La collaboration efficace entre le front-end et le back-end
+a permis une intégration fluide des services. Le choix de l’AOP pour le journal d’audit
+s’est avéré très performant, car il n’impacte pas la logique métier principale.
+• Ce qui peut être amélioré : La configuration technique du multi-tenant (Tenant
+Provisioning) a été plus complexe que prévu, retardant légèrement le démarrage des
+tests d’intégration.
+• Actions pour le Sprint 2 : Anticiper les tâches d’infrastructure dès le début du sprint
+et adopter une approche plus systématique pour la rédaction des tests d’intégration
+afin de détecter les anomalies plus tôt.
+Conclusion
+Ce chapitre a détaillé la réalisation du Sprint 1, marquant l’établissement du socle
+technique et fonctionnel de PaieZone. Les dix-huit User Stories validées ont permis de
+déployer les piliers de la plateforme : l’authentification sécurisée, la gestion multi-tenant,
+le suivi d’audit automatisé et la structuration organisationnelle. La cohérence entre la
+64
+
+===== PAGE 66 =====
+conception technique et les interfaces Angular livrées garantit une base robuste et évolutive.
+Ces acquis fondamentaux ouvrent désormais la voie au Sprint 2, qui se concentrera sur le
+cœur métier du système : la gestion des employés et la configuration des processus de paie.
+65
+
+===== PAGE 67 =====
+Chapitre 4
+ETUDE DE SPRINT 2
+Plan
+1
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
+2
+User Stories du premier sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
+3
+Backlog du premier Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
+4
+Spécification fonctionnelle . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .84
+5
+Conception du premier Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 74
+6
+Etude et réalisation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .68
+7
+Tests et Validation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82
+8
+Rituels Agiles et Clôture du Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 83
+9
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
+
+===== PAGE 68 =====
+Introduction
+Fort des acquis du premier sprint qui a posé les fondations de la plateforme PaieZone à
+travers la sécurisation des accès, la gestion multi-tenant et la structuration organisationnelle
+ce quatrième chapitre présente les travaux réalisés lors du deuxième sprint de développement.
+Ce sprint constitue le cœur opérationnel du système de gestion des ressources humaines :
+il introduit la gestion complète du capital humain, couvrant la création et l’administration
+des dossiers employés, le cycle de vie des contrats de travail, la gestion des documents
+administratifs et la traçabilité des modifications via un mécanisme d’historisation. La
+démarche adoptée reste identique : spécification rigoureuse des besoins, modélisation UML,
+conception technique et réalisation des interfaces fonctionnelles.
+4.1
+User Stories du deuxième sprint
+Lors de la réunion de planification du Sprint 2, l’équipe Scrum a défini l’objectif du
+sprint autour de la valeur métier suivante : « Permettre à l’équipe RH de gérer l’intégralité
+du dossier administratif d’un employé, de son recrutement à la formalisation de sa relation
+contractuelle ». Quatre épics prioritaires ont été sélectionnés dans le backlog produit pour
+constituer le périmètre de ce sprint :
+• Gestion du Capital Humain
+• Gestion du Cycle de Vie des Contrats de Travail
+• Gestion des Documents Administratifs
+• Historisation et Suivi des Modifications
+Les besoins fonctionnels ont été formalisés sous forme de User Stories détaillées dans le
+Tableau 4.2.
+Table 4.2: User Stories sélectionnées pour le deuxième sprint
+ID
+User Story
+6.1
+En tant qu’Admin/RH, je veux consulter la liste des employés, afin
+d’avoir une vue d’ensemble du personnel.
+6.2
+En tant qu’Admin/RH, je veux créer un employé, afin de l’ajouter au
+système.
+6.3
+En tant qu’Admin/RH, je veux consulter le profil d’un employé, afin de
+voir ses informations détaillées.
+6.4
+En tant qu’Admin/RH, je veux modifier un employé, afin de mettre à
+jour ses données.
+67
+
+===== PAGE 69 =====
+Table 4.2: User Stories sélectionnées pour le deuxième sprint
+ID
+User Story
+6.5
+En tant qu’Admin/RH, je veux désactiver un employé, afin de gérer sa
+sortie de l’organisation.
+7.1
+En tant que RH, je veux associer un contrat à un employé, afin de
+formaliser la relation de travail.
+7.2
+En tant que RH, je veux modifier un contrat, afin de mettre à jour ses
+conditions.
+7.3
+En tant que RH, je veux résilier un contrat, afin de terminer une relation
+de travail.
+8.1
+En tant que RH, je veux uploader un document, afin de le stocker dans
+le dossier de l’employé.
+4.2
+Backlog du deuxième Sprint
+Le Backlog du produit de PaieZone, regroupant fonctionnalités et améliorations, est
+formalisé en User Stories organisées par thèmes fonctionnels. Le Tableau 4.3 détaille ce
+backlog pour le deuxième sprint, incluant les tâches techniques et leurs estimations en
+jours.
+Table 4.3: Backlog détaillé du deuxième Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+Gestion du
+Capital
+Humain
+6.1
+En
+tant
+qu’Admin/RH,
+je
+souhaite
+consulter
+la
+liste
+des
+employés
+afin
+d’avoir
+une
+vue
+d’ensemble du personnel.
+- Concevoir l’interface de la liste des
+employés (tableau paginé avec filtres
+et recherche).
+-
+Développer
+l’API
+REST
+de
+récupération des employés liés à la
+société.
+1
+68
+
+===== PAGE 70 =====
+Table 4.3: Backlog détaillé du deuxième Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+6.2
+En
+tant
+qu’Admin/RH,
+je
+souhaite créer un employé afin de
+l’ajouter au système.
+- Développer le formulaire de création
+du
+profil
+employé
+(informations
+personnelles, poste, département).
+-
+Implémenter
+la
+génération
+automatique du matricule unique.
+- Développer l’API REST d’insertion
+de l’employé.
+2
+6.3
+En
+tant
+qu’Admin/RH,
+je
+souhaite
+consulter
+le
+profil
+d’un
+employé afin de voir ses informations
+détaillées.
+- Implémenter la vue détaillée du
+profil employé (informations, contrats,
+documents).
+-
+Développer
+l’API
+REST
+de
+récupération du profil complet.
+1
+6.4
+En
+tant
+qu’Admin/RH,
+je
+souhaite modifier un employé afin de
+mettre à jour ses données.
+- Créer l’interface de modification du
+profil employé.
+- Implémenter la mise à jour des
+données en base.
+1
+6.5
+En
+tant
+qu’Admin/RH,
+je
+souhaite désactiver un employé afin
+de gérer sa sortie de l’organisation.
+-
+Implémenter
+la
+logique
+de
+désactivation du profil.
+- Gérer la désactivation du compte
+utilisateur associé.
+- Tester l’impact sur les contrats
+actifs et les accès.
+1
+Gestion des
+Contrats
+de Travail
+7.1 En tant que RH, je souhaite
+associer un contrat à un employé afin
+de formaliser la relation de travail.
+- Concevoir l’interface de création et
+d’association d’un contrat.
+- Implémenter les types de contrats
+(CDI, CDD, CIVP) et leurs règles de
+gestion.
+- Développer l’API REST de création
+de contrat.
+2
+7.2 En tant que RH, je souhaite
+modifier un contrat afin de mettre à
+jour ses conditions.
+- Créer l’interface de modification du
+contrat (formulaire pré-rempli).
+- Implémenter la mise à jour des
+données du contrat.
+- Tester les transitions de statut et la
+cohérence des dates.
+1.5
+69
+
+===== PAGE 71 =====
+Table 4.3: Backlog détaillé du deuxième Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+7.3 En tant que RH, je souhaite
+résilier un contrat afin de terminer
+une relation de travail.
+- Développer la logique de résiliation
+(motif obligatoire, date effective).
+- Implémenter le passage du statut
+ACTIF à RÉSILIÉ en base.
+-
+Tester
+le
+blocage
+de
+toute
+modification post-résiliation.
+1.5
+Gestion des
+Documents
+Administratifs
+8.1 En tant que RH, je souhaite
+déposer un document afin de le
+stocker dans le dossier de l’employé.
+- Concevoir l’interface de dépôt et
+de consultation des documents du
+dossier.
+- Développer le service de stockage de
+fichiers (PDF, images) avec gestion
+des types de documents.
+- Implémenter les contrôles d’accès
+selon le rôle.
+- Tester le dépôt, la consultation et la
+validation des formats.
+3
+4.3
+Spécification fonctionnelle du deuxième Sprint
+La modélisation fonctionnelle du Sprint 2 de PaieZone repose sur des diagrammes
+de cas d’utilisation UML, offrant une représentation visuelle du périmètre fonctionnel,
+complétés par des descriptions textuelles structurées détaillant les scénarios d’interaction
+pour chaque cas d’utilisation majeur.
+4.3.1
+Diagramme de cas d’utilisation du deuxième Sprint
+La Figure 4.1 présente le diagramme de cas d’utilisation global du Sprint 2 de PaieZone.
+70
+
+===== PAGE 72 =====
+Figure 4.1 – Diagramme de cas d’utilisation du Sprint 2
+Le diagramme de cas d’utilisation du Sprint 2 articule les fonctionnalités autour de
+trois packages fonctionnels principaux, structurés selon les responsabilités des acteurs
+impliqués. Les responsabilités et fonctionnalités par acteur sont les suivantes :
+ADMIN :
+• Consulter la liste complète des employés de la société.
+• Accéder au profil détaillé de chaque employé.
+• Désactiver un employé pour gérer sa sortie de l’organisation.
+RH (RESSOURCES HUMAINES) :
+• Gérer l’intégralité du dossier employé : création, consultation, modification et désactivation.
+• Associer, modifier et résilier les contrats de travail des employés.
+• Uploader et consulter les documents administratifs dans le dossier employé.
+• Consulter et filtrer l’historique des modifications du dossier employé.
+71
+
+===== PAGE 73 =====
+4.3.2
+Description textuelle des cas d’utilisation
+Les descriptions textuelles suivantes formalisent les préconditions, scénarios nominaux
+et alternatifs des cas d’utilisation les plus critiques du Sprint 2. Elles constituent la référence
+contractuelle de validation avec le Product Owner.
+4.3.2.1
+Cas d’utilisation 1 : Créer un employé
+Le tableau 4.4 présente la description textuelle détaillée du cas d’utilisation « Créer un
+employé ».
+Table 4.4 – Description textuelle du cas d’utilisation Créer un employé
+Élément
+Description
+Titre
+Créer un employé
+Acteur principal
+Admin / RH
+Préconditions
+L’utilisateur est authentifié avec le rôle Admin ou RH. Au
+moins un département et un poste actifs existent dans le
+système.
+Postconditions
+Un nouveau profil employé est enregistré dans le système
+avec un matricule unique généré automatiquement. L’employé
+apparaît dans la liste du personnel de la société.
+Scénario principal
+1. L’acteur accède au formulaire de création d’un employé.
+2. Il renseigne les informations personnelles (nom, prénom,
+date de naissance, nationalité, genre, coordonnées).
+3. Il sélectionne le département et le poste de rattachement.
+4. Le système valide les données saisies.
+5. Le système génère un matricule unique pour l’employé.
+6. Le profil employé est enregistré et un message de
+confirmation est affiché.
+Scénarios alternatifs
+A1 : Données obligatoires manquantes →Les erreurs de
+validation sont affichées sur les champs concernés ; la création
+est bloquée.
+A2 : Département ou poste inactif sélectionné →Un
+message d’erreur indique que la structure organisationnelle
+sélectionnée est inactive.
+4.3.2.2
+Cas d’utilisation 2 : Gérer les contrats de travail
+Le tableau 4.5 présente la description textuelle détaillée du cas d’utilisation « Gérer
+les contrats de travail (Associer / Modifier / Résilier)».
+72
+
+===== PAGE 74 =====
+Table 4.5 – Description textuelle du cas d’utilisation Gérer les contrats de travail
+Élément
+Description
+Titre
+Gérer les contrats de travail (Associer / Modifier / Résilier)
+Acteur principal
+RH
+Préconditions
+L’utilisateur est authentifié avec le rôle RH. L’employé cible
+est actif dans le système.
+Postconditions
+Le contrat est créé, modifié ou résilié. L’action est enregistrée
+dans le journal d’audit.
+Scénario principal
+1. Le RH accède au profil de l’employé, section « Contrats ».
+2. Il sélectionne l’action souhaitée : association, modification
+ou résiliation.
+3. Association : Il choisit le type de contrat (CDI, CDD,
+CIVP), renseigne les conditions (date de début, salaire
+brut, poste) et confirme.
+4. Modification : Il met à jour les champs autorisés sur le
+contrat actif et confirme.
+5. Résiliation : Il renseigne le motif obligatoire et la date
+effective de résiliation, puis confirme.
+6. Le système valide les données, applique les changements et
+les enregistre en base.
+7. Un message de confirmation est affiché.
+Scénarios alternatifs
+A1 : Contrat actif déjà existant →Le système bloque la
+création et affiche un message indiquant qu’un contrat actif
+est déjà en cours.
+A2 : Date de fin antérieure à la date de début (CDD)
+→Erreur de validation bloquante sur le champ date de fin.
+A3 : Motif de résiliation non renseigné →Erreur
+de validation ; le champ motif est obligatoire pour toute
+résiliation.
+4.3.2.3
+Cas d’utilisation 3 : Déposer un document administratif
+Le tableau 4.6 présente la description textuelle détaillée du cas d’utilisation « Déposer
+un document administratif ».
+73
+
+===== PAGE 75 =====
+Table 4.6 – Description textuelle du cas d’utilisation Déposer un document administratif
+Élément
+Description
+Titre
+Déposer un document administratif
+Acteur principal
+RH
+Préconditions
+L’utilisateur est authentifié avec le rôle RH. L’employé cible
+est enregistré dans le système.
+Postconditions
+Le document est stocké et associé au dossier de l’employé. Le
+dépôt est tracé automatiquement dans le journal d’audit.
+Scénario principal
+1. Le RH accède au profil de l’employé, section «Documents».
+2. Il clique sur « Ajouter un document ».
+3. Il
+sélectionne
+le
+type
+de
+document
+(CONTRAT,
+ATTESTATION, DIPLOME, AUTRE).
+4. Il joint le fichier à déposer.
+5. Le système valide le format et la taille du fichier.
+6. Le document est enregistré avec ses métadonnées (type,
+auteur, horodatage).
+7. Un message de confirmation est affiché.
+Scénarios alternatifs
+A1 : Format de fichier non supporté →Un message
+d’erreur liste les formats acceptés ; le dépôt est bloqué.
+A2 : Taille du fichier dépassant la limite autorisée →
+Un message d’erreur indique la taille maximale autorisée ; le
+dépôt est bloqué.
+4.4
+Conception du deuxième Sprint
+La conception technique du Sprint 2 traduit les besoins métiers en modèles structurants
+guidant le développement. Cette section s’articule autour de deux axes complémentaires :
+le diagramme de classes, qui modélise l’architecture statique des nouvelles entités, et les
+diagrammes de séquence, qui illustrent les interactions dynamiques entre les composants
+du système.
+4.4.1
+Diagramme de classes
+Le diagramme de classes du Sprint 2 étend le modèle établi lors du Sprint 1 en
+introduisant les nouvelles entités du domaine RH. Il définit la structure des données —
+employés, contrats, documents et historique — ainsi que les relations de dépendance qui
+les unissent avec les entités existantes (UserProfile, Company, Department, JobPosition).
+La figure 4.2 présente le diagramme de classes du Sprint 2, illustrant l’extension du modèle
+de données de PaieZone.
+74
+
+===== PAGE 76 =====
+Figure 4.2 – Diagramme de classes du Sprint 2
+Les entités principales introduites dans ce sprint sont les suivantes :
+• Employee : Entité centrale du sprint, elle stocke les informations personnelles, le
+statut , la catégorie et le matricule unique. Elle est associée à un Department, un
+JobPosition, une Company et peut être liée à un UserProfile.
+• Contract : Représente le contrat de travail d’un employé. Elle porte le type , le statut,
+les dates clés et le salaire brut.
+• Document : Modélise les pièces administratives attachées au dossier d’un employé,
+identifiées par leur type , leur chemin de stockage , leur type et la référence à l’auteur
+de l’upload.
+• EmployeeHistory : Assure la traçabilité des modifications apportées au dossier
+employé en enregistrant pour chaque changement le champ concerné, l’ancienne valeur,
+la nouvelle valeur, l’auteur et l’horodatage.
+4.4.2
+Diagrammes de séquences
+Les diagrammes de séquences illustrent la dynamique du système en détaillant les
+interactions chronologiques entre les composants pour les cas d’utilisation les plus critiques.
+75
+
+===== PAGE 77 =====
+4.4.2.1
+Diagramme de séquence : Création d’un employé
+La figure 4.3 illustre le flux de création d’un employé dans PaieZone, incluant la
+génération du matricule et le déclenchement automatique de l’enregistrement dans l’historique.
+Figure 4.3 – Diagramme de séquence — Création d’un employé
+4.4.2.2
+Diagramme de séquence : Association d’un contrat à un employé
+La figure 4.4 illustre le flux d’association d’un contrat de travail à un employé dans
+PaieZone, incluant les validations métier et la mise à jour du statut.
+76
+
+===== PAGE 78 =====
+Figure 4.4 – Diagramme de séquence — Association d’un contrat à un employé
+77
+
+===== PAGE 79 =====
+4.5
+Etude et réalisation du deuxième sprint
+Cette section présente les réalisations concrètes du Sprint 2, marquant le passage
+des spécifications à des fonctionnalités opérationnelles livrées. Les travaux ont porté sur
+l’implémentation du module de gestion des employés, le cycle de vie des contrats de travail,
+la gestion documentaire et le système d’historisation. Ces développements matérialisent la
+validation des 9 User Stories planifiées et constituent le cœur métier RH de la plateforme
+PaieZone.
+4.5.1
+Gestion des employés
+Le module de gestion des employés constitue l’épine dorsale du Sprint 2. Il offre à
+l’équipe RH et aux Administrateurs un contrôle complet sur les dossiers du personnel de
+la société.
+Figure 4.5 – Liste des employés — Vue d’ensemble du personnel
+La figure 4.5 illustre l’interface de consultation de la liste des employés. Les collaborateurs
+sont présentés avec leurs informations clés : matricule, identité, département, poste et
+statut. La table intègre des fonctions de recherche multicritère et de pagination pour
+faciliter la navigation au sein des effectifs.
+78
+
+===== PAGE 80 =====
+Figure 4.6 – Formulaire de création et de modification d’un employé
+La figure 4.6 présente le formulaire de gestion (création/modification) du profil d’un
+employé. L’utilisateur renseigne les informations personnelles, le département, le poste et
+la catégorie de l’employé. Pour garantir l’intégrité des données,
+Figure 4.7 – Vue détaillée du profil employé
+La figure 4.7 illustre la vue détaillée du profil d’un employé, centralisant l’ensemble de
+son dossier administratif : informations personnelles, contrats associés, documents stockés
+et historique des modifications. Cette vue constitue le point d’entrée unique pour toutes
+les opérations liées au dossier d’un collaborateur.
+79
+
+===== PAGE 81 =====
+4.5.2
+Gestion des contrats de travail
+Le module de gestion des contrats formalise la relation de travail entre l’employé et
+la société. Il couvre l’intégralité du cycle de vie contractuel : association, modification et
+résiliation.
+Figure 4.8 – Section Contrats du dossier employé
+La figure 4.8 présente la section « Contrats » du dossier employé, affichant l’historique
+contractuel avec le type, le statut , les dates clés et le salaire brut. Les actions disponibles
+(modifier, résilier) sont conditionnées au statut courant du contrat, empêchant toute
+opération incohérente.
+4.5.3
+Gestion des documents administratifs
+Le module de gestion documentaire permet à l’équipe RH de constituer un dossier
+numérique complet pour chaque employé, en stockant de manière sécurisée l’ensemble des
+pièces administratives.
+80
+
+===== PAGE 82 =====
+Figure 4.9 – Section Documents du dossier employé — Upload et consultation
+La figure 4.9 présente la section « Documents » du dossier employé. Le RH peut
+uploader des fichiers en sélectionnant leur type parmi une liste prédéfinie (CONTRAT,
+ATTESTATION, DIPLOME, AUTRE). Chaque document est référencé avec son nom,
+son type et la date d’upload .
+4.5.4
+Historique des fiches de paie
+Le module de gestion de paie intègre un système d’historisation complet pour chaque
+employé. Il permet de centraliser, d’archiver et de consulter l’historique de l’ensemble
+des fiches de paie générées au fil des mois, offrant ainsi un suivi temporel et détaillé des
+rémunérations, des retenues et des versements effectués.
+Figure 4.10 – Interface de l’historique de paie d’un employé
+81
+
+===== PAGE 83 =====
+La figure 4.10 illustre l’interface de consultation de cet historique. Elle affiche, pour
+chaque période, le salaire net, les retenues appliquées et le statut du versement.
+4.6
+Tests et Validation
+La phase de tests et de validation du Sprint 2 vise à garantir la conformité des
+fonctionnalités implémentées aux exigences des User Stories et à assurer la robustesse
+des modules métier livrés. Trois niveaux de tests ont été mis en œuvre de manière
+complémentaire.
+4.6.1
+Plan de tests
+• Tests unitaires (JUnit / Mockito) : Vérification de la logique métier des services
+Spring — notamment la génération du matricule, les règles de transition de statut des
+contrats et les validations de format des documents.
+• Tests d’intégration : Validation du bon fonctionnement des flux complets — création
+d’un employé avec rattachement à un département et un poste et l’association d’un
+contrat , résiliation d’un contrat avec mise à jour du statut.
+• Tests fonctionnels (interface Angular) : Vérification du comportement des formulaires
+(validation des champs obligatoires, gestion des erreurs), de l’affichage conditionnel des
+actions selon le statut des entités et de la cohérence des données affichées dans les vues
+de consultation.
+Le Tableau 4.2 synthétise les cas de test principaux réalisés pour ce sprint.
+Table 4.2: Récapitulatif des cas de test du Sprint 2
+ID Test
+Description du cas de test
+Résultat attendu
+Statut
+T-6.1
+Création d’un employé avec tous les champs
+valides
+Employé
+créé,
+matricule généré
+OK
+T-6.2
+Création
+d’un
+employé
+avec
+champs
+obligatoires manquants
+Erreurs de validation
+affichées
+OK
+T-6.3
+Désactivation d’un employé possédant un
+contrat actif
+Avertissement
+affiché, désactivation
+conditionnelle
+OK
+T-7.1
+Association d’un contrat CDI à un employé
+sans contrat actif
+Contrat
+créé
+avec
+statut ACTIF
+OK
+82
+
+===== PAGE 84 =====
+ID Test
+Description du cas de test
+Résultat attendu
+Statut
+T-7.2
+Tentative d’association d’un second contrat
+actif
+Blocage avec message
+d’erreur explicite
+OK
+T-7.3
+Résiliation d’un contrat sans motif renseigné
+Erreur de validation,
+résiliation bloquée
+OK
+T-8.1
+Upload d’un fichier PDF valide dans le dossier
+employé
+Document enregistré
+et visible dans la liste
+OK
+T-9.1
+Modification
+d’un
+profil
+employé
+et
+consultation de l’historique
+Entrée
+créée
+avec
+ancienne/nouvelle
+valeur
+OK
+4.7
+Rituels Agiles et Clôture du Sprint
+Conformément à la méthodologie Scrum adoptée par l’équipe PaieZone, le Sprint 2 s’est
+clôturé par la tenue des deux rituels essentiels : la Sprint Review et la Sprint Retrospective.
+Ces cérémonies assurent la transparence du travail accompli et l’amélioration continue des
+pratiques d’équipe.
+4.7.1
+Revue du Sprint (Sprint Review)
+La Sprint Review a réuni l’équipe de développement, le Product Owner et les parties
+prenantes. Les User Stories du sprint ont été présentées et démontrées en conditions réelles
+à travers l’interface Angular :
+• Démonstration de la gestion du capital humain : Validation du flux de gestion
+des profils employés (création, consultation détaillée, modification et désactivation) et
+de la génération automatique du matricule unique.
+• Présentation de la gestion des contrats de travail : Démonstration de l’association
+des différents types de contrats (CDI, CDD, CIVP) à un employé, de la mise à jour de
+leurs conditions et de la gestion des transitions de statut (Actif à Résilié).
+• Démonstration de la gestion des documents administratifs : Validation du
+service de stockage de fichiers (PDF, images), du dépôt de documents dans le dossier
+de l’employé et de l’application des contrôles d’accès selon le rôle de l’utilisateur.
+• Historique des fiches de paie : Présentation de l’interface de consultation de
+l’historique de paie d’un employé, permettant le suivi temporel des rémunérations et la
+recherche ciblée par période.
+L’ensemble des User Stories planifiées pour ce second sprint a été validé par le Product
+83
+
+===== PAGE 85 =====
+Owner, confirmant la conformité des livrables aux critères d’acceptation et l’évolution
+fonctionnelle de la plateforme.
+4.7.2
+Rétrospective du Sprint (Sprint Retrospective)
+La Sprint Retrospective a permis à l’équipe de réfléchir collectivement sur les pratiques
+du sprint écoulé autour de trois axes :
+• Ce qui a bien fonctionné : La collaboration efficace entre le front-end et le back-end
+a de nouveau permis une intégration fluide des services. L’utilisation d’une structure
+commune pour les tableaux a également facilité l’uniformisation visuelle des livrables
+de l’application.
+• Ce qui peut être amélioré : La gestion des fonctionnalités avancées (comme le
+stockage des documents et l’affichage des historiques) a été plus complexe que prévu,
+retardant légèrement la finalisation de certains tests applicatifs.
+• Actions pour le Sprint 3 : Anticiper l’architecture des modules complexes dès le
+début du sprint et adopter une approche plus systématique pour la préparation des
+environnements afin de détecter les anomalies plus tôt.
+Conclusion
+Ce chapitre a détaillé les réalisations du Sprint 2 de PaieZone, marqué par la finalisation
+du socle RH à travers 9 User Stories (gestion des employés, contrats, documents et
+historisation). L’architecture technique s’est enrichie de quatre entités clés intégrées via
+des interfaces Angular ergonomiques. Ces acquis permettent désormais d’aborder le Sprint
+3, dédié à la gestion de la paie et aux déclarations réglementaires.
+84
+
+===== PAGE 86 =====
+Chapitre 5
+ETUDE DE SPRINT 3
+Plan
+1
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 86
+2
+Spécification fonctionnelle du Sprint 3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .86
+3
+Conception du Sprint 3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .97
+4
+Étude et réalisation du Sprint 3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .103
+5
+Tests et Validation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .105
+6
+Rituels Agiles et Clôture du Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 108
+7
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .109
+
+===== PAGE 87 =====
+Introduction
+Le présent chapitre expose l’ensemble des travaux menés dans le cadre du troisième
+sprint du projet PaieZone. Ce sprint constitue le cœur métier différenciant de la
+plateforme : il couvre la gestion des paramètres réglementaires propres au cadre légal
+tunisien, la gestion complète du cycle de paie (périodes, rubriques, primes, avances, bulletins
+et déclaration CNSS), ainsi que la gestion des congés et des absences. Ces fonctionnalités
+s’appuient directement sur le socle technique établi lors des deux premiers sprints —
+authentification, gestion des utilisateurs et gestion du capital humain — pour offrir une
+solution de gestion RH et de paie pleinement opérationnelle. Le chapitre suit la même
+structure que les chapitres précédents : spécification fonctionnelle, conception, réalisation
+et implémentation, tests et validation, puis clôture agile du sprint.
+5.1
+Spécification fonctionnelle du Sprint 3
+La spécification fonctionnelle du Sprint 3 formalise les besoins exprimés par le Product
+Owner autour des trois épopées majeures de ce sprint. Le recueil des exigences est présenté
+sous forme de User Stories, puis décliné en tâches techniques dans le Sprint Backlog, avant
+d’être modélisé par les diagrammes UML correspondants.
+5.1.1
+User Stories du Sprint 3
+Le tableau 5.1 présente les vingt-deux User Stories identifiées pour le Sprint 3 de
+PaieZone, réparties sur trois domaines fonctionnels : la gestion des paramètres réglementaires,
+la gestion de la paie et la gestion des congés et des absences.
+Table 5.1: User Stories du Sprint 3 — PaieZone
+ID
+User Story
+Priorité
+10.1
+En tant que Super Admin, je souhaite consulter la liste
+des paramètres réglementaires afin de vérifier les taux
+légaux en vigueur.
+Haute
+10.2
+En tant que Super Admin, je souhaite ajouter un
+nouveau paramètre réglementaire afin d’intégrer une
+nouvelle règle légale dans le système.
+Haute
+10.3
+En tant que Super Admin, je souhaite modifier un
+paramètre réglementaire afin de mettre à jour les
+taux conformément aux évolutions législatives.
+Haute
+86
+
+===== PAGE 88 =====
+ID
+User Story
+Priorité
+10.4
+En tant que Super Admin, je souhaite consulter
+l’historique des modifications des paramètres afin
+de garantir la traçabilité des changements réglementaires.
+Moyenne
+11.1
+En tant que RH, je souhaite créer une période de paie
+afin de lancer le cycle de traitement des salaires.
+Critique
+11.2
+En tant que RH, je souhaite modifier une période de
+paie afin de corriger les données avant la clôture.
+Haute
+11.3
+En tant que RH, je souhaite clôturer une période
+de paie afin de valider les calculs et de bloquer toute
+modification ultérieure.
+Critique
+11.4
+En tant que RH, je souhaite lancer le calcul de
+tous les bulletins d’une période afin de générer
+automatiquement les salaires nets de l’ensemble du
+personnel.
+Critique
+11.5
+En tant que RH, je souhaite créer une rubrique de
+paie afin de structurer les éléments de calcul du salaire.
+Haute
+11.6
+En tant que RH, je souhaite modifier une rubrique de
+paie afin de l’adapter aux besoins de la société.
+Moyenne
+11.7
+En tant que RH, je souhaite ajouter une prime à
+un employé afin d’augmenter sa rémunération pour une
+période donnée.
+Haute
+11.8
+En tant que RH, je souhaite modifier une prime afin
+d’ajuster son montant avant le calcul de la paie.
+Moyenne
+11.9
+En tant que RH, je souhaite valider une demande
+d’avance afin d’accorder le soutien financier sollicité par
+l’employé.
+Haute
+11.10
+En tant que RH, je souhaite refuser une demande
+d’avance afin d’informer l’employé du rejet de sa
+demande.
+Haute
+11.11
+En tant qu’Employé, je souhaite demander une avance
+sur salaire afin de recevoir un soutien financier ponctuel.
+Haute
+11.12
+En tant que RH, je souhaite générer un bulletin de
+paie afin de le distribuer à l’employé concerné.
+Critique
+87
+
+===== PAGE 89 =====
+ID
+User Story
+Priorité
+11.13
+En tant que RH, je souhaite générer un fichier CNSS
+afin de déclarer les salariés auprès de la Caisse Nationale
+de Sécurité Sociale.
+Critique
+12.1
+En tant que RH, je souhaite créer un type de congé
+afin de définir les règles et les quotas associés.
+Haute
+12.2
+En tant qu’Employé, je souhaite demander un congé
+afin de m’absenter légitimement de mon poste de travail.
+Haute
+12.3
+En tant que RH, je souhaite valider une demande de
+congé afin de gérer la disponibilité et la continuité du
+service.
+Haute
+12.4
+En tant qu’Employé, je souhaite consulter mon solde
+de congé afin de planifier mes absences en connaissance
+de cause.
+Haute
+12.5
+En tant que RH, je souhaite gérer les jours fériés afin
+de les intégrer automatiquement dans le calcul de la paie
+et dans la gestion des congés.
+Moyenne
+5.1.2
+Backlog du Sprint 3
+Le Tableau 5.2 détaille le backlog complet du troisième Sprint, regroupant la gestion
+des paramètres réglementaires, le traitement de la paie, ainsi que le suivi des congés et des
+absences.
+Table 5.2: Backlog détaillé du troisième Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+Gestion des
+Paramètres
+Réglementaires
+10.1 En tant que Super Admin,
+je souhaite consulter la liste des
+paramètres réglementaires afin de
+vérifier les taux légaux en vigueur.
+- Concevoir l’interface de consultation
+des paramètres réglementaires.
+-
+Développer
+l’API
+REST
+de
+récupération des paramètres actifs.
+1
+88
+
+===== PAGE 90 =====
+Item
+User Story
+Tâches
+Est.
+(j)
+10.2 En tant que Super Admin,
+je
+souhaite
+ajouter
+un
+nouveau
+paramètre
+réglementaire
+afin
+d’intégrer une nouvelle règle légale.
+- Développer le formulaire d’ajout
+d’un paramètre (taux, date d’entrée
+en vigueur).
+- Implémenter l’API REST d’insertion
+avec versionnage.
+- Tester la prise en compte du nouveau
+taux dans les calculs de paie.
+1
+10.3 En tant que Super Admin,
+je souhaite modifier un paramètre
+réglementaire afin de mettre à jour
+les taux conformément aux évolutions
+législatives.
+-
+Développer
+l’interface
+de
+modification du paramètre.
+-
+Implémenter
+la
+traçabilité
+des
+modifications dans le journal d’audit.
+- Tester l’impact de la mise à jour sur
+les calculs historiques.
+1
+10.4 En tant que Super Admin,
+je
+souhaite
+consulter
+l’historique
+des modifications des paramètres
+afin de garantir la traçabilité des
+changements réglementaires.
+- Créer l’interface de consultation de
+l’historique des paramètres.
+-
+Développer
+l’API
+REST
+de
+récupération des versions antérieures.
+1
+Gestion des
+Périodes
+de Paie
+11.1 En tant que RH, je souhaite créer
+une période de paie afin de lancer le
+cycle de traitement des salaires.
+- Concevoir l’interface de création
+d’une période de paie (mois, année).
+- Développer l’API REST de création
+de la période.
+- Tester les contraintes de dates et
+l’unicité de la période.
+1
+11.2 En tant que RH, je souhaite
+modifier une période de paie afin de
+corriger les données avant la clôture.
+-
+Développer
+l’interface
+de
+modification de la période.
+-
+Implémenter
+les
+contrôles
+de
+modification (période non clôturée
+uniquement).
+- Tester les transitions de statut.
+1
+11.3 En tant que RH, je souhaite
+clôturer une période de paie afin de
+valider les calculs et de bloquer toute
+modification ultérieure.
+- Implémenter le verrouillage de la
+période et de tous ses bulletins.
+- Développer l’API REST de clôture
+avec horodatage (lockedAt).
+-
+Tester
+le
+blocage
+effectif
+des
+modifications post-clôture.
+1
+89
+
+===== PAGE 91 =====
+Item
+User Story
+Tâches
+Est.
+(j)
+Calcul des
+Bulletins
+de Paie
+11.4 En tant que RH, je souhaite
+lancer le calcul de tous les bulletins
+d’une
+période
+afin
+de
+générer
+automatiquement les salaires nets de
+l’ensemble du personnel.
+- Implémenter le moteur de calcul
+du salaire net (rubriques, cotisations
+CNSS, IRPP, primes, avances).
+- Développer le traitement par lot
+(Spring Batch) pour l’ensemble des
+employés d’une période.
+-
+Intégrer
+les
+paramètres
+réglementaires
+dans
+le
+moteur
+de calcul.
+- Tester les cas limites (prime, avance,
+mi-temps).
+5
+Rubriques
+& Primes
+11.5 En tant que RH, je souhaite créer
+une rubrique de paie afin de structurer
+les éléments de calcul du salaire.
+- Concevoir l’interface de création
+d’une
+rubrique
+(type,
+montant,
+nature : gain/retenue).
+- Développer l’API REST d’insertion
+de la rubrique.
+- Tester la prise en compte de la
+rubrique dans le calcul du bulletin.
+1
+11.6 En tant que RH, je souhaite
+modifier une rubrique de paie afin de
+l’adapter aux besoins de la société.
+-
+Développer
+l’interface
+de
+modification de la rubrique.
+- Implémenter la mise à jour en base
+avec contrôle de cohérence.
+1
+11.7 En tant que RH, je souhaite
+ajouter une prime à un employé afin
+d’augmenter sa rémunération pour
+une période donnée.
+- Développer l’interface et l’API
+REST
+de
+création
+d’une
+prime
+individuelle.
+- Tester l’intégration de la prime dans
+le calcul du bulletin.
+1
+11.8 En tant que RH, je souhaite
+modifier une prime afin d’ajuster son
+montant avant le calcul de la paie.
+-
+Développer
+l’interface
+de
+modification de la prime.
+- Implémenter la mise à jour avec
+contrôle du statut de la période.
+1
+Gestion
+des Avances
+11.9 En tant que RH, je souhaite
+valider une demande d’avance afin
+d’accorder le soutien financier sollicité
+par l’employé.
+-
+Implémenter
+le
+workflow
+de
+validation par le RH.
+- Mettre à jour le statut en APPROVED
+avec enregistrement de approvedBy.
+- Tester la déduction automatique de
+l’avance dans le bulletin.
+1
+90
+
+===== PAGE 92 =====
+Item
+User Story
+Tâches
+Est.
+(j)
+11.10 En tant que RH, je souhaite
+refuser une demande d’avance afin
+d’informer l’employé du rejet.
+- Implémenter le workflow de refus
+avec saisie obligatoire d’une raison.
+- Mettre à jour le statut en REJECTED.
+- Tester la notification de refus à
+l’employé.
+1
+11.11
+En
+tant
+qu’Employé,
+je
+souhaite demander une avance sur
+salaire afin de recevoir un soutien
+financier ponctuel.
+- Développer l’interface de demande
+d’avance
+(formulaire
+employé
+:
+montant, raison).
+- Implémenter les contrôles (contrat
+actif, plafond autorisé).
+-
+Tester
+le
+cycle
+complet
+de
+la
+demande à la déduction.
+1
+Génération
+des Documents
+de Paie
+11.12 En tant que RH, je souhaite
+générer un bulletin de paie afin de le
+distribuer à l’employé concerné.
+-
+Concevoir
+et
+implémenter
+le
+template PDF du bulletin de paie.
+- Développer le service de génération
+PDF (iText / JasperReports).
+- Implémenter la mise à disposition
+du bulletin dans l’espace employé.
+- Tester la conformité du PDF avec
+les paramètres réglementaires.
+2
+11.13 En tant que RH, je souhaite
+générer un fichier CNSS afin de
+déclarer les salariés auprès de la
+Caisse Nationale de Sécurité Sociale.
+- Développer le service de génération
+du
+fichier
+CNSS
+au
+format
+réglementaire.
+- Agréger les montants CNSS salarié
+et patronal par employé.
+- Tester la conformité du fichier
+généré avec les exigences légales.
+2
+Gestion des
+Congés &
+Absences
+12.1 En tant que RH, je souhaite créer
+un type de congé afin de définir les
+règles et les quotas associés.
+- Concevoir l’interface de création
+d’un type de congé (annuel, maladie,
+sans solde).
+- Développer l’API REST d’insertion
+avec gestion des quotas.
+1
+91
+
+===== PAGE 93 =====
+Item
+User Story
+Tâches
+Est.
+(j)
+12.2 En tant qu’Employé, je souhaite
+demander un congé afin de m’absenter
+légitimement de mon poste de travail.
+- Développer l’interface de demande
+de congé (formulaire, calendrier).
+- Implémenter les contrôles de solde
+et de chevauchement.
+- Tester la création de la demande avec
+le statut PENDING.
+1
+12.3 En tant que RH, je souhaite
+valider une demande de congé afin de
+gérer la disponibilité et la continuité
+du service.
+-
+Implémenter
+le
+workflow
+de
+validation/refus
+par
+le
+RH
+avec
+notification.
+- Mettre à jour automatiquement
+le
+solde
+LeaveBalance
+après
+approbation.
+- Tester la décrémentation du solde.
+1
+12.4 En tant qu’Employé, je souhaite
+consulter mon solde de congé afin de
+planifier mes absences en connaissance
+de cause.
+-
+Développer
+l’interface
+de
+consultation
+du
+solde
+de
+congé
+par type.
+-
+Développer
+l’API
+REST
+de
+récupération du solde en temps réel.
+1
+12.5 En tant que RH, je souhaite
+gérer les jours fériés afin de les intégrer
+automatiquement dans le calcul de la
+paie et dans la gestion des congés.
+- Implémenter la gestion des jours
+fériés (ajout, suppression).
+- Intégrer l’exclusion automatique des
+jours fériés dans le décompte des
+congés.
+- Tester la prise en compte des jours
+fériés dans le calcul de paie.
+1
+5.1.3
+Modélisation fonctionnelle
+La modélisation fonctionnelle du Sprint 3 s’appuie sur un diagramme de cas d’utilisation
+global et des descriptions textuelles détaillées pour les cas d’utilisation les plus critiques
+de ce sprint.
+5.1.3.1
+Diagramme de cas d’utilisation du Sprint 3
+La figure 5.1 présente le diagramme de cas d’utilisation global du Sprint 3 de PaieZone.
+Le diagramme de cas d’utilisation du Sprint 3 structure les fonctionnalités du système en
+trois modules fonctionnels distincts, garantissant une séparation claire des responsabilités
+entre les acteurs :
+92
+
+===== PAGE 94 =====
+Figure 5.1 – Diagramme de cas d’utilisation du Sprint 3
+93
+
+===== PAGE 95 =====
+• Gestion des paramètres réglementaires : Ce module est exclusivement dédié au
+profil Super Admin, seul habilité à configurer les constantes légales (taux CNSS,
+barèmes IRPP) indispensables à l’intégrité du moteur de calcul.
+• Gestion de la paie : Ce package centralise les opérations liées au cycle de rémunération.
+Le RH y pilote la configuration des périodes et la génération des bulletins, tandis que
+l’Employé dispose d’un accès pour soumettre ses demandes d’avances.
+• Gestion des congés et des absences : Ce module assure le suivi des temps. Il
+permet au RH d’administrer les types de congés et de valider les requêtes, tandis que
+l’Employé peut formuler et suivre ses demandes en toute autonomie.
+5.1.3.2
+Description textuelle des cas d’utilisation
+Les descriptions textuelles suivantes formalisent les scénarios des cas d’utilisation
+principaux du Sprint 3. Elles constituent la référence contractuelle de validation avec le
+Product Owner lors de la Sprint Review.
+5.1.3.2.1
+Cas d’utilisation 1 : Lancer le calcul de tous les bulletins d’une
+période
+Le tableau 5.3 présente la description textuelle détaillée du cas d’utilisation « Lancer
+le calcul des bulletins de paie ».
+Table 5.3: Description textuelle du cas d’utilisation
+Lancer le calcul des bulletins de paie
+Élément
+Description
+Titre
+Lancer le calcul de tous les bulletins d’une période
+Acteur principal
+RH
+Préconditions
+Une période de paie existe avec le statut DRAFT ou VALIDATED.
+Des employés actifs sont rattachés à la société.
+Postconditions
+Tous les bulletins (PaySlip) sont générés avec le statut
+CALCULATED. La période de paie passe au statut CALCULATED.
+94
+
+===== PAGE 96 =====
+Scénario principal
+1. Le RH accède au module Gestion de la Paie et sélectionne
+une période.
+2. Il clique sur « Lancer le calcul ».
+3. Le système vérifie que le statut de la période est différent
+de LOCKED.
+4. Pour chaque employé actif, le système récupère le salaire
+de base, les rubriques, les primes, les avances déduites et
+les congés.
+5. Il calcule : salaire brut →cotisations CNSS / CAVIS →
+IRPP →net à payer.
+6. Un bulletin (PaySlip) est créé et sauvegardé pour chaque
+employé avec le statut CALCULATED.
+7. La période de paie passe au statut CALCULATED.
+8. Un résumé (nombre de bulletins générés) s’affiche au RH.
+Scénarios alternatifs
+A1 : Période verrouillée →La période est au statut LOCKED,
+le système bloque l’action et informe le RH.
+A2 : Aucun employé actif →Aucun employé actif
+n’est trouvé pour la période, le système affiche un message
+d’avertissement.
+5.1.3.2.2
+Cas d’utilisation 2 : Clôturer une période de paie
+Le tableau 5.4 présente la description textuelle détaillée du cas d’utilisation « Clôturer
+une période de paie ».
+Table 5.4: Description textuelle du cas d’utilisation
+Clôturer une période de paie
+Élément
+Description
+Titre
+Clôturer une période de paie
+Acteur principal
+RH
+Préconditions
+La période est au statut CALCULATED. Tous les bulletins sont
+calculés.
+Postconditions
+La période passe au statut LOCKED. Aucune modification n’est
+possible.
+95
+
+===== PAGE 97 =====
+Scénario principal
+1. Le RH accède à la liste des périodes de paie et sélectionne
+une période au statut CALCULATED.
+2. Il clique sur « Clôturer la période ».
+3. Le système vérifie que tous les bulletins associés sont au
+statut CALCULATED.
+4. Il verrouille tous les bulletins (LOCKED) et la période
+(LOCKED + lockedAt = now()).
+5. Un message de confirmation s’affiche.
+Scénarios alternatifs
+A1 : Bulletins non finalisés →Des bulletins sont encore
+en statut DRAFT, le système bloque l’action avec un message
+d’erreur.
+A2 : Période déjà verrouillée →Le système affiche un
+message informatif.
+5.1.3.2.3
+Cas d’utilisation 3 : Demande et traitement d’une avance sur salaire
+Le tableau 5.5 présente la description textuelle détaillée du cas d’utilisation « Demande
+et traitement d’une avance sur salaire ».
+Table 5.5: Description textuelle du cas d’utilisation
+Demande et traitement d’une avance sur salaire
+Élément
+Description
+Titre
+Demande et traitement d’une avance sur salaire
+Acteurs principaux
+Employé (demandeur) — RH (valideur)
+Préconditions
+L’employé possède un contrat actif. La période de paie est
+ouverte. Aucune avance en statut PENDING n’est en cours.
+Postconditions
+L’avance est au statut APPROVED et sera déduite du prochain
+bulletin, ou au statut REJECTED avec une raison enregistrée.
+96
+
+===== PAGE 98 =====
+Scénario principal
+1. L’employé accède au module « Mes demandes d’avance ».
+2. Il renseigne le montant, la raison et la date de demande.
+3. Le système vérifie le contrat actif et le plafond autorisé.
+4. L’avance est créée avec le statut PENDING.
+5. Le RH consulte la liste des demandes en attente.
+6. Il sélectionne une demande et clique sur « Approuver ».
+7. Le système met à jour le statut →APPROVED, enregistre
+approvedBy et approvedAt.
+8. L’avance sera marquée DEDUCTED lors du calcul du bulletin.
+Scénarios alternatifs
+A1 : Refus par le RH →Le RH saisit une raison et clique
+sur « Refuser », le système passe le statut à REJECTED.
+A2 : Montant invalide →Le montant dépasse le plafond
+autorisé, le système bloque la validation à la soumission.
+5.2
+Conception du Sprint 3
+La phase de conception du Sprint 3 traduit les exigences fonctionnelles en structures
+techniques. Elle couvre le diagramme de classes enrichi des nouvelles entités métier
+introduites dans ce sprint, ainsi que les diagrammes de séquence des scénarios principaux.
+5.2.1
+Diagramme de classes
+La figure 5.2 présente le diagramme de classes du Sprint 3 de PaieZone.
+97
+
+===== PAGE 99 =====
+Figure 5.2 – Diagramme de classes du Sprint 3 — PaieZone
+Le diagramme de classes du Sprint 3 enrichit le modèle de données existant en
+introduisant les mécanismes nécessaires au traitement de la paie et à la gestion administrative.
+La logique métier s’articule désormais autour de trois piliers fondamentaux :
+• Le moteur de calcul et la conformité : L’intégration de paramètres réglementaires
+versionnés et de périodes de paie structurées garantit la précision des bulletins de paie
+et la traçabilité des historiques financiers.
+• La gestion des flux transactionnels : Le modèle intègre désormais les rubriques
+de paie (gains et retenues) permettant de générer des bulletins de paie complets et
+conformes.
+• La dématérialisation des processus RH : L’introduction de workflows dédiés aux
+demandes d’avances et de congés, couplée à un suivi dynamique des soldes, automatise
+les interactions entre les employés et la direction des ressources humaines.
+98
+
+===== PAGE 100 =====
+5.2.2
+Diagrammes de séquences
+Les diagrammes de séquences suivants modélisent la dynamique des cas d’utilisation
+principaux du Sprint 3 selon l’architecture N-Tiers à trois couches de PaieZone.
+5.2.2.1
+Diagramme de séquence : Lancer le calcul des bulletins de paie
+La figure 5.3 illustre le flux de calcul automatisé des bulletins de paie pour une période
+donnée.
+Figure 5.3 – Diagramme de séquence — Lancer le calcul des bulletins de paie
+Ce diagramme illustre l’ordonnancement du traitement de la paie, pilier central du
+99
+
+===== PAGE 101 =====
+Sprint 3. Le moteur de calcul automatise la transformation des données contractuelles
+en bulletins de paie nets, en appliquant rigoureusement les barèmes réglementaires à
+l’ensemble des employés actifs. Ce flux garantit l’intégrité des résultats financiers ainsi que
+la mise à jour cohérente des statuts de la période de paie.
+5.2.2.2
+Diagramme de séquence : Clôturer une période de paie
+La figure 5.4 illustre le flux de clôture d’une période de paie.
+Figure 5.4 – Diagramme de séquence — Clôturer une période de paie — PaieZone
+Ce diagramme détaille le processus de clôture définitive d’une période de paie, garantissant
+l’intégrité et l’immuabilité des résultats financiers. Le flux assure la validation préalable de
+l’état des bulletins avant d’opérer un verrouillage global, interdisant ainsi toute modification
+ultérieure des données de paie.
+100
+
+===== PAGE 102 =====
+5.2.2.3
+Diagramme de séquence : Demande et traitement d’une avance sur
+salaire
+La figure 5.5 illustre le flux de demande et de traitement d’une avance sur salaire.
+Figure 5.5 – Diagramme de séquence — Demande et traitement d’une avance sur salaire
+Ce diagramme illustre le processus de gestion des avances sur salaire, structuré en deux
+phases collaboratives. Le flux débute par la soumission de la demande par l’Employé,
+soumise à des contrôles d’éligibilité automatiques, et se conclut par la validation du RH.
+L’approbation finale déclenche l’intégration automatique de l’avance dans le prochain cycle
+de paie.
+101
+
+===== PAGE 103 =====
+5.2.2.4
+Diagramme de séquence : Demande et validation d’un congé
+La figure 5.6 illustre le flux de demande et de validation d’un congé.
+Figure 5.6 – Diagramme de séquence — Demande et validation d’un congé
+Ce diagramme modélise le workflow de gestion des congés, articulé entre l’Employé et
+le RH. Le processus garantit l’intégrité des données grâce à une vérification automatique
+des soldes et des règles d’éligibilité lors de la soumission. La validation finale par le RH
+déclenche la mise à jour immédiate du statut de la demande et l’ajustement automatique
+des compteurs de congés.
+102
+
+===== PAGE 104 =====
+5.3
+Étude et réalisation du troisième sprint
+Cette section détaille les réalisations concrètes du troisième sprint, marquant l’aboutissement
+du cœur métier de la plateforme. Les travaux ont porté sur l’implémentation du moteur
+de calcul de la paie, l’automatisation des processus de gestion des congés et la mise en
+place des traitements par lot via Spring Batch.
+5.3.1
+Gestion des paramètres réglementaires
+Figure 5.7 – Interface de gestion des paramètres réglementaires
+La figure 5.7 présente l’interface de gestion des paramètres réglementaires, accessible
+exclusivement au Super Admin. Elle affiche la liste des paramètres actifs (taux CNSS
+salarié, taux CNSS patronal, tranches IRPP) avec leurs dates d’entrée en vigueur, et
+propose des actions d’ajout et de modification. Cette interface est le point de configuration
+central qui alimente directement le moteur de calcul de paie de PaieZone.
+5.3.2
+Gestion des périodes de paie
+La figure 5.8 présente le module de gestion des périodes de paie. Le RH peut créer
+une nouvelle période mensuelle, suivre son statut (Ouverte / Clôturée) et déclencher la
+clôture une fois les calculs validés. Le verrouillage automatique après clôture prévient toute
+modification accidentelle des données de paie validées.
+5.3.3
+Calcul et visualisation des bulletins de paie
+La figure 5.9 présente l’interface de calcul des bulletins de paie. Après le lancement
+du calcul par lot, le RH visualise les bulletins générés pour chaque employé avec le détail
+103
+
+===== PAGE 105 =====
+Figure 5.8 – Interface de gestion des périodes de paie
+Figure 5.9 – Interface de calcul et de visualisation des bulletins de paie
+104
+
+===== PAGE 106 =====
+des rubriques, cotisations et montant net. Il peut exporter chaque bulletin en PDF ou
+déclencher l’envoi groupé à l’ensemble des employés.
+5.3.4
+Gestion des primes et des avances
+Figure 5.10 – Interface de gestion des primes et des avances
+La figure 5.10 présente le module de gestion des éléments variables de la paie. Le
+RH peut ajouter des primes individuelles ou collectives et traiter les demandes d’avance
+soumises par les employés (validation ou refus). Les montants validés sont automatiquement
+intégrés dans le calcul du bulletin de la période courante.
+5.3.5
+Gestion des congés et des absences
+La figure 5.11 présente le module de gestion des congés. L’Employé dispose d’un
+calendrier interactif pour soumettre ses demandes et consulter son solde en temps réel. Le
+RH accède à un tableau de bord des demandes en attente, avec les actions de validation et
+de refus. Les jours fériés configurés sont automatiquement exclus du décompte des jours
+de congé.
+5.4
+Tests et Validation
+La phase de tests du Sprint 3 accorde une importance particulière à la fiabilité du
+moteur de calcul de paie, dont les résultats ont des implications financières et légales
+directes pour les sociétés clientes de PaieZone.
+105
+
+===== PAGE 107 =====
+Figure 5.11 – Interface de gestion des congés et des absences
+5.4.1
+Plan de tests
+Trois types de tests ont été mis en œuvre : les tests unitaires du moteur de calcul
+(JUnit 5, Mockito), les tests d’intégration des flux métier complets, et les tests
+fonctionnels des interfaces Angular.
+Le tableau 5.6 présente le plan de tests du Sprint 3.
+Table 5.6: Plan de tests du Sprint 3 — PaieZone
+ID
+US
+Type
+Description
+Résultat
+attendu
+Statut
+TC-01
+10.2
+Unitaire
+Ajout d’un paramètre avec
+un taux valide
+Paramètre
+enregistré
++
+audit tracé
+OK
+TC-02
+10.3
+Unitaire
+Modification
+d’un
+paramètre
+avec
+taux
+hors bornes
+Erreur
+de
+validation
+bloquante
+OK
+TC-03
+11.1
+Intégration
+Création d’une période de
+paie
+Période
+créée
+avec
+statut
+OUVERTE
+OK
+TC-04
+11.3
+Intégration
+Clôture d’une période —
+blocage des modifications
+Statut
+CLÔTURÉE +
+modifications
+rejetées
+OK
+106
+
+===== PAGE 108 =====
+ID
+US
+Type
+Description
+Résultat
+attendu
+Statut
+TC-05
+11.4
+Unitaire
+Calcul du salaire net avec
+prime et avance
+Salaire net =
+Brut + Prime
+- CNSS - IRPP
+- Avance
+OK
+TC-06
+11.4
+Intégration
+Calcul par lot pour 10
+employés
+10
+bulletins
+générés
+sans
+erreur
+OK
+TC-07
+11.4
+Intégration
+Calcul
+sans
+paramètres
+réglementaires configurés
+Erreur
+bloquante
++
+message
+explicite
+OK
+TC-08
+11.12
+Fonctionnel
+Génération
+du
+bulletin
+PDF
+PDF conforme
+au
+template
+réglementaire
+OK
+TC-09
+11.13
+Fonctionnel
+Génération du fichier CNSS
+Fichier
+téléchargeable
+au
+format
+réglementaire
+OK
+TC-10
+12.2
+Intégration
+Demande de congé avec
+solde insuffisant
+Demande
+bloquée
++
+message
+de
+solde
+OK
+TC-11
+12.3
+Intégration
+Validation d’un congé —
+mise à jour du solde
+Solde
+décrémenté
++
+notification
+envoyée
+OK
+La stratégie de validation du Sprint 3 s’est concentrée sur la fiabilité du moteur de
+calcul et la conformité légale des documents produits. Une attention particulière a été
+portée aux scénarios critiques, tels que la gestion simultanée des éléments variables de
+paie, l’intégrité des calculs en l’absence de paramètres configurés, et l’irréversibilité du
+processus de clôture.
+107
+
+===== PAGE 109 =====
+5.5
+Rituels Agiles et Clôture du Sprint
+Fidèle au cadre méthodologique Scrum, le Sprint 3 s’est achevé par les rituels de
+clôture habituels : la revue de sprint, dédiée à la validation des livrables auprès des
+parties prenantes, et la rétrospective, consacrée à l’analyse et à l’amélioration continue des
+processus de l’équipe.
+5.5.1
+Revue du Sprint (Sprint Review)
+La Sprint Review a permis de valider les livrables majeurs du projet PaieZone devant
+le Product Owner :
+• Moteur de paie : Démonstration du calcul automatisé et de la génération des
+documents légaux.
+• Gestion des congés : Validation du workflow collaboratif et de la gestion dynamique
+des soldes.
+• Paramétrage : Configuration des constantes réglementaires (CNSS, IRPP).
+L’ensemble des User Stories planifiées a été validé par le Product Owner, confirmant la
+conformité des livrables aux critères d’acceptation définis lors du Sprint Planning.
+5.5.2
+Rétrospective du Sprint (Sprint Retrospective)
+La Sprint Retrospective a permis à l’équipe de mener une réflexion critique sur les
+processus de développement du cœur métier de PaieZone. Le tableau 5.7 synthétise les
+principaux enseignements selon le format Start / Stop / Continue.
+108
+
+===== PAGE 110 =====
+Table 5.7 – Rétrospective du Sprint 3 — PaieZone
+Ce
+qui
+a
+bien
+fonctionné
+Ce
+qui
+doit
+être
+amélioré
+Actions
+pour
+les
+projets futurs
+L’efficacité
+de
+Spring
+Batch pour le traitement
+de masse lors du calcul
+simultané des bulletins
+de paie.
+La
+complexité
+de
+l’algorithme
+de
+calcul
+de l’IRPP par tranches
+progressives,
+dont
+la
+charge a été sous-estimée.
+Systématiser les sessions
+de refinement technique
+avant le planning pour
+les fonctionnalités à forte
+complexité métier.
+La synergie productive
+entre le développement
+du
+moteur
+de
+calcul
+et
+l’intégration
+des
+interfaces Angular.
+La mise en conformité
+du fichier CNSS a exigé
+plusieurs
+cycles
+de
+correction pour respecter
+le format réglementaire.
+Mettre
+en
+place
+des
+tests de non-régression
+automatisés sur le moteur
+de calcul dès la phase de
+conception.
+La communication fluide
+avec le Product Owner,
+facilitant
+la
+validation
+rapide des templates de
+bulletins.
+Certains
+scénarios
+limites
+du
+calcul
+de
+paie n’avaient pas été
+anticipés lors du Sprint
+Planning.
+Constituer
+une
+bibliothèque
+de
+cas
+de test représentatifs du
+droit social tunisien dès
+la spécification.
+Conclusion
+Ce cinquième chapitre a exposé l’aboutissement des travaux du Sprint 3, phase pivot
+et stratégique du projet PaieZone. L’implémentation des User Stories a permis de finaliser
+le cœur métier de la plateforme, englobant la gestion réglementaire, le cycle complet de
+traitement de la paie et le module de gestion des absences. L’intégration de technologies
+avancées telles que Spring Batch assure désormais la fiabilité, la performance et la
+conformité légale des calculs, tandis que les interfaces Angular garantissent une expérience
+utilisateur adaptée à chaque profil d’acteur. Avec ce socle opérationnel, PaieZone s’affirme
+comme une solution SaaS multi-tenant complète, répondant rigoureusement aux exigences
+du droit social tunisien.
+109
+
+===== PAGE 111 =====
+Chapitre 6
+ETUDE DE SPRINT 4
+Plan
+1
+Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 111
+2
+User Stories du quatrième sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .111
+3
+Backlog du quatrième Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 112
+4
+Spécification fonctionnelle du Sprint 4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 115
+5
+Conception du Sprint 4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 119
+6
+Étude et réalisation du Sprint 4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .124
+7
+Tests et Validation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .126
+8
+Rituels Agiles et Clôture du Sprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 128
+9
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .129
+
+===== PAGE 112 =====
+Introduction
+Fort des acquis du troisième sprint qui a livré le moteur de paie et la gestion des
+congés de la plateforme PaieZone, ce sixième chapitre présente les travaux réalisés lors du
+quatrième et dernier sprint de développement. Ce sprint finalise la plateforme en y intégrant
+quatre domaines fonctionnels complémentaires : la gestion comptable avec export vers
+des logiciels tiers (SAGE), la conformité réglementaire avec la génération des déclarations
+sociales et fiscales (CNSS, CAVIS, IRPP), la production automatisée des documents
+administratifs RH (attestations de salaire et certificats de travail), ainsi qu’un assistant
+conversationnel RH (chatbot) accessible à tous les utilisateurs après authentification. La
+démarche adoptée reste identique : spécification rigoureuse des besoins, modélisation UML,
+conception technique et réalisation des interfaces fonctionnelles.
+6.1
+User Stories du quatrième sprint
+Lors de la réunion de planification du Sprint 4, l’équipe Scrum a défini l’objectif du
+sprint autour de la valeur métier suivante : « Compléter PaieZone par les fonctionnalités de
+conformité, de comptabilité, de génération documentaire et d’assistance conversationnelle,
+pour offrir une solution SaaS pleinement opérationnelle. ». Quatre épics prioritaires ont
+été sélectionnés dans le backlog produit pour constituer le périmètre de ce sprint :
+• Gestion Comptable
+• Conformité Réglementaire
+• Documents Administratifs RH
+• Assistant Conversationnel RH (Chatbot)
+Les besoins fonctionnels ont été formalisés sous forme de User Stories détaillées dans le
+Tableau 6.1.
+Table 6.1: User Stories sélectionnées pour le quatrième sprint
+ID
+User Story
+13.1
+En tant qu’Admin/RH, je veux configurer le plan comptable, afin de
+structurer les comptes de la société et de garantir la cohérence des exports
+comptables.
+13.2
+En tant qu’Admin/RH, je veux exporter les données comptables au
+format SAGE (.csv), afin de les intégrer directement dans le logiciel
+comptable de la société.
+111
+
+===== PAGE 113 =====
+ID
+User Story
+14.1
+En tant que RH, je veux générer la déclaration CNSS salarié par trimestre,
+afin de déclarer les cotisations salariales à la Caisse Nationale de Sécurité
+Sociale.
+14.2
+En tant que RH, je veux générer la déclaration CNSS patronal par
+trimestre, afin de déclarer les cotisations patronales à la Caisse Nationale
+de Sécurité Sociale.
+14.3
+En tant que RH, je veux générer la déclaration CAVIS par trimestre, afin
+de satisfaire aux obligations de la Caisse d’Assurance Vieillesse, Invalidité
+et Survivants.
+14.4
+En tant que RH, je veux générer la déclaration IRPP annuelle, afin de
+transmettre les retenues à la source à l’administration fiscale tunisienne.
+15.1
+En tant que RH, je veux générer une attestation de salaire en PDF, afin
+de la remettre à l’employé à sa demande.
+15.2
+En tant que RH, je veux générer un certificat de travail en PDF, afin
+d’attester de la relation contractuelle de l’employé avec la société.
+16.1
+En tant qu’utilisateur, je veux accéder à un assistant conversationnel
+RH (chatbot), afin d’obtenir des réponses rapides à mes questions
+administratives après connexion.
+16.2
+En tant qu’employé, je veux demander un congé via le chatbot, afin
+d’initier rapidement une demande d’absence sans naviguer manuellement
+dans les menus.
+16.3
+En tant qu’employé, je veux consulter mon bulletin de paie via le
+chatbot, afin d’accéder directement à mon dernier bulletin sans parcourir
+l’application.
+6.2
+Backlog du quatrième Sprint
+Le Backlog du produit de PaieZone, regroupant fonctionnalités et améliorations, est
+formalisé en User Stories organisées par thèmes fonctionnels. Le Tableau 6.2 détaille ce
+backlog pour le quatrième sprint, incluant les tâches techniques et leurs estimations en
+jours.
+112
+
+===== PAGE 114 =====
+Table 6.2: Backlog détaillé du quatrième Sprint
+Item
+User Story
+Tâches
+Est.
+(j)
+Gestion
+Comptable
+13.1
+En
+tant
+qu’Admin/RH,
+je
+souhaite configurer le plan comptable
+afin de structurer les comptes de la
+société.
+- Concevoir l’interface CRUD du plan
+comptable (créer, modifier, supprimer
+des comptes).
+- Développer l’API REST de gestion
+du plan comptable.
+- Tester la cohérence des comptes avec
+les rubriques de paie.
+2
+13.2
+En
+tant
+qu’Admin/RH,
+je
+souhaite
+exporter
+les
+données
+comptables au format SAGE (.csv)
+afin de les intégrer dans le logiciel
+comptable.
+- Implémenter le service de génération
+du fichier CSV au format SAGE.
+- Ajouter le bouton « Exporter SAGE
+(.csv) » dans l’onglet Comptabilité.
+- Tester la conformité du fichier
+produit avec le format attendu par
+SAGE.
+2
+Conformité
+Réglementaire
+14.1 En tant que RH, je souhaite
+générer la déclaration CNSS salarié
+par trimestre.
+- Agréger les cotisations salariales
+CNSS par trimestre et par employé.
+- Développer le service de génération
+du fichier déclaratif.
+-
+Implémenter
+le
+bouton
+de
+déclenchement
+dans
+l’onglet
+Conformité.
+- Tester la conformité des montants
+déclarés avec les bulletins calculés.
+2
+14.2 En tant que RH, je souhaite
+générer la déclaration CNSS patronal
+par trimestre.
+- Agréger les cotisations patronales
+CNSS par trimestre et par employé.
+- Développer le service de génération
+du fichier déclaratif patronal.
+- Tester la cohérence des montants
+avec les paramètres réglementaires.
+2
+14.3 En tant que RH, je souhaite
+générer la déclaration CAVIS par
+trimestre.
+-
+Implémenter
+l’agrégation
+des
+cotisations CAVIS trimestrielles.
+- Développer le service de génération
+du fichier CAVIS.
+- Tester la prise en compte correcte
+des taux CAVIS dans les calculs.
+2
+113
+
+===== PAGE 115 =====
+Item
+User Story
+Tâches
+Est.
+(j)
+14.4 En tant que RH, je souhaite
+générer la déclaration IRPP annuelle.
+- Agréger les retenues IRPP sur
+l’ensemble de l’exercice fiscal.
+- Développer le service de génération
+de l’état récapitulatif annuel.
+- Tester la conformité du document
+produit avec les exigences de la DGI.
+2
+Documents
+Administratifs
+RH
+15.1 En tant que RH, je souhaite
+générer une attestation de salaire en
+PDF afin de la remettre à l’employé.
+- Concevoir le template PDF de
+l’attestation de salaire.
+- Développer le service de génération
+PDF (iText / JasperReports).
+- Ajouter le bouton de téléchargement
+dans la page Employés.
+- Tester la conformité des données
+affichées (salaire brut, net, poste).
+2
+15.2 En tant que RH, je souhaite
+générer un certificat de travail en
+PDF afin d’attester de la relation
+contractuelle.
+- Concevoir le template PDF du
+certificat de travail (RI).
+- Développer le service de génération
+PDF avec les données contractuelles.
+- Ajouter le bouton de téléchargement
+dans la page Employés.
+- Tester la conformité des informations
+(dates de contrat, poste, société).
+2
+Assistant
+Conversationnel
+RH (Chatbot)
+16.1
+En
+tant
+qu’utilisateur,
+je
+souhaite
+accéder
+à
+un
+assistant
+conversationnel RH afin d’obtenir des
+réponses rapides après connexion.
+-
+Concevoir
+et
+implémenter
+le
+composant
+chatbot
+flottant
+(Angular).
+- Intégrer un moteur de traitement
+du langage naturel pour la détection
+d’intentions.
+- Configurer les intentions RH de base
+(congés, bulletins, attestations).
+- Tester la disponibilité du chatbot
+après authentification pour tous les
+rôles.
+3
+114
+
+===== PAGE 116 =====
+Item
+User Story
+Tâches
+Est.
+(j)
+16.2 En tant qu’employé, je souhaite
+demander un congé via le chatbot
+afin d’initier rapidement une demande
+d’absence.
+-
+Implémenter
+la
+détection
+de
+l’intention « congé » dans le chatbot.
+- Développer la redirection vers la
+page de demande de congé dédiée.
+- Tester le flux complet de détection
+et de redirection.
+2
+16.3 En tant qu’employé, je souhaite
+consulter mon bulletin de paie via le
+chatbot afin d’accéder directement à
+mon dernier bulletin.
+-
+Implémenter
+la
+détection
+des
+intentions « bulletin » et « fiche de
+paie ».
+- Développer le service de récupération
+et de proposition du dernier bulletin.
+- Tester le téléchargement du bulletin
+depuis la réponse du chatbot.
+2
+6.3
+Spécification fonctionnelle du quatrième Sprint
+La modélisation fonctionnelle du Sprint 4 de PaieZone repose sur des diagrammes
+de cas d’utilisation UML, offrant une représentation visuelle du périmètre fonctionnel,
+complétés par des descriptions textuelles structurées détaillant les scénarios d’interaction
+pour chaque cas d’utilisation majeur.
+6.3.1
+Diagramme de cas d’utilisation du quatrième Sprint
+La Figure 6.1 présente le diagramme de cas d’utilisation global du Sprint 4 de PaieZone.
+115
+
+===== PAGE 117 =====
+Figure 6.1 – Diagramme de cas d’utilisation du Sprint 4
+Le diagramme de cas d’utilisation du Sprint 4 articule les fonctionnalités autour de
+quatre packages fonctionnels principaux, structurés selon les responsabilités des acteurs
+impliqués. Les responsabilités et fonctionnalités par acteur sont les suivantes :
+ADMIN / RH :
+• Configurer le plan comptable de la société (CRUD complet).
+• Exporter les données comptables au format SAGE (.csv).
+RH (RESSOURCES HUMAINES) :
+• Générer les déclarations trimestrielles CNSS salarié, CNSS patronal et CAVIS.
+• Générer la déclaration annuelle IRPP.
+• Produire les attestations de salaire et certificats de travail en PDF depuis la page
+Employés.
+UTILISATEUR (tous rôles après authentification) :
+116
+
+===== PAGE 118 =====
+• Accéder au chatbot RH flottant et poser des questions administratives en langage
+naturel.
+• Initier une demande de congé via le chatbot (redirection vers la page dédiée).
+• Consulter et télécharger le dernier bulletin de paie via le chatbot.
+6.3.2
+Description textuelle des cas d’utilisation
+Les descriptions textuelles suivantes formalisent les préconditions, scénarios nominaux
+et alternatifs des cas d’utilisation les plus critiques du Sprint 4. Elles constituent la référence
+contractuelle de validation avec le Product Owner.
+6.3.2.1
+Cas d’utilisation : Générer les déclarations de conformité réglementaire
+Le tableau 6.3 présente la description textuelle détaillée du cas d’utilisation « Générer
+les déclarations de conformité réglementaire ».
+Table 6.3: Description textuelle du cas d’utilisation
+Générer les déclarations de conformité
+Élément
+Description
+Titre
+Générer les déclarations de conformité réglementaire (CNSS /
+CAVIS / IRPP)
+Acteur principal
+RH
+Préconditions
+Des périodes de paie clôturées (LOCKED) existent pour la
+période concernée. Les paramètres réglementaires (taux CNSS,
+CAVIS, barèmes IRPP) sont configurés.
+Postconditions
+Un fichier déclaratif (CSV ou PDF) est généré et mis à
+disposition du RH pour téléchargement.
+Scénario principal
+1. Le RH accède à l’onglet « Conformité » de la plateforme.
+2. Il sélectionne le type de déclaration souhaitée (CNSS
+Salarié, CNSS Patronal, CAVIS ou IRPP).
+3. Pour les déclarations trimestrielles, il sélectionne le
+trimestre et l’année cibles.
+4. Pour la déclaration IRPP, il sélectionne l’exercice fiscal
+annuel.
+5. Le système agrège les montants correspondants depuis les
+bulletins clôturés.
+6. Il génère le fichier déclaratif au format réglementaire.
+7. Le fichier est proposé en téléchargement au RH.
+117
+
+===== PAGE 119 =====
+Scénarios alternatifs
+A1 : Aucune période clôturée →Le système affiche
+un message indiquant l’absence de données et bloque la
+génération.
+A2 : Paramètres réglementaires manquants →Le
+système lève une erreur bloquante invitant le Super Admin à
+configurer les taux.
+6.3.2.2
+Cas d’utilisation : Interagir avec l’assistant conversationnel RH
+Le tableau 6.4 présente la description textuelle détaillée du cas d’utilisation « Interagir
+avec l’assistant conversationnel RH ».
+Table 6.4: Description textuelle du cas d’utilisation
+Interagir avec le chatbot RH
+Élément
+Description
+Titre
+Interagir avec l’assistant conversationnel RH
+Acteurs principaux
+Employé — RH — Admin
+Préconditions
+L’utilisateur est authentifié sur la plateforme PaieZone.
+Postconditions
+L’utilisateur obtient une réponse à sa question RH, est redirigé
+vers la fonctionnalité adéquate, ou télécharge son dernier
+bulletin.
+Scénario principal
+1. L’utilisateur clique sur le composant chatbot flottant visible
+après connexion.
+2. Il saisit sa question en langage naturel (ex. « Je veux
+demander un congé », « Montrez-moi mon bulletin de paie
+»).
+3. Le système analyse l’intention détectée.
+4. Intention congé : Le chatbot informe l’utilisateur et le
+redirige vers la page de demande de congé.
+5. Intention bulletin/fiche de paie : Le chatbot récupère le
+dernier bulletin disponible et propose son téléchargement.
+6. Intention générale : Le chatbot formule une réponse
+textuelle adaptée à la question posée.
+Scénarios alternatifs
+A1 : Intention non reconnue →Le chatbot informe
+l’utilisateur qu’il n’a pas compris la demande et lui propose
+des exemples de questions reconnues.
+118
+
+===== PAGE 120 =====
+A2 : Bulletin inexistant →Le chatbot informe l’utilisateur
+qu’aucun bulletin n’est disponible pour la période en cours.
+6.4
+Conception du quatrième Sprint
+La conception technique du Sprint 4 traduit les besoins métiers en modèles structurants
+guidant le développement. Cette section s’articule autour de deux axes complémentaires :
+le diagramme de classes, qui modélise l’architecture statique des nouvelles entités, et les
+diagrammes de séquence, qui illustrent les interactions dynamiques entre les composants
+du système.
+6.4.1
+Diagramme de classes
+Le diagramme de classes du Sprint 4 complète le modèle établi lors du Sprint 3 en
+introduisant les entités nécessaires à la comptabilité, à la conformité et aux documents
+RH. Il définit la structure des données — plan comptable, déclarations réglementaires
+et documents PDF — ainsi que les relations qui les unissent avec les entités existantes
+(PayPeriod, PaySlip, Employee, Contract).
+La figure 6.2 présente le diagramme de classes du Sprint 4, illustrant l’extension finale
+du modèle de données de PaieZone.
+119
+
+===== PAGE 121 =====
+Les entités principales introduites dans ce sprint sont les suivantes :
+• AccountPlan : Modélise le plan comptable de la société. Chaque entrée représente un
+compte (code, libellé, type) associé à une rubrique de paie, permettant la génération
+de l’export SAGE.
+• Declaration : Conserve le tracé des déclarations réglementaires générées (type, période,
+date de génération, chemin du fichier produit), garantissant l’historique des soumissions
+aux organismes sociaux et fiscaux.
+• HrDocument : Centralise les métadonnées des documents PDF administratifs générés
+(attestations de salaire, certificats de travail), liée à l’employé et au contrat concernés
+pour faciliter leur archivage et leur consultation ultérieure.
+6.4.2
+Diagrammes de séquences
+Les diagrammes de séquences illustrent la dynamique du système en détaillant les
+interactions chronologiques entre les composants pour les cas d’utilisation les plus critiques.
+6.4.2.1
+Diagramme de séquence : Générer une déclaration de conformité
+La figure 6.3 illustre le flux de génération d’une déclaration réglementaire (CNSS,
+CAVIS ou IRPP).
+Ce diagramme illustre l’agrégation automatique des données financières issues des
+bulletins clôturés pour produire un fichier déclaratif conforme aux exigences des organismes
+tunisiens. Le flux garantit l’intégrité des montants déclarés par rapport aux données
+calculées lors du cycle de paie.
+6.4.2.2
+Diagramme de séquence : Interaction avec le chatbot RH
+La figure 6.4 illustre le flux d’interaction entre un utilisateur et l’assistant conversationnel
+RH de PaieZone.
+120
+
+===== PAGE 122 =====
+Figure 6.2 – Diagramme de classes du Sprint 4
+121
+
+===== PAGE 123 =====
+Figure 6.3 – Diagramme de séquence — Générer une déclaration de conformité
+122
+
+===== PAGE 124 =====
+Figure 6.4 – Diagramme de séquence — Interaction avec le chatbot RH
+123
+
+===== PAGE 125 =====
+Ce diagramme modélise le pipeline de traitement des messages utilisateur : analyse de
+l’intention, branchement vers le service métier approprié (gestion des congés ou récupération
+du bulletin) et formulation de la réponse. L’architecture du chatbot repose sur une détection
+légère des intentions, interfacée avec les API existantes de la plateforme, sans duplication
+de la logique métier.
+6.5
+Étude et réalisation du quatrième sprint
+Cette section présente les réalisations concrètes du Sprint 4, marquant la finalisation de
+la plateforme PaieZone. Les travaux ont porté sur l’implémentation du module comptable,
+la génération des déclarations réglementaires, la production automatisée des documents
+administratifs RH et le déploiement de l’assistant conversationnel.
+6.5.1
+Gestion comptable et export SAGE
+Figure 6.5 – Interface de gestion du plan comptable et export SAGE
+La figure 6.5 présente l’interface de l’onglet Comptabilité de PaieZone. Le RH ou
+l’Administrateur dispose d’un tableau de gestion du plan comptable offrant un CRUD
+complet (création, modification, suppression de comptes). Un bouton « Exporter SAGE
+(.csv) » permet de générer à la demande un fichier d’export conforme au format attendu
+par les logiciels comptables SAGE, contenant les écritures issues des bulletins de paie
+clôturés.
+6.5.2
+Conformité réglementaire
+La figure 6.6 présente le module de conformité réglementaire. Le RH accède à quatre
+actions de génération : déclaration CNSS salarié, déclaration CNSS patronal, déclaration
+124
+
+===== PAGE 126 =====
+Figure 6.6 – Interface de l’onglet Conformité — Déclarations CNSS, CAVIS et IRPP
+CAVIS (toutes trois au pas trimestriel) et déclaration IRPP (annuelle). Chaque déclenchement
+agrège automatiquement les montants depuis les bulletins clôturés de la période sélectionnée
+et produit un fichier téléchargeable conforme aux exigences légales tunisiennes.
+6.5.3
+Documents administratifs RH
+Figure 6.7 – Génération de l’attestation de salaire et du certificat de travail
+La figure 6.7 illustre la fonctionnalité de génération des documents administratifs RH
+accessible depuis la page Employés. Un clic sur le bouton de téléchargement PDF déclenche
+la génération de l’attestation de salaire ou du certificat de travail, directement alimentés par
+les données du dossier employé et de son dernier bulletin calculé. Les documents respectent
+les templates légaux en vigueur et sont disponibles immédiatement en téléchargement.
+125
+
+===== PAGE 127 =====
+6.5.4
+Assistant conversationnel RH (Chatbot)
+Figure 6.8 – Composant chatbot RH flottant — Détection d’intentions et actions
+contextuelles
+La figure 6.8 présente le composant chatbot flottant de PaieZone, visible par tous
+les utilisateurs après authentification. L’assistant détecte les intentions liées aux congés
+et redirige l’employé vers la page de demande dédiée. Il identifie également les requêtes
+portant sur le bulletin ou la fiche de paie et propose directement le téléchargement du
+dernier bulletin disponible. Pour les questions générales, il formule des réponses textuelles
+adaptées au contexte RH de la plateforme.
+6.6
+Tests et Validation
+La phase de tests et de validation du Sprint 4 vise à garantir la conformité des fichiers
+déclaratifs produits et la fiabilité de l’assistant conversationnel. Trois niveaux de tests ont
+été mis en œuvre de manière complémentaire.
+6.6.1
+Plan de tests
+• Tests unitaires (JUnit 5, Mockito) : Validation des services de génération —
+notamment les algorithmes d’agrégation des montants CNSS, CAVIS et IRPP, et la
+cohérence des écritures comptables produites.
+• Tests d’intégration : Validation des flux complets — génération des déclarations
+sur des périodes clôturées réelles, export SAGE et vérification des montants par
+rapprochement avec les bulletins sources.
+126
+
+===== PAGE 128 =====
+• Tests fonctionnels (interface Angular) : Vérification du comportement des formulaires,
+de la conformité des PDF générés, et de la robustesse du chatbot face à des formulations
+variées des intentions utilisateur.
+Le Tableau 6.2 synthétise les cas de test principaux réalisés pour ce sprint.
+Table 6.2: Récapitulatif des cas de test du Sprint 4
+ID Test
+Description du cas de test
+Résultat attendu
+Statut
+T-13.1
+CRUD complet du plan comptable
+Opérations sans erreur,
+données persistées
+OK
+T-13.2
+Export SAGE sur une période clôturée
+Fichier CSV conforme
+au
+format
+SAGE
+téléchargeable
+OK
+T-14.1
+Génération CNSS salarié pour un trimestre
+avec 5 employés
+Fichier déclaratif avec
+montants cohérents
+OK
+T-14.2
+Génération CNSS patronal pour un trimestre
+Montants
+patronaux
+conformes aux taux
+configurés
+OK
+T-14.3
+Génération CAVIS trimestrielle
+Fichier
+CAVIS
+conforme
+aux
+exigences légales
+OK
+T-14.4
+Génération IRPP annuelle sur un exercice
+complet
+État
+récapitulatif
+IRPP conforme à la
+DGI
+OK
+T-14.5
+Génération d’une déclaration sans période
+clôturée
+Message
+d’erreur
+bloquant,
+aucun
+fichier généré
+OK
+T-15.1
+Génération de l’attestation de salaire PDF
+PDF
+conforme
+au
+template avec données
+exactes
+OK
+T-15.2
+Génération du certificat de travail PDF
+PDF conforme avec
+données contractuelles
+OK
+127
+
+===== PAGE 129 =====
+ID Test
+Description du cas de test
+Résultat attendu
+Statut
+T-16.1
+Affichage du chatbot après authentification
+Composant
+flottant
+visible pour tous les
+rôles
+OK
+T-16.2
+Détection intention « congé » et redirection
+Redirection
+vers
+la
+page de demande de
+congé
+OK
+T-16.3
+Détection intention « bulletin/fiche de paie »
+Proposition
+de
+téléchargement
+du
+dernier bulletin
+OK
+T-16.4
+Saisie d’une question non reconnue par le
+chatbot
+Message
+clair
+avec
+exemples
+de
+commandes
+OK
+6.7
+Rituels Agiles et Clôture du Sprint
+Conformément à la méthodologie Scrum adoptée par l’équipe PaieZone, le Sprint 4 s’est
+clôturé par la tenue des deux rituels essentiels : la Sprint Review et la Sprint Retrospective.
+Ces cérémonies assurent la transparence du travail accompli et l’amélioration continue des
+pratiques d’équipe.
+6.7.1
+Revue du Sprint (Sprint Review)
+La Sprint Review a réuni l’équipe de développement, le Product Owner et les parties
+prenantes. Les User Stories du sprint ont été présentées et démontrées en conditions réelles
+à travers l’interface Angular :
+• Module comptable : Démonstration du plan comptable configurable et de l’export
+SAGE fonctionnel, validés sur un jeu de données représentatif.
+• Conformité réglementaire : Présentation des quatre déclarations générées (CNSS
+salarié, CNSS patronal, CAVIS, IRPP), avec vérification des montants par rapport aux
+bulletins sources.
+• Documents administratifs RH : Validation des templates PDF de l’attestation de
+salaire et du certificat de travail, conformes aux exigences légales tunisiennes.
+• Assistant conversationnel : Démonstration du chatbot en conditions réelles :
+détection des intentions de congé et de bulletin, et réponses aux questions générales.
+L’ensemble des User Stories planifiées pour ce quatrième sprint a été validé par le
+128
+
+===== PAGE 130 =====
+Product Owner, confirmant la conformité des livrables aux critères d’acceptation et
+clôturant ainsi le développement fonctionnel de PaieZone.
+6.7.2
+Rétrospective du Sprint (Sprint Retrospective)
+La Sprint Retrospective a permis à l’équipe de réfléchir collectivement sur les pratiques
+du sprint écoulé autour de trois axes :
+• Ce qui a bien fonctionné : La réutilisation du service de génération PDF du Sprint 3
+pour les attestations et certificats, qui a considérablement accéléré le développement. La
+modularité du chatbot, dont l’architecture par intention permet d’ajouter de nouvelles
+capacités sans modifier le cœur du moteur de détection.
+• Ce qui peut être amélioré : La mise en conformité des fichiers CNSS et CAVIS
+a nécessité plusieurs cycles de révision pour respecter précisément le format attendu
+par les organismes tunisiens. La couverture fonctionnelle du chatbot reste partielle : la
+demande de congé redirige vers la page dédiée sans créer directement la demande.
+• Actions pour les projets futurs : Intégrer des jeux de données de référence issus
+des organismes réglementaires dès la phase de spécification. Enrichir le chatbot pour
+permettre la création directe de demandes de congé depuis l’interface conversationnelle.
+Constituer une bibliothèque de formats d’export standardisés pour les outils comptables
+courants (SAGE, Ciel).
+Conclusion
+Ce sixième chapitre a détaillé les réalisations du Sprint 4, sprint conclusif du projet
+PaieZone, marqué par la livraison de onze User Stories couvrant la comptabilité, la
+conformité réglementaire, les documents administratifs RH et l’assistant conversationnel.
+Ces fonctionnalités complètent le moteur de paie et le socle de gestion RH construits lors
+des sprints précédents, offrant ainsi une solution SaaS multi-tenant complète et conforme
+au cadre légal tunisien. PaieZone s’affirme désormais comme une plateforme de gestion RH
+et de paie pleinement opérationnelle, couvrant l’intégralité du cycle : du recrutement et
+de l’administration des dossiers employés jusqu’à la déclaration réglementaire et l’export
+comptable, en passant par le calcul automatisé des bulletins de paie et l’assistance
+conversationnelle aux utilisateurs.
+129
+
+===== PAGE 131 =====
+Bibliographie
+Références Méthodologiques
+[1] Ken Schwaber et Jeff Sutherland. Le Guide Scrum : Les règles du jeu. https://
+scrumguides.org, 2020.
+[2] Grady Booch, James Rumbaugh et Ivar Jacobson. UML : Guide de l’utilisateur.
+Addison-Wesley, 2ème édition, 2004.
+Technologies Backend et Base de données
+[3] Spring IO. Spring Boot Reference Documentation. https://docs.spring.io/
+spring-boot/docs/current/reference/html/, 2026.
+[4] JHipster Team. JHipster : Full-stack Platform for Modern Web Applications. https:
+//www.jhipster.tech/, 2025.
+[5] PostgreSQL Global Development Group. PostgreSQL 15 Documentation. https:
+//www.postgresql.org/docs/15/index.html, 2023.
+[6] Apache Software Foundation. Apache Kafka Documentation. https://kafka.apache.
+org/documentation/, 2026.
+Technologies Frontend
+[7] Google. Angular Documentation (v18/v19). https://angular.dev/, 2026.
+[8] Microsoft. TypeScript Documentation. https://www.typescriptlang.org/docs/,
+2026.
+Réglementation et Innovation
+[9] République Tunisienne. Loi de Finances pour l’année 2026. Journal Officiel de la
+République Tunisienne (JORT), 2025.
+130
+
+===== PAGE 132 =====
+[10] Lewis, P., et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.
+arXiv :2005.11401, 2020.
+131

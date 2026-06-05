@@ -30,6 +30,11 @@ public class PayrollPeriodDTO implements Serializable {
     private Long companyId;
     private String companyName;
 
+    // ── Agrégats calculés depuis les bulletins ───────────────────
+    private java.math.BigDecimal totalGross;
+    private java.math.BigDecimal totalNet;
+    private Integer employeeCount;
+
     // ── Getters / Setters ────────────────────────────────────────
 
     public Long getId() {
@@ -110,6 +115,30 @@ public class PayrollPeriodDTO implements Serializable {
 
     public void setCompanyName(String v) {
         this.companyName = v;
+    }
+
+    public java.math.BigDecimal getTotalGross() {
+        return totalGross;
+    }
+
+    public void setTotalGross(java.math.BigDecimal v) {
+        this.totalGross = v;
+    }
+
+    public java.math.BigDecimal getTotalNet() {
+        return totalNet;
+    }
+
+    public void setTotalNet(java.math.BigDecimal v) {
+        this.totalNet = v;
+    }
+
+    public Integer getEmployeeCount() {
+        return employeeCount;
+    }
+
+    public void setEmployeeCount(Integer v) {
+        this.employeeCount = v;
     }
 
     @Override

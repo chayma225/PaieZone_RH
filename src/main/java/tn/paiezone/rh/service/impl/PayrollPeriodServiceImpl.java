@@ -106,25 +106,39 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
     @Override
     @Transactional(readOnly = true)
     public Page<PayrollPeriodDTO> findAll(Pageable pageable) {
-        // ── Si company trouvée → filtrer par société ──────────────
         Optional<Company> company = getCurrentCompany();
         if (company.isPresent()) {
             Company comp = company.orElseThrow();
             log.debug("findAll filtré par company ID={}", comp.getId());
-            return periodRepository.findByCompanyId(comp.getId(), pageable).map(periodMapper::toDto);
+            return periodRepository.findByCompanyId(comp.getId(), pageable).map(periodMapper::toDto).map(this::enrichWithTotals);
         }
-        // Aucune société trouvée pour un non-super-admin → liste vide (fail-closed)
         if (!tenantContextService.isSuperAdmin()) {
             log.warn("Aucune société trouvée pour l'utilisateur courant — retour liste vide (fail-closed).");
             return Page.empty(pageable);
         }
-        return periodRepository.findAll(pageable).map(periodMapper::toDto);
+        return periodRepository.findAll(pageable).map(periodMapper::toDto).map(this::enrichWithTotals);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<PayrollPeriodDTO> findOne(Long id) {
-        return periodRepository.findById(id).map(periodMapper::toDto);
+        return periodRepository.findById(id).map(periodMapper::toDto).map(this::enrichWithTotals);
+    }
+
+    /** Injecte totalGross, totalNet, employeeCount depuis les bulletins calculés. */
+    private PayrollPeriodDTO enrichWithTotals(PayrollPeriodDTO dto) {
+        if (dto.getId() == null) return dto;
+        try {
+            Object[] agg = paySlipRepository.aggregateTotalsByPeriod(dto.getId());
+            if (agg != null && agg.length >= 3) {
+                dto.setEmployeeCount(((Number) agg[0]).intValue());
+                dto.setTotalGross(new java.math.BigDecimal(agg[1].toString()));
+                dto.setTotalNet(new java.math.BigDecimal(agg[2].toString()));
+            }
+        } catch (Exception e) {
+            log.warn("Impossible d'agréger les totaux pour la période {} : {}", dto.getId(), e.getMessage());
+        }
+        return dto;
     }
 
     @Override

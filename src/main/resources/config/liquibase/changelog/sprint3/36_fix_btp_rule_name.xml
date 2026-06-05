@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet id="sprint3-fix-btp-bitumineux-name" author="dev">
+    <update tableName="convention_rule">
+      <column name="label" value="Prime liée aux travaux bitumineux"/>
+      <where>label = 'Prime travaux bitumineux' AND convention_id IN (
+        SELECT sc.id FROM sectoral_convention sc
+        JOIN activity_sector s ON sc.sector_id = s.id
+        WHERE s.code = 'BTP' AND sc.year = 2026
+      )</where>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

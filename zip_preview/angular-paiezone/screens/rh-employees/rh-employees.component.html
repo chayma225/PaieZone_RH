@@ -1,0 +1,217 @@
+<div class="pz-page">
+  <div class="pz-page-head">
+    <div>
+      <div class="pz-crumbs"><strong>Atlas Tech</strong> <span class="sep">/</span> Capital humain <span class="sep">/</span> Employés</div>
+      <h1>Annuaire</h1>
+      <div class="pz-muted">{{ data.employees().length }} collaborateurs actifs · {{ data.departments().length }} départements</div>
+    </div>
+    <div class="pz-page-actions">
+      <button class="pz-btn"><pz-icon name="Upload" [size]="14" [strokeWidth]="1.5"/> Importer</button>
+      <button class="pz-btn pz-primary"><pz-icon name="Plus" [size]="14" [strokeWidth]="1.7"/> Nouvel employé</button>
+    </div>
+  </div>
+
+  <div class="pz-card">
+    <div class="table-tools">
+      @for (d of depts().slice(0, 6); track d) {
+        <button class="filter-chip" [class.active]="dept() === d" (click)="dept.set(d)">
+          {{ d }}
+          <span class="count">
+            {{ d === 'Tous' ? data.employees().length : data.employees().filter(e => e.dept === d).length }}
+          </span>
+        </button>
+      }
+      <div class="input-pill">
+        <pz-icon name="Search" [size]="14" [strokeWidth]="1.6"/>
+        <input placeholder="Nom, matricule…" [ngModel]="searchQ()" (ngModelChange)="searchQ.set($event)"/>
+      </div>
+    </div>
+
+    <table class="pz-tbl">
+      <thead>
+        <tr>
+          <th>Matricule</th><th>Employé</th><th>Département / Poste</th>
+          <th>Contrat</th><th>Embauche</th><th class="num">Salaire</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of filtered(); track e.id) {
+          <tr (click)="openDrawer(e)">
+            <td class="pz-mono small">{{ e.matricule }}</td>
+            <td>
+              <div class="ev-name">
+                <div class="pz-avatar" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
+                <div>
+                  <div class="strong">{{ data.fullName(e) }}</div>
+                  <small class="pz-muted">{{ e.email }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="strong">{{ e.role }}</div>
+              <div class="pz-muted small">{{ e.dept }}</div>
+            </td>
+            <td><span class="pz-pill" [class]="contractClass(e.contract)">{{ e.contract }}</span></td>
+            <td class="pz-mono small">{{ e.hireDate }}</td>
+            <td class="num">{{ data.fmtTND(e.salary) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DRAWER ─────────────────────────────────────────────────────────── -->
+@if (selected(); as e) {
+  <div class="modal-back" (click)="closeDrawer()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div class="row">
+          <div class="pz-avatar lg" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
+          <div>
+            <div class="modal-title">
+              {{ data.fullName(e) }}
+              <span class="ar" dir="rtl">{{ e.ar }}</span>
+            </div>
+            <div class="pz-muted small">{{ e.role }} · {{ e.dept }}</div>
+            <div class="badges">
+              <span class="pz-pill pz-mono small">{{ e.matricule }}</span>
+              <span class="pz-pill" [class]="contractClass(e.contract)">{{ e.contract }}</span>
+              <span class="pz-pill primary">{{ e.cat }}</span>
+            </div>
+          </div>
+        </div>
+        <button class="pz-btn pz-ghost modal-x" (click)="closeDrawer()">
+          <pz-icon name="X" [size]="14" [strokeWidth]="1.6"/>
+        </button>
+      </div>
+
+      <div class="tabs">
+        @for (t of [
+          { id: 'infos', label: 'Informations' },
+          { id: 'contract', label: 'Contrat' },
+          { id: 'docs', label: 'Documents' },
+          { id: 'pay', label: 'Historique paie' }
+        ]; track t.id) {
+          <button class="tab" [class.active]="tab() === t.id" (click)="tab.set($any(t.id))">
+            {{ t.label }}
+          </button>
+        }
+      </div>
+
+      <div class="modal-body">
+        @switch (tab()) {
+          @case ('infos') {
+            <div class="info-grid">
+              <div><div class="lbl">Email pro.</div><div class="val">{{ e.email }}</div></div>
+              <div><div class="lbl">Téléphone</div><div class="val">{{ e.phone }}</div></div>
+              <div><div class="lbl">Ville</div><div class="val">{{ e.city }}</div></div>
+              <div><div class="lbl">N° CNSS</div><div class="val pz-mono">{{ e.cnss }}</div></div>
+              <div><div class="lbl">Genre</div><div class="val">{{ e.gender === 'M' ? 'Homme' : 'Femme' }}</div></div>
+              <div><div class="lbl">Enfants à charge</div><div class="val">{{ e.children }}</div></div>
+            </div>
+          }
+          @case ('contract') {
+            <div class="info-grid">
+              <div><div class="lbl">Type de contrat</div><div class="val"><span class="pz-pill" [class]="contractClass(e.contract)">{{ e.contract }}</span></div></div>
+              <div><div class="lbl">Date d'embauche</div><div class="val">{{ e.hireDate }}</div></div>
+              <div><div class="lbl">Salaire de base</div><div class="val strong">{{ data.fmtTND(e.salary) }}</div></div>
+              <div><div class="lbl">Catégorie</div><div class="val">{{ e.cat }}</div></div>
+            </div>
+          }
+
+          <!-- DOCUMENTS TAB — drag/drop upload ─────────────────────── -->
+          @case ('docs') {
+            <div class="docs-pane">
+              <div class="upload-zone"
+                   [class.dragging]="dragOver()"
+                   (dragover)="onDragOver($event)"
+                   (dragleave)="onDragLeave()"
+                   (drop)="onDrop($event)">
+                <div class="upload-ico">
+                  <pz-icon name="Upload" [size]="20" [strokeWidth]="1.5"/>
+                </div>
+                <div class="upload-title">
+                  {{ dragOver() ? 'Déposez les fichiers ici' : 'Glissez-déposez des documents' }}
+                </div>
+                <div class="upload-sub">
+                  ou <button class="link" (click)="pickFiles()">parcourez vos fichiers</button>
+                  <span> · PDF, JPG, PNG · 10 Mo max</span>
+                </div>
+                <input #fileInput type="file" multiple hidden
+                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                       (change)="onFileChange($event)"/>
+                <div class="cat-row">
+                  <span class="pz-muted small">Catégorie par défaut :</span>
+                  <select class="cat-select" [ngModel]="docCategory()" (ngModelChange)="docCategory.set($event)">
+                    @for (c of docCats; track c) { <option>{{ c }}</option> }
+                  </select>
+                </div>
+              </div>
+
+              @for (u of uploading(); track u.id) {
+                <div class="doc-tile uploading">
+                  <div class="doc-ico"><pz-icon name="Doc" [size]="14" [strokeWidth]="1.4"/></div>
+                  <div class="grow">
+                    <div class="doc-name">{{ u.name }}</div>
+                    <div class="progress"><i [style.width.%]="u.progress"></i></div>
+                    <div class="doc-meta pz-muted small">{{ u.progress | number:'1.0-0' }}%</div>
+                  </div>
+                </div>
+              }
+
+              <div class="docs-header">
+                <span class="strong">Documents du dossier ({{ docs().length }})</span>
+                <span class="pz-muted small">
+                  Visible uniquement par {{ data.fullName(e) }} et le RH
+                </span>
+              </div>
+
+              <div class="docs-grid">
+                @for (d of docs(); track d.id) {
+                  <div class="doc-tile" [class.is-new]="d.isNew">
+                    <div class="doc-ico"><pz-icon [name]="d.icon" [size]="14" [strokeWidth]="1.4"/></div>
+                    <div class="grow">
+                      <div class="doc-name-row">
+                        <span class="doc-name">{{ d.name }}</span>
+                        @if (d.isNew) { <span class="pz-pill pos small">Nouveau</span> }
+                      </div>
+                      <div class="doc-meta pz-muted small">
+                        <span class="pz-pill small">{{ d.type }}</span>
+                        <span> {{ d.size }} · {{ d.date }}</span>
+                      </div>
+                    </div>
+                    <button class="pz-btn pz-sm pz-ghost"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4"/></button>
+                    <button class="pz-btn pz-sm pz-ghost"><pz-icon name="Download" [size]="14" [strokeWidth]="1.5"/></button>
+                    <button class="pz-btn pz-sm pz-ghost"><pz-icon name="Trash" [size]="14" [strokeWidth]="1.4"/></button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @case ('pay') {
+            <table class="pz-tbl">
+              <thead><tr><th>Période</th><th class="num">Brut</th><th class="num">Net</th><th>Statut</th></tr></thead>
+              <tbody>
+                @for (p of data.payrollPeriods().slice(0, 4); track p.id) {
+                  <tr>
+                    <td>{{ p.label }}</td>
+                    <td class="num">{{ data.fmtTND(e.salary * 1.15) }}</td>
+                    <td class="num">{{ data.fmtTND(e.salary * 0.78) }}</td>
+                    <td><span class="pz-pill" [class.pos]="p.status === 'VALIDATED'" [class.primary]="p.status === 'LOCKED'">{{ p.status }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        }
+      </div>
+
+      <div class="modal-foot">
+        <button class="pz-btn" (click)="closeDrawer()">Fermer</button>
+        <button class="pz-btn pz-primary"><pz-icon name="Edit" [size]="14" [strokeWidth]="1.4"/> Modifier</button>
+      </div>
+    </div>
+  </div>
+}

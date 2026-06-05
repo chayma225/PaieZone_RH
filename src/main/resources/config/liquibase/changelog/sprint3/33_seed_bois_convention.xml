@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Secteur : Industrie du Bois, Liège, Ameublement
+       Convention 2026 — 6 règles de paie extraites du fichier officiel
+       ══════════════════════════════════════════════════════════════ -->
+
+  <changeSet id="sprint3-seed-bois-sector" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector WHERE code = 'BOIS'</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="code" value="BOIS"/>
+      <column name="label" value="Industrie du Bois, Liège et Ameublement"/>
+      <column name="description" value="Fabrication de meubles, travail du bois, liège, vannerie"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-bois-convention-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM sectoral_convention sc
+        JOIN activity_sector s ON sc.sector_id = s.id
+        WHERE s.code = 'BOIS' AND sc.year = 2026
+      </sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'BOIS')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Bois, Liège et Ameublement 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-bois-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM convention_rule cr
+        JOIN sectoral_convention sc ON cr.convention_id = sc.id
+        JOIN activity_sector s ON sc.sector_id = s.id
+        WHERE s.code = 'BOIS' AND sc.year = 2026
+      </sqlCheck>
+    </preConditions>
+
+    <!-- 1. Indemnité de transport : 112,323 DT/mois (valeur 01/01/2026) -->
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BOIS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport"/>
+      <column name="value" value="112.323"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+
+    <!-- 2. Prime de présence : 21,111 DT/mois (valeur 01/01/2026) -->
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BOIS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de présence"/>
+      <column name="value" value="21.111"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+
+    <!-- 3. Prime de risque : 11 DT/mois -->
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BOIS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de risque"/>
+      <column name="value" value="11"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+
+    <!-- 4. Prime de caisse 1er degré : 6 DT/mois -->
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BOIS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de caisse (1er degré)"/>
+      <column name="value" value="6"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+
+    <!-- 5. Prime de caisse 2ème degré : 10 DT/mois -->
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BOIS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de caisse (2ème degré)"/>
+      <column name="value" value="10"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+
+    <!-- 6. Prime de panier : 0.650 DT/jour -->
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BOIS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de panier"/>
+      <column name="value" value="0.650"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

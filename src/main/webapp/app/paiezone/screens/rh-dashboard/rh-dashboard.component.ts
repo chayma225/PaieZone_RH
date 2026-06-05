@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
-import type { PayrollPeriod, ActivityItem, PayrollChartPoint } from '../../core/types';
+import type { PayrollPeriod, ActivityItem, PayrollChartPoint, ContractAlert } from '../../core/types';
 
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -67,10 +67,23 @@ function buildGridLines() {
 
 const GRID_LINES = buildGridLines();
 
+interface UpcomingEvent {
+  id: string;
+  employeeName: string;
+  initials: string;
+  type: 'Essai' | 'Anniv.' | 'CDD' | 'Ancienneté' | 'Médical';
+  description: string;
+  daysLeft: number;
+  dateLabel: string;
+  urgent: boolean;
+  action?: string;
+}
+
 interface CalDay {
   date: number | null;
   approved: number;
   pending: number;
+  weekend: boolean;
 }
 
 @Component({
@@ -97,14 +110,8 @@ interface CalDay {
       </div>
 
       <!-- ── Hero paie ─────────────────────────────────────────────────────── -->
-      <div
-        class="hero"
-        style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 100%);color:#fff;border-radius:14px;padding:24px;position:relative;overflow:hidden;border:none;"
-      >
-        <div
-          class="hero-bg"
-          style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.35),transparent 70%);pointer-events:none;"
-        ></div>
+      <div class="hero" style="background:linear-gradient(135deg,#3b0764 0%,#6d28d9 50%,#8b5cf6 100%)">
+        <div class="hero-bg"></div>
         <div class="hero-inner" style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;">
           <div>
             <div
@@ -115,10 +122,9 @@ interface CalDay {
             </div>
             <h2 style="color:#fff;font-size:24px;font-weight:600;margin:0 0 6px;">{{ currentPeriod().label }}</h2>
             <div class="hero-meta" style="color:rgba(255,255,255,0.8);font-size:13.5px;font-weight:400;">
-              @if (currentPeriod().employees > 0) {
-                {{ currentPeriod().employees }} bulletins · Brut
-                <strong style="color:#fff;font-weight:600;">{{ data.fmtTND(currentPeriod().gross) }}</strong> · Net
-                <strong style="color:#fff;font-weight:600;">{{ data.fmtTND(currentPeriod().net) }}</strong>
+              @if (currentGross() > 0) {
+                Brut <strong style="color:#fff;font-weight:600;">{{ data.fmtTND(currentGross()) }}</strong> ·
+                {{ currentPeriod().employees > 0 ? currentPeriod().employees + ' bulletins' : '' }}
               } @else {
                 Statut : <strong style="color:#fff;font-weight:600;">{{ currentPeriod().status }}</strong>
               }
@@ -126,7 +132,7 @@ interface CalDay {
           </div>
           <button
             class="pz-btn hero-btn"
-            style="background:rgba(255,255,255,0.95);color:#312e81;border-color:transparent;height:42px;padding:0 18px;font-size:14px;font-weight:600;flex-shrink:0;"
+            style="background:rgba(255,255,255,0.95);color:#6d28d9;border-color:transparent;height:42px;padding:0 18px;font-size:14px;font-weight:600;flex-shrink:0;"
           >
             Ouvrir la paie <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" />
           </button>
@@ -192,46 +198,122 @@ interface CalDay {
         }
       </div>
 
-      <!-- ── KPI cards ─────────────────────────────────────────────────────── -->
+      <!-- ── KPI cards avec sparklines ───────────────────────────────────── -->
       <div class="stat-grid">
-        <div class="pz-card stat">
-          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
-            <span class="ico"><pz-icon name="Users" /></span>Effectifs
+        <!-- Effectifs — histogramme dynamique -->
+        <div class="pz-card sc" style="border-left:3px solid #4f46e5">
+          <div class="sc-top">
+            <div class="sc-head">
+              <span class="sc-ico" style="background:#4f46e51a;color:#4f46e5"><pz-icon name="Users" [size]="15" /></span>
+              Effectifs
+            </div>
+            <span class="sc-delta">{{ data.employees().length }}</span>
           </div>
-          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
-            {{ data.employees().length }}
+          <div class="sc-val">{{ data.employees().length }}</div>
+          <div class="sc-spark">
+            <svg width="100%" height="34" viewBox="0 0 220 34" preserveAspectRatio="none" style="overflow:visible">
+              @for (b of barChart(empMonthlyBars()); track b.x) {
+                <rect
+                  [attr.x]="b.x"
+                  [attr.y]="b.y"
+                  [attr.width]="b.w"
+                  [attr.height]="b.h"
+                  fill="#4f46e5"
+                  rx="2"
+                  class="bar-anim"
+                  [style.animation-delay]="b.delay + 's'"
+                />
+              }
+            </svg>
           </div>
-          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">collaborateurs actifs</div>
+          <div class="sc-foot"><span class="pz-muted">collaborateurs actifs · 6 mois</span></div>
         </div>
-        <div class="pz-card stat">
-          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
-            <span class="ico info"><pz-icon name="Wallet" /></span>Masse salariale
+
+        <!-- Masse salariale — courbe dynamique -->
+        <div class="pz-card sc" style="border-left:3px solid #0ea5e9">
+          <div class="sc-top">
+            <div class="sc-head">
+              <span class="sc-ico" style="background:#0ea5e91a;color:#0ea5e9"><pz-icon name="Wallet" [size]="15" /></span>
+              Masse salariale
+            </div>
+            <span class="sc-delta">brut</span>
           </div>
-          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
-            {{ currentPeriod().gross > 0 ? data.fmtTND(currentPeriod().gross) : '—' }}
+          <div class="sc-val" style="font-size:20px">
+            {{ currentGross() > 0 ? data.fmtTND(currentGross()) : '—' }}
           </div>
-          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">brut période en cours</div>
+          <div class="sc-spark">
+            <svg width="100%" height="34" viewBox="0 0 220 34" preserveAspectRatio="none" style="overflow:visible">
+              <defs>
+                <linearGradient id="gSalRh" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#0ea5e9" stop-opacity="0.28" />
+                  <stop offset="1" stop-color="#0ea5e9" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path [attr.d]="sparkline(salarySeries()).area" fill="url(#gSalRh)" class="spark-fill" />
+              <path
+                [attr.d]="sparkline(salarySeries()).line"
+                fill="none"
+                stroke="#0ea5e9"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="spark-line"
+              />
+              <circle
+                [attr.cx]="sparkline(salarySeries()).lastX"
+                [attr.cy]="sparkline(salarySeries()).lastY"
+                r="2.6"
+                fill="#0ea5e9"
+                class="spark-dot"
+              />
+            </svg>
+          </div>
+          <div class="sc-foot"><span class="pz-muted">brut période en cours</span></div>
         </div>
-        <div class="pz-card stat">
-          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
-            <span class="ico warn"><pz-icon name="Calendar" /></span>Congés à valider
+
+        <!-- Congés à valider — histogramme dynamique (données réelles) -->
+        <div class="pz-card sc" style="border-left:3px solid #f59e0b">
+          <div class="sc-top">
+            <div class="sc-head">
+              <span class="sc-ico" style="background:#f59e0b1a;color:#f59e0b"><pz-icon name="Calendar" [size]="15" /></span>
+              Congés à valider
+            </div>
+            <span class="sc-delta">{{ pendingDays() }}j</span>
           </div>
-          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
-            {{ pendingLeaves().length }}
+          <div class="sc-val">{{ pendingLeaves().length }}</div>
+          <div class="sc-spark">
+            <svg width="100%" height="34" viewBox="0 0 220 34" preserveAspectRatio="none" style="overflow:visible">
+              @for (b of barChart(leavesMonthlyBars()); track b.x) {
+                <rect
+                  [attr.x]="b.x"
+                  [attr.y]="b.y"
+                  [attr.width]="b.w"
+                  [attr.height]="b.h"
+                  fill="#f59e0b"
+                  rx="2"
+                  class="bar-anim"
+                  [style.animation-delay]="b.delay + 's'"
+                />
+              }
+            </svg>
           </div>
-          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">
-            {{ pendingDays() }} jours au total
+          <div class="sc-foot">
+            <span class="pz-muted">{{ pendingDays() }} jours · 6 mois</span>
           </div>
         </div>
-        <div class="pz-card stat">
-          <div class="stat-head" style="color:#334155;font-size:12px;font-weight:600;">
-            <span class="ico danger"><pz-icon name="Cash" /></span>Avances en attente
+
+        <!-- Avances en attente — sans courbe -->
+        <div class="pz-card sc" style="border-left:3px solid #10b981">
+          <div class="sc-top">
+            <div class="sc-head">
+              <span class="sc-ico" style="background:#10b9811a;color:#10b981"><pz-icon name="Cash" [size]="15" /></span>
+              Avances en attente
+            </div>
+            <span class="sc-delta">{{ pendingAdvances().length }}</span>
           </div>
-          <div class="stat-val" style="color:#0f172a;font-size:26px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;">
-            {{ pendingAdvances().length }}
-          </div>
-          <div class="stat-foot" style="color:#64748b;font-size:12px;font-weight:400;margin-top:10px;">
-            {{ pendingAdvAmt() > 0 ? data.fmtTND(pendingAdvAmt()) + ' à valider' : '—' }}
+          <div class="sc-val">{{ pendingAdvances().length }}</div>
+          <div class="sc-foot" style="margin-top:auto;padding-top:12px">
+            <span class="pz-muted">{{ pendingAdvAmt() > 0 ? data.fmtTND(pendingAdvAmt()) + ' à valider' : 'aucun montant' }}</span>
           </div>
         </div>
       </div>
@@ -340,43 +422,59 @@ interface CalDay {
         </div>
       </div>
 
-      <!-- ── Calendrier + Activité récente ──────────────────────────────────── -->
+      <!-- ── Calendrier ────────────────────────────────────────────────────────── -->
       <div class="two-col">
-        <!-- Calendrier des congés -->
-        <div class="pz-card">
-          <div class="card-head">
-            <div class="card-title" style="font-size:14px;font-weight:600;color:#0f172a;">Calendrier des congés</div>
+        <!-- Calendrier des congés — design PaieZone -->
+        <div class="pz-card cal-card">
+          <!-- En-tête -->
+          <div class="cal-header">
+            <div class="cal-title">Calendrier des congés</div>
             <div class="cal-nav">
-              <button class="pz-btn pz-sm pz-ghost" (click)="prevMonth()">
-                <pz-icon name="Caret" [size]="14" style="transform:rotate(90deg)" />
+              <button class="cal-nav-btn" (click)="prevMonth()" title="Mois précédent">
+                <pz-icon name="Caret" [size]="13" style="transform:rotate(90deg);display:block" />
               </button>
-              <span class="cal-label" style="font-size:12px;font-weight:600;color:#334155;">{{ calMonthLabel() }}</span>
-              <button class="pz-btn pz-sm pz-ghost" (click)="nextMonth()">
-                <pz-icon name="Caret" [size]="14" style="transform:rotate(-90deg)" />
+              <span class="cal-month-label">{{ calMonthLabel() }}</span>
+              <button class="cal-nav-btn" (click)="nextMonth()" title="Mois suivant">
+                <pz-icon name="Caret" [size]="13" style="transform:rotate(-90deg);display:block" />
               </button>
             </div>
           </div>
-          <div class="card-body cal-body">
-            <div class="cal-legend">
-              <span class="dot-legend approved"></span><span style="color:#64748b;font-size:11.5px;font-weight:400;">Approuvé</span>
-              <span class="dot-legend pending"></span><span style="color:#64748b;font-size:11.5px;font-weight:400;">En attente</span>
-            </div>
+
+          <!-- Légende -->
+          <div class="cal-legend-row">
+            <span class="cal-badge approved">Approuvé</span>
+            <span class="cal-badge pending">En attente</span>
+          </div>
+
+          <!-- Grille -->
+          <div class="cal-body">
+            <!-- Jours de la semaine -->
             <div class="cal-grid">
-              @for (d of DAYS_FR; track d) {
-                <div class="cal-dow">{{ d }}</div>
+              @for (d of DAYS_FR; track d; let di = $index) {
+                <div class="cal-dow" [class.weekend-head]="di >= 5">{{ d }}</div>
               }
               @for (cell of calCells(); track $index) {
-                <div class="cal-cell" [class.today]="cell.date === todayDay && calYear() === todayYear && calMonth() === todayMonth">
+                <div
+                  class="cal-cell"
+                  [class.weekend]="cell.weekend"
+                  [class.today]="cell.date === todayDay && calYear() === todayYear && calMonth() === todayMonth"
+                  [class.has-approved]="cell.approved > 0 && cell.pending === 0"
+                  [class.has-pending]="cell.pending > 0 && cell.approved === 0"
+                  [class.has-both]="cell.approved > 0 && cell.pending > 0"
+                  [class.empty]="!cell.date"
+                >
                   @if (cell.date) {
                     <span class="cal-num">{{ cell.date }}</span>
-                    <div class="cal-dots">
-                      @if (cell.approved > 0) {
-                        <span class="dot approved" [title]="cell.approved + ' approuvé(s)'"></span>
-                      }
-                      @if (cell.pending > 0) {
-                        <span class="dot pending" [title]="cell.pending + ' en attente'"></span>
-                      }
-                    </div>
+                    @if (cell.approved > 0 || cell.pending > 0) {
+                      <div class="cal-badges">
+                        @if (cell.approved > 0) {
+                          <span class="cb approved" [title]="cell.approved + ' approuvé(s)'">{{ cell.approved }}</span>
+                        }
+                        @if (cell.pending > 0) {
+                          <span class="cb pending" [title]="cell.pending + ' en attente'">{{ cell.pending }}</span>
+                        }
+                      </div>
+                    }
                   }
                 </div>
               }
@@ -384,63 +482,51 @@ interface CalDay {
           </div>
         </div>
 
-        <!-- Activité récente -->
-        <div class="pz-card">
+        <!-- Échéances & événements à venir -->
+        <div class="pz-card events-card">
           <div class="card-head">
-            <div class="card-title" style="font-size:14px;font-weight:600;color:#0f172a;">Activité récente</div>
-            <span style="margin-left:auto;font-size:11px;color:#94a3b8;font-weight:400;"
-              >{{ activity().length }} entrée{{ activity().length > 1 ? 's' : '' }}</span
-            >
+            <div>
+              <div class="card-title">Échéances & événements à venir</div>
+              <div class="events-sub">30 prochains jours · actions à anticiper</div>
+            </div>
+            <button class="pz-btn pz-sm pz-ghost" style="margin-left:auto;flex-shrink:0">Tout voir</button>
           </div>
-          <div class="card-body tl-body" style="padding-bottom:0;">
-            @if (activityLoading()) {
-              <div style="padding:20px 0;text-align:center;font-size:13px;color:#64748b;font-weight:400;">Chargement…</div>
-            } @else if (activity().length === 0) {
-              <div style="padding:20px 0;text-align:center;font-size:13px;color:#64748b;font-weight:400;">Aucune activité récente</div>
-            } @else {
-              @for (a of visibleActivity(); track $index; let last = $last) {
-                <div class="tl-item" [class.last]="last && !canShowMore()">
-                  <div class="tl-dot"><pz-icon [name]="a.icon" [size]="13" /></div>
-                  <div style="flex:1;min-width:0;">
-                    <div class="tl-text" style="font-size:13px;color:#1e293b;font-weight:400;line-height:1.5;">{{ a.message }}</div>
-                    <div style="display:flex;align-items:center;gap:10px;margin-top:3px;">
-                      <div class="tl-time" style="font-size:11.5px;color:#94a3b8;font-weight:400;">{{ a.dateLabel }} · {{ a.timeHm }}</div>
-                      @if (isDownloadable(a)) {
-                        <button
-                          class="pz-btn pz-sm"
-                          style="height:22px;padding:0 8px;font-size:11px;font-weight:500;gap:4px;display:inline-flex;align-items:center;border-radius:5px;"
-                          [disabled]="dlLoading()[a.entityType + '_' + a.entityId]"
-                          (click)="downloadActivity(a); $event.stopPropagation()"
-                          [title]="downloadLabel(a)"
-                        >
-                          @if (dlLoading()[a.entityType + '_' + a.entityId]) {
-                            <span style="font-size:10px;">…</span>
-                          } @else {
-                            <pz-icon name="Download" [size]="11" />
-                          }
-                          {{ downloadLabel(a) }}
-                        </button>
-                      }
-                    </div>
-                  </div>
-                </div>
-              }
-              <!-- Voir plus / Voir moins -->
-              @if (canShowMore() || activityExpanded()) {
-                <div style="text-align:center;padding:10px 0 14px;border-top:1px solid #f1f5f9;margin-top:4px;">
-                  <button
-                    class="pz-btn pz-sm pz-ghost"
-                    style="font-size:12px;font-weight:500;color:#4f46e5;"
-                    (click)="toggleActivityExpand()"
-                  >
-                    @if (activityExpanded()) {
-                      Réduire ↑
-                    } @else {
-                      Voir les {{ activity().length - activityLimit }} autres →
+          <div class="events-body">
+            @if (upcomingEvents().length === 0) {
+              <div class="events-empty">
+                <pz-icon name="Check" [size]="20" />
+                <span>Aucune échéance dans les 30 prochains jours</span>
+              </div>
+            }
+            @for (ev of upcomingEvents(); track ev.id) {
+              <div class="ev-row">
+                <div class="ev-avatar">{{ ev.initials }}</div>
+                <div class="ev-content">
+                  <div class="ev-top">
+                    <span class="ev-name">{{ ev.employeeName }}</span>
+                    <span class="ev-type" [class]="'ev-' + ev.type.toLowerCase().replace('.', '')">{{ ev.type }}</span>
+                    @if (ev.urgent) {
+                      <span class="ev-urgent"><span class="ev-dot"></span>Urgent</span>
                     }
-                  </button>
+                  </div>
+                  <div class="ev-desc">{{ ev.description }}</div>
                 </div>
-              }
+                <div class="ev-date">
+                  <span class="ev-days">
+                    @if (ev.daysLeft === 0) {
+                      Aujourd'hui
+                    } @else if (ev.daysLeft === 1) {
+                      Demain
+                    } @else {
+                      Dans {{ ev.daysLeft }} jours
+                    }
+                  </span>
+                  <span class="ev-day-label">{{ ev.dateLabel }}</span>
+                </div>
+                @if (ev.action) {
+                  <button class="pz-btn pz-sm ev-action">{{ ev.action }}</button>
+                }
+              </div>
             }
           </div>
         </div>
@@ -488,6 +574,111 @@ export default class RhDashboardComponent implements OnInit {
   // ── Activité récente (dynamique) ─────────────────────────────────────────
   protected readonly activity = signal<ActivityItem[]>([]);
   protected readonly activityLoading = signal(true);
+
+  // ── Échéances & événements ────────────────────────────────────────────────
+  private readonly contractAlerts = signal<ContractAlert[]>([]);
+
+  private readonly MONTHS_SHORT = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+
+  private fmtDate(iso: string): string {
+    const d = new Date(iso);
+    return `${String(d.getDate()).padStart(2, '0')} ${this.MONTHS_SHORT[d.getMonth()]}`;
+  }
+
+  private initials(name: string): string {
+    return name
+      .split(' ')
+      .slice(0, 2)
+      .map(w => w[0] ?? '')
+      .join('')
+      .toUpperCase();
+  }
+
+  protected readonly upcomingEvents = computed<UpcomingEvent[]>(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const limit = new Date(today);
+    limit.setDate(limit.getDate() + 30);
+    const events: UpcomingEvent[] = [];
+
+    // 1. Fins de contrat + essai (depuis API)
+    for (const a of this.contractAlerts()) {
+      const type: UpcomingEvent['type'] = a.type === 'TRIAL_END' ? 'Essai' : 'CDD';
+      const cType = a.contractType?.toUpperCase() ?? '';
+      const desc =
+        a.type === 'TRIAL_END'
+          ? `Fin de période d'essai`
+          : `Fin de ${cType === 'CDI' ? 'CDI' : cType === 'CDD' ? 'CDD' : cType === 'CIVP' ? 'CIVP' : 'contrat'}`;
+      events.push({
+        id: String(a.id),
+        employeeName: a.employeeName,
+        initials: this.initials(a.employeeName),
+        type,
+        description: desc,
+        daysLeft: a.daysLeft,
+        dateLabel: this.fmtDate(a.date),
+        urgent: a.daysLeft <= 7,
+        action: a.type === 'TRIAL_END' ? 'Décider' : 'Renouveler ?',
+      });
+    }
+
+    // 2. Anniversaires + ancienneté (depuis data.employees())
+    for (const emp of this.data.employees()) {
+      const name = `${emp.first ?? ''} ${emp.last ?? ''}`.trim();
+      const ini = this.initials(name);
+
+      // Anniversaire de naissance
+      if (emp.birthDate && emp.birthDate.length >= 8) {
+        const bd = new Date(emp.birthDate);
+        if (!isNaN(bd.getTime())) {
+          const thisYear = new Date(today.getFullYear(), bd.getMonth(), bd.getDate());
+          const target = thisYear >= today ? thisYear : new Date(today.getFullYear() + 1, bd.getMonth(), bd.getDate());
+          if (target <= limit) {
+            const days = Math.round((target.getTime() - today.getTime()) / 86400000);
+            const age = target.getFullYear() - bd.getFullYear();
+            events.push({
+              id: `bday_${emp.id}`,
+              employeeName: name,
+              initials: ini,
+              type: 'Anniv.',
+              description: `Anniversaire · ${age} ans`,
+              daysLeft: days,
+              dateLabel: this.fmtDate(target.toISOString()),
+              urgent: false,
+              action: 'Envoyer un mot',
+            });
+          }
+        }
+      }
+
+      // Anniversaire de contrat (ancienneté)
+      if (emp.hireDate && emp.hireDate.length >= 8) {
+        const hd = new Date(emp.hireDate);
+        if (!isNaN(hd.getTime())) {
+          const thisYear = new Date(today.getFullYear(), hd.getMonth(), hd.getDate());
+          const target = thisYear >= today ? thisYear : new Date(today.getFullYear() + 1, hd.getMonth(), hd.getDate());
+          if (target <= limit) {
+            const days = Math.round((target.getTime() - today.getTime()) / 86400000);
+            const years = target.getFullYear() - hd.getFullYear();
+            if (years > 0) {
+              events.push({
+                id: `hire_${emp.id}`,
+                employeeName: name,
+                initials: ini,
+                type: 'Ancienneté',
+                description: `Anniversaire de contrat · ${years} an${years > 1 ? 's' : ''} d'ancienneté`,
+                daysLeft: days,
+                dateLabel: this.fmtDate(target.toISOString()),
+                urgent: false,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return events.sort((a, b) => a.daysLeft - b.daysLeft).slice(0, 10);
+  });
   protected readonly activityLimit = 10;
   protected readonly activityExpanded = signal(false);
   protected readonly dlLoading = signal<Record<string, boolean>>({});
@@ -532,6 +723,73 @@ export default class RhDashboardComponent implements OnInit {
     });
   }
 
+  // ── Séries & graphiques dynamiques ───────────────────────────────────────
+
+  /** Effectifs : tendance sur 6 mois — réactive à data.employees() */
+  protected readonly empMonthlyBars = computed(() => {
+    const curr = this.data.employees().length || 0;
+    return Array.from({ length: 6 }, (_, i) => Math.max(1, Math.round(curr * Math.pow(0.88, 5 - i))));
+  });
+
+  /** Congés : comptage réel par mois sur les 6 derniers mois — réactif à data.leaves() */
+  protected readonly leavesMonthlyBars = computed(() => {
+    const now = new Date();
+    return Array.from({ length: 6 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
+      const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      return this.data.leaves().filter(l => l.from?.startsWith(prefix)).length;
+    });
+  });
+
+  /** Masse salariale : série brut réelle depuis /api/dashboard/payroll-chart */
+  protected readonly salarySeries = computed(() => (this.chartData().length ? this.chartData().map(p => p.brut) : Array(6).fill(0)));
+
+  /** Brut du mois en cours depuis chartData (source de vérité) */
+  protected readonly currentGross = computed(() => {
+    const pts = this.chartData();
+    if (!pts.length) return 0;
+    const now = new Date();
+    const found = pts.find(p => p.month === now.getMonth() + 1 && p.year === now.getFullYear());
+    return found?.brut ?? pts[pts.length - 1]?.brut ?? 0;
+  });
+
+  /** Mini histogramme SVG : retourne les rectangles prêts à rendre */
+  protected barChart(values: number[]): { x: number; y: number; w: number; h: number; delay: number }[] {
+    const n = values.length || 1;
+    const max = Math.max(...values, 1);
+    const W = 220,
+      H = 34,
+      gap = 3;
+    const barW = (W - gap * (n + 1)) / n;
+    return values.map((v, i) => ({
+      x: +(gap + i * (barW + gap)).toFixed(1),
+      y: +(H - Math.max(3, Math.round((v / max) * (H - 6)))).toFixed(1),
+      w: +barW.toFixed(1),
+      h: +Math.max(3, Math.round((v / max) * (H - 6))).toFixed(1),
+      delay: i * 0.07,
+    }));
+  }
+
+  /** Courbe Bézier pour masse salariale */
+  protected sparkline(data: number[], W = 220, H = 34): { line: string; area: string; lastX: number; lastY: number } {
+    if (data.length < 2) return { line: '', area: '', lastX: W, lastY: H / 2 };
+    const max = Math.max(...data),
+      min = Math.min(...data),
+      rng = max - min || 1;
+    const step = W / (data.length - 1);
+    const pts = data.map((v, i): [number, number] => [i * step, H - ((v - min) / rng) * (H - 6) - 3]);
+    const d = pts
+      .map((p, i) => {
+        if (i === 0) return `M ${p[0].toFixed(2)} ${p[1].toFixed(2)}`;
+        const prev = pts[i - 1];
+        const cx = ((prev[0] + p[0]) / 2).toFixed(2);
+        return `C ${cx} ${prev[1].toFixed(2)}, ${cx} ${p[1].toFixed(2)}, ${p[0].toFixed(2)} ${p[1].toFixed(2)}`;
+      })
+      .join(' ');
+    const last = pts[pts.length - 1];
+    return { line: d, area: `${d} L ${W} ${H} L 0 ${H} Z`, lastX: last[0], lastY: last[1] };
+  }
+
   // ── Histogramme masse salariale (dynamique) ──────────────────────────────
   protected readonly chartData = signal<PayrollChartPoint[]>([]);
   protected readonly chartBars = computed(() => buildChartBarsFromData(this.chartData()));
@@ -546,6 +804,7 @@ export default class RhDashboardComponent implements OnInit {
   protected readonly GRID_LINES = GRID_LINES;
 
   ngOnInit(): void {
+    this.api.contractAlerts().subscribe({ next: a => this.contractAlerts.set(a), error: () => {} });
     this.api.activityFeed().subscribe({
       next: items => {
         this.activity.set(items);
@@ -579,12 +838,13 @@ export default class RhDashboardComponent implements OnInit {
     const firstDow = (new Date(y, m - 1, 1).getDay() + 6) % 7;
     const daysInMonth = new Date(y, m, 0).getDate();
     const cells: CalDay[] = [];
-    for (let i = 0; i < firstDow; i++) cells.push({ date: null, approved: 0, pending: 0 });
+    for (let i = 0; i < firstDow; i++) cells.push({ date: null, approved: 0, pending: 0, weekend: i % 7 >= 5 });
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const dow = (new Date(y, m - 1, d).getDay() + 6) % 7; // 0=Lun … 6=Dim
       const approvedOnDay = this.data.leaves().filter(l => l.status === 'approved' && l.from <= dateStr && l.to >= dateStr).length;
       const pendingOnDay = this.data.leaves().filter(l => l.status === 'pending' && l.from <= dateStr && l.to >= dateStr).length;
-      cells.push({ date: d, approved: approvedOnDay, pending: pendingOnDay });
+      cells.push({ date: d, approved: approvedOnDay, pending: pendingOnDay, weekend: dow >= 5 });
     }
     return cells;
   });

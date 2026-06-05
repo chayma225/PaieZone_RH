@@ -53,6 +53,8 @@ public class AdminUserDTO implements Serializable {
 
     private Set<String> authorities;
 
+    private boolean twoFactorEnabled = false;
+
     public AdminUserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -175,6 +177,14 @@ public class AdminUserDTO implements Serializable {
 
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
     }
 
     // prettier-ignore

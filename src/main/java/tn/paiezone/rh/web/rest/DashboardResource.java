@@ -258,37 +258,55 @@ public class DashboardResource {
             LocalDate today = LocalDate.now();
             LocalDate limit = today.plusDays(30);
 
-            LOG.info("contract-alerts: recherche entre {} et {}", today, limit);
+            List<Map<String, Object>> alerts = new ArrayList<>();
 
-            List<Contract> contracts =
+            // ── 1. Fins de contrat CDD/CIVP ─────────────────────────────────
+            List<Contract> ending =
                 companyId != null
                     ? contractRepository.findByStatusAndEndDateBetweenAndCompanyId(ContractStatus.ACTIVE, today, limit, companyId)
                     : contractRepository.findByStatusAndEndDateBetween(ContractStatus.ACTIVE, today, limit);
 
-            List<Map<String, Object>> alerts = contracts
-                .stream()
-                .map(c -> {
-                    long daysLeft = ChronoUnit.DAYS.between(today, c.getEndDate());
-                    String empName = "N/A";
-                    try {
-                        if (c.getEmployee() != null) {
-                            empName = c.getEmployee().getFirstName() + " " + c.getEmployee().getLastName();
-                        }
-                    } catch (Exception ex) {
-                        LOG.warn("Impossible de charger l'employé du contrat {}: {}", c.getId(), ex.getMessage());
-                    }
-                    Map<String, Object> m = new LinkedHashMap<>();
-                    m.put("id", c.getId());
-                    m.put("reference", c.getReference() != null ? c.getReference() : "");
-                    m.put("contractType", c.getContractType() != null ? c.getContractType().name() : "");
-                    m.put("endDate", c.getEndDate().toString());
-                    m.put("daysLeft", daysLeft);
-                    m.put("employeeName", empName);
-                    return m;
-                })
-                .toList();
+            for (Contract c : ending) {
+                long days = ChronoUnit.DAYS.between(today, c.getEndDate());
+                String name = c.getEmployee() != null ? c.getEmployee().getFirstName() + " " + c.getEmployee().getLastName() : "N/A";
+                Long empId = c.getEmployee() != null ? c.getEmployee().getId() : null;
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("id", c.getId());
+                m.put("type", "CONTRACT_END");
+                m.put("contractType", c.getContractType() != null ? c.getContractType().name() : "");
+                m.put("date", c.getEndDate().toString());
+                m.put("daysLeft", days);
+                m.put("employeeName", name);
+                m.put("employeeId", empId);
+                alerts.add(m);
+            }
 
-            LOG.info("contract-alerts: {} contrat(s) trouvé(s)", alerts.size());
+            // ── 2. Fins de période d'essai ───────────────────────────────────
+            List<Contract> trials =
+                companyId != null
+                    ? contractRepository.findActiveWithTrialByCompany(ContractStatus.ACTIVE, companyId)
+                    : contractRepository.findActiveWithTrial(ContractStatus.ACTIVE);
+
+            for (Contract c : trials) {
+                if (c.getStartDate() == null || c.getTrialPeriodMonths() == null) continue;
+                LocalDate trialEnd = c.getStartDate().plusMonths(c.getTrialPeriodMonths());
+                if (trialEnd.isBefore(today) || trialEnd.isAfter(limit)) continue;
+                long days = ChronoUnit.DAYS.between(today, trialEnd);
+                String name = c.getEmployee() != null ? c.getEmployee().getFirstName() + " " + c.getEmployee().getLastName() : "N/A";
+                Long empId = c.getEmployee() != null ? c.getEmployee().getId() : null;
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("id", "trial_" + c.getId());
+                m.put("type", "TRIAL_END");
+                m.put("contractType", c.getContractType() != null ? c.getContractType().name() : "CDI");
+                m.put("date", trialEnd.toString());
+                m.put("daysLeft", days);
+                m.put("employeeName", name);
+                m.put("employeeId", empId);
+                alerts.add(m);
+            }
+
+            alerts.sort(Comparator.comparingLong(m -> ((Number) m.get("daysLeft")).longValue()));
+            LOG.info("contract-alerts: {} événement(s)", alerts.size());
             return ResponseEntity.ok(alerts);
         } catch (Exception e) {
             LOG.error("ERREUR contract-alerts: {}", e.getMessage(), e);

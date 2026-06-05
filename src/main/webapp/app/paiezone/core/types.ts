@@ -283,12 +283,13 @@ export interface PayrollChartPoint {
 }
 
 export interface ContractAlert {
-  id: number;
-  reference: string;
+  id: number | string;
+  type: 'CONTRACT_END' | 'TRIAL_END';
   contractType: string;
-  endDate: string;
+  date: string;
   daysLeft: number;
   employeeName: string;
+  employeeId: number | null;
 }
 
 export interface AccountPlan {

@@ -64,7 +64,22 @@ export class ApiService {
   }
 
   contractAlerts(): Observable<ContractAlert[]> {
-    return this.http.get<ContractAlert[]>('/api/dashboard/contract-alerts');
+    return this.http.get<any[]>('/api/dashboard/contract-alerts').pipe(
+      map(list =>
+        list.map(
+          a =>
+            ({
+              id: a.id,
+              type: a.type ?? 'CONTRACT_END',
+              contractType: a.contractType ?? '',
+              date: a.date ?? a.endDate ?? '', // compatibilité ancien/nouveau backend
+              daysLeft: a.daysLeft ?? 0,
+              employeeName: a.employeeName ?? '',
+              employeeId: a.employeeId ?? null,
+            }) as ContractAlert,
+        ),
+      ),
+    );
   }
 
   employees(size = 200): Observable<Employee[]> {
@@ -1024,8 +1039,8 @@ export class ApiService {
       label: `${MONTHS_FR[m]} ${d.year}`,
       status: d.status ?? 'DRAFT',
       employees: d.employeeCount != null ? +d.employeeCount : 0,
-      gross: 0,
-      net: 0,
+      gross: d.totalGross != null ? +d.totalGross : 0,
+      net: d.totalNet != null ? +d.totalNet : 0,
       validatedAt: d.validatedAt ?? null,
       lockedAt: d.lockedAt ?? null,
     };

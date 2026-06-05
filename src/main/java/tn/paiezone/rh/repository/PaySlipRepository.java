@@ -69,6 +69,12 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, Long>, JpaSpec
 
     Optional<PaySlip> findFirstByEmployee_UserProfile_IdOrderByYearDescMonthDesc(Long userProfileId);
 
+    @Query(
+        "SELECT COUNT(ps), COALESCE(SUM(ps.grossSalary), 0), COALESCE(SUM(ps.netSalary), 0) " +
+            "FROM PaySlip ps WHERE ps.payrollPeriod.id = :periodId"
+    )
+    Object[] aggregateTotalsByPeriod(@Param("periodId") Long periodId);
+
     /**
      * Agrège gross + employerCnss par (month, year) pour les N derniers mois.
      * fromYm / toYm sont des entiers YYYYMM (ex. 202511, 202604).

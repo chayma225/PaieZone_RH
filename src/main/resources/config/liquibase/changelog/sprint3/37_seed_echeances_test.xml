@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════════
+    SEED — Échéances & événements à venir — Entreprise : TechSoft
+    Date de référence : 2026-06-05
+
+    Événements couverts (30 jours) :
+      Anis Gharbi      — Fin période d'essai     2026-06-08  (3 jours)  URGENT
+      Mehdi Ben Salah  — Anniversaire 32 ans     2026-06-06  (Demain)
+      Karim Mrad       — Fin CDD                 2026-06-10  (5 jours)  URGENT
+      Oussama Romdhane — Fin CDD                 2026-06-17  (12 jours)
+      Leila Chaâbane   — Ancienneté 8 ans        2026-06-23  (18 jours)
+      Rim Saidi        — Anniversaire 35 ans     2026-07-01  (26 jours)
+    ═══════════════════════════════════════════════════════════════════════
+  -->
+
+  <!-- ══ Anis Gharbi ═══════════════════════════════════════════════════════ -->
+  <changeSet id="techsoft-emp-anis-gharbi" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM employee WHERE matricule = 'TS-2026-001'</sqlCheck>
+    </preConditions>
+    <insert tableName="employee">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="matricule"          value="TS-2026-001"/>
+      <column name="first_name"         value="Anis"/>
+      <column name="last_name"          value="Gharbi"/>
+      <column name="birth_date"         valueDate="1995-04-15"/>
+      <column name="gender"             value="M"/>
+      <column name="marital_status"     value="SINGLE"/>
+      <column name="number_of_children" valueNumeric="0"/>
+      <column name="chef_de_famille"    valueBoolean="false"/>
+      <column name="national_id"        value="08695412"/>
+      <column name="category"           value="EMPLOYEE"/>
+      <column name="hire_date"          valueDate="2026-03-08"/>
+      <column name="active"             valueBoolean="true"/>
+      <column name="salary_brut"        valueNumeric="2800.000"/>
+      <column name="salary_net"         valueNumeric="2300.000"/>
+      <column name="balance_conge"      valueNumeric="0"/>
+      <column name="city"               value="Tunis"/>
+      <column name="company_id"   valueComputed="(SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1)"/>
+      <column name="department_id" valueComputed="(SELECT id FROM department WHERE company_id = (SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1) ORDER BY id LIMIT 1)"/>
+      <column name="position_id"  valueComputed="(SELECT id FROM job_position ORDER BY id LIMIT 1)"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="techsoft-contract-anis-gharbi" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM contract WHERE reference = 'TS-CDI-2026-001'</sqlCheck>
+    </preConditions>
+    <insert tableName="contract">
+      <column name="id"                  valueComputed="nextval('sequence_generator')"/>
+      <column name="reference"           value="TS-CDI-2026-001"/>
+      <column name="contract_type"       value="CDI"/>
+      <column name="status"              value="ACTIVE"/>
+      <column name="start_date"          valueDate="2026-03-08"/>
+      <column name="base_salary"         valueNumeric="2800.00"/>
+      <column name="trial_period_months" valueNumeric="3"/>
+      <column name="working_hours_week"  valueNumeric="40"/>
+      <column name="working_days_week"   valueNumeric="5"/>
+      <column name="renewal_count"       valueNumeric="0"/>
+      <column name="employee_id" valueComputed="(SELECT id FROM employee WHERE matricule = 'TS-2026-001')"/>
+    </insert>
+  </changeSet>
+
+  <!-- ══ Mehdi Ben Salah ═══════════════════════════════════════════════════ -->
+  <changeSet id="techsoft-emp-mehdi-bensalah" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM employee WHERE matricule = 'TS-2019-007'</sqlCheck>
+    </preConditions>
+    <insert tableName="employee">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="matricule"          value="TS-2019-007"/>
+      <column name="first_name"         value="Mehdi"/>
+      <column name="last_name"          value="Ben Salah"/>
+      <column name="birth_date"         valueDate="1994-06-06"/>
+      <column name="gender"             value="M"/>
+      <column name="marital_status"     value="MARRIED"/>
+      <column name="number_of_children" valueNumeric="2"/>
+      <column name="chef_de_famille"    valueBoolean="true"/>
+      <column name="national_id"        value="09341872"/>
+      <column name="category"           value="MANAGER"/>
+      <column name="hire_date"          valueDate="2019-03-15"/>
+      <column name="active"             valueBoolean="true"/>
+      <column name="salary_brut"        valueNumeric="3500.000"/>
+      <column name="salary_net"         valueNumeric="2850.000"/>
+      <column name="balance_conge"      valueNumeric="18"/>
+      <column name="city"               value="Sfax"/>
+      <column name="company_id"   valueComputed="(SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1)"/>
+      <column name="department_id" valueComputed="(SELECT id FROM department WHERE company_id = (SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1) ORDER BY id LIMIT 1)"/>
+      <column name="position_id"  valueComputed="(SELECT id FROM job_position ORDER BY id LIMIT 1)"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="techsoft-contract-mehdi-bensalah" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM contract WHERE reference = 'TS-CDI-2019-007'</sqlCheck>
+    </preConditions>
+    <insert tableName="contract">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="reference"          value="TS-CDI-2019-007"/>
+      <column name="contract_type"      value="CDI"/>
+      <column name="status"             value="ACTIVE"/>
+      <column name="start_date"         valueDate="2019-03-15"/>
+      <column name="base_salary"        valueNumeric="3500.00"/>
+      <column name="working_hours_week" valueNumeric="40"/>
+      <column name="working_days_week"  valueNumeric="5"/>
+      <column name="renewal_count"      valueNumeric="0"/>
+      <column name="employee_id" valueComputed="(SELECT id FROM employee WHERE matricule = 'TS-2019-007')"/>
+    </insert>
+  </changeSet>
+
+  <!-- ══ Karim Mrad — CDD URGENT dans 5 jours ════════════════════════════ -->
+  <changeSet id="techsoft-emp-karim-mrad" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM employee WHERE matricule = 'TS-2025-014'</sqlCheck>
+    </preConditions>
+    <insert tableName="employee">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="matricule"          value="TS-2025-014"/>
+      <column name="first_name"         value="Karim"/>
+      <column name="last_name"          value="Mrad"/>
+      <column name="birth_date"         valueDate="1990-02-28"/>
+      <column name="gender"             value="M"/>
+      <column name="marital_status"     value="MARRIED"/>
+      <column name="number_of_children" valueNumeric="1"/>
+      <column name="chef_de_famille"    valueBoolean="true"/>
+      <column name="national_id"        value="07812345"/>
+      <column name="category"           value="TECHNICIAN"/>
+      <column name="hire_date"          valueDate="2025-06-10"/>
+      <column name="active"             valueBoolean="true"/>
+      <column name="salary_brut"        valueNumeric="2500.000"/>
+      <column name="salary_net"         valueNumeric="2050.000"/>
+      <column name="balance_conge"      valueNumeric="6"/>
+      <column name="city"               value="Sousse"/>
+      <column name="company_id"   valueComputed="(SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1)"/>
+      <column name="department_id" valueComputed="(SELECT id FROM department WHERE company_id = (SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1) ORDER BY id LIMIT 1)"/>
+      <column name="position_id"  valueComputed="(SELECT id FROM job_position ORDER BY id LIMIT 1)"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="techsoft-contract-karim-mrad" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM contract WHERE reference = 'TS-CDD-2025-014'</sqlCheck>
+    </preConditions>
+    <insert tableName="contract">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="reference"          value="TS-CDD-2025-014"/>
+      <column name="contract_type"      value="CDD"/>
+      <column name="status"             value="ACTIVE"/>
+      <column name="start_date"         valueDate="2025-06-10"/>
+      <column name="end_date"           valueDate="2026-06-10"/>
+      <column name="base_salary"        valueNumeric="2500.00"/>
+      <column name="working_hours_week" valueNumeric="40"/>
+      <column name="working_days_week"  valueNumeric="5"/>
+      <column name="renewal_count"      valueNumeric="0"/>
+      <column name="employee_id" valueComputed="(SELECT id FROM employee WHERE matricule = 'TS-2025-014')"/>
+    </insert>
+  </changeSet>
+
+  <!-- ══ Oussama Romdhane — CDD dans 12 jours ════════════════════════════ -->
+  <changeSet id="techsoft-emp-oussama-romdhane" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM employee WHERE matricule = 'TS-2025-009'</sqlCheck>
+    </preConditions>
+    <insert tableName="employee">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="matricule"          value="TS-2025-009"/>
+      <column name="first_name"         value="Oussama"/>
+      <column name="last_name"          value="Romdhane"/>
+      <column name="birth_date"         valueDate="1992-11-20"/>
+      <column name="gender"             value="M"/>
+      <column name="marital_status"     value="SINGLE"/>
+      <column name="number_of_children" valueNumeric="0"/>
+      <column name="chef_de_famille"    valueBoolean="false"/>
+      <column name="national_id"        value="09567823"/>
+      <column name="category"           value="TECHNICIAN"/>
+      <column name="hire_date"          valueDate="2025-06-17"/>
+      <column name="active"             valueBoolean="true"/>
+      <column name="salary_brut"        valueNumeric="2200.000"/>
+      <column name="salary_net"         valueNumeric="1800.000"/>
+      <column name="balance_conge"      valueNumeric="12"/>
+      <column name="city"               value="Tunis"/>
+      <column name="company_id"   valueComputed="(SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1)"/>
+      <column name="department_id" valueComputed="(SELECT id FROM department WHERE company_id = (SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1) ORDER BY id LIMIT 1)"/>
+      <column name="position_id"  valueComputed="(SELECT id FROM job_position ORDER BY id LIMIT 1)"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="techsoft-contract-oussama-romdhane" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM contract WHERE reference = 'TS-CDD-2025-009'</sqlCheck>
+    </preConditions>
+    <insert tableName="contract">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="reference"          value="TS-CDD-2025-009"/>
+      <column name="contract_type"      value="CDD"/>
+      <column name="status"             value="ACTIVE"/>
+      <column name="start_date"         valueDate="2025-06-17"/>
+      <column name="end_date"           valueDate="2026-06-17"/>
+      <column name="base_salary"        valueNumeric="2200.00"/>
+      <column name="working_hours_week" valueNumeric="40"/>
+      <column name="working_days_week"  valueNumeric="5"/>
+      <column name="renewal_count"      valueNumeric="0"/>
+      <column name="employee_id" valueComputed="(SELECT id FROM employee WHERE matricule = 'TS-2025-009')"/>
+    </insert>
+  </changeSet>
+
+  <!-- ══ Leila Chaâbane — Ancienneté 8 ans ══════════════════════════════ -->
+  <changeSet id="techsoft-emp-leila-chaabane" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM employee WHERE matricule = 'TS-2018-003'</sqlCheck>
+    </preConditions>
+    <insert tableName="employee">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="matricule"          value="TS-2018-003"/>
+      <column name="first_name"         value="Leila"/>
+      <column name="last_name"          value="Chaâbane"/>
+      <column name="birth_date"         valueDate="1988-09-12"/>
+      <column name="gender"             value="F"/>
+      <column name="marital_status"     value="MARRIED"/>
+      <column name="number_of_children" valueNumeric="3"/>
+      <column name="chef_de_famille"    valueBoolean="false"/>
+      <column name="national_id"        value="06734512"/>
+      <column name="category"           value="EXECUTIVE"/>
+      <column name="hire_date"          valueDate="2018-06-23"/>
+      <column name="active"             valueBoolean="true"/>
+      <column name="salary_brut"        valueNumeric="4200.000"/>
+      <column name="salary_net"         valueNumeric="3400.000"/>
+      <column name="balance_conge"      valueNumeric="22"/>
+      <column name="city"               value="Tunis"/>
+      <column name="company_id"   valueComputed="(SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1)"/>
+      <column name="department_id" valueComputed="(SELECT id FROM department WHERE company_id = (SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1) ORDER BY id LIMIT 1)"/>
+      <column name="position_id"  valueComputed="(SELECT id FROM job_position ORDER BY id LIMIT 1)"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="techsoft-contract-leila-chaabane" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM contract WHERE reference = 'TS-CDI-2018-003'</sqlCheck>
+    </preConditions>
+    <insert tableName="contract">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="reference"          value="TS-CDI-2018-003"/>
+      <column name="contract_type"      value="CDI"/>
+      <column name="status"             value="ACTIVE"/>
+      <column name="start_date"         valueDate="2018-06-23"/>
+      <column name="base_salary"        valueNumeric="4200.00"/>
+      <column name="working_hours_week" valueNumeric="40"/>
+      <column name="working_days_week"  valueNumeric="5"/>
+      <column name="renewal_count"      valueNumeric="0"/>
+      <column name="employee_id" valueComputed="(SELECT id FROM employee WHERE matricule = 'TS-2018-003')"/>
+    </insert>
+  </changeSet>
+
+  <!-- ══ Rim Saidi — Anniversaire 35 ans ════════════════════════════════ -->
+  <changeSet id="techsoft-emp-rim-saidi" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM employee WHERE matricule = 'TS-2022-011'</sqlCheck>
+    </preConditions>
+    <insert tableName="employee">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="matricule"          value="TS-2022-011"/>
+      <column name="first_name"         value="Rim"/>
+      <column name="last_name"          value="Saidi"/>
+      <column name="birth_date"         valueDate="1991-07-01"/>
+      <column name="gender"             value="F"/>
+      <column name="marital_status"     value="SINGLE"/>
+      <column name="number_of_children" valueNumeric="0"/>
+      <column name="chef_de_famille"    valueBoolean="false"/>
+      <column name="national_id"        value="09123456"/>
+      <column name="category"           value="EMPLOYEE"/>
+      <column name="hire_date"          valueDate="2022-09-01"/>
+      <column name="active"             valueBoolean="true"/>
+      <column name="salary_brut"        valueNumeric="1900.000"/>
+      <column name="salary_net"         valueNumeric="1600.000"/>
+      <column name="balance_conge"      valueNumeric="10"/>
+      <column name="city"               value="Monastir"/>
+      <column name="company_id"   valueComputed="(SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1)"/>
+      <column name="department_id" valueComputed="(SELECT id FROM department WHERE company_id = (SELECT id FROM company WHERE LOWER(name) LIKE '%techsoft%' ORDER BY id LIMIT 1) ORDER BY id LIMIT 1)"/>
+      <column name="position_id"  valueComputed="(SELECT id FROM job_position ORDER BY id LIMIT 1)"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="techsoft-contract-rim-saidi" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM contract WHERE reference = 'TS-CDI-2022-011'</sqlCheck>
+    </preConditions>
+    <insert tableName="contract">
+      <column name="id"                 valueComputed="nextval('sequence_generator')"/>
+      <column name="reference"          value="TS-CDI-2022-011"/>
+      <column name="contract_type"      value="CDI"/>
+      <column name="status"             value="ACTIVE"/>
+      <column name="start_date"         valueDate="2022-09-01"/>
+      <column name="base_salary"        valueNumeric="1900.00"/>
+      <column name="working_hours_week" valueNumeric="40"/>
+      <column name="working_days_week"  valueNumeric="5"/>
+      <column name="renewal_count"      valueNumeric="0"/>
+      <column name="employee_id" valueComputed="(SELECT id FROM employee WHERE matricule = 'TS-2022-011')"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

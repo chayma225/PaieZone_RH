@@ -38,7 +38,7 @@ export class NotificationService {
               id: `contract-${a.id}`,
               icon: 'FileText',
               title: a.daysLeft <= 7 ? '⚠️ Contrat expire bientôt' : "Contrat proche de l'expiration",
-              detail: `${a.employeeName} · ${a.reference} · dans ${a.daysLeft} jour(s) (${a.endDate})`,
+              detail: `${a.employeeName} · dans ${a.daysLeft} jour(s) (${a.date})`,
               urgent: a.daysLeft <= 7,
               link: '/paiezone/rh-employees',
             })),

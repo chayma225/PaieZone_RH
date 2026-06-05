@@ -29,6 +29,147 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
+// ── StatCard — structure exacte du design ────────────────────────────────────
+@keyframes sparkDraw {
+  from {
+    stroke-dashoffset: 600;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes sparkFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes barGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+// ── StatCard — barre gauche via border-left natif (pixel-perfect) ───────────
+// La barre colorée est gérée par border-left inline sur chaque .pz-card.sc
+// → aucun problème de positionnement, fonctionne avec tous les border-radius
+.sc {
+  padding: 18px 20px;
+
+  // Ligne label + badge delta
+  .sc-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0; // stat-head gère son margin-bottom
+  }
+
+  // stat-head (identique au design)
+  .sc-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--pz-muted);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    margin-bottom: 8px;
+  }
+
+  // Icône dans badge (30×30, radius 8, fond couleur+soft)
+  .sc-ico {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  // Badge delta (identique au design)
+  .sc-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--pz-pos-soft);
+    color: var(--pz-pos-ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    &.neg {
+      background: var(--pz-danger-soft);
+      color: var(--pz-danger-ink);
+    }
+  }
+
+  // Valeur principale (identique au design)
+  .sc-val {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--pz-ink);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+
+    &.mono {
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+    }
+  }
+
+  // Zone sparkline — marginLeft:-2 (identique au design : léger débord gauche)
+  .sc-spark {
+    margin-top: 12px;
+    margin-left: -2px;
+
+    svg {
+      display: block;
+      overflow: visible;
+    }
+
+    .spark-line {
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: sparkDraw 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+    }
+
+    .spark-fill {
+      opacity: 0;
+      animation: sparkFade 0.6s ease 0.3s forwards;
+    }
+
+    .spark-dot {
+      opacity: 0;
+      animation: sparkFade 0.3s ease 1s forwards;
+    }
+
+    .bar-anim {
+      transform-origin: bottom;
+      transform-box: fill-box;
+      transform: scaleY(0);
+      animation: barGrow 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+  }
+
+  // Footer (stat-foot du design)
+  .sc-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+}
+
+// ── Ancienne classe stat conservée pour compatibilité ────────────────────────
 .stat {
   padding: 18px 20px;
 

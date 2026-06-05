@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       Conventions collectives 2026 — fichier conventions2.txt
+       7 secteurs identifiés via paie-tunisie.com
+       ══════════════════════════════════════════════════════════════ -->
+
+  <!-- ─────────────────────────────────────────────────────────────
+       1. CONFISERIE, BISCUITERIE, CHOCOLATERIE ET PÂTISSERIE
+       Transport 2026 : 62,793 DT | Présence : 4,870 DT
+       ───────────────────────────────────────────────────────────── -->
+  <changeSet id="sprint3-seed-confiserie-sector" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector WHERE code = 'CONFISERIE'</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="code" value="CONFISERIE"/>
+      <column name="label" value="Confiserie, Biscuiterie, Chocolaterie et Pâtisserie"/>
+      <column name="description" value="Fabrication de confiseries, biscuits, chocolats, pâtisseries industrielles"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-confiserie-conv-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONFISERIE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'CONFISERIE')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Confiserie, Biscuiterie, Chocolaterie et Pâtisserie 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-confiserie-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM convention_rule cr JOIN sectoral_convention sc ON cr.convention_id = sc.id JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONFISERIE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONFISERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport"/>
+      <column name="value" value="62.793"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONFISERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de présence"/>
+      <column name="value" value="4.870"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONFISERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de panier"/>
+      <column name="value" value="0.200"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONFISERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de caisse"/>
+      <column name="value" value="7"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       2. CONSTRUCTION MÉTALLIQUE
+       Transport Exec 2026 : 97,44 DT | Cadres : 105,559 DT
+       ───────────────────────────────────────────────────────────── -->
+  <changeSet id="sprint3-seed-const-metal-sector" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector WHERE code = 'CONST_METAL'</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="code" value="CONST_METAL"/>
+      <column name="label" value="Construction Métallique"/>
+      <column name="description" value="Fabrication et montage de structures métalliques"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-const-metal-conv-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONST_METAL' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'CONST_METAL')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Construction Métallique 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-const-metal-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM convention_rule cr JOIN sectoral_convention sc ON cr.convention_id = sc.id JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONST_METAL' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONST_METAL' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Exécution et Maîtrise)"/>
+      <column name="value" value="97.44"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONST_METAL' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Cadres)"/>
+      <column name="value" value="105.559"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONST_METAL' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de présence"/>
+      <column name="value" value="8.248"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CONST_METAL' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de panier"/>
+      <column name="value" value="0.560"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       3. CUIRS ET PEAUX
+       Transport 2026 : 77,950 DT | Présence : 8,251 DT
+       ───────────────────────────────────────────────────────────── -->
+  <changeSet id="sprint3-seed-cuirs-sector" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector WHERE code = 'CUIRS_PEAUX'</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="code" value="CUIRS_PEAUX"/>
+      <column name="label" value="Cuirs et Peaux"/>
+      <column name="description" value="Tannerie, mégisserie, maroquinerie et articles en cuir"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-cuirs-conv-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CUIRS_PEAUX' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'CUIRS_PEAUX')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Cuirs et Peaux 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-cuirs-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM convention_rule cr JOIN sectoral_convention sc ON cr.convention_id = sc.id JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CUIRS_PEAUX' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CUIRS_PEAUX' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport"/>
+      <column name="value" value="77.950"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'CUIRS_PEAUX' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de présence"/>
+      <column name="value" value="8.251"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       4. BANQUE (secteur déjà créé dans le seed 32)
+       Transport 40H Exec 2026 : 79,575 DT | Présence 40H : 14,745 DT
+       Prime Aid el Idha : 70 DT | Panier : 0,300 DT/jour
+       ───────────────────────────────────────────────────────────── -->
+  <changeSet id="sprint3-seed-banque-conv-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'BANQUE')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Secteur Bancaire 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-banque-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM convention_rule cr JOIN sectoral_convention sc ON cr.convention_id = sc.id JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Exec+Maîtrise 40H)"/>
+      <column name="value" value="79.575"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Exec+Maîtrise 48H)"/>
+      <column name="value" value="83.473"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Cadres 40H)"/>
+      <column name="value" value="87.435"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de présence (régime 40H)"/>
+      <column name="value" value="14.745"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de panier"/>
+      <column name="value" value="0.300"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'BANQUE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de l'Aid el Idha"/>
+      <column name="value" value="70"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       5. EXPLOSIFS
+       Transport 2026 : 54,537 DT | Présence : 34,503 DT
+       Prime risque : 150 DT | Panier : 1,500 DT/jour
+       ───────────────────────────────────────────────────────────── -->
+  <changeSet id="sprint3-seed-explosifs-sector" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector WHERE code = 'EXPLOSIFS'</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="code" value="EXPLOSIFS"/>
+      <column name="label" value="Industrie des Explosifs"/>
+      <column name="description" value="Fabrication, stockage et distribution d'explosifs industriels"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-explosifs-conv-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'EXPLOSIFS' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'EXPLOSIFS')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Industrie des Explosifs 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-explosifs-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM convention_rule cr JOIN sectoral_convention sc ON cr.convention_id = sc.id JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'EXPLOSIFS' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'EXPLOSIFS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport"/>
+      <column name="value" value="54.537"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'EXPLOSIFS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de présence"/>
+      <column name="value" value="34.503"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'EXPLOSIFS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de risque"/>
+      <column name="value" value="150"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'EXPLOSIFS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de panier"/>
+      <column name="value" value="1.500"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'EXPLOSIFS' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité spécifique (Exec et Maîtrise)"/>
+      <column name="value" value="170"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       6. PRODUITS DE TOILETTE ET PARFUMERIE
+       Transport Exec 2026 : 96,897 DT | Présence : 12,180 DT
+       Prime caisse caissier : 15,333 DT | Aide caissier : 5 DT
+       ───────────────────────────────────────────────────────────── -->
+  <changeSet id="sprint3-seed-parfumerie-sector" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector WHERE code = 'PARFUMERIE'</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="code" value="PARFUMERIE"/>
+      <column name="label" value="Fabricants de Produits de Toilette et de Parfumerie"/>
+      <column name="description" value="Fabrication de produits cosmétiques, de toilette et de parfumerie"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-parfumerie-conv-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'PARFUMERIE')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Produits de Toilette et Parfumerie 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-parfumerie-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM convention_rule cr JOIN sectoral_convention sc ON cr.convention_id = sc.id JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Exécution)"/>
+      <column name="value" value="96.897"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Agents de maîtrise)"/>
+      <column name="value" value="105.016"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de présence"/>
+      <column name="value" value="12.180"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de panier"/>
+      <column name="value" value="0.875"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de caisse (Caissier)"/>
+      <column name="value" value="15.333"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de caisse (Aide caissier)"/>
+      <column name="value" value="5"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de risque"/>
+      <column name="value" value="4"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'PARFUMERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de salissure"/>
+      <column name="value" value="3.500"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       7. FONDERIE, MÉTALLURGIE ET CONSTRUCTION MÉCANIQUE
+       Transport Exec 2026 : 97,44 DT | Maîtrise : 105,559 DT
+       Présence : 8,248 DT | Panier : 0,707 DT/jour
+       ───────────────────────────────────────────────────────────── -->
+  <changeSet id="sprint3-seed-fonderie-sector" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM activity_sector WHERE code = 'FONDERIE'</sqlCheck>
+    </preConditions>
+    <insert tableName="activity_sector">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="code" value="FONDERIE"/>
+      <column name="label" value="Fonderie, Métallurgie et Construction Mécanique"/>
+      <column name="description" value="Fonderie de métaux, métallurgie, fabrication de machines et équipements"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-fonderie-conv-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'FONDERIE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="sectoral_convention">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="sector_id" valueComputed="(SELECT id FROM activity_sector WHERE code = 'FONDERIE')"/>
+      <column name="year" valueNumeric="2026"/>
+      <column name="label" value="Convention collective Fonderie, Métallurgie et Construction Mécanique 2026"/>
+      <column name="active" valueBoolean="true"/>
+      <column name="effective_from" valueDate="2026-01-01"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="sprint3-seed-fonderie-rules-2026" author="dev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">SELECT COUNT(*) FROM convention_rule cr JOIN sectoral_convention sc ON cr.convention_id = sc.id JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'FONDERIE' AND sc.year = 2026</sqlCheck>
+    </preConditions>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'FONDERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Exécution)"/>
+      <column name="value" value="97.44"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'FONDERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Indemnité de transport (Agents de maîtrise)"/>
+      <column name="value" value="105.559"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'FONDERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de présence"/>
+      <column name="value" value="8.248"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+    <insert tableName="convention_rule">
+      <column name="id" valueComputed="nextval('sequence_generator')"/>
+      <column name="convention_id" valueComputed="(SELECT sc.id FROM sectoral_convention sc JOIN activity_sector s ON sc.sector_id = s.id WHERE s.code = 'FONDERIE' AND sc.year = 2026)"/>
+      <column name="rule_type" value="PREMIUM"/>
+      <column name="label" value="Prime de panier"/>
+      <column name="value" value="0.707"/>
+      <column name="active" valueBoolean="true"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

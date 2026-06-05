@@ -10,50 +10,167 @@
     </div>
   </div>
 
-  <!-- ── KPI ───────────────────────────────────────────────────────────────── -->
+  <!-- ── KPI StatCards (structure exacte du design) ───────────────────────── -->
   <div class="stat-grid">
-    <div class="pz-card stat">
-      <div class="stat-head">
-        <span class="ico"><pz-icon name="Wallet" /></span>MRR — {{ currentMonth }}
+    <!-- MRR — sparkline courbe Bézier -->
+    <div class="pz-card sc" style="border-left: 3px solid #4f46e5">
+      <div class="sc-top">
+        <div class="sc-head">
+          <span class="sc-ico" style="background: #4f46e51a; color: #4f46e5"><pz-icon name="Wallet" [size]="15" /></span>
+          MRR — {{ currentMonth }}
+        </div>
+        @if (mrrGrowthPct() !== 0) {
+          <span class="sc-delta" [class.neg]="mrrGrowthPct() < 0">
+            <pz-icon [name]="mrrGrowthPct() > 0 ? 'Up' : 'Down'" [size]="10" [strokeWidth]="2.5" />
+            {{ mrrGrowthPct() > 0 ? '+' : '' }}{{ mrrGrowthPct() }}%
+          </span>
+        }
       </div>
-      <div class="stat-val">{{ data.fmtTND(kpi().mrr) }}</div>
-      <div class="stat-foot">
-        <span class="pz-pill" [class.pos]="mrrGrowthPct() > 0" [class.danger]="mrrGrowthPct() < 0">
-          {{ mrrGrowthPct() > 0 ? '+' : '' }}{{ mrrGrowthPct() }}%
-        </span>
+      <div class="sc-val">{{ data.fmtTND(kpi().mrr) }}</div>
+      <div class="sc-spark">
+        <svg width="100%" height="34" viewBox="0 0 220 34" preserveAspectRatio="none" style="overflow: visible">
+          <defs>
+            <linearGradient id="gMrr" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#4f46e5" stop-opacity="0.28" />
+              <stop offset="1" stop-color="#4f46e5" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path [attr.d]="sparkline(mrrSeries()).area" fill="url(#gMrr)" class="spark-fill" />
+          <path
+            [attr.d]="sparkline(mrrSeries()).line"
+            fill="none"
+            stroke="#4f46e5"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="spark-line"
+          />
+          <circle
+            [attr.cx]="sparkline(mrrSeries()).lastX"
+            [attr.cy]="sparkline(mrrSeries()).lastY"
+            r="2.6"
+            fill="#4f46e5"
+            class="spark-dot"
+          />
+        </svg>
+      </div>
+      <div class="sc-foot">
         <span class="pz-muted">vs mois précédent</span>
       </div>
     </div>
-    <div class="pz-card stat">
-      <div class="stat-head">
-        <span class="ico info"><pz-icon name="TrendUp" [size]="14" [strokeWidth]="1.5" /></span>ARR projeté
+
+    <!-- ARR — même courbe -->
+    <div class="pz-card sc" style="border-left: 3px solid #0ea5e9">
+      <div class="sc-top">
+        <div class="sc-head">
+          <span class="sc-ico" style="background: #0ea5e91a; color: #0ea5e9"
+            ><pz-icon name="TrendUp" [size]="15" [strokeWidth]="1.5"
+          /></span>
+          ARR projeté
+        </div>
+        @if (mrrGrowthPct() !== 0) {
+          <span class="sc-delta" [class.neg]="mrrGrowthPct() < 0">
+            <pz-icon [name]="mrrGrowthPct() > 0 ? 'Up' : 'Down'" [size]="10" [strokeWidth]="2.5" />
+            {{ mrrGrowthPct() > 0 ? '+' : '' }}{{ mrrGrowthPct() }}%
+          </span>
+        }
       </div>
-      <div class="stat-val">{{ data.fmtTND(kpi().arr) }}</div>
-      <div class="stat-foot">
-        <span class="pz-pill" [class.pos]="mrrGrowthPct() > 0" [class.danger]="mrrGrowthPct() < 0">
-          {{ mrrGrowthPct() > 0 ? '+' : '' }}{{ mrrGrowthPct() }}%
-        </span>
-        <span class="pz-muted">12 derniers mois</span>
+      <div class="sc-val">{{ data.fmtTND(kpi().arr) }}</div>
+      <div class="sc-spark">
+        <svg width="100%" height="34" viewBox="0 0 220 34" preserveAspectRatio="none" style="overflow: visible">
+          <defs>
+            <linearGradient id="gArr" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0ea5e9" stop-opacity="0.28" />
+              <stop offset="1" stop-color="#0ea5e9" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path [attr.d]="sparkline(mrrSeries()).area" fill="url(#gArr)" class="spark-fill" />
+          <path
+            [attr.d]="sparkline(mrrSeries()).line"
+            fill="none"
+            stroke="#0ea5e9"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="spark-line"
+          />
+          <circle
+            [attr.cx]="sparkline(mrrSeries()).lastX"
+            [attr.cy]="sparkline(mrrSeries()).lastY"
+            r="2.6"
+            fill="#0ea5e9"
+            class="spark-dot"
+          />
+        </svg>
+      </div>
+      <div class="sc-foot"><span class="pz-muted">12 derniers mois</span></div>
+    </div>
+
+    <!-- Entreprises — mini bars -->
+    <div class="pz-card sc" style="border-left: 3px solid #10b981">
+      <div class="sc-top">
+        <div class="sc-head">
+          <span class="sc-ico" style="background: #10b9811a; color: #10b981"><pz-icon name="Building" [size]="15" /></span>
+          Entreprises clientes
+        </div>
+        @if (newCompaniesThisQuarter() > 0) {
+          <span class="sc-delta"> <pz-icon name="Up" [size]="10" [strokeWidth]="2.5" />+{{ newCompaniesThisQuarter() }} </span>
+        }
+      </div>
+      <div class="sc-val mono">{{ kpi().tenants }}</div>
+      <div class="sc-spark">
+        <svg width="100%" height="32" viewBox="0 0 200 32" preserveAspectRatio="none">
+          @for (b of miniBars(tenantSeries()); track b.x) {
+            <rect
+              [attr.x]="b.x"
+              [attr.y]="b.y"
+              [attr.width]="b.bw"
+              [attr.height]="b.bh"
+              [attr.rx]="b.rx"
+              fill="#10b981"
+              [attr.fill-opacity]="b.opacity"
+              class="bar-anim"
+              [style.transition-delay]="0.05 * $index + 's'"
+            />
+          }
+        </svg>
+      </div>
+      <div class="sc-foot">
+        <span class="pz-muted">{{ activeCompaniesCount() }} actives · ce trimestre</span>
       </div>
     </div>
-    <div class="pz-card stat">
-      <div class="stat-head">
-        <span class="ico pos"><pz-icon name="Building" /></span>Entreprises clientes
+
+    <!-- Employés — mini bars -->
+    <div class="pz-card sc" style="border-left: 3px solid #f59e0b">
+      <div class="sc-top">
+        <div class="sc-head">
+          <span class="sc-ico" style="background: #f59e0b1a; color: #f59e0b"><pz-icon name="Users" [size]="15" /></span>
+          Employés gérés
+        </div>
+        @if (activeEmployeesCount() > 0) {
+          <span class="sc-delta"> <pz-icon name="Up" [size]="10" [strokeWidth]="2.5" />{{ activeEmployeesCount() }} actifs </span>
+        }
       </div>
-      <div class="stat-val">{{ kpi().tenants }}</div>
-      <div class="stat-foot">
-        <span class="pz-pill" [class.pos]="activeCompaniesCount() > 0"> {{ activeCompaniesCount() }} actives </span>
-        <span class="pz-muted">ce trimestre</span>
+      <div class="sc-val mono">{{ kpi().totalEmployees }}</div>
+      <div class="sc-spark">
+        <svg width="100%" height="32" viewBox="0 0 200 32" preserveAspectRatio="none">
+          @for (b of miniBars(employeeSeries()); track b.x) {
+            <rect
+              [attr.x]="b.x"
+              [attr.y]="b.y"
+              [attr.width]="b.bw"
+              [attr.height]="b.bh"
+              [attr.rx]="b.rx"
+              fill="#f59e0b"
+              [attr.fill-opacity]="b.opacity"
+              class="bar-anim"
+              [style.transition-delay]="0.05 * $index + 's'"
+            />
+          }
+        </svg>
       </div>
-    </div>
-    <div class="pz-card stat">
-      <div class="stat-head">
-        <span class="ico warn"><pz-icon name="Users" /></span>Employés gérés
-      </div>
-      <div class="stat-val">{{ kpi().totalEmployees }}</div>
-      <div class="stat-foot">
-        <span class="pz-pill" [class.pos]="activeEmployeesCount() > 0"> {{ activeEmployeesCount() }} actifs </span>
-        <span class="pz-muted">ce mois-ci</span>
+      <div class="sc-foot">
+        <span class="pz-muted">{{ activeEmployeesCount() }} actifs · ce mois-ci</span>
       </div>
     </div>
   </div>

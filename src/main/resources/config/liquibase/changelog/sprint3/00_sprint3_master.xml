@@ -69,4 +69,14 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/sprint3/32_add_sectoral_conventions.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/33_seed_bois_convention.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/34_seed_conventions2.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/35_seed_conventions3.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/36_fix_btp_rule_name.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/sprint3/37_seed_echeances_test.xml"
+           relativeToChangelogFile="false"/>
 </databaseChangeLog>

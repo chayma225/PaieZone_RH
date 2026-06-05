@@ -66,90 +66,278 @@ type Tab = 'demandes' | 'types';
           </div>
         </div>
 
-        <div class="pz-card">
-          <table class="pz-table">
-            <thead>
-              <tr>
-                <th>Employé</th>
-                <th>Type</th>
-                <th>Du</th>
-                <th>Au</th>
-                <th>Jours</th>
-                <th>Soumis le</th>
-                <th>Statut</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              @if (filtered().length === 0) {
-                <tr>
-                  <td colspan="8" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucune demande trouvée</td>
-                </tr>
-              }
-              @for (l of filtered(); track l.id) {
-                @let e = data.empById(l.empId);
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:10px">
-                      @if (e) {
-                        <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
-                        <div>
-                          <div style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</div>
-                          <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.dept }}</div>
+        <!-- Layout : table + mini-calendrier -->
+        <div class="leaves-layout">
+          <div class="leaves-table-col">
+            <div class="pz-card">
+              <table class="pz-table">
+                <thead>
+                  <tr>
+                    <th>Employé</th>
+                    <th>Type</th>
+                    <th>Du</th>
+                    <th>Au</th>
+                    <th>Jours</th>
+                    <th>Soumis le</th>
+                    <th>Statut</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (filtered().length === 0) {
+                    <tr>
+                      <td colspan="8" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucune demande trouvée</td>
+                    </tr>
+                  }
+                  @for (l of filtered(); track l.id) {
+                    @let e = data.empById(l.empId);
+                    <tr>
+                      <td>
+                        <div style="display:flex;align-items:center;gap:10px">
+                          @if (e) {
+                            <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
+                            <div>
+                              <div style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</div>
+                              <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.dept }}</div>
+                            </div>
+                          } @else {
+                            <span class="pz-muted">—</span>
+                          }
                         </div>
-                      } @else {
-                        <span class="pz-muted">—</span>
+                      </td>
+                      <td>
+                        <span class="pz-pill info">{{ l.type }}</span>
+                      </td>
+                      <td class="pz-mono" style="font-size:12px">{{ l.from }}</td>
+                      <td class="pz-mono" style="font-size:12px">{{ l.to }}</td>
+                      <td>
+                        <strong>{{ l.days }}</strong>
+                      </td>
+                      <td style="color:var(--pz-muted);font-size:12px">{{ l.submitted }}</td>
+                      <td>
+                        <span
+                          class="pz-pill"
+                          [class.warn]="l.status === 'pending'"
+                          [class.pos]="l.status === 'approved'"
+                          [class.danger]="l.status === 'rejected'"
+                        >
+                          {{ l.status === 'pending' ? 'En attente' : l.status === 'approved' ? 'Approuvé' : 'Refusé' }}
+                        </span>
+                      </td>
+                      <td>
+                        @if (l.status === 'pending') {
+                          <div style="display:flex;gap:6px">
+                            <button
+                              class="pz-btn pz-sm"
+                              style="background:var(--pz-pos);color:#fff;border-color:var(--pz-pos)"
+                              [disabled]="busy()"
+                              (click)="approve(l.id)"
+                              title="Approuver"
+                            >
+                              <pz-icon name="Check" [size]="13" [strokeWidth]="1.8" />
+                            </button>
+                            <button
+                              class="pz-btn pz-sm"
+                              style="color:var(--pz-danger-ink)"
+                              [disabled]="busy()"
+                              (click)="openReject(l.id)"
+                              title="Refuser"
+                            >
+                              <pz-icon name="X" [size]="13" [strokeWidth]="1.6" />
+                            </button>
+                          </div>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- /leaves-table-col -->
+
+          <!-- ── Mini-Calendrier d'équipe ─────────────────────── -->
+          <aside class="mini-cal">
+            <!-- Header inline pour garantir la visibilité -->
+            <div
+              style="background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);padding:16px 14px 12px;display:flex;align-items:center;justify-content:space-between;border-radius:18px 18px 0 0"
+            >
+              <button
+                (click)="prevMonth(); $event.stopPropagation()"
+                style="background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:20px;font-weight:700;display:grid;place-items:center;transition:background .15s"
+              >
+                ‹
+              </button>
+              <div style="text-align:center">
+                <div style="color:#fff;font-size:14px;font-weight:800;text-transform:capitalize;letter-spacing:.01em">
+                  {{ calMonthName() }}
+                </div>
+                <div style="color:rgba(255,255,255,.7);font-size:11px;font-weight:500">{{ calYearNum() }}</div>
+              </div>
+              <button
+                (click)="nextMonth(); $event.stopPropagation()"
+                style="background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:20px;font-weight:700;display:grid;place-items:center;transition:background .15s"
+              >
+                ›
+              </button>
+            </div>
+
+            <!-- Stats -->
+            <div
+              style="display:flex;align-items:center;justify-content:center;padding:10px 14px;border-bottom:1px solid var(--pz-line);background:linear-gradient(135deg,#eef2ff,#f5f3ff)"
+            >
+              <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                <span style="font-size:20px;font-weight:800;color:#4f46e5;line-height:1">{{ calMonthLeaves().length }}</span>
+                <span style="font-size:10px;color:var(--pz-muted);margin-top:2px">absences</span>
+              </div>
+              <div style="width:1px;height:32px;background:var(--pz-line)"></div>
+              <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                <span style="font-size:20px;font-weight:800;color:#f59e0b;line-height:1">{{ pendingCount() }}</span>
+                <span style="font-size:10px;color:var(--pz-muted);margin-top:2px">en attente</span>
+              </div>
+            </div>
+
+            <!-- Jours semaine -->
+            <div class="mc-dows">
+              @for (h of ['L', 'M', 'M', 'J', 'V', 'S', 'D']; track $index) {
+                <span>{{ h }}</span>
+              }
+            </div>
+
+            <!-- Grille — clic sur un jour ouvre la saisie d'absence -->
+            <div class="mc-grid">
+              @for (day of calDays(); track day.dateStr) {
+                <div
+                  class="mc-cell"
+                  [class.mc-other]="!day.isCurrentMonth"
+                  [class.mc-today]="day.isToday"
+                  [class.mc-weekend]="day.isWeekend"
+                  [class.mc-has-leave]="day.leaves.length > 0"
+                  [title]="'Saisir une absence le ' + day.dateStr"
+                  (click)="openCalLeave(day.dateStr)"
+                >
+                  <span class="mc-num">{{ day.day }}</span>
+                  @if (day.leaves.length > 0) {
+                    <div class="mc-dots">
+                      @for (lv of day.leaves.slice(0, 3); track lv.empId) {
+                        <span class="mc-dot" [style.background]="lv.color"></span>
                       }
                     </div>
-                  </td>
-                  <td>
-                    <span class="pz-pill info">{{ l.type }}</span>
-                  </td>
-                  <td class="pz-mono" style="font-size:12px">{{ l.from }}</td>
-                  <td class="pz-mono" style="font-size:12px">{{ l.to }}</td>
-                  <td>
-                    <strong>{{ l.days }}</strong>
-                  </td>
-                  <td style="color:var(--pz-muted);font-size:12px">{{ l.submitted }}</td>
-                  <td>
-                    <span
-                      class="pz-pill"
-                      [class.warn]="l.status === 'pending'"
-                      [class.pos]="l.status === 'approved'"
-                      [class.danger]="l.status === 'rejected'"
-                    >
-                      {{ l.status === 'pending' ? 'En attente' : l.status === 'approved' ? 'Approuvé' : 'Refusé' }}
-                    </span>
-                  </td>
-                  <td>
-                    @if (l.status === 'pending') {
-                      <div style="display:flex;gap:6px">
-                        <button
-                          class="pz-btn pz-sm"
-                          style="background:var(--pz-pos);color:#fff;border-color:var(--pz-pos)"
-                          [disabled]="busy()"
-                          (click)="approve(l.id)"
-                          title="Approuver"
-                        >
-                          <pz-icon name="Check" [size]="13" [strokeWidth]="1.8" />
-                        </button>
-                        <button
-                          class="pz-btn pz-sm"
-                          style="color:var(--pz-danger-ink)"
-                          [disabled]="busy()"
-                          (click)="openReject(l.id)"
-                          title="Refuser"
-                        >
-                          <pz-icon name="X" [size]="13" [strokeWidth]="1.6" />
-                        </button>
-                      </div>
-                    }
-                  </td>
-                </tr>
+                  }
+                </div>
               }
-            </tbody>
-          </table>
+            </div>
+
+            <!-- Légende -->
+            <div class="mc-legend">
+              <span class="mc-ldot" style="background:#059669"></span><span class="mc-ltxt">Congé payé</span>
+              <span class="mc-ldot" style="background:#d97706"></span><span class="mc-ltxt">Maladie</span>
+              <span class="mc-ldot" style="background:#6366f1"></span><span class="mc-ltxt">Autre</span>
+            </div>
+
+            <!-- Absences du mois -->
+            <div class="mc-section-title">Absences ce mois</div>
+            <div class="mc-list">
+              @if (calMonthLeaves().length === 0) {
+                <div class="mc-empty">✓ Aucune absence</div>
+              }
+              @for (lv of calMonthLeaves().slice(0, 5); track lv.id) {
+                <div class="mc-row">
+                  <div class="pz-avatar xs" [attr.data-bg]="data.empBgIdx($any(lv.emp?.id))">
+                    {{ data.initials($any(lv.emp)) }}
+                  </div>
+                  <div class="mc-row-info">
+                    <div class="mc-row-name">{{ data.fullName($any(lv.emp)) }}</div>
+                    <div class="mc-row-dates">{{ lv.from }} → {{ lv.to }}</div>
+                  </div>
+                  <span class="mc-row-dot" [style.background]="leaveColorOf(lv.type)"></span>
+                </div>
+              }
+              @if (calMonthLeaves().length > 5) {
+                <div class="mc-more">+{{ calMonthLeaves().length - 5 }} autres</div>
+              }
+            </div>
+          </aside>
+
+          <!-- ── Modal saisie absence depuis calendrier ─────────── -->
+          @if (showCalLeaveModal()) {
+            <div class="pz-overlay" (click)="closeCalLeave()">
+              <div class="pz-modal pz-modal-sm" (click)="$event.stopPropagation()" style="width:420px">
+                <div class="pz-modal-head">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:20px">📅</span>
+                    <div>
+                      <div style="font-size:14px;font-weight:700">Saisir une absence</div>
+                      <div style="font-size:11px;color:var(--pz-muted)">{{ calLeaveForm.startDate }}</div>
+                    </div>
+                  </div>
+                  <button class="pz-modal-close" (click)="closeCalLeave()"><pz-icon name="X" [size]="16" /></button>
+                </div>
+                <div class="pz-modal-body">
+                  <div class="pz-field">
+                    <label>Employé *</label>
+                    <select [(ngModel)]="calLeaveForm.employeeId">
+                      <option [value]="0">— Sélectionner —</option>
+                      @for (e of data.employees(); track e.id) {
+                        <option [value]="e.id">{{ data.fullName(e) }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="pz-field">
+                    <label>Type de congé *</label>
+                    <select [(ngModel)]="calLeaveForm.leaveTypeId">
+                      <option [value]="0">— Sélectionner —</option>
+                      @for (t of leaveTypes(); track t.id) {
+                        <option [value]="t.id">{{ t.name }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div style="display:flex;gap:10px">
+                    <div class="pz-field" style="flex:1">
+                      <label>Date début *</label>
+                      <input type="date" [(ngModel)]="calLeaveForm.startDate" style="color-scheme:light" (change)="calRecalcDays()" />
+                    </div>
+                    <div class="pz-field" style="flex:1">
+                      <label>Date fin *</label>
+                      <input
+                        type="date"
+                        [(ngModel)]="calLeaveForm.endDate"
+                        [min]="calLeaveForm.startDate"
+                        style="color-scheme:light"
+                        (change)="calRecalcDays()"
+                      />
+                    </div>
+                  </div>
+                  <div class="pz-field">
+                    <label>Nombre de jours</label>
+                    <input type="number" [(ngModel)]="calLeaveForm.days" min="1" />
+                  </div>
+                  <div class="pz-field">
+                    <label>Commentaire</label>
+                    <input type="text" [(ngModel)]="calLeaveForm.comment" placeholder="Motif (optionnel)" />
+                  </div>
+                  @if (calLeaveErr()) {
+                    <div class="pz-err">{{ calLeaveErr() }}</div>
+                  }
+                  <div style="font-size:11.5px;color:var(--pz-muted);background:var(--pz-surface-3);border-radius:8px;padding:8px 12px">
+                    💡 L'absence sera intégrée au calcul de la fiche de paie du mois concerné.
+                  </div>
+                </div>
+                <div class="pz-modal-foot">
+                  <button class="pz-btn" (click)="closeCalLeave()">Annuler</button>
+                  <button class="pz-btn pz-primary" [disabled]="calLeaveBusy()" (click)="submitCalLeave()">
+                    @if (calLeaveBusy()) {
+                      …
+                    } @else {
+                      Enregistrer l'absence
+                    }
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
         </div>
+        <!-- /leaves-layout -->
       }
 
       <!-- ── TAB: Types de congé ──────────────────────────────────────────── -->
@@ -632,6 +820,288 @@ type Tab = 'demandes' | 'types';
         padding: 8px 12px;
         margin-bottom: 4px;
       }
+
+      /* ── Layout demandes + mini-cal ──────────────────────────── */
+      .leaves-layout {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 18px;
+        align-items: start;
+      }
+      .leaves-table-col {
+        min-width: 0;
+      }
+
+      /* ── Mini-Calendrier ──────────────────────────────────────── */
+      .mini-cal {
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow:
+          0 8px 32px rgba(79, 70, 229, 0.13),
+          0 2px 8px rgba(0, 0, 0, 0.07);
+        background: var(--pz-surface);
+        border: 1px solid var(--pz-line);
+        animation: mcFadeIn 0.3s ease-out;
+        position: sticky;
+        top: 16px;
+      }
+      @keyframes mcFadeIn {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* Header gradient */
+      .mc-hd {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        padding: 16px 14px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .mc-nav {
+        background: rgba(255, 255, 255, 0.18);
+        border: none;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        display: grid;
+        place-items: center;
+        transition:
+          background 0.15s,
+          transform 0.1s;
+      }
+      .mc-nav:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+      .mc-hd-center {
+        text-align: center;
+      }
+      .mc-hd-month {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 800;
+        text-transform: capitalize;
+        letter-spacing: 0.01em;
+      }
+      .mc-hd-year {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      /* Stats */
+      .mc-stats {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--pz-line);
+        background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+      }
+      .mc-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+      }
+      .mc-stat-n {
+        font-size: 18px;
+        font-weight: 800;
+        color: #4f46e5;
+        line-height: 1;
+      }
+      .mc-stat-l {
+        font-size: 10px;
+        color: var(--pz-muted);
+        margin-top: 2px;
+      }
+      .mc-stat-sep {
+        width: 1px;
+        height: 32px;
+        background: var(--pz-line);
+      }
+
+      /* Jours semaine */
+      .mc-dows {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 8px 8px 2px;
+      }
+      .mc-dows span {
+        text-align: center;
+        font-size: 9.5px;
+        font-weight: 700;
+        color: var(--pz-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* Grille */
+      .mc-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 0 8px 8px;
+        gap: 1px;
+      }
+      .mc-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3px 1px;
+        border-radius: 7px;
+        cursor: default;
+        transition: background 0.12s;
+        min-height: 36px;
+      }
+      .mc-cell:hover {
+        background: var(--pz-surface-3);
+      }
+      .mc-num {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--pz-ink);
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.15s;
+      }
+      .mc-other .mc-num {
+        color: var(--pz-muted);
+        opacity: 0.35;
+      }
+      .mc-weekend .mc-num {
+        color: #7c3aed;
+      }
+      .mc-today .mc-num {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+      }
+      .mc-has-leave {
+        background: rgba(79, 70, 229, 0.04);
+        border-radius: 7px;
+      }
+      .mc-dots {
+        display: flex;
+        gap: 2px;
+        justify-content: center;
+        margin-top: 1px;
+      }
+      .mc-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        transition: transform 0.15s;
+      }
+      .mc-cell:hover .mc-dot {
+        transform: scale(1.3);
+      }
+
+      /* Légende */
+      .mc-legend {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 6px 10px;
+        border-top: 1px solid var(--pz-line);
+        border-bottom: 1px solid var(--pz-line);
+        background: var(--pz-surface-3);
+      }
+      .mc-ldot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+      }
+      .mc-ltxt {
+        font-size: 9.5px;
+        color: var(--pz-muted);
+        margin-left: 3px;
+      }
+
+      /* Section absences */
+      .mc-section-title {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--pz-muted);
+        padding: 10px 12px 4px;
+      }
+      .mc-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 0 10px 12px;
+      }
+      .mc-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        border-radius: 9px;
+        background: var(--pz-surface-3);
+        border: 1px solid var(--pz-line);
+        transition:
+          transform 0.12s,
+          box-shadow 0.12s;
+      }
+      .mc-row:hover {
+        transform: translateX(2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .mc-row-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .mc-row-name {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--pz-ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .mc-row-dates {
+        font-size: 9.5px;
+        color: var(--pz-muted);
+      }
+      .mc-row-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .mc-empty {
+        font-size: 11.5px;
+        color: var(--pz-muted);
+        text-align: center;
+        padding: 12px 8px;
+      }
+      .mc-more {
+        font-size: 11px;
+        color: var(--pz-primary);
+        text-align: center;
+        padding: 4px;
+        font-weight: 600;
+      }
     `,
   ],
 })
@@ -659,6 +1129,158 @@ export default class RhLeavesComponent {
   protected readonly typeErrMsg = signal('');
   protected typeForm = { code: '', label: '', maxDaysPerYear: 30, paid: true, requiresApproval: true, active: true, description: '' };
 
+  // ── Calendrier d'équipe ──────────────────────────────────────────────────
+  protected readonly calViewDate = signal(new Date());
+  protected readonly calDowHeaders = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+
+  protected readonly calMonthLabel = computed(() => {
+    const d = this.calViewDate();
+    return d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  });
+  protected readonly calMonthName = computed(() => this.calViewDate().toLocaleDateString('fr-FR', { month: 'long' }));
+  protected readonly calYearNum = computed(() => this.calViewDate().getFullYear());
+
+  private readonly calApproved = computed(() => this.data.leaves().filter(l => l.status === 'approved'));
+
+  protected readonly calDays = computed(() => {
+    const d = this.calViewDate();
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const dow0 = firstDay.getDay(); // 0=Sun
+    const startOffset = dow0 === 0 ? 6 : dow0 - 1;
+    const start = new Date(firstDay);
+    start.setDate(start.getDate() - startOffset);
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const days = [];
+    for (let i = 0; i < 42; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      const dateStr = date.toISOString().slice(0, 10);
+      const leaves = this.calApproved()
+        .filter(l => this.toIso(l.from) <= dateStr && this.toIso(l.to) >= dateStr)
+        .map(l => {
+          const emp = this.data.empById(l.empId);
+          return emp ? { empId: l.empId, emp, type: l.type, color: this.leaveColorOf(l.type) } : null;
+        })
+        .filter((x): x is { empId: any; emp: any; type: string; color: string } => x !== null);
+      days.push({
+        dateStr,
+        day: date.getDate(),
+        isCurrentMonth: date.getMonth() === month,
+        isToday: dateStr === todayStr,
+        isWeekend: date.getDay() === 0 || date.getDay() === 6,
+        leaves,
+      });
+    }
+    return days;
+  });
+
+  protected readonly calMonthLeaves = computed(() => {
+    const d = this.calViewDate();
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const mStart = new Date(year, month, 1).toISOString().slice(0, 10);
+    const mEnd = new Date(year, month + 1, 0).toISOString().slice(0, 10);
+    return this.calApproved()
+      .filter(l => this.toIso(l.from) <= mEnd && this.toIso(l.to) >= mStart)
+      .map(l => ({ ...l, emp: this.data.empById(l.empId) }))
+      .filter((l): l is typeof l & { emp: NonNullable<typeof l.emp> } => l.emp !== undefined);
+  });
+
+  leaveColorOf(type: string): string {
+    const t = (type ?? '').toLowerCase();
+    if (t.includes('maladie') || t.includes('sick')) return '#d97706';
+    if (t.includes('pay') || t.includes('annuel') || t.includes('conge') || t.includes('congé')) return '#059669';
+    return '#6366f1';
+  }
+
+  private toIso(s: string): string {
+    if (!s) return '';
+    if (s.includes('/')) {
+      const [d, m, y] = s.split('/');
+      return `${y}-${m}-${d}`;
+    }
+    return s.slice(0, 10);
+  }
+
+  prevMonth() {
+    const d = new Date(this.calViewDate());
+    d.setMonth(d.getMonth() - 1);
+    this.calViewDate.set(d);
+  }
+  nextMonth() {
+    const d = new Date(this.calViewDate());
+    d.setMonth(d.getMonth() + 1);
+    this.calViewDate.set(d);
+  }
+
+  // ── Modal saisie absence depuis calendrier ────────────────────────────
+  protected readonly showCalLeaveModal = signal(false);
+  protected readonly calLeaveBusy = signal(false);
+  protected readonly calLeaveErr = signal('');
+  protected calLeaveForm = { employeeId: 0, leaveTypeId: 0, startDate: '', endDate: '', days: 1, comment: '' };
+
+  openCalLeave(dateStr: string): void {
+    this.calLeaveForm = { employeeId: 0, leaveTypeId: 0, startDate: dateStr, endDate: dateStr, days: 1, comment: '' };
+    this.calLeaveErr.set('');
+    if (!this.leaveTypes().length) {
+      this.api.leaveTypes().subscribe({ next: lt => this.leaveTypes.set(lt), error: () => {} });
+    }
+    this.showCalLeaveModal.set(true);
+  }
+
+  closeCalLeave(): void {
+    this.showCalLeaveModal.set(false);
+  }
+
+  calRecalcDays(): void {
+    const s = new Date(this.calLeaveForm.startDate);
+    const e = new Date(this.calLeaveForm.endDate);
+    if (!isNaN(s.getTime()) && !isNaN(e.getTime()) && e >= s) {
+      let days = 0;
+      const cur = new Date(s);
+      while (cur <= e) {
+        const dow = cur.getDay();
+        if (dow !== 0 && dow !== 6) days++;
+        cur.setDate(cur.getDate() + 1);
+      }
+      this.calLeaveForm.days = Math.max(1, days);
+    }
+  }
+
+  submitCalLeave(): void {
+    const f = this.calLeaveForm;
+    if (!f.employeeId || !f.leaveTypeId || !f.startDate || !f.endDate || f.days < 1) {
+      this.calLeaveErr.set('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+    this.calLeaveBusy.set(true);
+    this.calLeaveErr.set('');
+    this.api
+      .createLeaveRequest({
+        leaveTypeId: f.leaveTypeId,
+        employeeId: f.employeeId,
+        startDate: f.startDate,
+        endDate: f.endDate,
+        numberOfDays: f.days,
+        comment: f.comment || undefined,
+      })
+      .subscribe({
+        next: leave => {
+          this.data.leaves.update(list => [leave, ...list]);
+          this.calLeaveBusy.set(false);
+          this.showCalLeaveModal.set(false);
+        },
+        error: () => {
+          this.calLeaveErr.set("Erreur lors de l'enregistrement.");
+          this.calLeaveBusy.set(false);
+        },
+      });
+  }
+
+  // ── Filtres demandes ──────────────────────────────────────────────────────
   protected readonly filtered = computed(() => {
     const q = this.q().toLowerCase();
     const sf = this.statusFilter();

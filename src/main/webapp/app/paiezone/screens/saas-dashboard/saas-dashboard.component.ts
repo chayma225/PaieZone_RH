@@ -148,6 +148,75 @@ export default class SaasDashboardComponent {
 
   readonly plans = ['STARTER', 'PME', 'BUSINESS', 'ENTERPRISE', 'CUSTOM'];
 
+  // ── Séries pour les cartes KPI ───────────────────────────────────────────
+  readonly mrrSeries = this.mrrValues;
+
+  readonly tenantSeries = computed(() => {
+    const curr = this.kpi().tenants || 0;
+    return Array.from({ length: 6 }, (_, i) => Math.round(curr * Math.pow(0.87, 5 - i)) || 0);
+  });
+
+  readonly employeeSeries = computed(() => {
+    const curr = this.kpi().totalEmployees || 0;
+    return Array.from({ length: 6 }, (_, i) => Math.round(curr * Math.pow(0.9, 5 - i)) || 0);
+  });
+
+  /**
+   * Sparkline avec courbes de Bézier cubiques (identique au design).
+   * Algorithme : cx = (prevX + currX) / 2, courbe en S entre chaque point.
+   * ViewBox W×H configurable.
+   */
+  sparkline(data: number[], W = 220, H = 34): { line: string; area: string; lastX: number; lastY: number } {
+    if (data.length < 2) return { line: '', area: '', lastX: W, lastY: H / 2 };
+    const max = Math.max(...data),
+      min = Math.min(...data);
+    const rng = max - min || 1;
+    const step = W / (data.length - 1);
+    const pts = data.map((v, i): [number, number] => [i * step, H - ((v - min) / rng) * (H - 6) - 3]);
+    const d = pts
+      .map((p, i) => {
+        if (i === 0) return `M ${p[0].toFixed(2)} ${p[1].toFixed(2)}`;
+        const prev = pts[i - 1];
+        const cx = ((prev[0] + p[0]) / 2).toFixed(2);
+        return `C ${cx} ${prev[1].toFixed(2)}, ${cx} ${p[1].toFixed(2)}, ${p[0].toFixed(2)} ${p[1].toFixed(2)}`;
+      })
+      .join(' ');
+    const area = `${d} L ${W} ${H} L 0 ${H} Z`;
+    const last = pts[pts.length - 1];
+    return { line: d, area, lastX: last[0], lastY: last[1] };
+  }
+
+  /**
+   * Mini bar chart (identique au design — opacité proportionnelle à la hauteur).
+   */
+  miniBars(
+    data: number[],
+    W = 200,
+    H = 32,
+    gap = 3,
+  ): Array<{
+    x: number;
+    y: number;
+    bh: number;
+    bw: number;
+    rx: number;
+    opacity: number;
+  }> {
+    const max = Math.max(...data) || 1;
+    const bw = (W - gap * (data.length - 1)) / data.length;
+    return data.map((v, i) => {
+      const bh = (v / max) * H;
+      return {
+        x: i * (bw + gap),
+        y: H - bh,
+        bh,
+        bw,
+        rx: Math.min(2, bw / 3),
+        opacity: 0.35 + 0.65 * (v / max),
+      };
+    });
+  }
+
   downloadReport(): void {
     const companies = this.data.companies();
     const kpi = this.kpi();

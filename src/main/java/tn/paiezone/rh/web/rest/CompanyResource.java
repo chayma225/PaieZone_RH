@@ -193,10 +193,20 @@ public class CompanyResource {
         //    (cas des invitations faites avant le fix de création automatique du UserProfile)
         new HashSet<>(logins).forEach(adminLogin -> userRepository.findAllByCreatedBy(adminLogin).forEach(u -> logins.add(u.getLogin())));
 
+        Map<String, Boolean> twoFaByLogin = userProfileRepository
+            .findByCompanyId(companyId)
+            .stream()
+            .filter(up -> up.getJhiUserId() != null && up.getTwoFactorEnabled() != null)
+            .collect(Collectors.toMap(UserProfile::getJhiUserId, up -> Boolean.TRUE.equals(up.getTwoFactorEnabled())));
+
         return logins
             .stream()
             .flatMap(login -> userRepository.findOneWithAuthoritiesByLogin(login).stream())
-            .map(AdminUserDTO::new)
+            .map(user -> {
+                AdminUserDTO dto = new AdminUserDTO(user);
+                dto.setTwoFactorEnabled(Boolean.TRUE.equals(twoFaByLogin.get(user.getLogin())));
+                return dto;
+            })
             .collect(Collectors.toList());
     }
 
