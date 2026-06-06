@@ -21,6 +21,7 @@ export class DataService {
   // Reactive signals — populated from API on init
   readonly companies = signal<Company[]>([]);
   readonly companiesLoaded = signal(false);
+  readonly companiesError = signal(false);
   readonly employees = signal<Employee[]>([]);
   readonly departments = signal<Department[]>([]);
   readonly payrollPeriods = signal<PayrollPeriod[]>([]);
@@ -93,6 +94,7 @@ export class DataService {
   reset(): void {
     this.companies.set([]);
     this.companiesLoaded.set(false);
+    this.companiesError.set(false);
     this.employees.set([]);
     this.departments.set([]);
     this.payrollPeriods.set([]);
@@ -123,8 +125,11 @@ export class DataService {
       next: v => {
         this.companies.set(v);
         this.companiesLoaded.set(true);
+        this.companiesError.set(false);
       },
-      error: () => {
+      error: err => {
+        console.error('[DataService] /api/companies failed:', err?.status, err?.message);
+        this.companiesError.set(true);
         this.companiesLoaded.set(true);
       },
     });

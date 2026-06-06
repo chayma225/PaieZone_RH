@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -17,9 +17,15 @@ const MONTHS_SHORT = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'
   styleUrl: './saas-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class SaasDashboardComponent {
+export default class SaasDashboardComponent implements OnInit {
   protected readonly data = inject(DataService);
   private readonly api = inject(ApiService);
+
+  ngOnInit(): void {
+    if (!this.data.companiesLoaded() || this.data.companiesError()) {
+      this.data.reset();
+    }
+  }
 
   readonly currentMonth = MONTHS_SHORT[new Date().getMonth()] + ' ' + new Date().getFullYear();
 

@@ -227,6 +227,25 @@ public class LeaveRequestResource {
     }
 
     /**
+     * {@code GET /leave-requests/my} : demandes de congé de l'employé connecté.
+     */
+    @GetMapping("/my")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<LeaveRequestDTO>> getMyLeaveRequests() {
+        return tn.paiezone.rh.security.SecurityUtils.getCurrentUserLogin()
+            .flatMap(login -> employeeRepository.findByUserProfile_JhiUserId(login))
+            .map(emp -> {
+                List<LeaveRequestDTO> list = leaveRequestRepository
+                    .findByEmployeeIdOrderByRequestedAtDesc(emp.getId())
+                    .stream()
+                    .map(lr -> leaveRequestService.findOne(lr.getId()).orElseThrow())
+                    .collect(java.util.stream.Collectors.toList());
+                return ResponseEntity.ok(list);
+            })
+            .orElseGet(() -> ResponseEntity.ok(List.of()));
+    }
+
+    /**
      * {@code GET  /leave-requests/:id} : get the "id" leaveRequest.
      *
      * @param id the id of the leaveRequestDTO to retrieve.

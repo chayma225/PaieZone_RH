@@ -28,4 +28,7 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 
     /** Demandes PENDING dont la date de début est passée (non traitées avant le congé) */
     List<LeaveRequest> findByStatusAndStartDateBefore(LeaveStatus status, java.time.LocalDate date);
+
+    /** Toutes les demandes d'un employé, triées par date décroissante */
+    List<LeaveRequest> findByEmployeeIdOrderByRequestedAtDesc(Long employeeId);
 }

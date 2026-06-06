@@ -599,6 +599,10 @@ export class ApiService {
     return this.http.get<any[]>('/api/leave-balances/my').pipe(map(list => list.map(d => this.mapLeaveBalance(d))));
   }
 
+  myLeaveRequests(): Observable<any[]> {
+    return this.http.get<any[]>('/api/leave-requests/my').pipe(map(list => list.map(d => this.mapLeave(d))));
+  }
+
   paySlipsByEmployee(employeeId: number): Observable<PaySlip[]> {
     const params = new HttpParams().set('employeeId.equals', employeeId).set('page', 0).set('size', 24);
     return this.http.get<any[]>('/api/pay-slips', { params }).pipe(map(list => list.map(d => this.mapPaySlip(d))));

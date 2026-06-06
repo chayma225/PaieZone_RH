@@ -420,6 +420,7 @@ export default class EmpLeavesComponent implements OnInit {
   protected readonly api = inject(ApiService);
 
   protected readonly leaveBalancesRaw = signal<LeaveBalance[]>([]);
+  protected readonly myLeavesRaw = signal<any[]>([]);
   protected readonly leaveTypes = signal<{ id: number; name: string; maxDays: number }[]>([]);
   protected readonly loadingBalances = signal(true);
   protected readonly busy = signal(false);
@@ -437,11 +438,7 @@ export default class EmpLeavesComponent implements OnInit {
     })),
   );
 
-  protected readonly myLeaves = computed(() => {
-    const empId = this.data.myEmployee()?.id;
-    const all = this.data.leaves();
-    return empId != null ? all.filter(l => l.empId === empId) : all;
-  });
+  protected readonly myLeaves = computed(() => this.myLeavesRaw());
 
   ngOnInit(): void {
     this.api.myLeaveBalances().subscribe({
@@ -450,6 +447,10 @@ export default class EmpLeavesComponent implements OnInit {
         this.loadingBalances.set(false);
       },
       error: () => this.loadingBalances.set(false),
+    });
+    this.api.myLeaveRequests().subscribe({
+      next: v => this.myLeavesRaw.set(v),
+      error: () => {},
     });
     this.api.leaveTypes().subscribe({
       next: v => {
@@ -497,9 +498,9 @@ export default class EmpLeavesComponent implements OnInit {
         employeeId: this.data.myEmployee()?.id,
       })
       .subscribe({
-        next: leave => {
-          this.data.leaves.update(list => [leave, ...list]);
+        next: () => {
           this.api.myLeaveBalances().subscribe({ next: v => this.leaveBalancesRaw.set(v), error: () => {} });
+          this.api.myLeaveRequests().subscribe({ next: v => this.myLeavesRaw.set(v), error: () => {} });
           this.busy.set(false);
           this.showCreate.set(false);
         },

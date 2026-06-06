@@ -10,6 +10,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 /**
  * Entreprise = Tenant SaaS
@@ -115,6 +117,7 @@ public class Company implements Serializable {
     private String website;
 
     @JsonIgnoreProperties(value = { "company" }, allowSetters = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(unique = true)
     private CompanySubscription companySubscription;

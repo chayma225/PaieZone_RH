@@ -25,5 +25,7 @@ public interface LeaveBalanceMapper extends EntityMapper<LeaveBalanceDTO, LeaveB
     @Named("leaveTypeId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "label", source = "label")
     LeaveTypeDTO toDtoLeaveTypeId(LeaveType leaveType);
 }
