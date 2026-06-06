@@ -236,7 +236,13 @@ public class TunisianTaxService {
 
         if (applicable == null || applicable.getRate().compareTo(ZERO) == 0) return ZERO;
 
-        BigDecimal impot = annualTaxable.multiply(applicable.getRate()).subtract(applicable.getFixedDeduction()).max(ZERO).setScale(3, RM);
+        // Le taux en DB est en % (ex: 32.00) → normaliser en décimal (0.32)
+        BigDecimal rate = applicable.getRate();
+        if (rate.compareTo(BigDecimal.ONE) > 0) {
+            rate = rate.divide(BigDecimal.valueOf(100), 6, RM);
+        }
+
+        BigDecimal impot = annualTaxable.multiply(rate).subtract(applicable.getFixedDeduction()).max(ZERO).setScale(3, RM);
 
         log.debug(
             "Barème IRPP | tranche min={} taux={} déd={} → impôt annuel={}",

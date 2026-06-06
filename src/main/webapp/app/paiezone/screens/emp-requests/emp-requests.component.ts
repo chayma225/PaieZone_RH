@@ -1,66 +1,98 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
 
+interface RequestRow {
+  ref: string;
+  type: string;
+  detail: string;
+  date: string;
+  status: 'approved' | 'pending' | 'rejected';
+}
+
 @Component({
   selector: 'pz-emp-requests',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent],
+  imports: [CommonModule, FormsModule, RouterLink, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="pz-page">
       <div class="pz-page-head">
         <div>
           <div class="pz-crumbs"><strong>Mon espace</strong> <span class="sep">/</span> Mes demandes</div>
-          <h1>Mes demandes</h1>
-          <div class="pz-muted">Avances sur salaire et autres demandes</div>
+          <h1>Toutes mes demandes</h1>
+          <div class="pz-muted">Suivi de l'ensemble de vos requêtes RH</div>
         </div>
-        <button class="pz-btn pz-primary" (click)="openCreate()">
-          <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Demander une avance
+      </div>
+
+      <!-- Tuiles d'action -->
+      <div class="tiles">
+        <button class="pz-card tile" routerLink="/paiezone/emp-leaves">
+          <div class="tile-ico"><pz-icon name="Calendar" [size]="20" /></div>
+          <div class="tile-title">Demander un congé</div>
+          <div class="pz-muted tile-sub">Posez vos congés payés, RTT ou jours exceptionnels</div>
+          <div class="tile-go">Commencer <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" /></div>
+        </button>
+        <button class="pz-card tile" (click)="openCreate()">
+          <div class="tile-ico"><pz-icon name="Cash" [size]="20" /></div>
+          <div class="tile-title">Demander une avance</div>
+          <div class="pz-muted tile-sub">Sollicitez une avance sur votre prochain salaire</div>
+          <div class="tile-go">Commencer <pz-icon name="Arrow" [size]="12" [strokeWidth]="1.6" /></div>
+        </button>
+        <button class="pz-card tile" disabled style="opacity:.5;cursor:default">
+          <div class="tile-ico"><pz-icon name="Doc" [size]="20" /></div>
+          <div class="tile-title">Demander un document</div>
+          <div class="pz-muted tile-sub">Attestation employeur, certificat, etc.</div>
+          <div class="tile-go pz-muted">Bientôt disponible</div>
         </button>
       </div>
 
+      <!-- Historique unifié -->
       <div class="pz-card">
-        <div class="card-head"><div class="card-title">Demandes d'avance</div></div>
-        <table class="pz-table">
+        <div class="card-head">
+          <div class="card-title">Historique</div>
+          <div class="pz-muted small">6 derniers mois</div>
+        </div>
+        <table class="pz-tbl">
           <thead>
             <tr>
-              <th>Montant</th>
-              <th>Motif</th>
-              <th>Remboursement</th>
-              <th>Soumis</th>
+              <th>Réf.</th>
+              <th>Type</th>
+              <th>Détail</th>
+              <th>Date</th>
               <th>Statut</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            @if (myAdvances().length === 0) {
+            @if (requests().length === 0) {
               <tr>
-                <td colspan="5" style="text-align:center;padding:60px">
-                  <pz-icon name="Cash" [size]="28" [strokeWidth]="1.2" />
-                  <div style="margin-top:10px;font-size:13px;color:var(--pz-muted)">Aucune demande d'avance</div>
-                </td>
+                <td colspan="6" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucune demande</td>
               </tr>
             }
-            @for (a of myAdvances(); track a.id) {
+            @for (r of requests(); track r.ref) {
               <tr>
-                <td>
-                  <strong class="pz-mono">{{ data.fmtTND(a.amount) }}</strong>
-                </td>
-                <td style="font-size:12.5px;max-width:220px">{{ a.reason }}</td>
-                <td style="font-size:12px;color:var(--pz-muted)">{{ a.repayment }}</td>
-                <td style="font-size:12px;color:var(--pz-muted)">{{ a.submitted }}</td>
+                <td class="pz-mono small">{{ r.ref }}</td>
+                <td class="strong">{{ r.type }}</td>
+                <td class="pz-muted">{{ r.detail }}</td>
+                <td class="pz-mono small">{{ r.date }}</td>
                 <td>
                   <span
                     class="pz-pill"
-                    [class.warn]="a.status === 'pending'"
-                    [class.pos]="a.status === 'approved'"
-                    [class.danger]="a.status === 'rejected'"
+                    [class.pos]="r.status === 'approved'"
+                    [class.warn]="r.status === 'pending'"
+                    [class.danger]="r.status === 'rejected'"
                   >
-                    {{ a.status === 'pending' ? 'En attente' : a.status === 'approved' ? 'Approuvée' : 'Refusée' }}
+                    <span class="dot"></span>{{ statusLabel(r.status) }}
                   </span>
+                </td>
+                <td>
+                  <button class="pz-btn pz-sm pz-ghost"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /></button>
                 </td>
               </tr>
             }
@@ -69,7 +101,7 @@ import { ApiService } from '../../core/api.service';
       </div>
     </div>
 
-    <!-- Modal Demande d'avance -->
+    <!-- Modal Avance -->
     @if (showCreate()) {
       <div class="pz-overlay" (click)="closeCreate()">
         <div class="pz-modal" (click)="$event.stopPropagation()">
@@ -111,11 +143,7 @@ import { ApiService } from '../../core/api.service';
           <div class="pz-modal-foot">
             <button class="pz-btn" (click)="closeCreate()">Annuler</button>
             <button class="pz-btn pz-primary" [disabled]="busy()" (click)="submitCreate()">
-              @if (busy()) {
-                Envoi…
-              } @else {
-                Soumettre
-              }
+              {{ busy() ? 'Envoi…' : 'Soumettre' }}
             </button>
           </div>
         </div>
@@ -127,42 +155,139 @@ import { ApiService } from '../../core/api.service';
       :host {
         display: block;
       }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--pz-gap);
+      }
+      .tile {
+        text-align: left;
+        padding: 20px;
+        cursor: pointer;
+        border: 1px solid var(--pz-line);
+        background: #fff;
+        border-radius: var(--pz-radius-lg, 14px);
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s,
+          border-color 0.15s;
+      }
+      .tile:not([disabled]):hover {
+        transform: translateY(-3px);
+        box-shadow: var(--pz-shadow-lg);
+        border-color: var(--pz-primary);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .tile {
+        animation: fadeUp 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .tile:nth-child(1) {
+        animation-delay: 0ms;
+      }
+      .tile:nth-child(2) {
+        animation-delay: 80ms;
+      }
+      .tile:nth-child(3) {
+        animation-delay: 160ms;
+      }
+      .tile-ico {
+        width: 44px;
+        height: 44px;
+        border-radius: 11px;
+        background: var(--pz-primary-soft);
+        color: var(--pz-primary);
+        display: grid;
+        place-items: center;
+      }
+      .tile-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-top: 14px;
+        color: var(--pz-ink);
+      }
+      .tile-sub {
+        font-size: 12.5px;
+        margin-top: 4px;
+        line-height: 1.5;
+      }
+      .tile-go {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 14px;
+        color: var(--pz-primary);
+        font-size: 13px;
+        font-weight: 600;
+      }
       .card-head {
-        padding: 16px 20px 8px;
+        padding: 16px 20px 12px;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .card-head .small {
+        margin-left: auto;
       }
       .card-title {
         font-size: 14px;
         font-weight: 600;
       }
-      .pz-table {
+      .small {
+        font-size: 11.5px;
+      }
+      .strong {
+        font-weight: 600;
+      }
+      .pz-tbl {
         width: 100%;
         border-collapse: collapse;
       }
-      .pz-table th {
+      .pz-tbl thead th {
         text-align: left;
-        font-size: 11.5px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         font-weight: 600;
         color: var(--pz-muted);
         padding: 10px 16px;
         border-bottom: 1px solid var(--pz-line);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
+        background: var(--pz-surface-2);
       }
-      .pz-table td {
+      .pz-tbl tbody td {
         padding: 12px 16px;
         border-bottom: 1px solid var(--pz-line);
         font-size: 13px;
-        vertical-align: middle;
+        color: var(--pz-ink-2);
       }
-      .pz-table tr:last-child td {
+      .pz-tbl tbody tr:last-child td {
         border-bottom: 0;
       }
-      .pz-table tr:hover td {
-        background: var(--pz-surface-3);
+      .pz-tbl tbody tr:hover {
+        background: var(--pz-surface-2);
+      }
+      .pz-mono {
+        font-family: 'JetBrains Mono', monospace;
       }
       .pz-pill.danger {
         background: #fee2e2;
         color: #b91c1c;
+      }
+      .pz-primary {
+        background: var(--pz-primary);
+        color: #fff;
+        border-color: var(--pz-primary);
+      }
+      .pz-primary:hover {
+        background: #4338ca;
       }
       .pz-overlay {
         position: fixed;
@@ -241,11 +366,16 @@ import { ApiService } from '../../core/api.service';
         border-color: var(--pz-primary);
       }
       .pz-err {
-        color: var(--pz-danger-ink, #b91c1c);
+        color: #b91c1c;
         font-size: 12.5px;
         background: #fee2e2;
         border-radius: 8px;
         padding: 8px 12px;
+      }
+      @media (max-width: 1024px) {
+        .tiles {
+          grid-template-columns: 1fr;
+        }
       }
     `,
   ],
@@ -253,11 +383,44 @@ import { ApiService } from '../../core/api.service';
 export default class EmpRequestsComponent {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
-  protected readonly myAdvances = computed(() => this.data.advances().slice(0, 10));
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
   protected readonly showCreate = signal(false);
   protected form = { amount: 0, reason: '', deductionMonth: null as number | null };
+
+  // Historique unifié : avances + congés de l'employé connecté
+  protected readonly requests = computed<RequestRow[]>(() => {
+    const empId = this.data.myEmployee()?.id;
+    const rows: RequestRow[] = [];
+
+    for (const a of this.data.advances()) {
+      if (empId != null && a.empId !== empId) continue;
+      rows.push({
+        ref: `AV-${a.id}`,
+        type: 'Avance sur salaire',
+        detail: `${this.data.fmtTND(a.amount)}${a.repayment ? ' · ' + a.repayment : ''}`,
+        date: a.submitted ? new Date(a.submitted).toLocaleDateString('fr-FR') : '—',
+        status: a.status as any,
+      });
+    }
+
+    for (const l of this.data.leaves()) {
+      if (empId != null && l.empId !== empId) continue;
+      rows.push({
+        ref: `LV-${l.id}`,
+        type: l.type,
+        detail: `${l.days}j · ${l.from} → ${l.to}`,
+        date: l.submitted ? new Date(l.submitted).toLocaleDateString('fr-FR') : '—',
+        status: l.status as any,
+      });
+    }
+
+    return rows.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 20);
+  });
+
+  protected statusLabel(s: string): string {
+    return s === 'approved' ? 'Approuvée' : s === 'pending' ? 'En attente' : 'Refusée';
+  }
 
   openCreate() {
     this.form = { amount: 0, reason: '', deductionMonth: null };

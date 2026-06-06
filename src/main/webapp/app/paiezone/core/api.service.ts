@@ -1010,7 +1010,7 @@ export class ApiService {
       pending: +(d.pending ?? 0),
       carryOver: +(d.carryOver ?? 0),
       remaining: +(d.remaining ?? 0),
-      leaveTypeName: d.leaveType?.label ?? d.leaveType?.name ?? d.leaveType?.code ?? 'Congé',
+      leaveTypeName: d.leaveType?.name ?? d.leaveType?.label ?? d.leaveType?.code ?? 'Congé',
     };
   }
 

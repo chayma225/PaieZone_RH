@@ -1,10 +1,39 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
 import type { LeaveBalance } from '../../core/types';
+
+const LEAVE_ICON: Record<string, string> = {
+  ANNUEL: 'Beach',
+  MALADIE: 'Shield',
+  RTT: 'Calendar',
+  MATERNITE: 'User',
+  PATERNITE: 'User',
+  SANS_SOLDE: 'Doc',
+  MARIAGE: 'Gift',
+};
+const LEAVE_COLOR: Record<string, string> = {
+  ANNUEL: '#5b21b6',
+  MALADIE: '#f59e0b',
+  RTT: '#0ea5e9',
+  MATERNITE: '#ec4899',
+  PATERNITE: '#14b8a6',
+  SANS_SOLDE: '#6b7280',
+  MARIAGE: '#8b5cf6',
+};
+const LEAVE_LABEL: Record<string, string> = {
+  ANNUEL: 'Congés payés',
+  MALADIE: 'Congé maladie',
+  RTT: 'RTT',
+  MATERNITE: 'Maternité',
+  PATERNITE: 'Paternité',
+  SANS_SOLDE: 'Sans solde',
+  MARIAGE: 'Congé mariage',
+};
 
 @Component({
   selector: 'pz-emp-leaves',
@@ -16,75 +45,93 @@ import type { LeaveBalance } from '../../core/types';
       <div class="pz-page-head">
         <div>
           <div class="pz-crumbs"><strong>Mon espace</strong> <span class="sep">/</span> Mes congés</div>
-          <h1>Mes congés</h1>
-          <div class="pz-muted">Gérez vos demandes de congé et consultez vos soldes</div>
+          <h1>Mes congés & absences</h1>
+          <div class="pz-muted">Consultez vos soldes et déposez vos demandes</div>
         </div>
-        <button class="pz-btn pz-primary" (click)="openCreate()">
-          <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvelle demande
-        </button>
+        <div class="pz-page-actions">
+          <button class="pz-btn pz-primary" (click)="openCreate()">
+            <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvelle demande
+          </button>
+        </div>
       </div>
 
-      <div class="balances">
+      <!-- Anneaux de soldes -->
+      <div class="bal-grid">
         @if (loadingBalances()) {
-          <div class="pz-card bal-card" style="color:var(--pz-muted);font-size:13px;padding:24px">Chargement des soldes…</div>
+          <div class="pz-card bal-card" style="color:var(--pz-muted);font-size:13px;">Chargement…</div>
         }
         @for (b of balances(); track b.label) {
           <div class="pz-card bal-card">
-            <div class="bal-label">{{ b.label }}</div>
-            <div class="bal-val">
-              <span class="big">{{ b.remaining }}</span
-              ><span class="pz-muted"> / {{ b.total }} j</span>
+            <div class="ring-wrap">
+              <svg width="72" height="72" viewBox="0 0 72 72">
+                <circle cx="36" cy="36" r="30" fill="none" stroke="var(--pz-surface-3)" stroke-width="7" />
+                <circle
+                  cx="36"
+                  cy="36"
+                  r="30"
+                  fill="none"
+                  [attr.stroke]="b.color"
+                  stroke-width="7"
+                  stroke-linecap="round"
+                  [attr.stroke-dasharray]="dash(b.used, b.total)"
+                  transform="rotate(-90 36 36)"
+                  class="ring"
+                />
+              </svg>
+              <div class="ring-ico" [style.color]="b.color"><pz-icon [name]="b.icon" [size]="18" /></div>
             </div>
-            <div class="progress">
-              <i [style.width.%]="b.total > 0 ? (b.used / b.total) * 100 : 0" [style.background]="b.color"></i>
+            <div class="bal-info">
+              <div class="pz-muted small">{{ b.label }}</div>
+              <div class="bal-num">
+                {{ b.total - b.used }}<span class="pz-muted">/ {{ b.total }}j</span>
+              </div>
+              <div class="pz-muted small">{{ b.used }} jours pris</div>
             </div>
-            <div class="bal-foot pz-muted">{{ b.used }} j utilisés · {{ b.pending }} en attente</div>
           </div>
         }
         @if (!loadingBalances() && balances().length === 0) {
-          <div class="pz-card bal-card" style="color:var(--pz-muted);font-size:13px;padding:24px">Aucun solde de congé configuré</div>
+          <div class="pz-card bal-card" style="color:var(--pz-muted);font-size:13px;">Aucun solde configuré.</div>
         }
       </div>
 
+      <!-- Historique des demandes -->
       <div class="pz-card">
-        <div class="card-head">
-          <div class="card-title">Mes demandes</div>
-        </div>
-        <table class="pz-table">
+        <div class="card-head"><div class="card-title">Historique de mes demandes</div></div>
+        <table class="pz-tbl">
           <thead>
             <tr>
+              <th>Réf.</th>
               <th>Type</th>
+              <th class="num">Jours</th>
               <th>Période</th>
-              <th>Durée</th>
-              <th>Soumis</th>
               <th>Statut</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             @if (myLeaves().length === 0) {
               <tr>
-                <td colspan="5" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucune demande de congé</td>
+                <td colspan="6" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucune demande de congé</td>
               </tr>
             }
             @for (l of myLeaves(); track l.id) {
               <tr>
-                <td>
-                  <span class="pz-pill info">{{ l.type }}</span>
-                </td>
-                <td class="pz-mono" style="font-size:12px">{{ l.from }} → {{ l.to }}</td>
-                <td>
-                  <strong>{{ l.days }}</strong> j
-                </td>
-                <td style="color:var(--pz-muted);font-size:12px">{{ l.submitted }}</td>
+                <td class="pz-mono small">{{ l.id }}</td>
+                <td>{{ l.type }}</td>
+                <td class="num strong">{{ l.days }}j</td>
+                <td class="pz-mono small">{{ l.from }} → {{ l.to }}</td>
                 <td>
                   <span
                     class="pz-pill"
-                    [class.warn]="l.status === 'pending'"
                     [class.pos]="l.status === 'approved'"
+                    [class.warn]="l.status === 'pending'"
                     [class.danger]="l.status === 'rejected'"
                   >
-                    {{ l.status === 'pending' ? 'En attente' : l.status === 'approved' ? 'Approuvé' : 'Refusé' }}
+                    <span class="dot"></span>{{ statusLabel(l.status) }}
                   </span>
+                </td>
+                <td>
+                  <button class="pz-btn pz-sm pz-ghost"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /></button>
                 </td>
               </tr>
             }
@@ -111,14 +158,8 @@ import type { LeaveBalance } from '../../core/types';
               </select>
             </div>
             <div class="pz-field-row">
-              <div class="pz-field">
-                <label>Date début</label>
-                <input type="date" [(ngModel)]="form.startDate" />
-              </div>
-              <div class="pz-field">
-                <label>Date fin</label>
-                <input type="date" [(ngModel)]="form.endDate" />
-              </div>
+              <div class="pz-field"><label>Date début</label><input type="date" [(ngModel)]="form.startDate" /></div>
+              <div class="pz-field"><label>Date fin</label><input type="date" [(ngModel)]="form.endDate" /></div>
             </div>
             <div class="pz-field">
               <label>Nombre de jours ouvrables</label>
@@ -135,11 +176,7 @@ import type { LeaveBalance } from '../../core/types';
           <div class="pz-modal-foot">
             <button class="pz-btn" (click)="closeCreate()">Annuler</button>
             <button class="pz-btn pz-primary" [disabled]="busy()" (click)="submitCreate()">
-              @if (busy()) {
-                Envoi…
-              } @else {
-                Soumettre
-              }
+              {{ busy() ? 'Envoi…' : 'Soumettre' }}
             </button>
           </div>
         </div>
@@ -151,76 +188,134 @@ import type { LeaveBalance } from '../../core/types';
       :host {
         display: block;
       }
-      .balances {
+      .pz-page-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .bal-grid {
         display: grid;
+        grid-template-columns: repeat(4, 1fr);
         gap: var(--pz-gap);
-        grid-template-columns: repeat(3, 1fr);
       }
       .bal-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
         padding: 18px 20px;
       }
-      .bal-label {
-        font-size: 12px;
+      .ring-wrap {
+        position: relative;
+        width: 72px;
+        height: 72px;
+        flex-shrink: 0;
+      }
+      .ring-ico {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .ring {
+        transition: stroke-dasharray 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .bal-card {
+        animation: fadeUp 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .bal-card:nth-child(1) {
+        animation-delay: 0ms;
+      }
+      .bal-card:nth-child(2) {
+        animation-delay: 70ms;
+      }
+      .bal-card:nth-child(3) {
+        animation-delay: 140ms;
+      }
+      .bal-card:nth-child(4) {
+        animation-delay: 210ms;
+      }
+      .bal-info {
+        min-width: 0;
+      }
+      .bal-num {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-top: 2px;
+      }
+      .bal-num span {
+        font-size: 13px;
         font-weight: 500;
-        color: var(--pz-muted);
-        margin-bottom: 6px;
+        margin-left: 4px;
       }
-      .bal-val {
-        font-size: 20px;
+      .small {
+        font-size: 11.5px;
+      }
+      .strong {
         font-weight: 600;
-        margin-bottom: 10px;
-      }
-      .big {
-        font-size: 32px;
-      }
-      .progress {
-        height: 5px;
-        background: var(--pz-surface-3);
-        border-radius: 999px;
-        overflow: hidden;
-        margin-bottom: 6px;
-      }
-      .progress i {
-        display: block;
-        height: 100%;
-        border-radius: 999px;
-      }
-      .bal-foot {
-        font-size: 12px;
       }
       .card-head {
-        padding: 16px 20px 8px;
+        padding: 16px 20px 12px;
       }
       .card-title {
         font-size: 14px;
         font-weight: 600;
       }
-      .pz-table {
+      .pz-tbl {
         width: 100%;
         border-collapse: collapse;
       }
-      .pz-table th {
+      .pz-tbl thead th {
         text-align: left;
-        font-size: 11.5px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         font-weight: 600;
         color: var(--pz-muted);
         padding: 10px 16px;
         border-bottom: 1px solid var(--pz-line);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
+        background: var(--pz-surface-2);
       }
-      .pz-table td {
+      .pz-tbl thead th.num,
+      .pz-tbl tbody td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .pz-tbl tbody td {
         padding: 12px 16px;
         border-bottom: 1px solid var(--pz-line);
         font-size: 13px;
-        vertical-align: middle;
+        color: var(--pz-ink-2);
       }
-      .pz-table tr:last-child td {
+      .pz-tbl tbody tr:last-child td {
         border-bottom: 0;
+      }
+      .pz-tbl tbody tr:hover {
+        background: var(--pz-surface-2);
+      }
+      .pz-mono {
+        font-family: 'JetBrains Mono', monospace;
       }
       .pz-pill.danger {
         background: #fee2e2;
         color: #b91c1c;
+      }
+      .pz-primary {
+        background: var(--pz-primary);
+        color: #fff;
+        border-color: var(--pz-primary);
+      }
+      .pz-primary:hover {
+        background: #4338ca;
       }
       .pz-overlay {
         position: fixed;
@@ -306,11 +401,16 @@ import type { LeaveBalance } from '../../core/types';
         border-color: var(--pz-primary);
       }
       .pz-err {
-        color: var(--pz-danger-ink, #b91c1c);
+        color: #b91c1c;
         font-size: 12.5px;
         background: #fee2e2;
         border-radius: 8px;
         padding: 8px 12px;
+      }
+      @media (max-width: 1024px) {
+        .bal-grid {
+          grid-template-columns: 1fr 1fr;
+        }
       }
     `,
   ],
@@ -327,16 +427,13 @@ export default class EmpLeavesComponent implements OnInit {
   protected readonly showCreate = signal(false);
   protected form = { leaveTypeId: 0, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
 
-  private readonly BALANCE_COLORS = ['#4f46e5', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#ef4444'];
-
   protected readonly balances = computed(() =>
-    this.leaveBalancesRaw().map((b, i) => ({
-      label: b.leaveTypeName,
-      total: b.entitled + b.carryOver,
-      used: b.taken,
-      pending: b.pending,
-      remaining: b.remaining,
-      color: this.BALANCE_COLORS[i % this.BALANCE_COLORS.length],
+    this.leaveBalancesRaw().map(b => ({
+      label: LEAVE_LABEL[b.leaveTypeName] ?? b.leaveTypeName,
+      total: +(b.entitled ?? 0) + +(b.carryOver ?? 0),
+      used: +(b.taken ?? 0),
+      color: LEAVE_COLOR[b.leaveTypeName] ?? '#6b7280',
+      icon: LEAVE_ICON[b.leaveTypeName] ?? 'Calendar',
     })),
   );
 
@@ -363,9 +460,19 @@ export default class EmpLeavesComponent implements OnInit {
     });
   }
 
+  protected dash(used: number, total: number): string {
+    const C = 2 * Math.PI * 30;
+    if (!total) return `0 ${C}`;
+    return `${(used / total) * C} ${C}`;
+  }
+
+  protected statusLabel(s: string): string {
+    return s === 'approved' ? 'Approuvée' : s === 'pending' ? 'En attente' : 'Refusée';
+  }
+
   openCreate() {
-    const firstType = this.leaveTypes()[0]?.id ?? 0;
-    this.form = { leaveTypeId: firstType, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
+    const first = this.leaveTypes()[0]?.id ?? 0;
+    this.form = { leaveTypeId: first, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
     this.errMsg.set('');
     this.showCreate.set(true);
   }
@@ -392,20 +499,12 @@ export default class EmpLeavesComponent implements OnInit {
       .subscribe({
         next: leave => {
           this.data.leaves.update(list => [leave, ...list]);
-          this.loadingBalances.set(true);
-          this.api.myLeaveBalances().subscribe({
-            next: v => {
-              this.leaveBalancesRaw.set(v);
-              this.loadingBalances.set(false);
-            },
-            error: () => this.loadingBalances.set(false),
-          });
+          this.api.myLeaveBalances().subscribe({ next: v => this.leaveBalancesRaw.set(v), error: () => {} });
           this.busy.set(false);
           this.showCreate.set(false);
         },
         error: err => {
-          const detail = err?.error?.detail ?? err?.error?.message ?? err?.error?.title ?? 'Erreur lors de la soumission.';
-          this.errMsg.set(detail);
+          this.errMsg.set(err?.error?.detail ?? err?.error?.title ?? 'Erreur lors de la soumission.');
           this.busy.set(false);
         },
       });

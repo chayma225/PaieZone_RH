@@ -915,6 +915,32 @@
   font-weight: 500;
   color: var(--pz-muted);
 }
+.pz-input {
+  font: inherit;
+  font-size: 13px;
+  border: 1px solid var(--pz-line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: var(--pz-surface);
+  color: var(--pz-ink);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  &:focus {
+    border-color: var(--pz-primary);
+    box-shadow: 0 0 0 3px var(--pz-primary-soft);
+  }
+}
+
+.pz-primary {
+  background: var(--pz-primary);
+  color: #fff;
+  border-color: var(--pz-primary);
+  &:hover {
+    background: var(--pz-primary-dark, #4338ca);
+  }
+}
+
 .rej-ta {
   resize: vertical;
   font: inherit;

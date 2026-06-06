@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, viewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, viewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
@@ -34,9 +35,31 @@ interface UploadingItem {
   styleUrl: './rh-employees.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class RhEmployeesComponent {
+export default class RhEmployeesComponent implements OnInit {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
+  private readonly route = inject(ActivatedRoute);
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const empId = params['emp'] ? +params['emp'] : null;
+      const tabParam = params['tab'];
+      if (!empId) return;
+
+      // Attendre que les employés soient chargés (signal peut être vide au démarrage)
+      const tryOpen = () => {
+        const emp = this.data.employees().find(e => e.id === empId);
+        if (emp) {
+          this.openDrawer(emp);
+          if (tabParam === 'contract') this.tab.set('contract');
+        } else {
+          // Réessayer après le prochain tick si les données ne sont pas encore chargées
+          setTimeout(tryOpen, 300);
+        }
+      };
+      tryOpen();
+    });
+  }
 
   protected readonly dept = signal('Tous');
   protected readonly searchQ = signal('');

@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, computed, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import IconComponent from '../../core/icon/icon.component';
 import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
@@ -69,6 +70,7 @@ const GRID_LINES = buildGridLines();
 
 interface UpcomingEvent {
   id: string;
+  employeeId: number | null;
   employeeName: string;
   initials: string;
   type: 'Essai' | 'Anniv.' | 'CDD' | 'Ancienneté' | 'Médical';
@@ -489,7 +491,11 @@ interface CalDay {
               <div class="card-title">Échéances & événements à venir</div>
               <div class="events-sub">30 prochains jours · actions à anticiper</div>
             </div>
-            <button class="pz-btn pz-sm pz-ghost" style="margin-left:auto;flex-shrink:0">Tout voir</button>
+            @if (upcomingEvents().length > 5) {
+              <button class="pz-btn pz-sm pz-ghost" style="margin-left:auto;flex-shrink:0" (click)="showAllEvents.set(!showAllEvents())">
+                {{ showAllEvents() ? 'Réduire' : 'Tout voir (' + upcomingEvents().length + ')' }}
+              </button>
+            }
           </div>
           <div class="events-body">
             @if (upcomingEvents().length === 0) {
@@ -498,7 +504,7 @@ interface CalDay {
                 <span>Aucune échéance dans les 30 prochains jours</span>
               </div>
             }
-            @for (ev of upcomingEvents(); track ev.id) {
+            @for (ev of displayedEvents(); track ev.id) {
               <div class="ev-row">
                 <div class="ev-avatar">{{ ev.initials }}</div>
                 <div class="ev-content">
@@ -523,8 +529,10 @@ interface CalDay {
                   </span>
                   <span class="ev-day-label">{{ ev.dateLabel }}</span>
                 </div>
-                @if (ev.action) {
-                  <button class="pz-btn pz-sm ev-action">{{ ev.action }}</button>
+                @if (ev.action === 'Renouveler ?' || ev.action === 'Décider') {
+                  <button class="pz-btn pz-sm ev-action" (click)="goToContract(ev)">{{ ev.action }}</button>
+                } @else if (ev.action === 'Envoyer un mot') {
+                  <button class="pz-btn pz-sm ev-action" (click)="openEmailModal(ev)">{{ ev.action }}</button>
                 }
               </div>
             }
@@ -532,6 +540,36 @@ interface CalDay {
         </div>
       </div>
     </div>
+
+    <!-- Modal Email -->
+    @if (showEmailModal()) {
+      <div class="pz-overlay" (click)="showEmailModal.set(false)">
+        <div class="pz-modal" style="width:500px" (click)="$event.stopPropagation()">
+          <div class="pz-modal-head">
+            <span>Envoyer un message</span>
+            <button class="pz-modal-close" (click)="showEmailModal.set(false)"><pz-icon name="X" [size]="16" /></button>
+          </div>
+          <div class="pz-modal-body">
+            <div class="pz-field">
+              <label>À</label>
+              <input class="pz-input" [(ngModel)]="emailTo" type="email" placeholder="email@exemple.com" />
+            </div>
+            <div class="pz-field">
+              <label>Objet</label>
+              <input class="pz-input" [(ngModel)]="emailSubject" type="text" />
+            </div>
+            <div class="pz-field">
+              <label>Message</label>
+              <textarea class="rej-ta" [(ngModel)]="emailBody" rows="7"></textarea>
+            </div>
+          </div>
+          <div class="pz-modal-foot">
+            <button class="pz-btn" (click)="showEmailModal.set(false)">Annuler</button>
+            <button class="pz-btn pz-primary" (click)="sendEmail()"><pz-icon name="Send" [size]="14" /> Envoyer</button>
+          </div>
+        </div>
+      </div>
+    }
 
     <!-- Modal Rejet -->
     @if (rejectTarget()) {
@@ -567,7 +605,45 @@ interface CalDay {
 export default class RhDashboardComponent implements OnInit {
   protected readonly data = inject(DataService);
   protected readonly api = inject(ApiService);
+  protected readonly router = inject(Router);
   protected readonly busy = signal(false);
+
+  // ── Modal email ──────────────────────────────────────────────────────────────
+  protected readonly showEmailModal = signal(false);
+  protected emailTo = '';
+  protected emailSubject = '';
+  protected emailBody = '';
+
+  openEmailModal(ev: UpcomingEvent): void {
+    const emp = this.data.employees().find(e => e.id === ev.employeeId);
+    const email = emp?.email ?? '';
+    const daysLabel = ev.daysLeft === 0 ? "aujourd'hui" : ev.daysLeft === 1 ? 'demain' : `dans ${ev.daysLeft} jours`;
+    this.emailTo = email;
+    this.emailSubject =
+      ev.type === 'Anniv.'
+        ? `Joyeux anniversaire ${ev.employeeName.split(' ')[0]} !`
+        : `Félicitations pour vos ${ev.description.match(/\d+/)?.[0] ?? ''} ans d'ancienneté !`;
+    this.emailBody =
+      ev.type === 'Anniv.'
+        ? `Bonjour ${ev.employeeName.split(' ')[0]},\n\nToute l'équipe vous souhaite un joyeux anniversaire ${daysLabel} !\n\nCordialement,\nL'équipe RH`
+        : `Bonjour ${ev.employeeName.split(' ')[0]},\n\nNous tenons à vous féliciter pour vos ${ev.description.match(/\d+/)?.[0] ?? ''} ans d'ancienneté au sein de TechSoft.\n\nMerci pour votre fidélité et votre engagement.\n\nCordialement,\nL'équipe RH`;
+    this.showEmailModal.set(true);
+  }
+
+  sendEmail(): void {
+    const subject = encodeURIComponent(this.emailSubject);
+    const body = encodeURIComponent(this.emailBody);
+    window.open(`mailto:${this.emailTo}?subject=${subject}&body=${body}`, '_blank');
+    this.showEmailModal.set(false);
+  }
+
+  // ── Navigation vers la fiche contrat ────────────────────────────────────────
+  goToContract(ev: UpcomingEvent): void {
+    if (!ev.employeeId) return;
+    this.router.navigate(['/paiezone/rh-employees'], {
+      queryParams: { emp: ev.employeeId, tab: 'contract' },
+    });
+  }
   protected readonly rejectTarget = signal<{ type: 'leave' | 'advance'; id: string } | null>(null);
   protected rejectComment = '';
 
@@ -611,6 +687,7 @@ export default class RhDashboardComponent implements OnInit {
           : `Fin de ${cType === 'CDI' ? 'CDI' : cType === 'CDD' ? 'CDD' : cType === 'CIVP' ? 'CIVP' : 'contrat'}`;
       events.push({
         id: String(a.id),
+        employeeId: a.employeeId ?? null,
         employeeName: a.employeeName,
         initials: this.initials(a.employeeName),
         type,
@@ -638,6 +715,7 @@ export default class RhDashboardComponent implements OnInit {
             const age = target.getFullYear() - bd.getFullYear();
             events.push({
               id: `bday_${emp.id}`,
+              employeeId: emp.id,
               employeeName: name,
               initials: ini,
               type: 'Anniv.',
@@ -663,6 +741,7 @@ export default class RhDashboardComponent implements OnInit {
             if (years > 0) {
               events.push({
                 id: `hire_${emp.id}`,
+                employeeId: emp.id,
                 employeeName: name,
                 initials: ini,
                 type: 'Ancienneté',
@@ -677,8 +756,12 @@ export default class RhDashboardComponent implements OnInit {
       }
     }
 
-    return events.sort((a, b) => a.daysLeft - b.daysLeft).slice(0, 10);
+    return events.sort((a, b) => a.daysLeft - b.daysLeft);
   });
+
+  protected readonly showAllEvents = signal(false);
+
+  protected readonly displayedEvents = computed(() => (this.showAllEvents() ? this.upcomingEvents() : this.upcomingEvents().slice(0, 5)));
   protected readonly activityLimit = 10;
   protected readonly activityExpanded = signal(false);
   protected readonly dlLoading = signal<Record<string, boolean>>({});

@@ -178,6 +178,8 @@ public class SecurityConfiguration {
                     // ═══════════════════════════════════════════════════════════════════
                     // SPRINT 3 — CONGÉS : SOLDES
                     // ═══════════════════════════════════════════════════════════════════
+                    .requestMatchers(HttpMethod.GET, "/api/leave-balances/my")
+                    .authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/leave-balances/my/**")
                     .authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/leave-balances/**")
