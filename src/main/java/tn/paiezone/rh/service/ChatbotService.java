@@ -28,7 +28,8 @@ public class ChatbotService {
 
     private static final Logger log = LoggerFactory.getLogger(ChatbotService.class);
     private static final String ENTITY_NAME = "chatbot";
-    private static final int MAX_HISTORY = 4; // réduit pour éviter pollution par hallucinations
+    private static final int MAX_HISTORY = 2; // 2 messages = contexte minimal, réponse plus rapide
+    private static final int RAG_MAX_CHARS = 400; // tronque chaque doc RAG → prompt plus court
 
     // ── FIX ANTI-HALLUCINATION : prompt court + interdictions explicites ──
     private static final String RAG_SYSTEM_PROMPT = """
@@ -345,8 +346,15 @@ public class ChatbotService {
                         .filter(k -> !k.isEmpty())
                         .anyMatch(q::contains)
             )
-            .limit(3)
-            .map(d -> "### " + d.getTitle() + "\n" + d.getContent())
+            .limit(2) // 2 docs max → prompt plus court
+            .map(d -> {
+                String content = d.getContent();
+                // Tronquer si le document est trop long pour limiter les tokens
+                if (content != null && content.length() > RAG_MAX_CHARS) {
+                    content = content.substring(0, RAG_MAX_CHARS) + "…";
+                }
+                return "### " + d.getTitle() + "\n" + content;
+            })
             .collect(Collectors.joining("\n\n"));
     }
 

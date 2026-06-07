@@ -255,26 +255,147 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
       }
 
       /* ══ Hero ══ */
+      /* ── Hero orbes animés ── */
+      @keyframes orbDrift1 {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(45px, -28px) scale(1.07);
+        }
+        66% {
+          transform: translate(-22px, 32px) scale(0.96);
+        }
+      }
+      @keyframes orbDrift2 {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        40% {
+          transform: translate(-38px, 24px) scale(1.09);
+        }
+        70% {
+          transform: translate(28px, -18px) scale(0.97);
+        }
+      }
+      @keyframes orbDrift3 {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(20px, 38px) scale(1.05);
+        }
+      }
+      /* Hero entry animations */
+      @keyframes heroUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes heroRight {
+        from {
+          opacity: 0;
+          transform: translateX(42px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+      }
+      @keyframes heroCurtain {
+        from {
+          clip-path: inset(0 100% 0 0);
+        }
+        to {
+          clip-path: inset(0 0% 0 0);
+        }
+      }
+      @keyframes floatUp {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      @keyframes floatAlt {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-1deg);
+        }
+        50% {
+          transform: translateY(-7px) rotate(1.2deg);
+        }
+      }
+      /* Hero showcase shimmer line */
+      @keyframes showcaseScan {
+        0% {
+          top: -2px;
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.6;
+        }
+        90% {
+          opacity: 0.4;
+        }
+        100% {
+          top: 102%;
+          opacity: 0;
+        }
+      }
+
       .hero {
         position: relative;
         padding: 90px 48px 100px;
         max-width: 1440px;
         margin: 0 auto;
-        overflow: visible;
+        overflow: hidden;
       }
-      .hero::before {
-        content: '';
+
+      /* ── Orbes flottants ── */
+      .hero-orb {
         position: absolute;
-        top: 60px;
-        left: -10%;
-        right: -10%;
-        bottom: 0;
-        background:
-          radial-gradient(ellipse 60% 80% at 80% 30%, rgba(91, 33, 182, 0.14), transparent 60%),
-          radial-gradient(ellipse 50% 60% at 10% 70%, rgba(126, 34, 206, 0.08), transparent 60%);
+        border-radius: 50%;
+        filter: blur(72px);
         pointer-events: none;
         z-index: 0;
+        will-change: transform;
       }
+      .hero-orb-1 {
+        width: 520px;
+        height: 520px;
+        top: -80px;
+        right: -60px;
+        background: radial-gradient(circle, rgba(91, 33, 182, 0.22) 0%, transparent 70%);
+        animation: orbDrift1 22s ease-in-out infinite;
+      }
+      .hero-orb-2 {
+        width: 380px;
+        height: 380px;
+        bottom: -40px;
+        left: -80px;
+        background: radial-gradient(circle, rgba(126, 34, 206, 0.14) 0%, transparent 70%);
+        animation: orbDrift2 28s ease-in-out infinite;
+      }
+      .hero-orb-3 {
+        width: 260px;
+        height: 260px;
+        top: 40%;
+        left: 40%;
+        background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+        animation: orbDrift3 17s ease-in-out infinite;
+      }
+
       .hero-inner {
         position: relative;
         display: grid;
@@ -284,6 +405,8 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         z-index: 1;
         overflow: visible;
       }
+
+      /* ── Entrée Hero (stagger) ── */
       .hero-eyebrow {
         display: inline-flex;
         align-items: center;
@@ -292,6 +415,48 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         font-size: 13px;
         font-weight: 600;
         color: #3a3d47;
+        animation: heroUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+      }
+      .hero-inner h1 {
+        animation: heroUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+      }
+      .hero-lead {
+        animation: heroUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+      }
+      .hero-actions {
+        animation: heroUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+      }
+      .hero-stats {
+        animation: heroUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.52s both;
+      }
+      /* Showcase slide depuis la droite */
+      .hero-showcase {
+        animation: heroRight 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+      }
+
+      /* Scan line sur le showcase */
+      .hero-showcase .showcase-main {
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-showcase .showcase-main::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.7), transparent);
+        animation: showcaseScan 4.5s ease-in-out 1.2s infinite;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      /* Float chips */
+      .float-ai {
+        animation: floatUp 3.8s ease-in-out infinite;
+      }
+      .float-cnss {
+        animation: floatAlt 4.6s ease-in-out 0.8s infinite;
       }
       .dot {
         width: 7px;
@@ -849,14 +1014,36 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         padding: 32px;
         position: relative;
         overflow: hidden;
-        transition: all 0.25s;
+        /* GPU-composited 3D tilt */
+        transition:
+          transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 0.3s ease,
+          border-color 0.2s ease;
         display: flex;
         flex-direction: column;
+        transform-style: preserve-3d;
+        will-change: transform;
       }
       .bento-card:hover {
         border-color: #0a0a0f;
-        transform: translateY(-3px);
-        box-shadow: 0 20px 40px -10px rgba(10, 10, 15, 0.08);
+        transform: perspective(900px) rotateX(2.5deg) rotateY(-3.5deg) translateY(-6px);
+        box-shadow:
+          0 24px 48px -12px rgba(10, 10, 15, 0.12),
+          8px 12px 28px -8px rgba(91, 33, 182, 0.1);
+      }
+      /* Lueur intérieure au hover */
+      .bento-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        border-radius: inherit;
+      }
+      .bento-card:hover::after {
+        opacity: 1;
       }
       .bento-card.feat-1 {
         grid-column: span 2;

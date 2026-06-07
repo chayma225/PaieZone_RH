@@ -40,6 +40,12 @@ export class ApiService {
     return this.http.get<Record<string, number>>('/api/dashboard/stats');
   }
 
+  servicesHealth(): Observable<{ name: string; up: boolean; warn?: boolean; latency: string; latencyMs: number }[]> {
+    return this.http.get<{ name: string; up: boolean; warn?: boolean; latency: string; latencyMs: number }[]>(
+      '/api/dashboard/services-health',
+    );
+  }
+
   activityFeed(): Observable<ActivityItem[]> {
     return this.http.get<any[]>('/api/dashboard/activity').pipe(
       map(list =>
@@ -782,6 +788,20 @@ export class ApiService {
 
   createEmployeeSimple(body: Record<string, any>): Observable<Employee> {
     return this.http.post<any>('/api/employees/create-simple', body).pipe(map(d => this.mapEmployee(d)));
+  }
+
+  importEmployeesExcel(file: File): Observable<{
+    imported: number;
+    skipped: number;
+    errors: number;
+    importedNames: string[];
+    skippedLines: string[];
+    errorLines: string[];
+    message: string;
+  }> {
+    const fd = new FormData();
+    fd.append('file', file);
+    return this.http.post<any>('/api/employees/import-excel', fd);
   }
 
   contracts(employeeId?: number, size = 500): Observable<Contract[]> {

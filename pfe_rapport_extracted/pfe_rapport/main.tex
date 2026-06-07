@@ -1,0 +1,439 @@
+\documentclass[12pt,a4paper]{report}
+
+% ==========================================
+% PREAMBULE
+% ==========================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage[table,xcdraw]{xcolor}   % UN SEUL appel xcolor suffit
+\usepackage{microtype}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}               % "shadows" retiré (non reconnu MiKTeX 25.12)
+\usepackage{lmodern}
+\usepackage{setspace}
+\onehalfspacing
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=black,
+}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage[export]{adjustbox}
+\usepackage{enumitem}
+\usepackage{xltabular}
+\usepackage{colortbl}
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+
+\titleformat{\chapter}[display]
+{}
+{}
+{0pt}
+{
+    \vspace*{1cm}
+    \noindent
+    \makebox[\textwidth][s]{%
+        \rule[0.5ex]{0.35\textwidth}{3pt}%
+        \hfill
+        {\Large \textsc{Chapitre \thechapter}}%
+        \hfill
+        \rule[0.5ex]{0.35\textwidth}{3pt}%
+    }%
+    \newline
+    \vspace{-0.2cm}
+    \rule{\textwidth}{0.5pt}
+    \vspace{0.3cm}
+    \begin{center}
+    \singlespacing\Huge\bfseries
+}
+[
+    \end{center}
+    \vspace{0.2cm}
+    \rule{\textwidth}{0.5pt}
+]
+\titlespacing*{\chapter}{0pt}{0pt}{1.5cm}
+
+\usepackage{tocloft}
+\renewcommand{\cftchappresnum}{Chapitre }
+\renewcommand{\cftchapaftersnum}{ :}
+\setlength{\cftchapnumwidth}{6em}
+\setlength{\cftfignumwidth}{3.5em}
+\setlength{\cfttabnumwidth}{3.5em}
+\renewcommand{\cftfigpresnum}{Fig. }
+\renewcommand{\cfttabpresnum}{Tab. }
+
+\newcommand{\unchapter}[1]{%
+    \clearpage
+    \thispagestyle{plain}
+    \vspace*{2cm}
+    \begin{center}
+        {\Huge\bfseries #1}
+    \end{center}
+    \vspace{1cm}
+    \addcontentsline{toc}{chapter}{#1}%
+}
+
+\setlist[itemize]{
+    label=\textbullet,
+    leftmargin=*,
+    itemsep=6pt,
+    parsep=0pt,
+    topsep=6pt,
+    partopsep=0pt
+}
+\setlist[enumerate]{
+    nosep,
+    leftmargin=*,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=4pt
+}
+
+\newcommand{\pz}{PaieZone RH}
+\renewcommand{\chaptername}{Chapitre}
+\usepackage{needspace}
+\usepackage{float}
+\usepackage{amsmath}
+
+% ==========================================
+% CORPS DU DOCUMENT
+% ==========================================
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{titlepage}
+    \centering
+
+    %--- Ligne 1 : Logo gauche + texte institutionnel centre + Logo droit ---
+    \begin{minipage}[t]{0.25\textwidth}
+        \includegraphics[width=\textwidth]{logo_tunisie.png}\\[0.1cm]
+    {\fontsize{8}{10}\selectfont
+    \textbf{Direction Générale des Études Technologiques}\\[0.1cm]
+    \textbf{}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.52\textwidth}
+
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.25\textwidth}
+        \centering
+        \includegraphics[width=0.6\textwidth]{logo_iset.png}\newline
+{\fontsize{8}{10}\selectfont
+    \textbf{Institut Supérieur des Études Technologiques de mahdia}\\[0.05cm]
+    \textbf{}} 
+\end{minipage}
+    %--- Ligne 2 : Code du projet à gauche ---
+    \begin{flushleft}
+        \fbox{\parbox{5.5cm}{\centering\small\textbf{Code du projet : 25-3/085}}}
+    \end{flushleft}
+
+    \vspace{0.5cm}
+
+    %--- Titre principal ---
+    {\fontsize{20}{23}\selectfont\textbf{PROJET}}\\[0.15cm]
+    {\fontsize{20}{23}\selectfont\textbf{DE FIN D'ÉTUDES}}
+
+    \vspace{0.35cm}
+
+    {\fontsize{12}{15}\selectfont PRÉSENTE POUR OBTENIR LE TITRE :}\\[0.29cm]
+    {\fontsize{14}{16}\selectfont\textbf{DIPLÔME NATIONAL DE LICENCE}}\\[0.12cm]
+    {\fontsize{14}{16}\selectfont\textbf{En Technologies de l'Informatique}}\\[0.12cm]
+    {\fontsize{14}{16}\selectfont\textbf{Parcours :~~Développement des Systèmes d'Information}}
+
+    \vspace{0.35cm}
+
+    %--- Cadre Thème du projet (sans ombre, compatible toutes versions MiKTeX) ---
+   \begin{tcolorbox}[
+    enhanced,
+    width=\textwidth,
+    colback=white,
+    colframe=black,
+    boxrule=0.8pt,
+    arc=0pt,
+    outer arc=0pt,
+    borderline west={4pt}{-4pt}{black!30},
+    borderline north={4pt}{-4pt}{black!30},
+    left=0.8cm,
+    right=0.8cm,
+    top=0.4cm,
+    bottom=0.4cm,
+    halign=center,
+]   
+    {\fontsize{18}{21}\selectfont\textbf{Thème du projet}}\\[0.2cm]
+    {\fontsize{12}{15}\selectfont\textbf{Conception et développement d'un module RH et d'un chatbot assistant RH piloté par l'IA pour la solution logicielle ComptaZone}}
+    \end{tcolorbox}
+    \vspace{0.1cm}
+
+  %--- Réalisé par ---
+\begin{flushleft}
+    {\fontsize{13}{16}\selectfont\textbf{Réalisé par :}} \hspace{1cm} {\fontsize{13}{16}\selectfont\textbf{Bouguerra Chayma}}\\[0.3cm]
+    \hspace{4cm} {\fontsize{13}{16}\selectfont\textbf{Boughmadi Takwa}}
+\end{flushleft}
+
+\vspace{0.1cm}
+
+    %--- Soutenance ---
+    {\hspace{0.2cm} \fontsize{10}{12.5}\selectfont SOUTENU LE \textbf{19/06/2026} DEVANT LE JURY D'EXAMEN }
+    %--- Jury ---
+    \begin{flushleft}
+    \begin{tabular}{@{}p{3cm} p{6.5cm} p{7cm}@{}}
+        \fontsize{11}{14}\selectfont \textbf{Mme} & \fontsize{11}{14}\selectfont\textbf{Jguirim Moufida}  & \textbf{Président} \\[0.15cm]
+        \fontsize{11}{14}\selectfont \textbf{M.}  & \fontsize{11}{14}\selectfont\textbf{Boukthir Hafedh}   & \textbf{Rapporteur} \\[0.15cm]
+        \fontsize{11}{14}\selectfont \textbf{Mme} & \fontsize{11}{14}\selectfont\textbf{Hechkel Amina}     & \textbf{Encadrant-ISET} \\[0.15cm]
+        \fontsize{11}{14}\selectfont \textbf{M.}  & \fontsize{11}{14}\selectfont\textbf{Hmidi Salim }       & \textbf{Encadrant-Entreprise} \\
+    \end{tabular}
+    \end{flushleft}
+
+    \vspace{0.7cm}
+
+    %--- A.U. centré sous le jury ---
+    {\fontsize{10}{12}\selectfont\textbf{A.U. : 2025-2026}}
+
+    %--- Pied de page ---
+    \rule{\textwidth}{0.8pt}\\[0.2cm]
+    {\tiny ISET Mahdia, Avenue Elmourouj 5111 Hiboun Mahdia Tunisie\\
+    Tél : (+216)73 68 34 07 ~ (+216)73 68 34 10 \quad Fax : (+216)73 68 33 99}
+
+\end{titlepage}
+
+
+% ==========================================
+% PAGES PRÉLIMINAIRES (numérotation romaine)
+% ==========================================
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+% --- Table des matières ---
+\clearpage
+\tableofcontents
+\addcontentsline{toc}{chapter}{Table des Matières}
+\newpage
+
+% --- Liste des Figures ---
+\clearpage
+\renewcommand{\listfigurename}{Liste des Figures}
+\listoffigures
+\addcontentsline{toc}{chapter}{Liste des Figures}
+\newpage
+
+% --- Liste des Tableaux ---
+\clearpage
+\renewcommand{\listtablename}{Liste des Tableaux}
+\listoftables
+\addcontentsline{toc}{chapter}{Liste des Tableaux}
+\newpage
+
+% ==========================================
+% CORPS PRINCIPAL (numérotation arabe)
+% ==========================================
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% --- Introduction Générale ---
+\unchapter{Introduction Générale}
+
+Texte de l'introduction générale ici...
+
+\newpage
+
+% --- Chapitres ---
+\input{chapitre1}
+\input{chapitre2}
+\input{chapitre3}
+\input{chapitre4}
+\input{chapitre5}
+\input{chapitre6}
+
+% --- Conclusion Générale ---
+\unchapter{Conclusion Générale}
+
+Texte de la conclusion générale ici...
+\newpage
+
+% ==========================================
+% BIBLIOGRAPHIE
+% ==========================================
+\begingroup
+\color{black}
+\small
+\singlespacing
+
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Bibliographie et Webographie}
+
+% ── 1. Méthodologies ─────────────────────────────────────
+\section*{Références méthodologiques}
+
+\bibitem{scrum}
+Ken Schwaber et Jeff Sutherland.
+Le Guide Scrum : Les règles du jeu.
+\url{https://scrumguides.org}, 2020.
+
+\bibitem{uml}
+Grady Booch, James Rumbaugh et Ivar Jacobson.
+UML : Guide de l'utilisateur.
+Addison-Wesley, 2ème édition, 2004.
+
+% ── 2. Sécurité et Architecture ──────────────────────────
+\section*{Sécurité et architecture logicielle}
+
+\bibitem{jwt}
+M. Jones, J. Bradley et N. Sakimura.
+JSON Web Token (JWT).
+RFC 7519, IETF, mai 2015.
+\url{https://www.rfc-editor.org/rfc/rfc7519}
+
+\bibitem{rbac}
+R. S. Sandhu, E. J. Coyne, H. L. Feinstein et C. E. Youman.
+Role-Based Access Control Models.
+IEEE Computer, vol. 29, n° 2, pp. 38-47, 1996.
+
+\bibitem{multitenant}
+F. Chong et G. Carraro.
+Architecture Strategies for Catching the Long Tail.
+Microsoft MSDN, 2006.
+\url{https://learn.microsoft.com/en-us/azure/architecture/}
+
+\bibitem{totp}
+D. M'Raihi, S. Machani, M. Pei et J. Rydell.
+TOTP: Time-Based One-Time Password Algorithm.
+RFC 6238, IETF, mai 2011.
+\url{https://www.rfc-editor.org/rfc/rfc6238}
+
+\bibitem{saas}
+M. Armbrust, A. Fox, R. Griffith et al.
+A View of Cloud Computing.
+Communications of the ACM, vol. 53, n° 4, pp. 50-58, 2010.
+
+% ── 3. Technologies Backend et Base de données ───────────
+\section*{Technologies backend et base de données}
+
+\bibitem{springboot}
+Spring IO.
+Spring Boot Reference Documentation.
+\url{https://docs.spring.io/spring-boot/docs/current/reference/html/}, 2026.
+
+\bibitem{jhipster}
+JHipster Team.
+JHipster: Full-stack Platform for Modern Web Applications.
+\url{https://www.jhipster.tech/}, 2025.
+
+\bibitem{springbatch}
+Spring IO.
+Spring Batch Reference Documentation.
+\url{https://docs.spring.io/spring-batch/docs/current/reference/html/}, 2025.
+
+\bibitem{postgresql}
+PostgreSQL Global Development Group.
+PostgreSQL 15 Documentation.
+\url{https://www.postgresql.org/docs/15/index.html}, 2023.
+
+\bibitem{kafka}
+Apache Software Foundation.
+Apache Kafka Documentation.
+\url{https://kafka.apache.org/documentation/}, 2026.
+
+\bibitem{liquibase}
+Liquibase Inc.
+Liquibase Documentation : Database Version Control.
+\url{https://docs.liquibase.com}, 2025.
+
+% ── 4. Technologies Frontend ─────────────────────────────
+\section*{Technologies frontend}
+
+\bibitem{angular}
+Google.
+Angular Documentation (v18).
+\url{https://angular.dev/}, 2026.
+
+\bibitem{typescript}
+Microsoft.
+TypeScript Documentation.
+\url{https://www.typescriptlang.org/docs/}, 2026.
+
+% ── 5. Réglementation Tunisienne ─────────────────────────
+\section*{Réglementation et droit social tunisien}
+
+\bibitem{loifinance}
+République Tunisienne.
+Loi de Finances pour l'année 2026.
+Journal Officiel de la République Tunisienne (JORT), 2025.
+
+\bibitem{cdt}
+République Tunisienne.
+Code du Travail tunisien,
+Loi n° 66-27 du 30 avril 1966 et ses amendements successifs.
+Journal Officiel de la République Tunisienne (JORT).
+
+\bibitem{cnss_reg}
+Caisse Nationale de Sécurité Sociale (CNSS).
+Guide des cotisations sociales et des déclarations patronales.
+Tunis, 2024. \url{https://www.cnss.tn}
+
+% ── 6. IA et Innovation ──────────────────────────────────
+\section*{Intelligence artificielle et innovation}
+
+\bibitem{rag_paper}
+P. Lewis, E. Perez, A. Piktus et al.
+Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.
+arXiv:2005.11401, 2020.
+
+\bibitem{llm_survey}
+W. X. Zhao, K. Zhou, J. Li et al.
+A Survey of Large Language Models.
+arXiv:2303.18223, 2023.
+
+\bibitem{chatbot_hr}
+A. Følstad et K. Skjuve.
+Chatbots for customer service: individual vs. shared experiences.
+Proceedings of the 1st International Conference on Conversational User Interfaces (CUI), ACM, 2019.
+
+% ── 7. Tests et Qualité logicielle ───────────────────────────
+\section*{Tests et qualité logicielle}
+
+\bibitem{junit5}
+JUnit Team.
+JUnit~5 User Guide.
+\url{https://junit.org/junit5/docs/current/user-guide/}, 2024.
+
+\bibitem{mockito}
+S. Szczepański et B. Faber.
+Mockito Framework Documentation.
+\url{https://javadoc.io/doc/org.mockito/mockito-core/}, 2024.
+
+\bibitem{testcontainers}
+Testcontainers Team.
+Testcontainers for Java.
+\url{https://testcontainers.com/}, 2024.
+
+\bibitem{cypress}
+Cypress.io.
+Cypress End-to-End Testing Framework Documentation.
+\url{https://docs.cypress.io/}, 2024.
+
+\bibitem{fowler_pyramid}
+M. Fowler.
+The Practical Test Pyramid.
+\url{https://martinfowler.com/articles/practical-test-pyramid.html}, 2018.
+
+\end{thebibliography}
+\endgroup
+
+\end{document}

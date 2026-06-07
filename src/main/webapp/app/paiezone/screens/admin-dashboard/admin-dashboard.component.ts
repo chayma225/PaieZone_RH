@@ -100,7 +100,11 @@ import { AccountService } from 'app/core/auth/account.service';
           <div class="hero-glow hero-glow-1"></div>
           <div class="hero-glow hero-glow-2"></div>
           <div class="hero-left">
-            <div class="hero-logo">{{ companyInitials() }}</div>
+            @if (company()?.logoUrl) {
+              <img class="hero-logo hero-logo-img" [src]="company()!.logoUrl!" alt="Logo" />
+            } @else {
+              <div class="hero-logo">{{ companyInitials() }}</div>
+            }
             <div class="hero-text">
               <div class="hero-eyebrow">Espace administrateur</div>
               <div class="hero-title">Bonjour {{ firstName() }} 👋</div>
@@ -304,7 +308,11 @@ import { AccountService } from 'app/core/auth/account.service';
           <div class="card-head"><div class="card-title">Mon entreprise</div></div>
           <div class="card-body">
             <div class="company-head">
-              <div class="logo">{{ companyInitials() }}</div>
+              @if (company()?.logoUrl) {
+                <img class="logo logo-img" [src]="company()!.logoUrl!" alt="Logo" />
+              } @else {
+                <div class="logo">{{ companyInitials() }}</div>
+              }
               <div>
                 <div class="strong">{{ company()?.name ?? '—' }}</div>
                 <div class="pz-muted small">{{ company()?.city ?? '—' }}</div>
@@ -461,6 +469,10 @@ import { AccountService } from 'app/core/auth/account.service';
         color: #fff;
         flex-shrink: 0;
         letter-spacing: -0.02em;
+      }
+      .hero-logo-img {
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.9);
       }
       .hero-eyebrow {
         font-size: 11px;
@@ -684,6 +696,12 @@ import { AccountService } from 'app/core/auth/account.service';
         place-items: center;
         font-weight: 700;
         font-size: 18px;
+        flex-shrink: 0;
+      }
+      .logo-img {
+        object-fit: contain;
+        background: var(--pz-surface-2);
+        border: 1px solid var(--pz-line);
       }
       .info-rows {
         margin-bottom: 4px;

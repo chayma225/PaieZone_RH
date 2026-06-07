@@ -491,6 +491,104 @@ export default class RhEmployeesComponent implements OnInit {
     });
   }
 
+  // ── Import Excel ──────────────────────────────────────────────────────────
+  protected readonly showImport = signal(false);
+  protected readonly importBusy = signal(false);
+  protected readonly importFile = signal<File | null>(null);
+  protected readonly importDrop = signal(false);
+  protected readonly importResult = signal<{
+    imported: number;
+    skipped: number;
+    errors: number;
+    importedNames: string[];
+    skippedLines: string[];
+    errorLines: string[];
+  } | null>(null);
+  protected readonly importErr = signal('');
+
+  openImport(): void {
+    this.importFile.set(null);
+    this.importResult.set(null);
+    this.importErr.set('');
+    this.showImport.set(true);
+  }
+  closeImport(): void {
+    this.showImport.set(false);
+  }
+
+  onImportFilePick(event: Event): void {
+    const f = (event.target as HTMLInputElement).files?.[0];
+    if (f) {
+      this.importFile.set(f);
+      this.importResult.set(null);
+      this.importErr.set('');
+    }
+  }
+
+  onImportDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.importDrop.set(false);
+    const f = event.dataTransfer?.files?.[0];
+    if (f) {
+      this.importFile.set(f);
+      this.importResult.set(null);
+      this.importErr.set('');
+    }
+  }
+
+  runImport(): void {
+    const f = this.importFile();
+    if (!f) return;
+    this.importBusy.set(true);
+    this.importErr.set('');
+    this.api.importEmployeesExcel(f).subscribe({
+      next: res => {
+        this.importResult.set(res);
+        this.importBusy.set(false);
+        if (res.imported > 0) this.data.reloadEmployees();
+      },
+      error: err => {
+        this.importErr.set(err?.error?.message ?? err?.error?.detail ?? "Erreur lors de l'import.");
+        this.importBusy.set(false);
+      },
+    });
+  }
+
+  downloadTemplate(): void {
+    // Génère un CSV modèle téléchargeable côté client
+    const headers = [
+      'Matricule',
+      'Prénom',
+      'Nom',
+      'Genre (M/F)',
+      'Situation familiale',
+      'Nb enfants',
+      'Chef famille (O/N)',
+      'CIN',
+      'Date embauche (DD/MM/YYYY)',
+      'Département',
+      'Poste',
+      'Email pro',
+      'Téléphone',
+      'Ville',
+      'N° CNSS',
+      'Type contrat (CDI/CDD/CIVP/KARAMA/STAGE)',
+      'Salaire base',
+      'Date début contrat',
+    ].join(';');
+    const example =
+      'E001;Ahmed;Ben Ali;M;MARRIED;2;O;12345678;01/01/2024;Informatique;Développeur;ahmed@example.com;+216 20 000 000;Tunis;98765432;CDI;1800;01/01/2024';
+    const blob = new Blob(['﻿' + headers + '\n' + example], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'modele-import-employes.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   // ── Contrats ──────────────────────────────────────────────────────────────
   protected readonly contracts = signal<Contract[]>([]);
   protected readonly activeContract = computed(() => {

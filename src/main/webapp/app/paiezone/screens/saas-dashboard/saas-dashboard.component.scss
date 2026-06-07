@@ -2,6 +2,124 @@
   display: block;
 }
 
+/* ── Staggered reveal des cartes KPI ── */
+@keyframes kpiIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.stat-grid .pz-card {
+  animation: kpiIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  &:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+  &:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.19s;
+  }
+  &:nth-child(4) {
+    animation-delay: 0.26s;
+  }
+
+  /* Hover lift */
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease;
+  will-change: transform;
+
+  &:hover {
+    transform: translateY(-5px) scale(1.005);
+    box-shadow:
+      0 16px 36px -8px rgba(15, 23, 42, 0.12),
+      0 4px 10px -4px rgba(79, 70, 229, 0.1);
+  }
+}
+
+/* ── Shimmer sweep au hover sur les cartes ── */
+@keyframes sweepShimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+.pz-card {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: translateX(-100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &:hover::before {
+    animation: sweepShimmer 0.55s ease forwards;
+  }
+}
+
+/* ── Staggered reveal lignes tableau ── */
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+tbody tr {
+  animation: rowIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--row-i, 0) * 45ms);
+}
+
+/* ── Modal backdrop + pop ── */
+@keyframes backdropFade {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(6px);
+  }
+}
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.91) translateY(18px);
+  }
+  65% {
+    transform: scale(1.01) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Appliquer sur les overlays et modals existants */
+
 .plan-select {
   border: 1px solid var(--pz-line);
   border-radius: 8px;

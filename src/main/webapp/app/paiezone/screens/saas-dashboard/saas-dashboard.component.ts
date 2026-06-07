@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -21,10 +21,30 @@ export default class SaasDashboardComponent implements OnInit {
   protected readonly data = inject(DataService);
   private readonly api = inject(ApiService);
 
+  // Signal pour les services — état par défaut affiché avant la réponse API
+  readonly services = signal<{ name: string; up: boolean; warn?: boolean; latency: string }[]>([
+    { name: 'API & Authentification', up: true, latency: '— ms' },
+    { name: 'Base de données PostgreSQL', up: true, latency: '— ms' },
+    { name: 'Moteur de paie', up: true, latency: '— ms' },
+    { name: 'Génération PDF (JasperReports)', up: true, latency: '— ms' },
+    { name: 'Assistant IA (Ollama / phi3)', up: true, warn: true, latency: '— ms' },
+    { name: 'Service Email', up: true, latency: '— ms' },
+  ]);
+
   ngOnInit(): void {
     if (!this.data.companiesLoaded() || this.data.companiesError()) {
       this.data.reset();
     }
+    this.loadServicesHealth();
+  }
+
+  private loadServicesHealth(): void {
+    this.api.servicesHealth().subscribe({
+      next: health => this.services.set(health),
+      error: () => {
+        /* garde les valeurs par défaut */
+      },
+    });
   }
 
   readonly currentMonth = MONTHS_SHORT[new Date().getMonth()] + ' ' + new Date().getFullYear();
@@ -42,15 +62,6 @@ export default class SaasDashboardComponent implements OnInit {
       uptime: 99.97,
     };
   });
-
-  readonly services = [
-    { name: 'API & Authentification', up: true, latency: '— ms' },
-    { name: 'Base de données PostgreSQL', up: true, latency: '— ms' },
-    { name: 'Moteur de paie', up: true, latency: '— ms' },
-    { name: 'Génération PDF (JasperReports)', up: true, latency: '— ms' },
-    { name: 'Assistant IA (Ollama / phi3)', up: true, warn: true, latency: '— ms' },
-    { name: 'Service Email', up: true, latency: '— ms' },
-  ];
 
   serviceState(s: { up: boolean; warn?: boolean }): { tone: string; label: string } {
     if (s.warn) return { tone: 'warn', label: 'Dégradé' };

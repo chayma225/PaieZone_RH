@@ -13,6 +13,7 @@ import tn.paiezone.rh.domain.Employee;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor<Employee> {
     boolean existsByMatricule(String matricule);
+    boolean existsByMatriculeAndCompanyId(String matricule, Long companyId);
     boolean existsByNationalId(String nationalId);
     boolean existsByProfessionalEmail(String professionalEmail);
     long countByCompanyId(Long companyId);

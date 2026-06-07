@@ -222,8 +222,8 @@ application:
   chatbot:
     ollama-url: http://localhost:11434
     model: phi3:latest
-    max-tokens: 1024
-    max-history-messages: 10
+    max-tokens: 512 # réduit de 1024 → réponses plus courtes et plus rapides
+    max-history-messages: 2 # réduit de 10 → moins de contexte = moins de tokens à traiter
 # jhipster-needle-add-application-yaml-document
 ---
 # ===================================================================

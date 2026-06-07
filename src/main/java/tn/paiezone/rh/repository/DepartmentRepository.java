@@ -1,6 +1,7 @@
 package tn.paiezone.rh.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import tn.paiezone.rh.domain.Department;
@@ -14,4 +15,5 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     boolean existsByCodeAndCompanyId(String code, Long companyId);
     long countByCompanyId(Long companyId);
     List<Department> findByCompanyId(Long companyId);
+    Optional<Department> findByNameIgnoreCaseAndCompanyId(String name, Long companyId);
 }

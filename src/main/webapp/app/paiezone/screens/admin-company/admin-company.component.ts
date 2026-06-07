@@ -14,129 +14,105 @@ import { ActivitySector } from '../../core/types';
   template: `
     <div class="pz-page">
       <!-- ── En-tête ──────────────────────────────────────────────── -->
-      <div class="pz-page-head">
-        <div>
+      <div class="page-header">
+        <div class="page-header-left">
           <div class="pz-crumbs"><strong>Administration</strong> <span class="sep">/</span> Mon entreprise</div>
-          <h1>{{ company()?.name ?? 'Mon entreprise' }}</h1>
-          <div class="pz-muted">{{ company()?.gouvernorat ?? company()?.city ?? '—' }} · Informations et configuration</div>
+          <h1 class="page-title">Informations de l'entreprise</h1>
+          <p class="page-subtitle">Coordonnées légales et fiscales · visible par les utilisateurs autorisés</p>
         </div>
-        <button class="pz-btn pz-primary" (click)="openEdit()"><pz-icon name="Edit" [size]="14" /> Modifier</button>
+        <button class="pz-btn pz-primary" (click)="openEdit()"><pz-icon name="Pencil" [size]="14" /> Modifier</button>
       </div>
 
       <div class="layout">
-        <!-- ── Colonne gauche — Identité, Fiscaux, Coordonnées ──────── -->
+        <!-- ── Colonne gauche ────────────────────────────────────── -->
         <div class="col-left">
-          <!-- Identité de l'entreprise -->
-          <div class="pz-card">
-            <div class="section-head">
-              <pz-icon name="Building" [size]="15" class="section-ico" />
-              <span class="section-title">Identité de l'entreprise</span>
-            </div>
-            <div class="section-body">
-              <div class="info-rows">
-                <div class="info-row">
-                  <span class="lbl">Raison sociale</span>
-                  <span class="val strong">{{ company()?.name || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Nom commercial</span>
-                  <span class="val">{{ company()?.tradeName || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Forme juridique</span>
-                  <span class="val">{{ company()?.legalForm || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Capital social</span>
-                  <span class="val pz-mono">
-                    {{ company()?.capitalSocial != null ? (company()!.capitalSocial! | number: '1.0-0') + ' TND' : '—' }}
-                  </span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Activité principale</span>
-                  <span class="val">{{ company()?.mainActivity || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Secteur d'activité</span>
-                  <span class="val">{{ sectorLabel() }}</span>
-                </div>
+          <div class="pz-card info-card">
+            <!-- Identité -->
+            <div class="section-label">Identité de l'entreprise</div>
+            <div class="fields-grid">
+              <div class="field-box">
+                <span class="field-lbl">Raison sociale</span>
+                <span class="field-val strong">{{ company()?.name || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Nom commercial</span>
+                <span class="field-val">{{ company()?.tradeName || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Forme juridique</span>
+                <span class="field-val">{{ company()?.legalForm || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Capital social</span>
+                <span class="field-val pz-mono">
+                  {{ company()?.capitalSocial != null ? (company()!.capitalSocial! | number: '1.0-0') + ' TND' : '—' }}
+                </span>
+              </div>
+              <div class="field-box full">
+                <span class="field-lbl">Activité principale</span>
+                <span class="field-val">{{ company()?.mainActivity || '—' }}</span>
               </div>
             </div>
-          </div>
 
-          <!-- Identifiants fiscaux & sociaux -->
-          <div class="pz-card">
-            <div class="section-head">
-              <pz-icon name="FileText" [size]="15" class="section-ico" />
-              <span class="section-title">Identifiants fiscaux &amp; sociaux</span>
-            </div>
-            <div class="section-body">
-              <div class="info-rows">
-                <div class="info-row">
-                  <span class="lbl">Matricule fiscal</span>
-                  <span class="val pz-mono">{{ company()?.taxId || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Identifiant CNSS</span>
-                  <span class="val pz-mono">{{ company()?.cnssId || '—' }}</span>
-                </div>
+            <div class="divider"></div>
+
+            <!-- Identifiants fiscaux -->
+            <div class="section-label">Identifiants fiscaux &amp; sociaux</div>
+            <div class="fields-grid">
+              <div class="field-box">
+                <span class="field-lbl">Matricule fiscal</span>
+                <span class="field-val pz-mono">{{ company()?.taxId || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Identifiant CNSS</span>
+                <span class="field-val pz-mono">{{ company()?.cnssId || '—' }}</span>
               </div>
             </div>
-          </div>
 
-          <!-- Coordonnées -->
-          <div class="pz-card">
-            <div class="section-head">
-              <pz-icon name="MapPin" [size]="15" class="section-ico" />
-              <span class="section-title">Coordonnées</span>
-            </div>
-            <div class="section-body">
-              <div class="info-rows">
-                <div class="info-row">
-                  <span class="lbl">Adresse</span>
-                  <span class="val">{{ company()?.address || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Ville</span>
-                  <span class="val">{{ company()?.city || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Code postal</span>
-                  <span class="val pz-mono">{{ company()?.postalCode || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Gouvernorat</span>
-                  <span class="val">{{ company()?.gouvernorat || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Téléphone</span>
-                  <span class="val">{{ company()?.phone || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Email</span>
-                  <span class="val">{{ company()?.email || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Site web</span>
-                  <span class="val">{{ company()?.website || '—' }}</span>
-                </div>
+            <div class="divider"></div>
+
+            <!-- Coordonnées -->
+            <div class="section-label">Coordonnées</div>
+            <div class="fields-grid">
+              <div class="field-box full">
+                <span class="field-lbl">Adresse</span>
+                <span class="field-val">{{ company()?.address || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Ville</span>
+                <span class="field-val">{{ company()?.city || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Code postal</span>
+                <span class="field-val pz-mono">{{ company()?.postalCode || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Téléphone</span>
+                <span class="field-val">{{ company()?.phone || '—' }}</span>
+              </div>
+              <div class="field-box">
+                <span class="field-lbl">Email</span>
+                <span class="field-val">{{ company()?.email || '—' }}</span>
+              </div>
+              <div class="field-box full">
+                <span class="field-lbl">Site web</span>
+                <span class="field-val">{{ company()?.website || '—' }}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- ── Colonne droite — Logo, Abonnement, Données système ───── -->
+        <!-- ── Colonne droite ─────────────────────────────────────── -->
         <div class="col-right">
           <!-- Logo -->
           <div class="pz-card logo-card">
-            @if (company()?.logoUrl) {
-              <img class="logo-img" [src]="company()!.logoUrl!" alt="Logo entreprise" />
-            } @else {
-              <div class="logo-avatar">{{ initials() }}</div>
-            }
-            <div class="logo-info">
-              <div class="co-name">{{ company()?.name ?? '—' }}</div>
-              <div class="co-trade pz-muted">{{ company()?.tradeName || '—' }}</div>
+            <div class="logo-label">Logo de l'entreprise</div>
+            <div class="logo-preview">
+              @if (company()?.logoUrl) {
+                <img class="logo-img" [src]="company()!.logoUrl!" alt="Logo" />
+              } @else {
+                <div class="logo-initials">{{ initials() }}</div>
+              }
             </div>
             <input
               #fileInput
@@ -145,89 +121,70 @@ import { ActivitySector } from '../../core/types';
               style="display:none"
               (change)="onLogoSelected($event)"
             />
-            <button class="pz-btn pz-sm upload-btn" [disabled]="logoUploading()" (click)="fileInput.click()">
-              <pz-icon name="Upload" [size]="13" />
-              {{ logoUploading() ? 'Envoi…' : 'Changer le logo' }}
-            </button>
-            @if (logoErr()) {
-              <div style="color:#b91c1c;font-size:11px">{{ logoErr() }}</div>
-            } @else {
-              <div class="pz-muted" style="font-size:11px">PNG, JPG, SVG ou WebP — max 2 Mo</div>
-            }
+            <div class="logo-hint">
+              @if (logoErr()) {
+                <span class="err-txt">{{ logoErr() }}</span>
+              } @else {
+                <pz-icon name="Upload" [size]="12" class="hint-ico" />
+                Activer "Modifier" pour téléverser
+              }
+            </div>
+            <div class="logo-formats">PNG, JPG ou SVG · 2 Mo max</div>
           </div>
 
           <!-- Abonnement -->
-          <div class="pz-card">
-            <div class="section-head">
-              <pz-icon name="Wallet" [size]="15" class="section-ico" />
-              <span class="section-title">Abonnement</span>
-              <button class="pz-btn pz-sm pz-ghost" style="margin-left:auto" (click)="openPlanModal()">Changer</button>
+          <div class="pz-card sub-card">
+            <div class="sub-header">
+              <span class="sub-title">Abonnement</span>
             </div>
-            <div class="section-body">
-              @if (company()) {
-                <!-- Alerte dépassement -->
-                @if (isOverLimit()) {
-                  <div class="over-limit-banner">
-                    <pz-icon name="AlertTriangle" [size]="14" />
-                    <span>
-                      Limite atteinte ({{ data.employees().length }}/{{ company()!.maxEmployees }}). Passez au plan
-                      <strong>{{ suggestedPlan() }}</strong
-                      >.
-                    </span>
-                    <button class="pz-btn pz-sm pz-primary" (click)="openPlanModal()">Mettre à niveau</button>
-                  </div>
-                }
-                <!-- Plan actuel -->
-                <div class="current-plan">
-                  <div class="plan-name">{{ planLabel(company()!.plan) }}</div>
-                  <span
-                    class="pz-pill"
-                    [class.pos]="company()!.status === 'ACTIVE'"
-                    [class.warn]="company()!.status === 'TRIAL'"
-                    [class.danger]="company()!.status === 'SUSPENDED'"
-                    >{{ statusLabel(company()!.status) }}</span
-                  >
+            @if (company()) {
+              @if (isOverLimit()) {
+                <div class="over-banner">
+                  <pz-icon name="AlertTriangle" [size]="13" />
+                  Limite atteinte ({{ data.employees().length }}/{{ company()!.maxEmployees }})
                 </div>
-                <div class="info-rows" style="margin-top:10px">
-                  <div class="info-row">
-                    <span class="lbl">Prix mensuel HT</span>
-                    <strong class="pz-mono">{{ data.fmtTND(company()!.priceHT) }}</strong>
-                  </div>
-                  <div class="info-row">
-                    <span class="lbl">Collaborateurs</span>
-                    <span [class.over]="isOverLimit()"> {{ data.employees().length }} / {{ company()!.maxEmployees ?? '∞' }} </span>
-                  </div>
-                  <div class="info-row">
-                    <span class="lbl">Renouvellement</span>
-                    <span>{{ company()!.renewal || '—' }}</span>
-                  </div>
-                </div>
-              } @else {
-                <div class="pz-muted" style="padding:16px 0;text-align:center;font-size:13px">Aucun abonnement</div>
               }
-            </div>
+              <div class="sub-plan-row">
+                <div>
+                  <div class="sub-plan-name">Plan {{ planLabel(company()!.plan) }}</div>
+                  <div class="sub-renewal">Renouvellement le {{ company()!.renewal || '—' }}</div>
+                </div>
+                <div class="sub-price">
+                  <span class="price-val">{{ data.fmtTND(company()!.priceHT) }}</span>
+                  <span class="price-unit">HT/mois</span>
+                </div>
+              </div>
+              <div class="emp-progress-wrap">
+                <div class="emp-progress-bar">
+                  <div class="emp-progress-fill" [style.width.%]="empPercent()"></div>
+                </div>
+                <span class="emp-count">{{ data.employees().length }}/{{ company()!.maxEmployees ?? '∞' }} employés inclus</span>
+              </div>
+              <button class="pz-btn pz-sm pz-ghost sub-btn" (click)="openPlanModal()">Voir les détails du plan</button>
+            } @else {
+              <div class="pz-muted no-sub">Aucun abonnement</div>
+            }
           </div>
 
           <!-- Données système -->
-          <div class="pz-card">
-            <div class="section-head">
-              <pz-icon name="Settings" [size]="15" class="section-ico" />
-              <span class="section-title">Données système</span>
-            </div>
-            <div class="section-body">
-              <div class="info-rows">
-                <div class="info-row">
-                  <span class="lbl">Région</span>
-                  <span>Tunisie</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">Créée le</span>
-                  <span class="small">{{ fmtDate(company()?.createdAt) }}</span>
-                </div>
-                <div class="info-row">
-                  <span class="lbl">ID tenant</span>
-                  <span class="pz-mono small">{{ company()?.id ?? '—' }}</span>
-                </div>
+          <div class="pz-card sys-card">
+            <div class="sys-title">Données système</div>
+            <div class="sys-rows">
+              <div class="sys-row">
+                <span class="sys-lbl">Schéma BD</span>
+                <span class="sys-val pz-mono">{{ company()?.schema || '—' }}</span>
+              </div>
+              <div class="sys-row">
+                <span class="sys-lbl">Région</span>
+                <span class="sys-val">Tunisie (ar-tn)</span>
+              </div>
+              <div class="sys-row">
+                <span class="sys-lbl">Créée le</span>
+                <span class="sys-val">{{ fmtDate(company()?.createdAt) }}</span>
+              </div>
+              <div class="sys-row">
+                <span class="sys-lbl">Tenant</span>
+                <span class="sys-val pz-mono">#{{ company()?.id ?? '—' }}</span>
               </div>
             </div>
           </div>
@@ -416,9 +373,31 @@ import { ActivitySector } from '../../core/types';
         display: block;
       }
 
+      /* ── Header ─────────────────────────────────── */
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        gap: 16px;
+      }
+      .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--pz-ink);
+        margin: 4px 0 4px;
+        line-height: 1.2;
+      }
+      .page-subtitle {
+        font-size: 13px;
+        color: var(--pz-muted);
+        margin: 0;
+      }
+
+      /* ── Layout ──────────────────────────────────── */
       .layout {
         display: grid;
-        grid-template-columns: 1fr 280px;
+        grid-template-columns: 1fr 300px;
         gap: var(--pz-gap);
         align-items: start;
       }
@@ -429,130 +408,240 @@ import { ActivitySector } from '../../core/types';
         gap: var(--pz-gap);
       }
 
-      /* Logo card */
-      .logo-card {
+      /* ── Info card (left) ────────────────────────── */
+      .info-card {
+        padding: 24px;
+      }
+
+      .section-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--pz-primary);
+        margin-bottom: 16px;
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid var(--pz-line);
+        margin: 20px 0;
+      }
+
+      .fields-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .field-box {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        padding: 24px 20px;
-        text-align: center;
-        gap: 8px;
+        gap: 5px;
+        border: 1px solid var(--pz-line);
+        border-radius: 8px;
+        padding: 10px 14px;
+        background: var(--pz-surface);
       }
-      .logo-avatar {
-        width: 72px;
-        height: 72px;
-        border-radius: 16px;
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      .field-box.full {
+        grid-column: 1 / -1;
+      }
+      .field-lbl {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--pz-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .field-val {
+        font-size: 13.5px;
+        color: var(--pz-ink);
+        min-height: 20px;
+      }
+      .field-val.strong {
+        font-weight: 600;
+      }
+
+      /* ── Logo card ────────────────────────────────── */
+      .logo-card {
+        padding: 0;
+        overflow: hidden;
+      }
+      .logo-label {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px 18px 10px;
+        border-bottom: 1px solid var(--pz-line);
+      }
+      .logo-preview {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        min-height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logo-initials {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.18);
+        border: 2px solid rgba(255, 255, 255, 0.35);
         color: #fff;
         display: grid;
         place-items: center;
-        font-weight: 700;
-        font-size: 22px;
-        letter-spacing: -0.5px;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -1px;
       }
       .logo-img {
-        width: 72px;
-        height: 72px;
+        width: 80px;
+        height: 80px;
         border-radius: 16px;
         object-fit: contain;
-        background: var(--pz-surface-2);
-        border: 1px solid var(--pz-line);
+        background: rgba(255, 255, 255, 0.9);
       }
-      .co-name {
-        font-size: 15px;
-        font-weight: 600;
-      }
-      .co-trade {
-        font-size: 12px;
-        margin-top: 2px;
-      }
-      .upload-btn {
-        margin-top: 4px;
-      }
-
-      /* Section header */
-      .section-head {
+      .logo-hint {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 14px 20px 10px;
-        border-bottom: 1px solid var(--pz-line);
+        gap: 6px;
+        font-size: 12px;
+        color: var(--pz-muted);
+        padding: 10px 18px 2px;
       }
-      .section-ico {
+      .hint-ico {
         color: var(--pz-primary);
       }
-      .section-title {
+      .logo-formats {
+        font-size: 11px;
+        color: var(--pz-muted);
+        padding: 0 18px 14px;
+      }
+      .err-txt {
+        color: #b91c1c;
+        font-size: 12px;
+      }
+
+      /* ── Subscription card ─────────────────────── */
+      .sub-card {
+        padding: 0;
+        overflow: hidden;
+      }
+      .sub-header {
+        padding: 14px 18px 10px;
+        border-bottom: 1px solid var(--pz-line);
+      }
+      .sub-title {
         font-size: 13px;
         font-weight: 600;
       }
-      .section-body {
-        padding: 8px 20px 16px;
+      .over-banner {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #fff7ed;
+        border-bottom: 1px solid #fed7aa;
+        padding: 8px 18px;
+        font-size: 12px;
+        color: #9a3412;
+      }
+      .sub-plan-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 14px 18px 10px;
+        gap: 8px;
+      }
+      .sub-plan-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--pz-ink);
+      }
+      .sub-renewal {
+        font-size: 11.5px;
+        color: var(--pz-muted);
+        margin-top: 3px;
+      }
+      .sub-price {
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .price-val {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--pz-primary);
+        display: block;
+        line-height: 1.1;
+      }
+      .price-unit {
+        font-size: 11px;
+        color: var(--pz-muted);
+      }
+      .emp-progress-wrap {
+        padding: 4px 18px 12px;
+      }
+      .emp-progress-bar {
+        height: 6px;
+        border-radius: 99px;
+        background: var(--pz-line);
+        overflow: hidden;
+        margin-bottom: 6px;
+      }
+      .emp-progress-fill {
+        height: 100%;
+        background: var(--pz-primary);
+        border-radius: 99px;
+        transition: width 0.3s;
+        max-width: 100%;
+      }
+      .emp-count {
+        font-size: 11.5px;
+        color: var(--pz-muted);
+      }
+      .sub-btn {
+        display: block;
+        width: calc(100% - 36px);
+        margin: 0 18px 14px;
+        text-align: center;
+        justify-content: center;
+      }
+      .no-sub {
+        padding: 20px 18px;
+        font-size: 13px;
+        text-align: center;
       }
 
-      /* Info rows */
-      .info-rows {
+      /* ── System data card ─────────────────────── */
+      .sys-card {
+        padding: 0;
+        overflow: hidden;
       }
-      .info-row {
+      .sys-title {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 14px 18px 10px;
+        border-bottom: 1px solid var(--pz-line);
+      }
+      .sys-rows {
+        padding: 4px 18px 10px;
+      }
+      .sys-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 0;
+        padding: 7px 0;
         border-bottom: 1px solid var(--pz-line);
-        font-size: 13px;
-        gap: 12px;
+        font-size: 12.5px;
+        gap: 8px;
       }
-      .info-row:last-child {
-        border-bottom: 0;
+      .sys-row:last-child {
+        border-bottom: none;
       }
-      .lbl {
+      .sys-lbl {
         color: var(--pz-muted);
-        font-size: 12px;
-        white-space: nowrap;
       }
-      .val {
+      .sys-val {
+        font-size: 12px;
         text-align: right;
       }
-      .small {
-        font-size: 12px;
-      }
-      .strong {
-        font-weight: 500;
-      }
 
-      /* Subscription */
-      .over-limit-banner {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: #fff7ed;
-        border: 1px solid #fed7aa;
-        border-radius: 8px;
-        padding: 10px 12px;
-        font-size: 12.5px;
-        color: #9a3412;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-      }
-      .over-limit-banner span {
-        flex: 1;
-      }
-      .current-plan {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 4px;
-      }
-      .plan-name {
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--pz-primary);
-      }
-      .over {
-        color: #b91c1c;
-        font-weight: 600;
-      }
-
-      /* Plan modal */
+      /* ── Plan modal ─────────────────────────────── */
       .plan-modal {
         width: 680px;
       }
@@ -617,12 +706,13 @@ import { ActivitySector } from '../../core/types';
         font-weight: 700;
         color: #16a34a;
       }
-      .price-val {
+      .plan-card-price .price-val {
         font-size: 20px;
         font-weight: 700;
         color: var(--pz-ink);
+        display: inline;
       }
-      .price-unit {
+      .plan-card-price .price-unit {
         font-size: 12px;
         color: var(--pz-muted);
       }
@@ -642,7 +732,7 @@ import { ActivitySector } from '../../core/types';
         gap: 4px;
       }
 
-      /* Modal */
+      /* ── Modal shared ───────────────────────────── */
       .pz-overlay {
         position: fixed;
         inset: 0;
@@ -701,7 +791,6 @@ import { ActivitySector } from '../../core/types';
         color: var(--pz-muted);
         padding-top: 4px;
       }
-
       .pz-field {
         display: flex;
         flex-direction: column;
@@ -769,6 +858,15 @@ export default class AdminCompanyComponent implements OnInit {
     { key: 'ENTERPRISE', label: 'Enterprise', maxEmp: 500, price: 1480 },
   ];
 
+  // company défini en premier — tous les computed qui en dépendent sont après
+  protected readonly company = computed(() => this.data.companies()[0]);
+
+  protected readonly empPercent = computed(() => {
+    const c = this.company();
+    if (!c?.maxEmployees) return 0;
+    return Math.min(100, Math.round((this.data.employees().length / c.maxEmployees) * 100));
+  });
+
   protected readonly isOverLimit = computed(() => {
     const c = this.company();
     if (!c || c.maxEmployees == null) return false;
@@ -783,8 +881,6 @@ export default class AdminCompanyComponent implements OnInit {
     if (emp <= 500) return 'ENTERPRISE';
     return 'CUSTOM';
   });
-
-  protected readonly company = computed(() => this.data.companies()[0]);
 
   ngOnInit(): void {
     this.api.activitySectors().subscribe(list => this.sectors.set(list.filter(s => s.active)));

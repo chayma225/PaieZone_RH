@@ -49,29 +49,25 @@ const ROLE_LABELS: Record<string, string> = {
               <th>Département</th>
               <th>Contrat</th>
               <th>Date d'entrée</th>
+              <th>Statut</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             @if (data.employees().length === 0) {
               <tr>
-                <td colspan="8" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucun utilisateur enregistré</td>
+                <td colspan="9" style="text-align:center;padding:40px;color:var(--pz-muted)">Aucun utilisateur enregistré</td>
               </tr>
             }
             @for (e of data.employees(); track e.id) {
               @let sysRole = getSystemRole(e.email);
               @let inactive = e.active === false;
-              <tr [style.opacity]="inactive ? '0.55' : '1'">
+              <tr [style.opacity]="inactive ? '0.6' : '1'">
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
                     <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
                     <div>
-                      <div style="display:flex;align-items:center;gap:6px">
-                        <span style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</span>
-                        @if (inactive) {
-                          <span class="pz-pill" style="background:#f1f5f9;color:#64748b;font-size:10px">Inactif</span>
-                        }
-                      </div>
+                      <span style="font-weight:500;font-size:13px">{{ data.fullName(e) }}</span>
                       <div style="font-size:11.5px;color:var(--pz-muted)">{{ e.role || e.dept }}</div>
                     </div>
                   </div>
@@ -92,6 +88,19 @@ const ROLE_LABELS: Record<string, string> = {
                   <span class="pz-pill" [class.info]="e.contract === 'CDI'" [class.warn]="e.contract === 'CDD'">{{ e.contract }}</span>
                 </td>
                 <td style="color:var(--pz-muted);font-size:12px">{{ e.hireDate }}</td>
+                <td>
+                  @if (inactive) {
+                    <span class="pz-pill danger" style="display:inline-flex;align-items:center;gap:4px">
+                      <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
+                      Inactif
+                    </span>
+                  } @else {
+                    <span class="pz-pill pos" style="display:inline-flex;align-items:center;gap:4px">
+                      <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
+                      Actif
+                    </span>
+                  }
+                </td>
                 <td>
                   <div style="display:flex;gap:6px">
                     <button class="pz-btn pz-sm" title="Modifier" (click)="openEdit(e)">
@@ -470,18 +479,21 @@ export default class AdminUsersComponent implements OnInit {
   protected readonly twoFaEnabled = signal(false);
   protected readonly twoFaBusy = signal(false);
 
-  // Map email → { login, role, id } pour les utilisateurs qui ont un compte
-  private userMap = new Map<string, { login: string; firstName: string; lastName: string; role: string; id?: number }>();
+  // Signal Map email → { login, role, id } — Signal pour que le template réagisse au chargement async
+  private readonly userMapSig = signal<Map<string, { login: string; firstName: string; lastName: string; role: string; id?: number }>>(
+    new Map(),
+  );
 
   ngOnInit(): void {
     this.api.myCompanyUsers().subscribe({
       next: users => {
-        this.userMap.clear();
+        const map = new Map<string, { login: string; firstName: string; lastName: string; role: string; id?: number }>();
         for (const u of users) {
           const email = (u.email ?? '').toLowerCase();
           const role = this.primaryRole(u.authorities ?? []);
-          if (email) this.userMap.set(email, { id: u.id, login: u.login, firstName: u.firstName, lastName: u.lastName, role });
+          if (email) map.set(email, { id: u.id, login: u.login, firstName: u.firstName, lastName: u.lastName, role });
         }
+        this.userMapSig.set(map); // déclenche la mise à jour du template
       },
       error: () => {},
     });
@@ -499,7 +511,12 @@ export default class AdminUsersComponent implements OnInit {
   }
 
   protected getSystemRole(email: string): string {
-    return this.userMap.get((email ?? '').toLowerCase())?.role ?? '';
+    // Retourne le rôle JHipster si le compte existe, sinon ROLE_EMPLOYE par défaut
+    return this.userMapSig().get((email ?? '').toLowerCase())?.role ?? 'ROLE_EMPLOYE';
+  }
+
+  private getUserEntry(email: string) {
+    return this.userMapSig().get((email ?? '').toLowerCase());
   }
 
   autoFillLogin() {
@@ -542,7 +559,7 @@ export default class AdminUsersComponent implements OnInit {
   }
 
   openEdit(e: Employee) {
-    const userEntry = this.userMap.get((e.email ?? '').toLowerCase());
+    const userEntry = this.getUserEntry(e.email);
     this.editForm = {
       first: e.first,
       last: e.last,
@@ -615,7 +632,7 @@ export default class AdminUsersComponent implements OnInit {
         // Mettre à jour le rôle si un compte utilisateur existe et que le rôle a changé
         const login = this.editForm.login;
         if (login && this.editForm.role !== this.editForm.origRole) {
-          const userEntry = this.userMap.get((this.editForm.email ?? '').toLowerCase());
+          const userEntry = this.getUserEntry(this.editForm.email);
           this.api
             .updateUserAuthorities(
               login,
@@ -627,12 +644,14 @@ export default class AdminUsersComponent implements OnInit {
             )
             .subscribe({
               next: () => {
-                this.userMap.set((this.editForm.email ?? '').toLowerCase(), {
+                const updated = new Map(this.userMapSig());
+                updated.set((this.editForm.email ?? '').toLowerCase(), {
                   login,
                   firstName: this.editForm.first,
                   lastName: this.editForm.last,
                   role: this.editForm.role,
                 });
+                this.userMapSig.set(updated);
                 this.successMsg.set('Modifications enregistrées.');
                 this.busy.set(false);
                 this.editTarget.set(null);
@@ -670,7 +689,7 @@ export default class AdminUsersComponent implements OnInit {
     this.api.patchEmployee(e.id, { id: e.id, active: false }).subscribe({
       next: () => {
         this.data.employees.update(list => list.map(emp => (emp.id === e.id ? { ...emp, active: false } : emp)));
-        const userEntry = this.userMap.get((e.email ?? '').toLowerCase());
+        const userEntry = this.getUserEntry(e.email);
         if (userEntry?.login) {
           this.api
             .deactivateJhiUser(
@@ -698,7 +717,7 @@ export default class AdminUsersComponent implements OnInit {
     this.api.patchEmployee(e.id, { id: e.id, active: true }).subscribe({
       next: () => {
         this.data.employees.update(list => list.map(emp => (emp.id === e.id ? { ...emp, active: true } : emp)));
-        const userEntry = this.userMap.get((e.email ?? '').toLowerCase());
+        const userEntry = this.getUserEntry(e.email);
         if (userEntry?.login) {
           this.api
             .activateJhiUser(userEntry.login, e.email, userEntry.firstName, userEntry.lastName, [userEntry.role, 'ROLE_USER'], userEntry.id)

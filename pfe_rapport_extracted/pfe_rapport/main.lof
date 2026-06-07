@@ -1,0 +1,55 @@
+\babel@toc {french}{}\relax 
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Logo de Grow Up Technologies}}{4}{figure.1.1}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Paie tunisie}}{5}{figure.1.2}%
+\contentsline {figure}{\numberline {1.3}{\ignorespaces Diagramme du cycle Scrum}}{10}{figure.1.3}%
+\contentsline {figure}{\numberline {1.4}{\ignorespaces Langage de modélisation UML}}{12}{figure.1.4}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Diagramme de cas d'utilisation global de PaieZone RH}}{30}{figure.2.1}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Architecture physique trois-tiers}}{36}{figure.2.2}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Architecture logique N-tiers (Spring Boot / Angular)}}{37}{figure.2.3}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Diagramme de cas d'utilisation raffiné du Sprint~1}}{46}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Diagramme de classes du Sprint~1}}{51}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Diagramme de séquence — Authentification}}{53}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Diagramme de séquence — Création d'un utilisateur avec enregistrement d'audit}}{54}{figure.3.4}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Formulaire d'inscription — Informations personnelles et informations de la société}}{55}{figure.3.5}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Page de connexion de PaieZone RH}}{56}{figure.3.6}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Tableau de bord — Vue SuperAdmin après authentification}}{56}{figure.3.7}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Tableau de bord — Vue Administrateur après authentification}}{57}{figure.3.8}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Tableau de bord — Vue Employé après authentification}}{57}{figure.3.9}%
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Tableau de bord — Vue RH après authentification}}{58}{figure.3.10}%
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Liste des utilisateurs}}{58}{figure.3.11}%
+\contentsline {figure}{\numberline {3.12}{\ignorespaces Formulaire d'ajout et de modification d'un utilisateur}}{59}{figure.3.12}%
+\contentsline {figure}{\numberline {3.13}{\ignorespaces Journal d'audit — Liste des actions enregistrées}}{60}{figure.3.13}%
+\contentsline {figure}{\numberline {3.14}{\ignorespaces Interface de gestion des départements et postes}}{60}{figure.3.14}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Diagramme de cas d'utilisation du Sprint~2}}{70}{figure.4.1}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Diagramme de classes du Sprint~2}}{75}{figure.4.2}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Diagramme de séquence --- Création d'un employé}}{77}{figure.4.3}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Diagramme de séquence --- Association d'un contrat à un employé}}{78}{figure.4.4}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Liste des employés --- Vue d'ensemble du personnel}}{79}{figure.4.5}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Formulaire de création et de modification d'un employé}}{80}{figure.4.6}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Vue détaillée du profil employé}}{80}{figure.4.7}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Section Contrats du dossier employé}}{81}{figure.4.8}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Section Documents du dossier employé --- Dépôt et consultation}}{82}{figure.4.9}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Diagramme de cas d'utilisation du Sprint~3}}{93}{figure.5.1}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Diagramme de classes du Sprint 3 --- PaieZone}}{98}{figure.5.2}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Diagramme de séquence --- Lancer le calcul des bulletins de paie}}{100}{figure.5.3}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Diagramme de séquence --- Clôturer une période de paie }}{101}{figure.5.4}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Diagramme de séquence --- Demande et traitement d'une avance sur salaire}}{102}{figure.5.5}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Interface de gestion des paramètres réglementaires}}{103}{figure.5.6}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Interface de gestion des périodes de paie}}{104}{figure.5.7}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Interface de calcul et de visualisation des bulletins de paie}}{104}{figure.5.8}%
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Interface de gestion des primes et des avances}}{105}{figure.5.9}%
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Interface de gestion des congés et des absences}}{106}{figure.5.10}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Diagramme de cas d'utilisation du Sprint 4}}{118}{figure.6.1}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Diagramme de classes du Sprint 4}}{123}{figure.6.2}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Diagramme de séquence --- Générer une déclaration de conformité}}{125}{figure.6.3}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Diagramme de séquence --- Interaction avec le chatbot RH}}{126}{figure.6.4}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Interface de gestion du plan comptable et export SAGE}}{128}{figure.6.5}%
+\contentsline {figure}{\numberline {6.6}{\ignorespaces Interface de l'onglet Conformité --- Déclarations CNSS, CAVIS et IRPP}}{128}{figure.6.6}%
+\contentsline {figure}{\numberline {6.7}{\ignorespaces Génération de l'attestation de salaire et du certificat de travail}}{129}{figure.6.7}%
+\contentsline {figure}{\numberline {6.8}{\ignorespaces Composant PaieBot --- Assistant conversationnel RH flottant}}{130}{figure.6.8}%

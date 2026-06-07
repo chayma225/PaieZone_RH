@@ -1,0 +1,145 @@
+\babel@toc {french}{}\relax 
+\contentsline {chapter}{Table des Matières}{iv}{Doc-Start}%
+\contentsline {chapter}{Liste des Figures}{vi}{Doc-Start}%
+\contentsline {chapter}{Liste des Tableaux}{viii}{Doc-Start}%
+\contentsline {chapter}{Introduction Générale}{1}{Doc-Start}%
+\contentsline {chapter}{\numberline {1}Contexte Général}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Organisme d'accueil : Grow Up Technologies}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Présentation du Projet}{4}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Analyse de l'Existant}{4}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}État de l'art : Le marché de la gestion RH et paie en Tunisie}{4}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Comparaison avec l'existant}{5}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.2.4}Solution Proposée : La Plateforme PaieZone RH}{8}{subsection.1.2.4}%
+\contentsline {subsubsection}{\numberline {1.2.4.1}Description et Périmètre Fonctionnel}{8}{subsubsection.1.2.4.1}%
+\contentsline {subsubsection}{\numberline {1.2.4.2}Valeur ajoutée du modèle SaaS et de l'IA}{8}{subsubsection.1.2.4.2}%
+\contentsline {section}{\numberline {1.3}Démarche Adoptée}{9}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Choix du cadre méthodologique}{9}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Présentation de Scrum}{10}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}Raisons du choix de Scrum}{10}{subsection.1.3.3}%
+\contentsline {subsection}{\numberline {1.3.4}Les rôles Scrum}{11}{subsection.1.3.4}%
+\contentsline {section}{\numberline {1.4}Langage de modélisation UML}{11}{section.1.4}%
+\contentsline {chapter}{\numberline {2}Analyse et planification du projet}{13}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Identification des acteurs}{14}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Spécification des besoins}{16}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Besoins fonctionnels}{16}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Besoins non fonctionnels}{19}{subsection.2.2.2}%
+\contentsline {section}{\numberline {2.3}Pilotage du projet avec Scrum}{20}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Équipe et rôles Scrum}{21}{subsection.2.3.1}%
+\contentsline {section}{\numberline {2.4}Backlog du Produit}{21}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Diagramme de cas d'utilisation global}{29}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Planification préliminaire des sprints}{30}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Environnement de travail}{31}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Environnement matériel}{32}{subsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.1.1}Poste de travail n°1}{32}{subsubsection.2.7.1.1}%
+\contentsline {subsubsection}{\numberline {2.7.1.2}Poste de travail n°2}{32}{subsubsection.2.7.1.2}%
+\contentsline {subsection}{\numberline {2.7.2}Environnement logiciel}{33}{subsection.2.7.2}%
+\contentsline {section}{\numberline {2.8}Architecture du projet}{35}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Architecture physique (déploiement)}{35}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Architecture logique du système}{36}{subsection.2.8.2}%
+\contentsline {chapter}{\numberline {3}Étude et Réalisation du Premier Sprint}{39}{chapter.3}%
+\contentsline {section}{Introduction}{40}{Item.19}%
+\contentsline {section}{\numberline {3.1}User Stories du premier sprint}{40}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Backlog du premier Sprint}{42}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Spécification fonctionnelle du premier Sprint}{45}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Diagramme de cas d'utilisation du premier Sprint}{46}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Description textuelle des cas d'utilisation}{47}{subsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.1}Cas d'utilisation 1 : S'authentifier}{47}{subsubsection.3.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.3.2.2}Cas d'utilisation 2 : S'inscrire et enregistrer la société}{48}{subsubsection.3.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.3}Cas d'utilisation 3 : Gérer les utilisateurs}{49}{subsubsection.3.3.2.3}%
+\contentsline {section}{\numberline {3.4}Conception du premier Sprint}{51}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Diagramme de classes}{51}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Diagrammes de séquences}{52}{subsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.2.1}Diagramme de séquence : Authentification}{53}{subsubsection.3.4.2.1}%
+\contentsline {subsubsection}{\numberline {3.4.2.2}Diagramme de séquence : Création d'un utilisateur avec enregistrement d'audit}{54}{subsubsection.3.4.2.2}%
+\contentsline {section}{\numberline {3.5}Réalisation du premier Sprint}{55}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Inscription et initialisation de l'espace société}{55}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Authentification et accès}{55}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Gestion des utilisateurs}{58}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}Journal d'audit}{59}{subsection.3.5.4}%
+\contentsline {subsection}{\numberline {3.5.5}Gestion Organisationnelle}{60}{subsection.3.5.5}%
+\contentsline {section}{\numberline {3.6}Tests et Validation}{61}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Plan de tests}{61}{subsection.3.6.1}%
+\contentsline {section}{\numberline {3.7}Rituels Agiles et Clôture du Sprint}{62}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Revue du Sprint (Sprint Review)}{63}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Rétrospective du Sprint (Sprint Retrospective)}{63}{subsection.3.7.2}%
+\contentsline {section}{Conclusion}{63}{subsection.3.7.2}%
+\contentsline {chapter}{\numberline {4}Étude et Réalisation du Deuxième Sprint}{64}{chapter.4}%
+\contentsline {section}{Introduction}{65}{Item.44}%
+\contentsline {section}{\numberline {4.1}User Stories du deuxième sprint}{65}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Backlog du deuxième Sprint}{66}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Spécification fonctionnelle du deuxième Sprint}{69}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Diagramme de cas d'utilisation du deuxième Sprint}{69}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Description textuelle des cas d'utilisation}{71}{subsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.2.1}Cas d'utilisation 1 : Créer un employé}{71}{subsubsection.4.3.2.1}%
+\contentsline {subsubsection}{\numberline {4.3.2.2}Cas d'utilisation 2 : Gérer les contrats de travail}{72}{subsubsection.4.3.2.2}%
+\contentsline {subsubsection}{\numberline {4.3.2.3}Cas d'utilisation 3 : Déposer un document administratif}{74}{subsubsection.4.3.2.3}%
+\contentsline {section}{\numberline {4.4}Conception du deuxième Sprint}{74}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Diagramme de classes}{75}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Diagrammes de séquences}{76}{subsection.4.4.2}%
+\contentsline {subsubsection}{\numberline {4.4.2.1}Diagramme de séquence : Création d'un employé}{76}{subsubsection.4.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.4.2.2}Diagramme de séquence : Association d'un contrat}{77}{subsubsection.4.4.2.2}%
+\contentsline {section}{\numberline {4.5}Étude et réalisation du deuxième sprint}{79}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Gestion des employés}{79}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Gestion des contrats de travail}{81}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Gestion des documents administratifs}{81}{subsection.4.5.3}%
+\contentsline {section}{\numberline {4.6}Tests et Validation}{82}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Plan de tests}{82}{subsection.4.6.1}%
+\contentsline {section}{\numberline {4.7}Rituels Agiles et Clôture du Sprint}{83}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Revue du Sprint (Sprint Review)}{84}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Rétrospective du Sprint (Sprint Retrospective)}{84}{subsection.4.7.2}%
+\contentsline {section}{Conclusion}{84}{subsection.4.7.2}%
+\contentsline {chapter}{\numberline {5}ÉTUDE DU SPRINT 3}{85}{chapter.5}%
+\contentsline {section}{Introduction}{86}{Item.74}%
+\contentsline {section}{\numberline {5.1}User Stories du troisième sprint}{86}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Backlog du troisième Sprint}{88}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Spécification fonctionnelle}{92}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Diagramme de cas d'utilisation du Sprint 3}{93}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Description textuelle des cas d'utilisation}{94}{subsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.2.1}Cas d'utilisation 1 : Lancer le calcul de tous les bulletins d'une période}{94}{subsubsection.5.3.2.1}%
+\contentsline {subsubsection}{\numberline {5.3.2.2}Cas d'utilisation 2 : Clôturer une période de paie}{95}{subsubsection.5.3.2.2}%
+\contentsline {subsubsection}{\numberline {5.3.2.3}Cas d'utilisation 3 : Demande et traitement d'une avance sur salaire}{96}{subsubsection.5.3.2.3}%
+\contentsline {section}{\numberline {5.4}Conception du Sprint 3}{97}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Diagramme de classes}{97}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Diagrammes de séquences}{99}{subsection.5.4.2}%
+\contentsline {subsubsection}{\numberline {5.4.2.1}Diagramme de séquence : Lancer le calcul des bulletins de paie}{99}{subsubsection.5.4.2.1}%
+\contentsline {subsubsection}{\numberline {5.4.2.2}Diagramme de séquence : Clôturer une période de paie}{100}{subsubsection.5.4.2.2}%
+\contentsline {subsubsection}{\numberline {5.4.2.3}Diagramme de séquence : Demande et traitement d’une avance sur salaire}{101}{subsubsection.5.4.2.3}%
+\contentsline {section}{\numberline {5.5}Étude et réalisation}{103}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Gestion des paramètres réglementaires}{103}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Gestion des périodes de paie}{104}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Calcul et visualisation des bulletins de paie}{104}{subsection.5.5.3}%
+\contentsline {subsection}{\numberline {5.5.4}Gestion des primes et des avances}{105}{subsection.5.5.4}%
+\contentsline {subsection}{\numberline {5.5.5}Gestion des congés et des absences}{106}{subsection.5.5.5}%
+\contentsline {section}{\numberline {5.6}Tests et Validation}{106}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Plan de tests}{106}{subsection.5.6.1}%
+\contentsline {section}{\numberline {5.7}Rituels Agiles et Clôture du Sprint}{108}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Revue du Sprint (Sprint Review)}{108}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Rétrospective du Sprint (Sprint Retrospective)}{108}{subsection.5.7.2}%
+\contentsline {section}{Conclusion}{109}{subsection.5.7.2}%
+\contentsline {chapter}{\numberline {6}ÉTUDE DU SPRINT 4}{110}{chapter.6}%
+\contentsline {section}{Introduction}{111}{Item.102}%
+\contentsline {section}{\numberline {6.1}User Stories du quatrième sprint}{111}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Backlog du quatrième Sprint}{113}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Spécification fonctionnelle du quatrième Sprint}{117}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Diagramme de cas d'utilisation du quatrième Sprint}{117}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Description textuelle des cas d'utilisation}{119}{subsection.6.3.2}%
+\contentsline {subsubsection}{\numberline {6.3.2.1}Cas d'utilisation : Générer les déclarations de conformité réglementaire}{119}{subsubsection.6.3.2.1}%
+\contentsline {subsubsection}{\numberline {6.3.2.2}Cas d'utilisation : Interagir avec l'assistant conversationnel RH}{120}{subsubsection.6.3.2.2}%
+\contentsline {section}{\numberline {6.4}Conception du quatrième Sprint}{121}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Diagramme de classes}{121}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Diagrammes de séquences}{124}{subsection.6.4.2}%
+\contentsline {subsubsection}{\numberline {6.4.2.1}Diagramme de séquence : Générer une déclaration de conformité}{124}{subsubsection.6.4.2.1}%
+\contentsline {subsubsection}{\numberline {6.4.2.2}Diagramme de séquence : Interaction avec le chatbot RH}{125}{subsubsection.6.4.2.2}%
+\contentsline {section}{\numberline {6.5}Étude et réalisation du quatrième sprint}{127}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Gestion comptable et export SAGE}{128}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Conformité réglementaire}{128}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Documents administratifs RH}{129}{subsection.6.5.3}%
+\contentsline {subsection}{\numberline {6.5.4}Assistant conversationnel RH (PaieBot)}{130}{subsection.6.5.4}%
+\contentsline {section}{\numberline {6.6}Tests et Validation}{131}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}Plan de tests}{131}{subsection.6.6.1}%
+\contentsline {section}{\numberline {6.7}Rituels Agiles et Clôture du Sprint}{132}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}Revue du Sprint (Sprint Review)}{133}{subsection.6.7.1}%
+\contentsline {subsection}{\numberline {6.7.2}Rétrospective du Sprint (Sprint Retrospective)}{133}{subsection.6.7.2}%
+\contentsline {section}{Conclusion}{134}{subsection.6.7.2}%
+\contentsline {chapter}{Conclusion Générale}{137}{chapter*.1}%
+\contentsline {chapter}{Bibliographie et Webographie}{138}{chapter*.2}%

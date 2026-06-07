@@ -2,11 +2,13 @@ package tn.paiezone.rh.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
@@ -40,17 +42,41 @@ public class OllamaService {
         log.info("OllamaService → {} (modèle: {})", this.ollamaUrl, model);
     }
 
+    /**
+     * Pre-warm : charge phi3 en mémoire au démarrage.
+     * Evite le cold start sur le 1er appel utilisateur (~2-8s de latence).
+     * Exécuté en async pour ne pas bloquer le démarrage de l'application.
+     */
+    @PostConstruct
+    @Async
+    public void warmUp() {
+        try {
+            log.info("[Ollama] Pré-chargement du modèle {} en mémoire...", model);
+            long start = System.currentTimeMillis();
+            callOllama(
+                List.of(new OllamaMessage("user", "ok")),
+                0.1,
+                1, // 1 seul token suffit pour charger le modèle
+                512 // contexte minimal
+            );
+            log.info("[Ollama] Modèle chargé en {} ms — prêt.", System.currentTimeMillis() - start);
+        } catch (Exception e) {
+            log.warn("[Ollama] Pre-warm ignoré (Ollama non démarré) : {}", e.getMessage());
+        }
+    }
+
     // ──────────────────────────────────────────────────────────────────────────
     //  Mode conversationnel (RAG + réponses générales)
     // ──────────────────────────────────────────────────────────────────────────
 
     public String chat(List<OllamaMessage> messages) {
-        return callOllama(messages, 0.7, maxTokens);
+        // max 512 tokens suffisent pour une réponse RH concise
+        return callOllama(messages, 0.7, Math.min(maxTokens, 512), 1024);
     }
 
     /** Appel à température basse (0.1) pour les sorties JSON structurées. */
     public String chatJson(List<OllamaMessage> messages) {
-        return callOllama(messages, 0.1, 1500);
+        return callOllama(messages, 0.1, 600, 1024);
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -70,9 +96,8 @@ public class OllamaService {
             new OllamaMessage("user", question)
         );
 
-        // Température 0.05 : quasi-déterministe pour le SQL
-        // Max 300 tokens : une requête SQL simple ne dépasse pas 300 tokens
-        String rawSql = callOllama(messages, 0.05, 300);
+        // SQL : température 0.05, max 200 tokens, contexte 512 (SQL court)
+        String rawSql = callOllama(messages, 0.05, 200, 512);
         log.debug("[SQL-GEN] Réponse brute phi3 : {}", rawSql);
         return rawSql;
     }
@@ -81,12 +106,27 @@ public class OllamaService {
     //  Appel HTTP commun
     // ──────────────────────────────────────────────────────────────────────────
 
-    private String callOllama(List<OllamaMessage> messages, double temperature, int numPredict) {
+    private String callOllama(List<OllamaMessage> messages, double temperature, int numPredict, int numCtx) {
         OllamaChatRequest request = new OllamaChatRequest(
             model,
             messages,
             false,
-            Map.of("num_predict", numPredict, "temperature", temperature, "top_p", 0.9, "repeat_penalty", 1.1)
+            Map.of(
+                "num_predict",
+                numPredict,
+                "temperature",
+                temperature,
+                "top_p",
+                0.9,
+                "repeat_penalty",
+                1.1,
+                "num_ctx",
+                numCtx, // fenêtre de contexte réduite → plus rapide
+                "num_thread",
+                4, // threads CPU explicites
+                "keep_alive",
+                -1 // modèle toujours en mémoire (élimine le cold start)
+            )
         );
 
         try {

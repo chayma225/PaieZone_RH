@@ -6,7 +6,7 @@
       <div class="pz-muted">{{ data.employees().length }} collaborateurs actifs · {{ data.departments().length }} départements</div>
     </div>
     <div class="pz-page-actions">
-      <button class="pz-btn"><pz-icon name="Upload" [size]="14" [strokeWidth]="1.5" /> Importer</button>
+      <button class="pz-btn" (click)="openImport()"><pz-icon name="Upload" [size]="14" [strokeWidth]="1.5" /> Importer Excel</button>
       <button class="pz-btn pz-primary" (click)="openCreate()">
         <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Nouvel employé
       </button>
@@ -729,6 +729,142 @@
         <button class="pz-btn pz-danger" [disabled]="deleteBusy()" (click)="confirmDelete()">
           {{ deleteBusy() ? 'Suppression…' : 'Supprimer définitivement' }}
         </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════
+     Modal Import Excel
+══════════════════════════════════════════════════════════ -->
+@if (showImport()) {
+  <div class="pz-overlay" (click)="closeImport()">
+    <div class="pz-modal pz-modal-import" (click)="$event.stopPropagation()">
+      <!-- En-tête -->
+      <div class="pz-modal-head">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <div class="pz-avatar" data-bg="2"><pz-icon name="Upload" [size]="15" /></div>
+          <div>
+            <div style="font-size: 15px; font-weight: 700">Importer des employés</div>
+            <div style="font-size: 12px; color: var(--pz-muted)">Fichier Excel .xlsx — une ligne par employé</div>
+          </div>
+        </div>
+        <button class="pz-modal-close" (click)="closeImport()"><pz-icon name="X" [size]="16" /></button>
+      </div>
+
+      <div class="pz-modal-body">
+        <!-- ── Résultat import ── -->
+        @if (importResult(); as res) {
+          <div class="imp-result">
+            <div class="imp-stat-row">
+              <div class="imp-stat pos">
+                <pz-icon name="Check" [size]="18" />
+                <span>{{ res.imported }} importé{{ res.imported > 1 ? 's' : '' }}</span>
+              </div>
+              @if (res.skipped > 0) {
+                <div class="imp-stat warn">
+                  <pz-icon name="AlertTriangle" [size]="18" />
+                  <span>{{ res.skipped }} ignoré{{ res.skipped > 1 ? 's' : '' }}</span>
+                </div>
+              }
+              @if (res.errors > 0) {
+                <div class="imp-stat danger">
+                  <pz-icon name="X" [size]="18" />
+                  <span>{{ res.errors }} erreur{{ res.errors > 1 ? 's' : '' }}</span>
+                </div>
+              }
+            </div>
+            @if (res.errorLines.length > 0) {
+              <div class="imp-log danger">
+                <div class="imp-log-title">Erreurs</div>
+                @for (l of res.errorLines; track l) {
+                  <div class="imp-log-line">{{ l }}</div>
+                }
+              </div>
+            }
+            @if (res.skippedLines.length > 0) {
+              <div class="imp-log warn">
+                <div class="imp-log-title">Ignorés (déjà existants)</div>
+                @for (l of res.skippedLines; track l) {
+                  <div class="imp-log-line">{{ l }}</div>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- ── Zone drag & drop ── -->
+          <div
+            class="imp-dropzone"
+            [class.drag-over]="importDrop()"
+            (dragover)="$event.preventDefault(); importDrop.set(true)"
+            (dragleave)="importDrop.set(false)"
+            (drop)="onImportDrop($event)"
+            (click)="importFilePicker.click()"
+          >
+            <input #importFilePicker type="file" accept=".xlsx,.xls" style="display: none" (change)="onImportFilePick($event)" />
+            @if (importFile(); as f) {
+              <div class="imp-file-info">
+                <pz-icon name="FileText" [size]="28" style="color: var(--pz-primary)" />
+                <div>
+                  <div style="font-weight: 600; font-size: 14px">{{ f.name }}</div>
+                  <div style="font-size: 12px; color: var(--pz-muted)">{{ (f.size / 1024).toFixed(1) }} Ko</div>
+                </div>
+                <button class="pz-btn pz-sm pz-ghost" (click)="$event.stopPropagation(); importFile.set(null)">
+                  <pz-icon name="X" [size]="12" />
+                </button>
+              </div>
+            } @else {
+              <pz-icon name="Upload" [size]="32" style="color: var(--pz-muted-2)" />
+              <div class="imp-drop-title">Glissez votre fichier Excel ici</div>
+              <div class="imp-drop-sub">.xlsx · max 5 Mo · ou cliquez pour parcourir</div>
+            }
+          </div>
+
+          <!-- ── Colonnes attendues ── -->
+          <div class="imp-cols-info">
+            <div class="imp-cols-title">Colonnes du fichier (ligne 1 = en-têtes)</div>
+            <div class="imp-cols-grid">
+              <span class="imp-col req">A · Matricule *</span>
+              <span class="imp-col req">B · Prénom *</span>
+              <span class="imp-col req">C · Nom *</span>
+              <span class="imp-col req">H · CIN *</span>
+              <span class="imp-col req">I · Date embauche *</span>
+              <span class="imp-col">D · Genre (M/F)</span>
+              <span class="imp-col">E · Situation familiale</span>
+              <span class="imp-col">J · Département</span>
+              <span class="imp-col">K · Poste</span>
+              <span class="imp-col">L · Email pro</span>
+              <span class="imp-col">P · Type contrat</span>
+              <span class="imp-col">Q · Salaire base</span>
+            </div>
+          </div>
+
+          @if (importErr()) {
+            <div
+              style="color: var(--pz-danger-ink); background: var(--pz-danger-soft); padding: 8px 12px; border-radius: 8px; font-size: 13px"
+            >
+              {{ importErr() }}
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Pied -->
+      <div class="pz-modal-foot">
+        <button class="pz-btn pz-sm" (click)="downloadTemplate()"><pz-icon name="Download" [size]="13" /> Télécharger le modèle</button>
+        @if (importResult()) {
+          <button class="pz-btn" (click)="importFile.set(null); importResult.set(null)">Importer un autre</button>
+          <button class="pz-btn pz-primary" (click)="closeImport()">Fermer</button>
+        } @else {
+          <button class="pz-btn" (click)="closeImport()">Annuler</button>
+          <button class="pz-btn pz-primary" [disabled]="!importFile() || importBusy()" (click)="runImport()">
+            @if (importBusy()) {
+              … Import en cours…
+            } @else {
+              <pz-icon name="Upload" [size]="14" /> Lancer l'import
+            }
+          </button>
+        }
       </div>
     </div>
   </div>

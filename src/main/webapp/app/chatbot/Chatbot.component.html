@@ -81,14 +81,34 @@
         </div>
       </div>
       <div class="pz-chatbot__header-actions">
+        <!-- Historique -->
         <button class="pz-chatbot__icon-btn" (click)="showSessions = !showSessions" title="Historique des conversations">
-          <i class="fa fa-history"></i>
+          <svg
+            viewBox="0 0 16 16"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 8a5 5 0 1 0 1.5-3.5" />
+            <path d="M3 2v3h3" />
+            <path d="M8 5v3l2 1.5" />
+          </svg>
         </button>
+        <!-- Nouvelle conversation -->
         <button class="pz-chatbot__icon-btn" (click)="startNewSession()" title="Nouvelle conversation">
-          <i class="fa fa-plus"></i>
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M8 3v10M3 8h10" />
+          </svg>
         </button>
+        <!-- Réduire -->
         <button class="pz-chatbot__icon-btn" (click)="toggleChat()" title="Réduire">
-          <i class="fa fa-chevron-down"></i>
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="m4 6 4 4 4-4" />
+          </svg>
         </button>
       </div>
     </div>
@@ -166,7 +186,35 @@
         maxlength="2000"
       ></textarea>
       <button class="pz-chatbot__send-btn" (click)="sendMessage()" [disabled]="!currentMessage.trim() || isLoading">
-        <i class="fa" [class.fa-paper-plane]="!isLoading" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading"></i>
+        @if (isLoading) {
+          <svg
+            viewBox="0 0 16 16"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            style="animation: pz-spin 0.8s linear infinite"
+          >
+            <path d="M8 2a6 6 0 0 1 6 6" opacity=".9" />
+            <path d="M8 2a6 6 0 0 0-6 6" opacity=".3" />
+          </svg>
+        } @else {
+          <svg
+            viewBox="0 0 16 16"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m2.5 8 11-5.5-3 12-3-4.5z" />
+            <path d="m7.5 10 3-4.5" />
+          </svg>
+        }
       </button>
     </div>
 

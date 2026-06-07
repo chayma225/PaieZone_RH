@@ -1,4 +1,4 @@
-// PaieZone RH — Design tokens
+// PaieZone RH — Design tokens + Animation System
 
 :root {
   // Surfaces
@@ -565,4 +565,347 @@
     background: rgba(14, 165, 233, 0.15);
     color: #38bdf8;
   }
+}
+
+// ══════════════════════════════════════════════════════════
+//  PaieZone — Animation System (GPU-composited, 60fps)
+// ══════════════════════════════════════════════════════════
+
+// ── Keyframes ─────────────────────────────────────────────
+
+@keyframes pz-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pz-fade-right {
+  from {
+    opacity: 0;
+    transform: translateX(36px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes pz-curtain {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(0 0% 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes pz-row-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pz-shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pz-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 24px rgba(79, 70, 229, 0.42);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 8px 36px rgba(79, 70, 229, 0.65);
+  }
+}
+
+@keyframes pz-modal-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+  65% {
+    transform: scale(1.01) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pz-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pz-orb-1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -25px) scale(1.07);
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.96);
+  }
+}
+@keyframes pz-orb-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  40% {
+    transform: translate(-35px, 22px) scale(1.09);
+  }
+  70% {
+    transform: translate(25px, -18px) scale(0.97);
+  }
+}
+@keyframes pz-orb-3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(18px, 36px) scale(1.05);
+  }
+}
+
+@keyframes pz-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes pz-float-alt {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(1deg);
+  }
+}
+
+// ── Utility classes ────────────────────────────────────────
+
+// Entrée hero (stagger via --pz-delay)
+.pz-anim-up {
+  animation: pz-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--pz-delay, 0ms);
+}
+.pz-anim-right {
+  animation: pz-fade-right 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--pz-delay, 0ms);
+}
+.pz-anim-curtain {
+  animation: pz-curtain 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--pz-delay, 0ms);
+}
+
+// Reveal ligne tableau (appliquer --pz-i sur chaque ligne)
+.pz-row-reveal {
+  animation: pz-row-reveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--pz-i, 0) * 55ms);
+}
+
+// Skeleton shimmer
+.pz-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8f0 50%, #f0f0f0 75%);
+  background-size: 400% 100%;
+  animation: pz-shimmer 1.8s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+// Float animations
+.pz-float {
+  animation: pz-float 3.6s ease-in-out infinite;
+}
+.pz-float-alt {
+  animation: pz-float-alt 4.4s ease-in-out infinite;
+}
+
+// Modals
+.pz-modal-in {
+  animation: pz-modal-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.pz-backdrop-in {
+  animation: pz-backdrop-in 0.25s ease both;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+// ── Dashboard card hover ───────────────────────────────────
+
+.pz-card-hover {
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease;
+  will-change: transform;
+
+  &:hover {
+    transform: translateY(-4px) scale(1.005);
+    box-shadow:
+      0 12px 32px -8px rgba(15, 23, 42, 0.14),
+      0 4px 12px -4px rgba(79, 70, 229, 0.1);
+  }
+}
+
+// Hover : shimmer sweep sur la carte
+.pz-card-shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+    background-size: 200% 100%;
+    background-position: -200% 0;
+    opacity: 0;
+    transition: opacity 0.18s;
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    animation: pz-shimmer 0.7s ease forwards;
+  }
+}
+
+// ── Feature card 3D tilt ───────────────────────────────────
+
+.pz-tilt {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+
+  &:hover {
+    transform: perspective(900px) rotateX(3deg) rotateY(-4deg) translateY(-5px);
+    box-shadow: 12px 20px 40px -8px rgba(91, 33, 182, 0.18);
+  }
+
+  .pz-tilt-inner {
+    transform: translateZ(10px);
+    transition: transform 0.25s ease;
+  }
+}
+
+// ── Glow accent ────────────────────────────────────────────
+
+.pz-glow {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, var(--pz-primary), #7c3aed);
+    opacity: 0;
+    filter: blur(10px);
+    z-index: -1;
+    transition: opacity 0.25s ease;
+  }
+
+  &:hover::before {
+    opacity: 0.35;
+  }
+}
+
+// ── Orbes décoratifs ───────────────────────────────────────
+
+.pz-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  will-change: transform;
+  z-index: 0;
+}
+.pz-orb-1 {
+  animation: pz-orb-1 20s ease-in-out infinite;
+}
+.pz-orb-2 {
+  animation: pz-orb-2 26s ease-in-out infinite;
+}
+.pz-orb-3 {
+  animation: pz-orb-3 16s ease-in-out infinite;
+}
+
+// ══════════════════════════════════════════════════════════
+//  Modals cinématiques — s'appliquent globalement
+// ══════════════════════════════════════════════════════════
+
+@keyframes pz-modal-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pz-modal-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.91) translateY(20px);
+  }
+  60% {
+    transform: scale(1.015) translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Overlay : backdrop blur animé
+.pz-overlay {
+  animation: pz-modal-backdrop 0.22s ease both;
+  // Le backdrop-filter est déjà défini dans chaque composant
+  // On ajoute uniquement l'animation d'entrée
+}
+
+// Modal : pop avec rebond subtil
+.pz-modal {
+  animation: pz-modal-pop 0.32s cubic-bezier(0.34, 1.46, 0.64, 1) both;
+  will-change: transform, opacity;
+}
+
+// Focus lock : estompage du fond
+.pz-overlay {
+  backdrop-filter: blur(6px) saturate(130%);
+  -webkit-backdrop-filter: blur(6px) saturate(130%);
+  background: rgba(0, 0, 0, 0.45) !important;
 }

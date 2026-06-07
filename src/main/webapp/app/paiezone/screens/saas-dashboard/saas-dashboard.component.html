@@ -375,7 +375,7 @@
     <div class="pz-card">
       <div class="card-head"><div class="card-title">État de la plateforme</div></div>
       <div class="card-body">
-        @for (s of services; track s.name) {
+        @for (s of services(); track s.name) {
           <div class="svc-row">
             <span class="pz-pill" [class.pos]="!s.warn && s.up" [class.warn]="s.warn" [class.danger]="!s.up">
               <span class="dot"></span>{{ serviceState(s).label }}

@@ -70,6 +70,45 @@ const ICONS: Record<string, string> = {
   Info: '<circle cx="8" cy="8" r="6"/><path d="M8 7.5v4"/><circle cx="8" cy="5.5" r=".5" fill="currentColor" stroke="none"/>',
   Archive: '<rect x="2" y="2.5" width="12" height="3.5" rx="1"/><path d="M3.5 6v7.5h9V6"/><path d="M6 9.5h4"/>',
   CalendarRange: '<rect x="2.5" y="3" width="11" height="11" rx="1.4"/><path d="M2.5 7h11M5.5 2v2M10.5 2v2M5 10h2M9 10h2"/>',
+
+  // ── Icônes manquantes ─────────────────────────────────────────────────────
+
+  // Conventions sectorielles (onglet nav + bento card)
+  Layers:
+    '<rect x="2" y="10.5" width="12" height="2.5" rx=".8"/>' +
+    '<rect x="2" y="6.5"  width="12" height="2.5" rx=".8"/>' +
+    '<rect x="2" y="2.5"  width="12" height="2.5" rx=".8"/>',
+
+  // Jours fériés (rh-payroll + rh-leaves)
+  CalendarDays:
+    '<rect x="2.5" y="3" width="11" height="11" rx="1.4"/>' +
+    '<path d="M2.5 7h11M5.5 2v2M10.5 2v2"/>' +
+    '<circle cx="5.5" cy="10" r=".8" fill="currentColor" stroke="none"/>' +
+    '<circle cx="8"   cy="10" r=".8" fill="currentColor" stroke="none"/>' +
+    '<circle cx="10.5" cy="10" r=".8" fill="currentColor" stroke="none"/>',
+
+  // État vide conventions
+  FolderOpen:
+    '<path d="M2 5a1 1 0 0 1 1-1h3l1.5 1.5H13a1 1 0 0 1 1 1v1H2z"/>' + '<path d="M2 7.5v4.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1L13 7.5H2z"/>',
+
+  Inbox: '<path d="M2 8h3l1.5 2.5h3L11 8h3"/>' + '<path d="M3 4h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/>',
+
+  // Bouton modifier (conventions + autres)
+  Pencil: '<path d="M11 2.5 13.5 5 5.5 13H3v-2.5z"/>' + '<path d="M9.5 4 12 6.5"/>',
+
+  // Localisation (admin-company)
+  MapPin: '<path d="M8 2a4 4 0 0 1 4 4c0 3-4 8-4 8S4 9 4 6a4 4 0 0 1 4-4z"/>' + '<circle cx="8" cy="6" r="1.5"/>',
+
+  // Paramètres
+  Settings:
+    '<circle cx="8" cy="8" r="2.2"/>' +
+    '<path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.6 3.6l1.1 1.1M11.3 11.3l1.1 1.1M3.6 12.4l1.1-1.1M11.3 4.7l1.1-1.1"/>',
+
+  // Avertissement (rh-leaves)
+  AlertTriangle:
+    '<path d="M8 2.5 1.5 13.5h13L8 2.5z"/>' +
+    '<path d="M8 6.5v3.5"/>' +
+    '<circle cx="8" cy="11.5" r=".5" fill="currentColor" stroke="none"/>',
 };
 
 @Component({
