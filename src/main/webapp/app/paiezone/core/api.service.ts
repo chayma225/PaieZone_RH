@@ -224,6 +224,7 @@ export class ApiService {
     numberOfDays: number;
     comment?: string;
     employeeId?: number;
+    status?: string;
   }): Observable<LeaveRequest> {
     return this.http.post<any>('/api/leave-requests/submit', dto).pipe(map(d => this.mapLeave(d)));
   }
@@ -918,6 +919,7 @@ export class ApiService {
       createdAt: d.createdAt ?? '',
       mrr: status === 'ACTIVE' ? +(sub?.priceHT ?? 0) : 0,
       logoUrl: d.logoUrl ?? null,
+      adminLogin: d.adminLogin ?? undefined,
     };
   }
 

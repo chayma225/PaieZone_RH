@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Crée le type "Absence non justifiée" pour chaque entreprise qui n'en a pas déjà un.
+    -->
+    <changeSet id="20260607_add_absence_non_justifiee" author="chayma">
+        <sql>
+            INSERT INTO leave_type (name, label, max_days_per_year, carry_over_days, paid, requires_medical, active, company_id)
+            SELECT
+                'ABSENCE_NON_JUSTIFIEE',
+                'Absence non justifiée',
+                365,
+                0,
+                false,
+                false,
+                true,
+                c.id
+            FROM company c
+            WHERE NOT EXISTS (
+                SELECT 1 FROM leave_type lt
+                WHERE lt.company_id = c.id
+                  AND lt.name = 'ABSENCE_NON_JUSTIFIEE'
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

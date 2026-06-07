@@ -42,6 +42,7 @@ export interface Company {
   createdAt: string;
   mrr: number;
   logoUrl: string | null;
+  adminLogin?: string;
   activitySectorId?: number | null;
   activitySector?: ActivitySector | null;
 }

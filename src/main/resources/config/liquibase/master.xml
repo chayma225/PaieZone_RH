@@ -100,6 +100,12 @@
            relativeToChangelogFile="false"/>
   <include file="config/liquibase/changelog/20260525_create_user_profiles_for_admins.xml"
            relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260607_add_absence_non_justifiee_leave_type.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260607_backfill_audit_notification_user.xml"
+           relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20260607_seed_tunisian_public_holidays.xml"
+           relativeToChangelogFile="false"/>
 
 
 </databaseChangeLog>

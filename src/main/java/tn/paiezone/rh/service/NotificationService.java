@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.AuditLog;
 import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.Contract;
+import tn.paiezone.rh.domain.UserProfile;
 import tn.paiezone.rh.repository.AuditLogRepository;
 import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.UserProfileRepository;
 
 @Service
 @Transactional
@@ -20,10 +22,16 @@ public class NotificationService {
 
     private final AuditLogRepository auditLogRepository;
     private final CompanyRepository companyRepository;
+    private final UserProfileRepository userProfileRepository;
 
-    public NotificationService(AuditLogRepository auditLogRepository, CompanyRepository companyRepository) {
+    public NotificationService(
+        AuditLogRepository auditLogRepository,
+        CompanyRepository companyRepository,
+        UserProfileRepository userProfileRepository
+    ) {
         this.auditLogRepository = auditLogRepository;
         this.companyRepository = companyRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     public void createContractExpirationNotification(Contract contract, String delayLabel) {
@@ -35,17 +43,20 @@ public class NotificationService {
             notification.setOccurredAt(Instant.now());
             notification.setIpAddress("SYSTEM_SCHEDULER");
 
-            // Message de notification
             String message = buildNotificationMessage(contract, delayLabel);
             notification.setNewValue(message);
 
-            // ← Correction : récupérer la Company depuis l'employé
             Company company = resolveCompany(contract);
             if (company == null) {
                 LOG.warn("Impossible de créer la notification : Company introuvable pour le contrat {}", contract.getReference());
-                return; // Ne pas créer si Company manquante (NOT NULL en BDD)
+                return;
             }
             notification.setCompany(company);
+
+            // Stocker le UserProfile de l'admin company comme déclencheur
+            if (company.getAdminLogin() != null) {
+                userProfileRepository.findByJhiUserId(company.getAdminLogin()).ifPresent(notification::setUser);
+            }
 
             auditLogRepository.save(notification);
             LOG.debug("✅ Notification créée pour le contrat : {} (expire dans {})", contract.getReference(), delayLabel);
@@ -55,11 +66,9 @@ public class NotificationService {
     }
 
     private Company resolveCompany(Contract contract) {
-        // Priorité 1 : Company via l'employé
         if (contract.getEmployee() != null && contract.getEmployee().getCompany() != null) {
             return contract.getEmployee().getCompany();
         }
-        // Priorité 2 : Première Company disponible (fallback)
         Optional<Company> fallback = companyRepository.findAll().stream().findFirst();
         return fallback.orElse(null);
     }

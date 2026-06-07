@@ -50,9 +50,7 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
             </button>
           }
           @if (activeTab() === 'holidays') {
-            <button class="pz-btn pz-primary" (click)="openCreateHoliday()">
-              <pz-icon name="Plus" [size]="14" [strokeWidth]="1.7" /> Ajouter jour férié
-            </button>
+            <!-- Boutons dans l'en-tête section holidays -->
           }
         </div>
       </div>
@@ -345,111 +343,156 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
 
       <!-- TAB: Jours Fériés -->
       @if (activeTab() === 'holidays') {
-        <!-- Sélecteur d'année -->
-        <div class="hol-year-bar">
-          @for (y of holidayYears; track y) {
-            <button class="hol-year-btn" [class.active]="holidayYear === y" (click)="setHolidayYear(y)">{{ y }}</button>
-          }
+        <!-- En-tête section jours fériés -->
+        <div class="hol-header">
+          <div>
+            <h2 class="hol-title">Jours fériés</h2>
+            <div class="hol-subtitle">Calendrier légal tunisien · dates fixes et variables (hégirien ☽)</div>
+          </div>
+          <div class="hol-header-actions">
+            @for (y of holidayYears; track y) {
+              <button class="hol-year-chip" [class.active]="holidayYear === y" (click)="setHolidayYear(y)">{{ y }}</button>
+            }
+            <button class="pz-btn pz-sm" style="margin-left:4px"><pz-icon name="Upload" [size]="13" /> Exporter</button>
+            <button class="pz-btn pz-sm pz-primary" (click)="openCreateHoliday()">
+              <pz-icon name="Plus" [size]="13" [strokeWidth]="2" /> Ajouter un jour férié
+            </button>
+          </div>
         </div>
 
-        <!-- Stats -->
+        <!-- 4 Stats -->
         <div class="hol-stats">
           <div class="hol-stat">
-            <div class="hol-stat-num">{{ holidays().length }}</div>
-            <div class="hol-stat-lbl">Jours fériés</div>
+            <div class="hol-stat-ico">⭐</div>
+            <div>
+              <div class="hol-stat-num">{{ holidays().length }}</div>
+              <div class="hol-stat-lbl">Jours fériés</div>
+              <div class="hol-stat-sub">année {{ holidayYear }}</div>
+            </div>
           </div>
-          <div class="hol-stat green">
-            <div class="hol-stat-num">{{ fixedCount() }}</div>
-            <div class="hol-stat-lbl">Dates fixes 📅</div>
+          <div class="hol-stat">
+            <div class="hol-stat-ico" style="color:#7c3aed">📍</div>
+            <div>
+              <div class="hol-stat-num" style="color:#7c3aed">{{ fixedCount() }}</div>
+              <div class="hol-stat-lbl">Dates fixes 📅</div>
+              <div class="hol-stat-sub">récurrentes chaque année</div>
+            </div>
           </div>
-          <div class="hol-stat orange">
-            <div class="hol-stat-num">{{ variableCount() }}</div>
-            <div class="hol-stat-lbl">Dates variables ☽</div>
+          <div class="hol-stat">
+            <div class="hol-stat-ico" style="color:#0ea5e9">☽</div>
+            <div>
+              <div class="hol-stat-num" style="color:#0ea5e9">{{ variableCount() }}</div>
+              <div class="hol-stat-lbl">Dates variables ☽</div>
+              <div class="hol-stat-sub">calendrier hégirien</div>
+            </div>
           </div>
-          <div class="hol-stat blue">
-            <div class="hol-stat-num">{{ monthsWithHolidays().length }}</div>
-            <div class="hol-stat-lbl">Mois concernés</div>
+          <div class="hol-stat">
+            <div class="hol-stat-ico" style="color:#f59e0b">🗓</div>
+            <div>
+              <div class="hol-stat-num" style="color:#f59e0b">{{ monthsWithHolidays().length }}</div>
+              <div class="hol-stat-lbl">Mois concernés</div>
+              <div class="hol-stat-sub">sur 12 mois</div>
+            </div>
           </div>
         </div>
 
-        <!-- Grille des 12 mois -->
         @if (holidayLoading()) {
           <div style="text-align:center;padding:60px;color:var(--pz-muted)">Chargement…</div>
         } @else {
-          <div class="hol-grid">
-            @for (m of allMonths(); track m.num) {
-              <div class="hol-month" [class.hol-month-active]="m.holidays.length > 0">
-                <div class="hol-month-name">{{ m.name }}</div>
-                @if (m.holidays.length === 0) {
-                  <div class="hol-month-empty">Pas de férié</div>
-                } @else {
-                  @for (h of m.holidays; track h.id) {
-                    <div
-                      class="hol-badge"
-                      [class.hol-badge-var]="!h.isRecurring"
-                      (click)="openEditHoliday(h)"
-                      title="Cliquer pour modifier"
-                    >
-                      <span class="hol-badge-day">{{ dayNum(h.holidayDate) }}</span>
-                      <span class="hol-badge-txt">{{ h.name }}</span>
-                      @if (!h.isRecurring) {
-                        <span>☽</span>
+          <!-- Layout 2 colonnes -->
+          <div class="hol-layout">
+            <!-- Colonne gauche : calendrier mois par mois -->
+            <div class="pz-card hol-cal-card">
+              <div class="hol-cal-head">
+                <span class="hol-cal-title">Calendrier annuel — {{ holidayYear }}</span>
+                <span class="hol-cal-sub">Vue mois par mois</span>
+              </div>
+              <div class="hol-cal-body">
+                @for (m of allMonths(); track m.num) {
+                  <div class="hol-row">
+                    <div class="hol-row-left">
+                      <div class="hol-row-name">{{ m.name }}</div>
+                      @if (m.holidays.length > 0) {
+                        <div class="hol-row-count">{{ m.holidays.length }} jour{{ m.holidays.length > 1 ? 's' : '' }}</div>
                       }
                     </div>
-                  }
+                    <div class="hol-row-bars">
+                      @if (m.holidays.length === 0) {
+                        <span class="hol-row-empty">Pas de férié</span>
+                      } @else {
+                        @for (h of m.holidays; track h.id) {
+                          <div
+                            class="hol-bar"
+                            [class.hol-bar-var]="!h.isRecurring"
+                            [class.hol-bar-sel]="selectedHolidayId() === h.id"
+                            (click)="selectHoliday(h.id)"
+                          >
+                            {{ h.name }}
+                          </div>
+                        }
+                      }
+                    </div>
+                  </div>
                 }
               </div>
-            }
-          </div>
-
-          <!-- Liste détaillée -->
-          @if (holidays().length > 0) {
-            <div class="pz-card" style="margin-top:20px">
-              <div class="card-head" style="display:flex;align-items:center;justify-content:space-between">
-                <div class="card-title">Détail — {{ holidayYear }}</div>
-                <span style="font-size:12px;color:var(--pz-muted)">Cliquez sur un jour dans le calendrier ou modifiez ici</span>
-              </div>
-              <table class="pz-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Libellé</th>
-                    <th style="direction:rtl;text-align:right">الاسم بالعربية</th>
-                    <th>Type</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (h of holidays(); track h.id) {
-                    <tr>
-                      <td>
-                        <span class="hol-date-pill" [class.hol-date-var]="!h.isRecurring">
-                          {{ formatDate(h.holidayDate) }}
-                        </span>
-                      </td>
-                      <td style="font-weight:500">{{ h.name }}</td>
-                      <td style="font-family:serif;direction:rtl;text-align:right;color:var(--pz-muted)">{{ h.nameAr ?? '—' }}</td>
-                      <td>
-                        @if (h.isRecurring) {
-                          <span class="pz-pill pos" style="font-size:11px">Fixe</span>
-                        } @else {
-                          <span class="pz-pill warn" style="font-size:11px">Variable ☽</span>
-                        }
-                      </td>
-                      <td>
-                        <div style="display:flex;gap:5px">
-                          <button class="pz-btn pz-sm" (click)="openEditHoliday(h)"><pz-icon name="Edit" [size]="13" /></button>
-                          <button class="pz-btn pz-sm pz-danger" (click)="deleteHoliday(h.id)">
-                            <pz-icon name="Trash2" [size]="13" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
             </div>
-          }
+
+            <!-- Colonne droite : tableau détail -->
+            <div class="pz-card hol-detail-card">
+              <div class="hol-detail-head">
+                <div>
+                  <div class="hol-cal-title">Détail — {{ holidayYear }}</div>
+                  <div class="hol-cal-sub">Cliquez sur un jour pour le modifier</div>
+                </div>
+                <button class="pz-btn pz-sm pz-ghost" (click)="openCreateHoliday()"><pz-icon name="Plus" [size]="13" /> Ajouter</button>
+              </div>
+              @if (holidays().length === 0) {
+                <div style="text-align:center;padding:40px;color:var(--pz-muted);font-size:13px">
+                  Aucun jour férié pour {{ holidayYear }}
+                </div>
+              } @else {
+                <table class="pz-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Libellé</th>
+                      <th style="direction:rtl;text-align:right">الاسم بالعربية</th>
+                      <th>Type</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (h of holidays(); track h.id) {
+                      <tr class="hol-detail-row" [class.hol-detail-row-sel]="selectedHolidayId() === h.id" (click)="selectHoliday(h.id)">
+                        <td>
+                          <span class="hol-date-pill" [class.hol-date-var]="!h.isRecurring">
+                            {{ formatDate(h.holidayDate) }}
+                          </span>
+                        </td>
+                        <td style="font-weight:500">{{ h.name }}</td>
+                        <td style="font-family:serif;direction:rtl;text-align:right;color:var(--pz-muted)">{{ h.nameAr ?? '—' }}</td>
+                        <td>
+                          @if (h.isRecurring) {
+                            <span class="pz-pill pos" style="font-size:11px">Fixe</span>
+                          } @else {
+                            <span class="pz-pill warn" style="font-size:11px">☽ Variable</span>
+                          }
+                        </td>
+                        <td>
+                          <div style="display:flex;gap:5px" (click)="$event.stopPropagation()">
+                            <button class="pz-btn pz-sm" (click)="openEditHoliday(h)"><pz-icon name="Edit" [size]="13" /></button>
+                            <button class="pz-btn pz-sm pz-danger" (click)="deleteHoliday(h.id)">
+                              <pz-icon name="Trash2" [size]="13" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </div>
+          </div>
         }
       }
     </div>
@@ -956,14 +999,33 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
         border-color: var(--pz-primary);
       }
       /* ── Jours Fériés ─────────────────────────── */
-      .hol-year-bar {
+      /* ── Jours fériés — nouveau design ─────────────────── */
+      .hol-header {
         display: flex;
-        gap: 6px;
+        align-items: center;
+        justify-content: space-between;
         margin-bottom: 18px;
+        gap: 12px;
         flex-wrap: wrap;
       }
-      .hol-year-btn {
-        padding: 7px 20px;
+      .hol-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--pz-ink);
+        margin: 0 0 2px;
+      }
+      .hol-subtitle {
+        font-size: 12.5px;
+        color: var(--pz-muted);
+      }
+      .hol-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .hol-year-chip {
+        padding: 5px 16px;
         border-radius: 20px;
         border: 1.5px solid var(--pz-line);
         background: var(--pz-surface);
@@ -974,127 +1036,177 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
         font-weight: 500;
         transition: all 0.15s;
       }
-      .hol-year-btn:hover {
+      .hol-year-chip:hover {
         border-color: var(--pz-primary);
         color: var(--pz-primary);
       }
-      .hol-year-btn.active {
+      .hol-year-chip.active {
         background: var(--pz-primary);
         border-color: var(--pz-primary);
         color: #fff;
         font-weight: 700;
       }
+
       .hol-stats {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
         gap: 12px;
         margin-bottom: 20px;
-        flex-wrap: wrap;
       }
       .hol-stat {
-        flex: 1;
-        min-width: 120px;
         background: var(--pz-surface);
         border: 1px solid var(--pz-line);
         border-radius: 12px;
-        padding: 14px 18px;
-        text-align: center;
-        border-top: 3px solid var(--pz-primary);
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
-      .hol-stat.green {
-        border-top-color: #16a34a;
-      }
-      .hol-stat.orange {
-        border-top-color: #d97706;
-      }
-      .hol-stat.blue {
-        border-top-color: #2563eb;
+      .hol-stat-ico {
+        font-size: 22px;
+        line-height: 1;
       }
       .hol-stat-num {
-        font-size: 28px;
+        font-size: 26px;
         font-weight: 700;
         color: var(--pz-ink);
         line-height: 1.1;
       }
       .hol-stat-lbl {
-        font-size: 11.5px;
-        color: var(--pz-muted);
-        margin-top: 3px;
+        font-size: 12px;
+        color: var(--pz-ink);
+        font-weight: 500;
+        margin-top: 2px;
       }
-      .hol-grid {
+      .hol-stat-sub {
+        font-size: 11px;
+        color: var(--pz-muted);
+        margin-top: 1px;
+      }
+
+      /* Layout 2 colonnes */
+      .hol-layout {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 4px;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
       }
-      .hol-month {
-        background: var(--pz-surface-3);
-        border: 1px solid var(--pz-line);
-        border-radius: 12px;
-        padding: 12px;
-        min-height: 90px;
-        transition: all 0.15s;
+      .hol-cal-card {
+        padding: 0;
+        overflow: hidden;
       }
-      .hol-month-active {
-        background: var(--pz-surface);
-        border-color: #c7d2fe;
-        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+      .hol-cal-head {
+        padding: 14px 20px 10px;
+        border-bottom: 1px solid var(--pz-line);
       }
-      .hol-month-name {
+      .hol-cal-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--pz-ink);
+      }
+      .hol-cal-sub {
         font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
         color: var(--pz-muted);
-        margin-bottom: 8px;
+        margin-top: 2px;
       }
-      .hol-month-active .hol-month-name {
-        color: var(--pz-primary);
+      .hol-cal-body {
+        padding: 8px 0;
       }
-      .hol-month-empty {
+
+      /* Ligne mois dans le calendrier */
+      .hol-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 8px 20px;
+        border-bottom: 1px solid var(--pz-line);
+      }
+      .hol-row:last-child {
+        border-bottom: none;
+      }
+      .hol-row-left {
+        width: 90px;
+        flex-shrink: 0;
+      }
+      .hol-row-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--pz-ink);
+      }
+      .hol-row-count {
         font-size: 11px;
+        color: var(--pz-muted);
+        margin-top: 2px;
+      }
+      .hol-row-bars {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-height: 24px;
+        justify-content: center;
+      }
+      .hol-row-empty {
+        font-size: 12px;
         color: var(--pz-muted);
         font-style: italic;
+        line-height: 24px;
       }
-      .hol-badge {
+      .hol-bar {
+        height: 24px;
+        border-radius: 4px;
+        background: var(--pz-surface-3);
+        border: 1px solid var(--pz-line);
         display: flex;
         align-items: center;
-        gap: 5px;
-        background: #dcfce7;
-        border-radius: 6px;
-        padding: 4px 7px;
-        margin-bottom: 4px;
+        padding: 0 10px;
+        font-size: 12px;
+        color: var(--pz-ink-2);
         cursor: pointer;
-        font-size: 11.5px;
-        transition: background 0.1s;
-      }
-      .hol-badge:hover {
-        background: #bbf7d0;
-      }
-      .hol-badge-var {
-        background: #fef3c7;
-      }
-      .hol-badge-var:hover {
-        background: #fde68a;
-      }
-      .hol-badge-day {
-        font-weight: 700;
-        font-size: 13px;
-        color: #166534;
-        min-width: 18px;
-      }
-      .hol-badge-var .hol-badge-day {
-        color: #92400e;
-      }
-      .hol-badge-txt {
-        flex: 1;
+        transition: all 0.15s;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
-        color: #166534;
       }
-      .hol-badge-var .hol-badge-txt {
-        color: #92400e;
+      .hol-bar:hover {
+        border-color: var(--pz-primary);
+        color: var(--pz-primary);
       }
+      .hol-bar-var {
+        border-color: #fed7aa;
+        background: #fff7ed;
+        color: #9a3412;
+      }
+      .hol-bar-var:hover {
+        border-color: #fb923c;
+      }
+      .hol-bar-sel {
+        border-color: var(--pz-primary);
+        background: var(--pz-primary-soft);
+        color: var(--pz-primary);
+        font-weight: 600;
+      }
+
+      /* Détail droite */
+      .hol-detail-card {
+        padding: 0;
+        overflow: hidden;
+      }
+      .hol-detail-head {
+        padding: 12px 16px 10px;
+        border-bottom: 1px solid var(--pz-line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .hol-detail-row {
+        cursor: pointer;
+      }
+      .hol-detail-row-sel td {
+        background: var(--pz-primary-soft) !important;
+      }
+
       .hol-date-pill {
         display: inline-block;
         background: #dbeafe;
@@ -1103,6 +1215,7 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
         padding: 2px 8px;
         font-size: 12px;
         font-weight: 600;
+        font-family: monospace;
       }
       .hol-date-var {
         background: #fef3c7;
@@ -1494,6 +1607,11 @@ export default class RhPayrollComponent {
   protected readonly showCreateHoliday = signal(false);
   protected readonly editHolidayId = signal<number | null>(null);
   protected readonly holidayErrMsg = signal('');
+  protected readonly selectedHolidayId = signal<number | null>(null);
+
+  selectHoliday(id: number): void {
+    this.selectedHolidayId.set(this.selectedHolidayId() === id ? null : id);
+  }
   protected holidayYear = new Date().getFullYear();
   protected readonly holidayYears = [2024, 2025, 2026, 2027, 2028];
 

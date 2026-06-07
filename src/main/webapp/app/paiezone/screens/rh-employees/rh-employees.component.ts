@@ -814,13 +814,37 @@ export default class RhEmployeesComponent implements OnInit {
     this.api.downloadBulletin(paySlipId).subscribe(blob => this.saveBlob(blob, `bulletin-${paySlipId}.pdf`));
   }
 
+  protected readonly docErr = signal('');
+
   dlAttestation(employeeId: number): void {
-    this.api.downloadAttestationTravail(employeeId).subscribe(blob => this.saveBlob(blob, `attestation-${employeeId}.pdf`));
+    this.docErr.set('');
+    this.api.downloadAttestationTravail(employeeId).subscribe({
+      next: blob => this.saveBlob(blob, `attestation-${employeeId}.pdf`),
+      error: () => this.docErr.set("Erreur lors de la génération de l'attestation."),
+    });
   }
 
   dlCertificatRI(employeeId: number): void {
     const year = new Date().getFullYear() - 1;
-    this.api.downloadCertificatRI(employeeId, year).subscribe(blob => this.saveBlob(blob, `certificat-ri-${employeeId}-${year}.pdf`));
+    this.docErr.set('');
+    this.api.downloadCertificatRI(employeeId, year).subscribe({
+      next: blob => {
+        // Le backend retourne du JSON en cas d'erreur (400/500) au lieu d'un PDF
+        if (blob.type === 'application/json' || blob.size < 200) {
+          blob.text().then(txt => {
+            try {
+              const msg = JSON.parse(txt)?.error ?? `Aucun bulletin de paie trouvé pour ${year}.`;
+              this.docErr.set(msg);
+            } catch {
+              this.docErr.set(`Aucun bulletin de paie trouvé pour ${year}.`);
+            }
+          });
+          return;
+        }
+        this.saveBlob(blob, `certificat-ri-${employeeId}-${year}.pdf`);
+      },
+      error: () => this.docErr.set(`Aucun bulletin de paie trouvé pour ${year}. Générez d'abord la paie.`),
+    });
   }
 
   private saveBlob(blob: Blob, filename: string): void {

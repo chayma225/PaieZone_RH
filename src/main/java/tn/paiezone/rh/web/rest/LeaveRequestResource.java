@@ -26,6 +26,7 @@ import tech.jhipster.web.util.ResponseUtil;
 import tn.paiezone.rh.domain.enumeration.LeaveStatus;
 import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.LeaveRequestRepository;
+import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.LeaveRequestQueryService;
 import tn.paiezone.rh.service.LeaveRequestService;
@@ -97,7 +98,14 @@ public class LeaveRequestResource {
         dto.setEndDate(LocalDate.parse(body.get("endDate").toString()));
         dto.setNumberOfDays(body.get("numberOfDays") != null ? Integer.valueOf(body.get("numberOfDays").toString()) : 1);
         dto.setEmployeeComment(body.get("comment") != null ? body.get("comment").toString() : null);
-        dto.setStatus(LeaveStatus.PENDING);
+        // RH peut enregistrer directement en APPROVED (ex: absence non justifiée)
+        String statusStr = body.get("status") != null ? body.get("status").toString() : null;
+        boolean isRhOrAdmin = SecurityUtils.hasCurrentUserAnyOfAuthorities(
+            AuthoritiesConstants.ADMIN,
+            AuthoritiesConstants.RH_COMPTABLE,
+            AuthoritiesConstants.SUPER_ADMIN
+        );
+        dto.setStatus(isRhOrAdmin && "APPROVED".equals(statusStr) ? LeaveStatus.APPROVED : LeaveStatus.PENDING);
         dto.setRequestedAt(Instant.now());
 
         LeaveRequestDTO result = leaveRequestService.submit(dto);

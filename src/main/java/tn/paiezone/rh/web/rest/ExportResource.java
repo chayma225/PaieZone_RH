@@ -100,8 +100,20 @@ public class ExportResource {
             year = java.time.LocalDate.now().getYear() - 1;
         }
         log.debug("GET /api/export/certificat-ri/{} year={}", employeeId, year);
-        byte[] pdf = pdfExportService.generateCertificatRI(employeeId, year);
-        return pdfResponse(pdf, "certificat-ri-" + employeeId + "-" + year + ".pdf");
+        try {
+            byte[] pdf = pdfExportService.generateCertificatRI(employeeId, year);
+            return pdfResponse(pdf, "certificat-ri-" + employeeId + "-" + year + ".pdf");
+        } catch (IllegalStateException e) {
+            log.warn("[CertificatRI] {}", e.getMessage());
+            return ResponseEntity.badRequest()
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .body(("{\"error\":\"" + e.getMessage() + "\"}").getBytes());
+        } catch (Exception e) {
+            log.error("[CertificatRI] Erreur inattendue : {}", e.getMessage());
+            return ResponseEntity.internalServerError()
+                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                .body(("{\"error\":\"Erreur lors de la génération du certificat.\"}").getBytes());
+        }
     }
 
     private ResponseEntity<byte[]> pdfResponse(byte[] pdf, String filename) {

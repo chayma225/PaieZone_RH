@@ -259,36 +259,35 @@ type Tab = 'demandes' | 'types';
             </div>
           </aside>
 
-          <!-- ── Modal saisie absence depuis calendrier ─────────── -->
+          <!-- ── Modal saisie absence NON JUSTIFIÉE ─────────────── -->
           @if (showCalLeaveModal()) {
             <div class="pz-overlay" (click)="closeCalLeave()">
               <div class="pz-modal pz-modal-sm" (click)="$event.stopPropagation()" style="width:420px">
                 <div class="pz-modal-head">
                   <div style="display:flex;align-items:center;gap:10px">
-                    <span style="font-size:20px">📅</span>
+                    <span style="font-size:20px">🚫</span>
                     <div>
-                      <div style="font-size:14px;font-weight:700">Saisir une absence</div>
+                      <div style="font-size:14px;font-weight:700">Absence non justifiée</div>
                       <div style="font-size:11px;color:var(--pz-muted)">{{ calLeaveForm.startDate }}</div>
                     </div>
                   </div>
                   <button class="pz-modal-close" (click)="closeCalLeave()"><pz-icon name="X" [size]="16" /></button>
                 </div>
                 <div class="pz-modal-body">
+                  <!-- Bandeau type fixe -->
+                  <div
+                    style="display:flex;align-items:center;gap:8px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:12px;color:#991b1b;margin-bottom:4px"
+                  >
+                    <pz-icon name="AlertTriangle" [size]="13" />
+                    Type : <strong>Absence non justifiée</strong> · Non payée · Impact sur la paie
+                  </div>
+
                   <div class="pz-field">
                     <label>Employé *</label>
                     <select [(ngModel)]="calLeaveForm.employeeId">
                       <option [value]="0">— Sélectionner —</option>
                       @for (e of data.employees(); track e.id) {
                         <option [value]="e.id">{{ data.fullName(e) }}</option>
-                      }
-                    </select>
-                  </div>
-                  <div class="pz-field">
-                    <label>Type de congé *</label>
-                    <select [(ngModel)]="calLeaveForm.leaveTypeId">
-                      <option [value]="0">— Sélectionner —</option>
-                      @for (t of leaveTypes(); track t.id) {
-                        <option [value]="t.id">{{ t.name }}</option>
                       }
                     </select>
                   </div>
@@ -309,23 +308,23 @@ type Tab = 'demandes' | 'types';
                     </div>
                   </div>
                   <div class="pz-field">
-                    <label>Nombre de jours</label>
+                    <label>Nombre de jours ouvrés</label>
                     <input type="number" [(ngModel)]="calLeaveForm.days" min="1" />
                   </div>
                   <div class="pz-field">
-                    <label>Commentaire</label>
-                    <input type="text" [(ngModel)]="calLeaveForm.comment" placeholder="Motif (optionnel)" />
+                    <label>Motif / Remarque</label>
+                    <input type="text" [(ngModel)]="calLeaveForm.comment" placeholder="ex: absence sans notification préalable" />
                   </div>
                   @if (calLeaveErr()) {
                     <div class="pz-err">{{ calLeaveErr() }}</div>
                   }
                   <div style="font-size:11.5px;color:var(--pz-muted);background:var(--pz-surface-3);border-radius:8px;padding:8px 12px">
-                    💡 L'absence sera intégrée au calcul de la fiche de paie du mois concerné.
+                    ⚠️ L'absence sera automatiquement enregistrée comme approuvée et déduira du salaire du mois concerné.
                   </div>
                 </div>
                 <div class="pz-modal-foot">
                   <button class="pz-btn" (click)="closeCalLeave()">Annuler</button>
-                  <button class="pz-btn pz-primary" [disabled]="calLeaveBusy()" (click)="submitCalLeave()">
+                  <button class="pz-btn pz-danger" [disabled]="calLeaveBusy()" (click)="submitCalLeave()">
                     @if (calLeaveBusy()) {
                       …
                     } @else {
@@ -1252,20 +1251,31 @@ export default class RhLeavesComponent {
 
   submitCalLeave(): void {
     const f = this.calLeaveForm;
-    if (!f.employeeId || !f.leaveTypeId || !f.startDate || !f.endDate || f.days < 1) {
+    if (!f.employeeId || !f.startDate || !f.endDate || f.days < 1) {
       this.calLeaveErr.set('Veuillez remplir tous les champs obligatoires.');
       return;
     }
+
+    // Trouver automatiquement le type ABSENCE_NON_JUSTIFIEE
+    const absenceType = this.leaveTypes().find(
+      t => (t.name ?? '').toUpperCase().includes('ABSENCE') || (t.name ?? '').toUpperCase() === 'ABSENCE_NON_JUSTIFIEE',
+    );
+    if (!absenceType) {
+      this.calLeaveErr.set('Type « Absence non justifiée » introuvable. Rechargez la page.');
+      return;
+    }
+
     this.calLeaveBusy.set(true);
     this.calLeaveErr.set('');
     this.api
       .createLeaveRequest({
-        leaveTypeId: f.leaveTypeId,
+        leaveTypeId: absenceType.id,
         employeeId: f.employeeId,
         startDate: f.startDate,
         endDate: f.endDate,
         numberOfDays: f.days,
-        comment: f.comment || undefined,
+        comment: f.comment || 'Absence non justifiée',
+        status: 'APPROVED',
       })
       .subscribe({
         next: leave => {

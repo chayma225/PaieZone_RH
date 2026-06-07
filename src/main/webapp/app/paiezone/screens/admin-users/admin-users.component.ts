@@ -61,8 +61,8 @@ const ROLE_LABELS: Record<string, string> = {
             }
             @for (e of data.employees(); track e.id) {
               @let sysRole = getSystemRole(e.email);
-              @let inactive = e.active === false;
-              <tr [style.opacity]="inactive ? '0.6' : '1'">
+              @let status = getStatus(e.email, e.active);
+              <tr [style.opacity]="status === 'inactive' ? '0.6' : '1'">
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
                     <div class="pz-avatar sm" [attr.data-bg]="data.empBgIdx(e.id)">{{ data.initials(e) }}</div>
@@ -75,13 +75,9 @@ const ROLE_LABELS: Record<string, string> = {
                 <td style="font-size:12.5px;color:var(--pz-ink-2)">{{ e.email || '—' }}</td>
                 <td style="font-size:12.5px;color:var(--pz-ink-2)">{{ e.phone || '—' }}</td>
                 <td>
-                  @if (sysRole) {
-                    <span class="pz-pill" [class.info]="sysRole === 'ROLE_ADMIN'" [class.warn]="sysRole === 'ROLE_RH_COMPTABLE'">
-                      {{ roleLabel(sysRole) }}
-                    </span>
-                  } @else {
-                    <span class="pz-muted" style="font-size:12px">—</span>
-                  }
+                  <span class="pz-pill" [class.info]="sysRole === 'ROLE_ADMIN'" [class.warn]="sysRole === 'ROLE_RH_COMPTABLE'">
+                    {{ roleLabel(sysRole) }}
+                  </span>
                 </td>
                 <td style="font-size:12.5px">{{ e.dept || '—' }}</td>
                 <td>
@@ -89,16 +85,31 @@ const ROLE_LABELS: Record<string, string> = {
                 </td>
                 <td style="color:var(--pz-muted);font-size:12px">{{ e.hireDate }}</td>
                 <td>
-                  @if (inactive) {
-                    <span class="pz-pill danger" style="display:inline-flex;align-items:center;gap:4px">
-                      <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
-                      Inactif
-                    </span>
-                  } @else {
-                    <span class="pz-pill pos" style="display:inline-flex;align-items:center;gap:4px">
-                      <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
-                      Actif
-                    </span>
+                  @switch (status) {
+                    @case ('active') {
+                      <span class="pz-pill pos" style="display:inline-flex;align-items:center;gap:4px">
+                        <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
+                        Actif
+                      </span>
+                    }
+                    @case ('pending') {
+                      <span class="pz-pill warn" style="display:inline-flex;align-items:center;gap:4px">
+                        <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
+                        En attente
+                      </span>
+                    }
+                    @case ('inactive') {
+                      <span class="pz-pill danger" style="display:inline-flex;align-items:center;gap:4px">
+                        <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
+                        Inactif
+                      </span>
+                    }
+                    @case ('no-account') {
+                      <span class="pz-pill" style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#64748b">
+                        <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
+                        Sans compte
+                      </span>
+                    }
                   }
                 </td>
                 <td>
@@ -479,21 +490,33 @@ export default class AdminUsersComponent implements OnInit {
   protected readonly twoFaEnabled = signal(false);
   protected readonly twoFaBusy = signal(false);
 
-  // Signal Map email → { login, role, id } — Signal pour que le template réagisse au chargement async
-  private readonly userMapSig = signal<Map<string, { login: string; firstName: string; lastName: string; role: string; id?: number }>>(
-    new Map(),
-  );
+  // Signal Map email → entrée utilisateur JHipster (inclut activated)
+  private readonly userMapSig = signal<
+    Map<string, { login: string; firstName: string; lastName: string; role: string; id?: number; activated: boolean; hasAccount: boolean }>
+  >(new Map());
 
   ngOnInit(): void {
     this.api.myCompanyUsers().subscribe({
       next: users => {
-        const map = new Map<string, { login: string; firstName: string; lastName: string; role: string; id?: number }>();
+        const map = new Map<
+          string,
+          { login: string; firstName: string; lastName: string; role: string; id?: number; activated: boolean; hasAccount: boolean }
+        >();
         for (const u of users) {
           const email = (u.email ?? '').toLowerCase();
           const role = this.primaryRole(u.authorities ?? []);
-          if (email) map.set(email, { id: u.id, login: u.login, firstName: u.firstName, lastName: u.lastName, role });
+          if (email)
+            map.set(email, {
+              id: u.id,
+              login: u.login,
+              firstName: u.firstName,
+              lastName: u.lastName,
+              role,
+              activated: u.activated ?? false,
+              hasAccount: true,
+            });
         }
-        this.userMapSig.set(map); // déclenche la mise à jour du template
+        this.userMapSig.set(map);
       },
       error: () => {},
     });
@@ -517,6 +540,14 @@ export default class AdminUsersComponent implements OnInit {
 
   private getUserEntry(email: string) {
     return this.userMapSig().get((email ?? '').toLowerCase());
+  }
+
+  // 'active' = compte JHipster activé | 'pending' = compte non vérifié | 'inactive' = employé désactivé | 'no-account' = pas de compte
+  protected getStatus(email: string, empActive: boolean | undefined): 'active' | 'pending' | 'inactive' | 'no-account' {
+    if (empActive === false) return 'inactive';
+    const entry = this.getUserEntry(email);
+    if (!entry) return 'no-account';
+    return entry.activated ? 'active' : 'pending';
   }
 
   autoFillLogin() {
@@ -645,11 +676,14 @@ export default class AdminUsersComponent implements OnInit {
             .subscribe({
               next: () => {
                 const updated = new Map(this.userMapSig());
+                const existing = this.getUserEntry(this.editForm.email);
                 updated.set((this.editForm.email ?? '').toLowerCase(), {
                   login,
                   firstName: this.editForm.first,
                   lastName: this.editForm.last,
                   role: this.editForm.role,
+                  activated: existing?.activated ?? true,
+                  hasAccount: true,
                 });
                 this.userMapSig.set(updated);
                 this.successMsg.set('Modifications enregistrées.');

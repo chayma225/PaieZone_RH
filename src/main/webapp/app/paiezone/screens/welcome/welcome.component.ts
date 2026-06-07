@@ -1,4 +1,15 @@
-import { Component, ChangeDetectionStrategy, inject, computed, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  computed,
+  signal,
+  AfterViewInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  NgZone,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import IconComponent from '../../core/icon/icon.component';
@@ -958,10 +969,25 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         padding: 48px 40px;
         border-right: 1px solid #ececea;
         position: relative;
-        transition: background 0.2s;
+        transition:
+          background 0.2s,
+          opacity 0.7s ease,
+          transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        opacity: 0;
+        transform: translateY(32px);
       }
       .how-step:last-child {
         border-right: 0;
+      }
+      .how-step.how-step-2 {
+        transition-delay: 0.14s;
+      }
+      .how-step.how-step-3 {
+        transition-delay: 0.28s;
+      }
+      .how-step.how-step-in {
+        opacity: 1;
+        transform: translateY(0);
       }
       .how-step:hover {
         background: #fafaf7;
@@ -1014,15 +1040,23 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         padding: 32px;
         position: relative;
         overflow: hidden;
-        /* GPU-composited 3D tilt */
-        transition:
-          transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-          box-shadow 0.3s ease,
-          border-color 0.2s ease;
         display: flex;
         flex-direction: column;
         transform-style: preserve-3d;
-        will-change: transform;
+        will-change: transform, opacity;
+        /* état initial — avant animation */
+        opacity: 0;
+        transform: translateY(28px) scale(0.97);
+        transition:
+          opacity 0.65s ease,
+          transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 0.3s ease,
+          border-color 0.2s ease;
+        transition-delay: var(--d, 0s);
+      }
+      .bento-card.bento-in {
+        opacity: 1;
+        transform: translateY(0) scale(1);
       }
       .bento-card:hover {
         border-color: #0a0a0f;
@@ -1299,9 +1333,30 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         padding: 20px 24px;
         border-right: 1px solid rgba(255, 255, 255, 0.1);
         text-align: center;
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
       }
       .big-num:last-child {
         border-right: 0;
+      }
+      .big-num:nth-child(1) {
+        transition-delay: 0s;
+      }
+      .big-num:nth-child(2) {
+        transition-delay: 0.12s;
+      }
+      .big-num:nth-child(3) {
+        transition-delay: 0.24s;
+      }
+      .big-num:nth-child(4) {
+        transition-delay: 0.36s;
+      }
+      .big-num.visible {
+        opacity: 1;
+        transform: translateY(0);
       }
       .big-num-val {
         font-family: 'JetBrains Mono', monospace;
@@ -1310,6 +1365,7 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         letter-spacing: -0.04em;
         line-height: 0.95;
         color: #fff;
+        transition: all 0.1s;
       }
       .big-num-val small {
         font-size: 32px;
@@ -1707,6 +1763,27 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         display: flex;
         gap: 14px;
         flex-wrap: wrap;
+        align-items: center;
+      }
+      .cta-create {
+        background: #fff !important;
+        color: #2a0f56 !important; /* couleur du fond de la carte CTA */
+        border-color: #fff !important;
+        font-weight: 800;
+        padding: 14px 36px;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+      }
+      .cta-create:hover {
+        background: #ede9fe !important;
+        color: #1e0a3c !important;
+        border-color: #ede9fe !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 36px rgba(0, 0, 0, 0.24);
+      }
+      .cta-create .arrow {
+        color: #7c3aed;
       }
       .cta-meta {
         position: absolute;
@@ -1915,8 +1992,72 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class WelcomeComponent {
+export default class WelcomeComponent implements AfterViewInit, OnDestroy {
   private readonly data = inject(DataService);
+  private readonly zone = inject(NgZone);
+
+  @ViewChild('chiffresSection') private chiffresRef!: ElementRef<HTMLElement>;
+  @ViewChild('howSection') private howRef!: ElementRef<HTMLElement>;
+  @ViewChild('bentoSection') private bentoRef!: ElementRef<HTMLElement>;
+
+  private observers: IntersectionObserver[] = [];
+
+  protected readonly numbersVisible = signal(false);
+  protected readonly howVisible = signal(false);
+  protected readonly bentoVisible = signal(false);
+  protected readonly countedNums = signal({ min: 0, h: 0, uptime: '0', conformity: 0 });
+
+  ngAfterViewInit(): void {
+    this.addObserver(this.chiffresRef, () => {
+      this.numbersVisible.set(true);
+      this.zone.runOutsideAngular(() => this.startCountup());
+    });
+    this.addObserver(this.howRef, () => this.howVisible.set(true));
+    this.addObserver(this.bentoRef, () => this.bentoVisible.set(true));
+  }
+
+  private addObserver(ref: ElementRef<HTMLElement> | undefined, cb: () => void, threshold = 0.2): void {
+    if (!ref?.nativeElement) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          this.zone.run(cb);
+          obs.disconnect();
+        }
+      },
+      { threshold },
+    );
+    obs.observe(ref.nativeElement);
+    this.observers.push(obs);
+  }
+
+  ngOnDestroy(): void {
+    this.observers.forEach(o => o.disconnect());
+  }
+
+  private startCountup(): void {
+    const duration = 1800;
+    const fps = 60;
+    const steps = Math.round((duration / 1000) * fps);
+    let step = 0;
+    const timer = setInterval(() => {
+      step++;
+      const t = step / steps;
+      const ease = 1 - Math.pow(1 - t, 3); // cubic ease-out
+      this.zone.run(() => {
+        this.countedNums.set({
+          min: Math.round(10 * ease),
+          h: Math.round(7 * ease),
+          uptime: (99.97 * ease).toFixed(ease >= 1 ? 2 : 0),
+          conformity: Math.round(100 * ease),
+        });
+      });
+      if (step >= steps) {
+        clearInterval(timer);
+        this.zone.run(() => this.countedNums.set({ min: 10, h: 7, uptime: '99,97', conformity: 100 }));
+      }
+    }, 1000 / fps);
+  }
 
   protected scrollTo(id: string, e: Event): void {
     e.preventDefault();

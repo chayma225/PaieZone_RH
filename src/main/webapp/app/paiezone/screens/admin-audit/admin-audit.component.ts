@@ -50,7 +50,7 @@ const JHIPSTER_ROLE_MAP: Record<string, string> = {
           <h1>Journal d'audit</h1>
           <div class="pz-muted">Historique des actions réalisées sur la plateforme</div>
         </div>
-        <button class="pz-btn"><pz-icon name="Download" [size]="14" /> Exporter</button>
+        <button class="pz-btn" (click)="exportCsv()"><pz-icon name="Download" [size]="14" /> Exporter</button>
       </div>
 
       <!-- Barre de filtres -->
@@ -580,14 +580,32 @@ export default class AdminAuditComponent {
 
   /** Nom affiché dans la colonne Utilisateur */
   protected displayName(entry: { user: string; ip: string; action: string }): string {
-    if (this.isScheduler(entry)) return 'Planificateur auto';
+    // Entrée scheduler avec un user déjà résolu → afficher ce user
+    if (this.isScheduler(entry) && entry.user && entry.user !== 'system') {
+      return this.userNames().get(entry.user) ?? entry.user;
+    }
+    // Entrée scheduler sans user → fallback sur l'admin de la company courante
+    if (this.isScheduler(entry)) {
+      const company = this.data.companies()[0];
+      const adminLogin = company?.adminLogin;
+      if (adminLogin) {
+        const adminName = this.userNames().get(adminLogin);
+        return adminName ?? adminLogin;
+      }
+      return 'Système';
+    }
     if (!entry.user || entry.user === 'system') return 'Compte système';
     return this.userNames().get(entry.user) ?? entry.user;
   }
 
   /** Login secondaire (affiché en petit sous le nom) */
   protected displayLogin(entry: { user: string; ip: string; action: string }): string | null {
-    if (this.isScheduler(entry) || !entry.user || entry.user === 'system') return null;
+    if (this.isScheduler(entry)) {
+      // Montrer le login admin comme sous-titre pour les notifications
+      const adminLogin = this.data.companies()[0]?.adminLogin;
+      return adminLogin ?? null;
+    }
+    if (!entry.user || entry.user === 'system') return null;
     const full = this.userNames().get(entry.user);
     return full ? entry.user : null;
   }
@@ -596,6 +614,42 @@ export default class AdminAuditComponent {
   protected resolvedRole(entry: { user: string; role: string; ip: string; action: string }): string {
     if (this.isScheduler(entry)) return 'SYSTEM';
     return entry.role || this.userRoles().get(entry.user) || '';
+  }
+
+  /** Export CSV du journal filtré */
+  protected exportCsv(): void {
+    const rows = this.filtered();
+    if (rows.length === 0) return;
+
+    const headers = ['Date', 'Utilisateur', 'Login', 'Rôle', 'Action', 'Entité', 'ID Entité', 'Détail', 'IP'];
+
+    const escape = (v: string) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+
+    const lines = rows.map(e =>
+      [
+        e.date,
+        this.displayName(e),
+        this.isScheduler(e) ? 'scheduler' : e.user,
+        this.roleLabel(this.resolvedRole(e)),
+        this.actionLabel(e.action) || e.action,
+        e.entity,
+        e.entityId,
+        e.detail,
+        e.ip,
+      ]
+        .map(escape)
+        .join(';'),
+    );
+
+    const bom = '﻿'; // BOM UTF-8 pour Excel
+    const csv = bom + [headers.map(escape).join(';'), ...lines].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `audit-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   /** Génère une phrase en français décrivant l'action */

@@ -205,24 +205,24 @@
   </div>
 
   <!-- ══════════ 01 — COMMENT ÇA MARCHE ══════════ -->
-  <section class="section" id="how">
+  <section class="section" id="how" #howSection>
     <div class="section-head">
       <div class="eyebrow"><span class="eyebrow-num">01</span> En 3 étapes</div>
       <h2>Votre première paie en <span class="serif">10 minutes,</span><br />vraiment.</h2>
       <p>Trois étapes, et vous gérez toute votre entreprise depuis une seule interface. Sans formation, sans documentation à lire.</p>
     </div>
     <div class="how-grid">
-      <div class="how-step">
+      <div class="how-step" [class.how-step-in]="howVisible()">
         <div class="how-num">01 — Setup</div>
         <h3>Créez votre <span class="serif">entreprise</span></h3>
         <p>Raison sociale, matricule fiscal, identifiant CNSS. Choisissez votre formule — essai gratuit immédiat, sans carte bancaire.</p>
       </div>
-      <div class="how-step">
+      <div class="how-step how-step-2" [class.how-step-in]="howVisible()">
         <div class="how-num">02 — Import</div>
         <h3>Importez vos <span class="serif">employés</span></h3>
         <p>Excel, CSV ou saisie manuelle. PaieZone détecte le contrat, la catégorie et calcule automatiquement les cotisations.</p>
       </div>
-      <div class="how-step">
+      <div class="how-step how-step-3" [class.how-step-in]="howVisible()">
         <div class="how-num">03 — Lancer</div>
         <h3>Lancez votre <span class="serif">paie</span></h3>
         <p>Un clic et 42 bulletins partent. IRPP calculé, PDF envoyés, déclarations CNSS prêtes à exporter. C'est tout.</p>
@@ -231,7 +231,7 @@
   </section>
 
   <!-- ══════════ 02 — LE PRODUIT ══════════ -->
-  <section class="section bg-cream" id="features">
+  <section class="section bg-cream" id="features" #bentoSection>
     <div class="section-inner">
       <div class="section-head">
         <div class="eyebrow"><span class="eyebrow-num">02</span> Le produit</div>
@@ -240,7 +240,7 @@
       </div>
       <div class="bento">
         <!-- Feat 1 — dark #2a0f56 — IA RAG (spans 2 cols) -->
-        <div class="bento-card feat-1">
+        <div class="bento-card feat-1" [class.bento-in]="bentoVisible()" style="--d: 0s">
           <div class="bento-header"><span class="bento-tag">IA · RAG</span></div>
           <h3>Posez n'importe quelle question sur le <span class="serif">Code du Travail</span></h3>
           <p>Notre assistant RAG indexe le JORT, la LF 2026 et les conventions collectives. Sources citées à chaque réponse.</p>
@@ -251,7 +251,7 @@
         </div>
 
         <!-- Feat 2 — purple — CNSS -->
-        <div class="bento-card feat-2">
+        <div class="bento-card feat-2" [class.bento-in]="bentoVisible()" style="--d: 0.1s">
           <div class="bento-header"><span class="bento-tag">Conforme</span></div>
           <h3>Cotisations sociales <span class="serif">au cordeau</span></h3>
           <p>CNSS · CAVIS · CSS · IRPP. Barèmes LF 2026 maintenus par notre équipe juridique.</p>
@@ -261,7 +261,7 @@
         </div>
 
         <!-- Feat 3 — white — Self-service -->
-        <div class="bento-card">
+        <div class="bento-card" [class.bento-in]="bentoVisible()" style="--d: 0.2s">
           <div class="bento-header"><span class="bento-tag">Self-service</span></div>
           <h3>Vos collaborateurs en <span class="serif">autonomie</span></h3>
           <p>Bulletins, congés, avances — directement depuis leur espace personnel.</p>
@@ -294,7 +294,7 @@
         </div>
 
         <!-- Feat 4 — cream — PDF (spans 2 cols) -->
-        <div class="bento-card feat-4">
+        <div class="bento-card feat-4" [class.bento-in]="bentoVisible()" style="--d: 0.15s">
           <div class="bento-header"><span class="bento-tag">Génération PDF</span></div>
           <h3>Bulletins, contrats, attestations — <span class="serif">signés et envoyés</span> en un clic</h3>
           <p>JasperReports + signature électronique eIDAS. Vos employés reçoivent leur bulletin par email avant la fin du mois.</p>
@@ -315,7 +315,7 @@
         </div>
 
         <!-- Feat 5 — white — Sécurité -->
-        <div class="bento-card">
+        <div class="bento-card" [class.bento-in]="bentoVisible()" style="--d: 0.25s">
           <div class="bento-header"><span class="bento-tag">Sécurité</span></div>
           <h3>Multi-tenant <span class="serif">par construction</span></h3>
           <p>Isolation PostgreSQL, RBAC, 2FA, audit log 7 ans.</p>
@@ -329,27 +329,27 @@
   </section>
 
   <!-- ══════════ 03 — LES CHIFFRES ══════════ -->
-  <section class="big-numbers" id="chiffres">
+  <section class="big-numbers" id="chiffres" #chiffresSection>
     <div class="big-numbers-inner">
       <div class="big-numbers-head">
         <div class="eyebrow"><span class="eyebrow-num">03</span> Les chiffres</div>
         <h2>Des résultats <span class="serif">mesurables</span> dès le premier mois.</h2>
       </div>
       <div class="big-numbers-grid">
-        <div class="big-num">
-          <div class="big-num-val">10<small>min</small></div>
+        <div class="big-num" [class.visible]="numbersVisible()">
+          <div class="big-num-val">{{ countedNums().min }}<small>min</small></div>
           <div class="big-num-lbl">Pour configurer votre entreprise et lancer votre première paie de A à Z.</div>
         </div>
-        <div class="big-num">
-          <div class="big-num-val">7<small>h</small></div>
+        <div class="big-num" [class.visible]="numbersVisible()">
+          <div class="big-num-val">{{ countedNums().h }}<small>h</small></div>
           <div class="big-num-lbl">Économisées chaque mois en moyenne par un responsable RH.</div>
         </div>
-        <div class="big-num">
-          <div class="big-num-val">99,97<small>%</small></div>
+        <div class="big-num" [class.visible]="numbersVisible()">
+          <div class="big-num-val">{{ countedNums().uptime }}<small>%</small></div>
           <div class="big-num-lbl">Disponibilité de la plateforme sur les 12 derniers mois.</div>
         </div>
-        <div class="big-num">
-          <div class="big-num-val">100<small>%</small></div>
+        <div class="big-num" [class.visible]="numbersVisible()">
+          <div class="big-num-val">{{ countedNums().conformity }}<small>%</small></div>
           <div class="big-num-lbl">Conformité LF 2026 — barèmes maintenus par notre équipe juridique.</div>
         </div>
       </div>
@@ -482,8 +482,10 @@
         <h2>Prêt à passer<br />à <span class="serif">PaieZone</span> ?</h2>
         <p>Mise en service en 10 minutes. Importez vos employés via Excel, lancez votre première paie le jour même.</p>
         <div class="cta-actions">
-          <a class="btn lg light" routerLink="/paiezone/register">Créer mon compte <span class="arrow">→</span></a>
-          <a class="btn lg outline" routerLink="/paiezone/login">Parler à un expert</a>
+          <a class="btn lg primary cta-create" routerLink="/paiezone/register">
+            Créer mon compte gratuitement <span class="arrow">→</span>
+          </a>
+          <a class="btn lg outline" routerLink="/paiezone/login">Se connecter</a>
         </div>
       </div>
       <div class="cta-meta">

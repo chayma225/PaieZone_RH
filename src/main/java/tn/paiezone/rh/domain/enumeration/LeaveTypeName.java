@@ -12,4 +12,5 @@ public enum LeaveTypeName {
     MARIAGE,
     DECES,
     EXCEPTIONNEL,
+    ABSENCE_NON_JUSTIFIEE,
 }

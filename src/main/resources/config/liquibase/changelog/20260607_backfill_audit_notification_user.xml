@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Retroactivement : assigne le UserProfile de l'admin company
+        aux entrées d'audit créées par le planificateur (user_id = NULL).
+    -->
+    <changeSet id="20260607_backfill_audit_notification_user" author="chayma">
+        <sql>
+            UPDATE audit_log al
+            SET user_id = (
+                SELECT up.id
+                FROM user_profile up
+                INNER JOIN company c ON c.admin_login = up.jhi_user_id
+                WHERE c.id = al.company_id
+                LIMIT 1
+            )
+            WHERE al.ip_address = 'SYSTEM_SCHEDULER'
+              AND al.user_id IS NULL
+              AND al.company_id IS NOT NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

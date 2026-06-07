@@ -341,6 +341,12 @@
         }
       </div>
 
+      @if (docErr()) {
+        <div class="doc-err-banner">
+          <pz-icon name="AlertCircle" [size]="13" />
+          {{ docErr() }}
+        </div>
+      }
       <div class="pz-emp-foot">
         <button class="pz-btn pz-danger" (click)="openDeleteConfirm()">
           <pz-icon name="Trash" [size]="14" [strokeWidth]="1.5" /> Supprimer
