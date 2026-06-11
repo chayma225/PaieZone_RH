@@ -47,54 +47,55 @@ public class AuditService {
         String ipAddress,
         String userAgent
     ) {
-        try {
-            String newValue = null;
-            if (result != null) {
-                newValue = objectMapper.writeValueAsString(result);
+        AuditLog auditLog = new AuditLog();
+        auditLog.setAction(action);
+        auditLog.setEntityType(entityType);
+        auditLog.setOccurredAt(Instant.now());
+        auditLog.setIpAddress(ipAddress != null && !ipAddress.isBlank() ? ipAddress : "127.0.0.1");
+        auditLog.setUserAgent(userAgent);
+
+        // Sérialisation indépendante : échec de sérialisation ≠ échec de l'audit
+        if (result != null) {
+            try {
+                auditLog.setNewValue(objectMapper.writeValueAsString(result));
+            } catch (Exception e) {
+                LOG.warn("Impossible de sérialiser le résultat pour l'audit ({}/{}): {}", action, entityType, e.getMessage());
             }
-
-            AuditLog auditLog = new AuditLog();
-            auditLog.setAction(action);
-            auditLog.setEntityType(entityType);
-
-            // Extraction de l'entityId depuis le DTO résultat via reflection
-            if (result != null) {
-                try {
-                    java.lang.reflect.Method getIdMethod = result.getClass().getMethod("getId");
-                    Object id = getIdMethod.invoke(result);
-                    if (id instanceof Long longId) {
-                        auditLog.setEntityId(longId);
-                    }
-                } catch (Exception ignored) {
-                    // Certains résultats n'ont pas de getId()
+            try {
+                java.lang.reflect.Method getIdMethod = result.getClass().getMethod("getId");
+                Object id = getIdMethod.invoke(result);
+                if (id instanceof Long longId) {
+                    auditLog.setEntityId(longId);
                 }
-            }
+            } catch (Exception ignored) {}
+        }
+        auditLog.setOldValue(oldValue);
 
-            auditLog.setOldValue(oldValue);
-            auditLog.setNewValue(newValue);
-            auditLog.setIpAddress(ipAddress != null && !ipAddress.isBlank() ? ipAddress : "127.0.0.1");
-            auditLog.setUserAgent(userAgent);
-            auditLog.setOccurredAt(Instant.now());
+        // Résolution user + compagnie
+        userProfileRepository
+            .findByJhiUserId(login)
+            .ifPresent(user -> {
+                auditLog.setUser(user);
+                if (user.getCompany() != null) {
+                    auditLog.setCompany(user.getCompany());
+                }
+            });
 
-            // Récupération du profil utilisateur et de la compagnie
-            userProfileRepository
-                .findByJhiUserId(login)
-                .ifPresent(user -> {
-                    auditLog.setUser(user);
-                    if (user.getCompany() != null) {
-                        auditLog.setCompany(user.getCompany());
-                    }
-                });
+        // Fallback : admin sans UserProfile (inscrit via /register-with-company)
+        if (auditLog.getCompany() == null && login != null) {
+            companyRepository.findFirstByAdminLoginIgnoreCase(login).ifPresent(auditLog::setCompany);
+        }
 
-            // Fallback : admin enregistré via /register-with-company (sans UserProfile)
-            if (auditLog.getCompany() == null && login != null) {
-                companyRepository.findFirstByAdminLoginIgnoreCase(login).ifPresent(auditLog::setCompany);
-            }
+        if (auditLog.getCompany() == null) {
+            LOG.error("AuditLog ignoré : aucune compagnie résolue pour login={} action={}", login, action);
+            return;
+        }
 
+        try {
             auditLogRepository.save(auditLog);
-            LOG.debug("AuditLog enregistré avec succès pour l'action : {}", action);
+            LOG.debug("AuditLog saved: action={} entity={}/{}", action, entityType, auditLog.getEntityId());
         } catch (Exception e) {
-            LOG.error("Erreur lors de la sauvegarde de l'audit dans AuditService : {}", e.getMessage());
+            LOG.error("Erreur sauvegarde AuditLog action={} entity={}: {}", action, entityType, e.getMessage());
         }
     }
 }
