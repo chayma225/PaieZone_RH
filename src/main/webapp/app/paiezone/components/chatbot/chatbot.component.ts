@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import IconComponent from '../../core/icon/icon.component';
 import { RoleService } from '../../core/role.service';
 import { ApiService } from '../../core/api.service';
+import { DataService } from '../../core/data.service';
 import type { ChatMessage, Role } from '../../core/types';
 
 @Component({
@@ -19,6 +20,7 @@ import type { ChatMessage, Role } from '../../core/types';
 export default class ChatbotComponent implements AfterViewChecked {
   private readonly roleService = inject(RoleService);
   private readonly api = inject(ApiService);
+  private readonly data = inject(DataService);
   private readonly router = inject(Router);
 
   protected readonly open = signal(false);
@@ -141,6 +143,15 @@ export default class ChatbotComponent implements AfterViewChecked {
       return;
     }
 
+    // Live RH data — answered from cached signals, no AI needed
+    const liveReply = this.matchLiveData(msg);
+    if (liveReply) {
+      this.messages.update(m => [...m, { role: 'me', text: msg }]);
+      this.input.set('');
+      this.messages.update(m => [...m, { role: 'bot', text: liveReply.text, cite: liveReply.cite }]);
+      return;
+    }
+
     this.messages.update(m => [...m, { role: 'me', text: msg }]);
     this.input.set('');
     this.busy.set(true);
@@ -221,6 +232,84 @@ export default class ChatbotComponent implements AfterViewChecked {
   private matchBulletinIntent(text: string): boolean {
     const t = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     return /bulletin|fiche de paie|fiche paie|telecharger.*paie|paie.*telecharger/.test(t);
+  }
+
+  // Live RH data answers — reads from DataService signals
+  private matchLiveData(text: string): { text: string; cite?: string } | null {
+    const t = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+    // "Combien d'employés actifs ?"
+    if (/employe.*(actif|actifs|nombre|combien)|combien.*employe|effectif/.test(t)) {
+      const emps = this.data.employees();
+      const actifs = emps.filter(e => e.active !== false);
+      const parDept = emps.reduce((acc, e) => {
+        const d = e.dept || 'Sans département';
+        acc[d] = (acc[d] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      const deptLines = Object.entries(parDept)
+        .sort((a, b) => b[1] - a[1])
+        .map(([d, n]) => `  • ${d} : ${n}`)
+        .join('\n');
+      return {
+        text:
+          `👥 Effectif total : **${emps.length}** employés\n` +
+          `✅ Actifs : **${actifs.length}**\n\n` +
+          `Répartition par département :\n${deptLines}`,
+      };
+    }
+
+    // "Masse salariale du mois ?"
+    if (/masse.?salariale|cout.*salarial|total.*salaire|salaire.*total/.test(t)) {
+      const now = new Date();
+      const periods = this.data.payrollPeriods();
+      const current = periods.find(p => p.month === now.getMonth() + 1 && p.year === now.getFullYear())
+        ?? [...periods].sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month)[0];
+      if (!current) return { text: "Aucune période de paie disponible pour l'instant." };
+      return {
+        text:
+          `💰 Masse salariale — **${MONTHS[current.month - 1]} ${current.year}**\n\n` +
+          `  • Brut total : **${current.gross.toLocaleString('fr-FR')} TND**\n` +
+          `  • Net total  : **${current.net.toLocaleString('fr-FR')} TND**\n` +
+          `  • Employés couverts : ${current.employees}\n` +
+          `  • Statut : ${current.status}`,
+      };
+    }
+
+    // "Employés par département ?"
+    if (/employe.*departement|departement.*employe|repartition.*dept|dept.*repartition/.test(t)) {
+      const emps = this.data.employees();
+      const parDept = emps.reduce((acc, e) => {
+        const d = e.dept || 'Sans département';
+        acc[d] = (acc[d] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      const lines = Object.entries(parDept)
+        .sort((a, b) => b[1] - a[1])
+        .map(([d, n]) => `  • ${d} : ${n} employé${n > 1 ? 's' : ''}`)
+        .join('\n');
+      return { text: `🏢 Répartition par département :\n\n${lines}` };
+    }
+
+    // "Qui a été recruté cette année ?"
+    if (/recrut|embauche|embauché|nouvel.*employe|employe.*nouveau|cette annee|annee.*en cours/.test(t)) {
+      const year = new Date().getFullYear();
+      const nouveaux = this.data.employees()
+        .filter(e => e.hireDate?.startsWith(String(year)))
+        .sort((a, b) => a.hireDate.localeCompare(b.hireDate));
+      if (nouveaux.length === 0) {
+        return { text: `Aucun employé recruté en ${year} pour l'instant.` };
+      }
+      const lines = nouveaux
+        .map(e => `  • ${e.firstName} ${e.lastName} — ${e.dept || 'N/A'} (${e.hireDate})`)
+        .join('\n');
+      return {
+        text: `🆕 Recrutements ${year} (${nouveaux.length}) :\n\n${lines}`,
+      };
+    }
+
+    return null;
   }
 
   // Pure local CNSS calculation (no AI needed, result is deterministic)
