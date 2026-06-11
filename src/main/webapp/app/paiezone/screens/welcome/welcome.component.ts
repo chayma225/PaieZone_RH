@@ -1766,24 +1766,24 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         align-items: center;
       }
       .cta-create {
-        background: #7c3aed !important;
-        color: #fff !important;
-        border-color: #7c3aed !important;
+        background: #fff !important;
+        color: #7c3aed !important;
+        border-color: #fff !important;
         font-weight: 800;
         padding: 14px 36px;
         font-size: 16px;
         letter-spacing: -0.01em;
-        box-shadow: 0 4px 24px rgba(124, 58, 237, 0.35);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
       }
       .cta-create:hover {
-        background: #6d28d9 !important;
-        color: #fff !important;
-        border-color: #6d28d9 !important;
+        background: #f5f3ff !important;
+        color: #6d28d9 !important;
+        border-color: #f5f3ff !important;
         transform: translateY(-2px);
-        box-shadow: 0 10px 36px rgba(124, 58, 237, 0.45);
+        box-shadow: 0 10px 36px rgba(0, 0, 0, 0.24);
       }
       .cta-create .arrow {
-        color: #c4b5fd;
+        color: #7c3aed;
       }
       .cta-meta {
         position: absolute;

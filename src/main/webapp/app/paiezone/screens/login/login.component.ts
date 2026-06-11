@@ -248,7 +248,7 @@ import { DataService } from '../../core/data.service';
         border-radius: 999px;
         border: none;
         cursor: pointer;
-        background: #7c3aed;
+        background: #4f46e5;
         color: #fff;
         font-size: 15px;
         font-weight: 700;
@@ -260,7 +260,8 @@ import { DataService } from '../../core/data.service';
         margin-top: 6px;
       }
       .btn-submit:hover:not(:disabled) {
-        box-shadow: 0 14px 40px rgba(196, 181, 253, 0.5);
+        background: #4338ca;
+        box-shadow: 0 14px 40px rgba(79, 70, 229, 0.4);
         transform: translateY(-2px);
       }
       .btn-submit:disabled {
