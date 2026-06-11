@@ -138,6 +138,7 @@ public class LeaveRequestResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @Auditable(action = "CREATE", entityType = "LeaveRequest")
     public ResponseEntity<LeaveRequestDTO> createLeaveRequest(@Valid @RequestBody LeaveRequestDTO leaveRequestDTO)
         throws URISyntaxException {
         LOG.debug("REST request to save LeaveRequest : {}", leaveRequestDTO);
@@ -161,6 +162,7 @@ public class LeaveRequestResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @Auditable(action = "UPDATE", entityType = "LeaveRequest")
     public ResponseEntity<LeaveRequestDTO> updateLeaveRequest(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody LeaveRequestDTO leaveRequestDTO
@@ -195,6 +197,7 @@ public class LeaveRequestResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @Auditable(action = "PATCH", entityType = "LeaveRequest")
     public ResponseEntity<LeaveRequestDTO> partialUpdateLeaveRequest(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody LeaveRequestDTO leaveRequestDTO
@@ -317,6 +320,7 @@ public class LeaveRequestResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @Auditable(action = "DELETE", entityType = "LeaveRequest")
     public ResponseEntity<Void> deleteLeaveRequest(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete LeaveRequest : {}", id);
         leaveRequestService.delete(id);

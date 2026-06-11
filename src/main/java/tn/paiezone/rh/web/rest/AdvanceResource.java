@@ -31,6 +31,7 @@ import tn.paiezone.rh.service.AdvanceQueryService;
 import tn.paiezone.rh.service.AdvanceService;
 import tn.paiezone.rh.service.criteria.AdvanceCriteria;
 import tn.paiezone.rh.service.dto.AdvanceDTO;
+import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -70,6 +71,7 @@ public class AdvanceResource {
      */
     @PostMapping("/request")
     @PreAuthorize("isAuthenticated()")
+    @Auditable(action = "CREATE", entityType = "Advance")
     public ResponseEntity<AdvanceDTO> requestAdvance(@RequestBody Map<String, Object> body) throws URISyntaxException {
         Long empId = body.get("employeeId") != null ? Long.valueOf(body.get("employeeId").toString()) : null;
         if (empId == null) {
@@ -103,6 +105,7 @@ public class AdvanceResource {
      */
     @PostMapping("")
     @PreAuthorize("isAuthenticated()")
+    @Auditable(action = "CREATE", entityType = "Advance")
     public ResponseEntity<AdvanceDTO> createAdvance(@Valid @RequestBody AdvanceDTO advanceDTO) throws URISyntaxException {
         LOG.debug("REST request to save Advance : {}", advanceDTO);
         if (advanceDTO.getId() != null) {
@@ -120,6 +123,7 @@ public class AdvanceResource {
      */
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN')")
+    @Auditable(action = "APPROVE", entityType = "Advance")
     public ResponseEntity<AdvanceDTO> approveAdvance(@PathVariable Long id) {
         LOG.debug("REST request to approve Advance : {}", id);
         String login = SecurityUtils.getCurrentUserLogin().orElse("system");
@@ -132,6 +136,7 @@ public class AdvanceResource {
      */
     @PutMapping("/{id}/reject")
     @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN')")
+    @Auditable(action = "REJECT", entityType = "Advance")
     public ResponseEntity<AdvanceDTO> rejectAdvance(@PathVariable Long id, @RequestParam String reason) {
         LOG.debug("REST request to reject Advance : {}", id);
         return ResponseEntity.ok(advanceService.rejectAdvance(id, reason));
@@ -142,6 +147,7 @@ public class AdvanceResource {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN')")
+    @Auditable(action = "UPDATE", entityType = "Advance")
     public ResponseEntity<AdvanceDTO> updateAdvance(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody AdvanceDTO advanceDTO
@@ -168,6 +174,7 @@ public class AdvanceResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN')")
+    @Auditable(action = "PATCH", entityType = "Advance")
     public ResponseEntity<AdvanceDTO> partialUpdateAdvance(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody AdvanceDTO advanceDTO
@@ -228,6 +235,7 @@ public class AdvanceResource {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Auditable(action = "DELETE", entityType = "Advance")
     public ResponseEntity<Void> deleteAdvance(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Advance : {}", id);
         advanceService.delete(id);

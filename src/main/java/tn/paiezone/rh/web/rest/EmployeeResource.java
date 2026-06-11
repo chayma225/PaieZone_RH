@@ -287,6 +287,7 @@ public class EmployeeResource {
             AuthoritiesConstants.RH_COMPTABLE +
             "')"
     )
+    @Auditable(action = "PATCH", entityType = "Employee")
     public ResponseEntity<EmployeeDTO> quickUpdateEmployee(@PathVariable Long id, @RequestBody Map<String, Object> body) {
         final tn.paiezone.rh.domain.Employee emp = employeeRepository
             .findById(id)
@@ -347,6 +348,7 @@ public class EmployeeResource {
             AuthoritiesConstants.RH_COMPTABLE +
             "')"
     )
+    @Auditable(action = "PATCH", entityType = "Employee")
     public ResponseEntity<EmployeeDTO> partialUpdateEmployee(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody EmployeeDTO employeeDTO

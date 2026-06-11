@@ -24,6 +24,7 @@ import tn.paiezone.rh.service.BonusQueryService;
 import tn.paiezone.rh.service.BonusService;
 import tn.paiezone.rh.service.criteria.BonusCriteria;
 import tn.paiezone.rh.service.dto.BonusDTO;
+import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -60,6 +61,7 @@ public class BonusResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @Auditable(action = "CREATE", entityType = "Bonus")
     public ResponseEntity<BonusDTO> createBonus(@Valid @RequestBody BonusDTO bonusDTO) throws URISyntaxException {
         LOG.debug("REST request to save Bonus : {}", bonusDTO);
         if (bonusDTO.getId() != null) {
@@ -82,6 +84,7 @@ public class BonusResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @Auditable(action = "UPDATE", entityType = "Bonus")
     public ResponseEntity<BonusDTO> updateBonus(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody BonusDTO bonusDTO
@@ -116,6 +119,7 @@ public class BonusResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @Auditable(action = "PATCH", entityType = "Bonus")
     public ResponseEntity<BonusDTO> partialUpdateBonus(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody BonusDTO bonusDTO
@@ -191,6 +195,7 @@ public class BonusResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @Auditable(action = "DELETE", entityType = "Bonus")
     public ResponseEntity<Void> deleteBonus(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Bonus : {}", id);
         bonusService.delete(id);

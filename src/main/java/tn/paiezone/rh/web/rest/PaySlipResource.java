@@ -30,6 +30,7 @@ import tn.paiezone.rh.service.PaySlipQueryService;
 import tn.paiezone.rh.service.PaySlipService;
 import tn.paiezone.rh.service.criteria.PaySlipCriteria;
 import tn.paiezone.rh.service.dto.PaySlipDTO;
+import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -73,6 +74,7 @@ public class PaySlipResource {
      * {@code POST  /pay-slips} : Create a new paySlip.
      */
     @PostMapping("")
+    @Auditable(action = "CREATE", entityType = "PaySlip")
     public ResponseEntity<PaySlipDTO> createPaySlip(@Valid @RequestBody PaySlipDTO paySlipDTO) throws URISyntaxException {
         LOG.debug("REST request to save PaySlip : {}", paySlipDTO);
         if (paySlipDTO.getId() != null) {
@@ -88,6 +90,7 @@ public class PaySlipResource {
      * {@code PUT  /pay-slips/:id} : Updates an existing paySlip.
      */
     @PutMapping("/{id}")
+    @Auditable(action = "UPDATE", entityType = "PaySlip")
     public ResponseEntity<PaySlipDTO> updatePaySlip(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody PaySlipDTO paySlipDTO
@@ -156,6 +159,7 @@ public class PaySlipResource {
      * {@code DELETE  /pay-slips/:id} : delete the "id" paySlip.
      */
     @DeleteMapping("/{id}")
+    @Auditable(action = "DELETE", entityType = "PaySlip")
     public ResponseEntity<Void> deletePaySlip(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete PaySlip : {}", id);
         paySlipService.delete(id);

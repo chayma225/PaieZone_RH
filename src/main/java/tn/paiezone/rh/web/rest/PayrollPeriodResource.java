@@ -39,6 +39,7 @@ public class PayrollPeriodResource {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    @Auditable(action = "CREATE", entityType = "PayrollPeriod")
     public ResponseEntity<PayrollPeriodDTO> createPeriod(
         @Valid @RequestBody PayrollPeriodDTO dto) {
         log.debug("REST POST /payroll-periods");
@@ -61,6 +62,7 @@ public class PayrollPeriodResource {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    @Auditable(action = "UPDATE", entityType = "PayrollPeriod")
     public ResponseEntity<PayrollPeriodDTO> updatePeriod(
         @PathVariable Long id,
         @Valid @RequestBody PayrollPeriodDTO dto) {
@@ -75,6 +77,7 @@ public class PayrollPeriodResource {
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    @Auditable(action = "PATCH", entityType = "PayrollPeriod")
     public ResponseEntity<PayrollPeriodDTO> partialUpdatePeriod(
         @PathVariable Long id,
         @RequestBody PayrollPeriodDTO dto) {
@@ -103,6 +106,7 @@ public class PayrollPeriodResource {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    @Auditable(action = "DELETE", entityType = "PayrollPeriod")
     public ResponseEntity<Void> deletePeriod(@PathVariable Long id) {
         log.debug("REST DELETE /payroll-periods/{}", id);
         periodService.delete(id);
