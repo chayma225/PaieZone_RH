@@ -495,4 +495,28 @@
       </div>
     </div>
   </section>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer">
+    <div class="foot-cols">
+      <div>
+        <div class="brand">
+          <div class="brand-mark">PZ</div>
+          <div class="brand-name">paie<span class="it">zone</span> RH</div>
+        </div>
+        <p class="foot-tagline">La paie tunisienne, repensée. Conçu à Tunis, pour les PME et entreprises de toutes tailles.</p>
+      </div>
+      <div>
+        <div class="foot-title">Produit</div>
+        <a href="#features" (click)="scrollTo('features', $event)">Fonctionnalités</a>
+        <a href="#plans" (click)="scrollTo('plans', $event)">Tarifs</a>
+        <a href="#how" (click)="scrollTo('how', $event)">Comment ça marche</a>
+        <a href="#faq" (click)="scrollTo('faq', $event)">FAQ</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© {{ currentYear }} PaieZone. Tous droits réservés.</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; font-weight: 500">🇹🇳 Conçu et hébergé en Tunisie</span>
+    </div>
+  </footer>
 </div>
