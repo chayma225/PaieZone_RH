@@ -73,7 +73,7 @@ public class AuditService {
 
         // Résolution user + compagnie
         userProfileRepository
-            .findByJhiUserId(login)
+            .findByJhiUserIdIgnoreCase(login)
             .ifPresent(user -> {
                 auditLog.setUser(user);
                 if (user.getCompany() != null) {

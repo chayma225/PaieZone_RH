@@ -14,5 +14,6 @@ import tn.paiezone.rh.domain.UserProfile;
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
     boolean existsByJhiUserId(String jhiUserId);
     Optional<UserProfile> findByJhiUserId(String jhiUserId);
+    Optional<UserProfile> findByJhiUserIdIgnoreCase(String jhiUserId);
     List<UserProfile> findByCompanyId(Long companyId);
 }
