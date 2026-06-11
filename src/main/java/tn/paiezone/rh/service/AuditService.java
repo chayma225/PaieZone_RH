@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tn.paiezone.rh.domain.AuditLog;
 import tn.paiezone.rh.repository.AuditLogRepository;
@@ -12,7 +13,6 @@ import tn.paiezone.rh.repository.CompanyRepository;
 import tn.paiezone.rh.repository.UserProfileRepository;
 
 @Service
-@Transactional
 public class AuditService {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuditService.class);
@@ -37,6 +37,7 @@ public class AuditService {
     /**
      * Centralise la création de l'audit pour respecter les règles ArchUnit.
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveAuditLog(
         String login,
         String action,
@@ -85,9 +86,9 @@ public class AuditService {
                     }
                 });
 
-            // Fallback si aucune compagnie n'est trouvée
-            if (auditLog.getCompany() == null) {
-                companyRepository.findAll().stream().findFirst().ifPresent(auditLog::setCompany);
+            // Fallback : admin enregistré via /register-with-company (sans UserProfile)
+            if (auditLog.getCompany() == null && login != null) {
+                companyRepository.findFirstByAdminLoginIgnoreCase(login).ifPresent(auditLog::setCompany);
             }
 
             auditLogRepository.save(auditLog);

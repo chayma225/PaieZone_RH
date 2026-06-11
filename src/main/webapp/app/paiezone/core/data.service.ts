@@ -143,7 +143,10 @@ export class DataService {
   }
 
   loadAudit(): void {
-    this.api.auditLogs().subscribe({ next: v => this.audit.set(v), error: () => {} });
+    this.api.auditLogs().subscribe({
+      next: v => this.audit.set(v),
+      error: err => console.error('[DataService] audit-logs failed:', err?.status, err?.message),
+    });
   }
 
   reloadEmployees(): void {
