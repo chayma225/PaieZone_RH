@@ -1766,24 +1766,24 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         align-items: center;
       }
       .cta-create {
-        background: #fff !important;
-        color: #2a0f56 !important; /* couleur du fond de la carte CTA */
-        border-color: #fff !important;
+        background: #7c3aed !important;
+        color: #fff !important;
+        border-color: #7c3aed !important;
         font-weight: 800;
         padding: 14px 36px;
         font-size: 16px;
         letter-spacing: -0.01em;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+        box-shadow: 0 4px 24px rgba(124, 58, 237, 0.35);
       }
       .cta-create:hover {
-        background: #ede9fe !important;
-        color: #1e0a3c !important;
-        border-color: #ede9fe !important;
+        background: #6d28d9 !important;
+        color: #fff !important;
+        border-color: #6d28d9 !important;
         transform: translateY(-2px);
-        box-shadow: 0 10px 36px rgba(0, 0, 0, 0.24);
+        box-shadow: 0 10px 36px rgba(124, 58, 237, 0.45);
       }
       .cta-create .arrow {
-        color: #7c3aed;
+        color: #c4b5fd;
       }
       .cta-meta {
         position: absolute;

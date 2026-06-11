@@ -248,7 +248,7 @@ import { DataService } from '../../core/data.service';
         border-radius: 999px;
         border: none;
         cursor: pointer;
-        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        background: #7c3aed;
         color: #fff;
         font-size: 15px;
         font-weight: 700;
