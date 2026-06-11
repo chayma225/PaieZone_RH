@@ -169,9 +169,24 @@ public class TextToSqlService {
         }
 
         boolean isEmployee = intentType == IntentType.PERSONAL_SQL;
-        String promptPrefix = isEmployee ? SQL_PROMPT_EMPLOYEE : SQL_PROMPT_ADMIN;
 
         log.info("[TextToSQL] intent={} user={} schema={}", intentType, ctx.login(), ctx.tenantSchema());
+
+        // Fast-path : requêtes fréquentes → SQL déterministe, pas de phi3
+        String fastSql = fastPathSql(question, isEmployee);
+        if (fastSql != null) {
+            log.debug("[TextToSQL] fast-path : {}", fastSql);
+            String secureSql = injectSecurityCte(fastSql, ctx.userProfileId(), isEmployee);
+            try {
+                List<Map<String, Object>> results = executeInTenantSchema(secureSql, ctx.tenantSchema());
+                return formatResults(results);
+            } catch (Exception e) {
+                log.error("[TextToSQL] fast-path erreur : {}", e.getMessage());
+                return "❌ " + simplifyError(e.getMessage());
+            }
+        }
+
+        String promptPrefix = isEmployee ? SQL_PROMPT_EMPLOYEE : SQL_PROMPT_ADMIN;
 
         // 1. Générer SQL (phi3, température 0.05 → déterministe)
         String rawSql = ollamaService.generateSql(promptPrefix, question);
@@ -466,6 +481,52 @@ public class TextToSqlService {
         if (results.size() > 25) sb.append("\n_… et **").append(results.size() - 25).append("** autres._");
 
         return sb.toString();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  Fast-path : SQL déterministe pour les questions fréquentes
+    // ─────────────────────────────────────────────────────────────
+
+    private String fastPathSql(String question, boolean isEmployee) {
+        String n = normalize(question);
+
+        if (!isEmployee) {
+            // "Combien d'employés actifs ?"
+            if (containsAny(n, "combien", "nombre", "effectif") && containsAny(n, "employe", "actif", "actifs")) {
+                return "SELECT COUNT(*) AS \"Employés actifs\" FROM employee WHERE active = true";
+            }
+            // "Masse salariale du mois ?"
+            if (containsAny(n, "masse salarial", "masse salariale", "cout salarial", "total salaire", "salaire total", "salaires totaux")) {
+                return "SELECT ROUND(SUM(salary_brut),3) AS \"Masse brute (DT)\", ROUND(SUM(salary_net),3) AS \"Masse nette (DT)\", COUNT(*) AS \"Employés\" FROM employee WHERE active = true";
+            }
+            // "Employés par département ?"
+            if (containsAny(n, "par departement", "repartition", "par dept") && containsAny(n, "employe")) {
+                return "SELECT d.name AS \"Département\", COUNT(*) AS \"Effectif\" FROM employee e JOIN department d ON e.department_id = d.id WHERE e.active = true GROUP BY d.name ORDER BY \"Effectif\" DESC";
+            }
+            // "Qui a été recruté cette année ?"
+            if (containsAny(n, "recrute", "embauche", "embauche cette annee", "embauche en", "cette annee", "cette année", "nouvel employe")) {
+                return "SELECT first_name AS \"Prénom\", last_name AS \"Nom\", hire_date AS \"Date d embauche\" FROM employee WHERE EXTRACT(YEAR FROM hire_date) = EXTRACT(YEAR FROM CURRENT_DATE) ORDER BY hire_date DESC";
+            }
+            // "Effectif par poste ?"
+            if (containsAny(n, "par poste", "repartition poste") && containsAny(n, "employe", "effectif")) {
+                return "SELECT jp.title AS \"Poste\", COUNT(*) AS \"Effectif\" FROM employee e JOIN job_position jp ON e.position_id = jp.id WHERE e.active = true GROUP BY jp.title ORDER BY \"Effectif\" DESC";
+            }
+            // "Salaire moyen ?"
+            if (containsAny(n, "salaire moyen", "moyenne salaire", "salaire median")) {
+                return "SELECT ROUND(AVG(salary_brut),3) AS \"Salaire brut moyen (DT)\", ROUND(AVG(salary_net),3) AS \"Salaire net moyen (DT)\" FROM employee WHERE active = true";
+            }
+        } else {
+            // Employé : solde de congés
+            if (containsAny(n, "solde conge", "mes conges", "jours conge", "balance conge")) {
+                return "SELECT balance_conge AS \"Solde de congés (jours)\", first_name AS \"Prénom\", last_name AS \"Nom\" FROM employee";
+            }
+            // Employé : ancienneté
+            if (containsAny(n, "anciennete", "depuis quand", "date embauche", "date d embauche")) {
+                return "SELECT first_name AS \"Prénom\", last_name AS \"Nom\", hire_date AS \"Embauché le\", (CURRENT_DATE - hire_date) / 365 AS \"Années d ancienneté\" FROM employee";
+            }
+        }
+
+        return null;
     }
 
     // ─────────────────────────────────────────────────────────────
