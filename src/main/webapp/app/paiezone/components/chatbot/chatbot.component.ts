@@ -208,6 +208,8 @@ export default class ChatbotComponent implements AfterViewChecked {
 
   private matchLeaveIntent(text: string): boolean {
     const t = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    // Ne pas rediriger si c'est une question légale/réglementaire sur les congés
+    if (/legal|legaux|loi|code travail|taux|duree|droit|tunisi|regle|nb|nombre|combien|jours?/.test(t)) return false;
     return /conge|conges|vacance|absence|rti|repos/.test(t);
   }
 
@@ -246,24 +248,97 @@ export default class ChatbotComponent implements AfterViewChecked {
     };
   }
 
-  // Offline fallback for IRPP bracket lookup
+  // Réponses locales exactes — intercepte les questions légales pour éviter les hallucinations phi3
   private matchCanned(text: string, _role: Role): { text: string; cite?: string } | null {
-    const t = text.toLowerCase();
-    if (/irpp|imp[oô]t/.test(t)) {
+    const t = text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '');
+
+    // IRPP / Tranches fiscales
+    if (/irpp|impo[st]|tranche.*fisc|fisc.*tranche|bareme|lf.?2026/.test(t)) {
       return {
         text:
           'Barème IRPP 2026 (LF 2026) :\n' +
-          '• 0 → 5 000 : 0 %\n' +
-          '• 5 000 → 10 000 : 15 %\n' +
-          '• 10 000 → 20 000 : 25 %\n' +
-          '• 20 000 → 30 000 : 30 %\n' +
-          '• 30 000 → 40 000 : 33 %\n' +
-          '• 40 000 → 50 000 : 36 %\n' +
-          '• 50 000 → 70 000 : 38 %\n' +
-          '• > 70 000 : 40 %',
+          '• 0 → 5 000 TND : 0 %\n' +
+          '• 5 001 → 10 000 TND : 15 %\n' +
+          '• 10 001 → 20 000 TND : 25 %\n' +
+          '• 20 001 → 30 000 TND : 30 %\n' +
+          '• 30 001 → 40 000 TND : 33 %\n' +
+          '• 40 001 → 50 000 TND : 36 %\n' +
+          '• 50 001 → 70 000 TND : 38 %\n' +
+          '• > 70 000 TND : 40 %',
         cite: 'LF 2026 Art. 12',
       };
     }
+
+    // Taux CNSS / CAVIS / CSS (sans montant → taux seuls)
+    if (/taux|rate|pourcentage|cotisation/.test(t) && /cnss|cavis|css|securite sociale/.test(t)) {
+      return {
+        text:
+          'Taux de cotisations sociales (LF 2026) :\n\n' +
+          '👤 Salarié :\n' +
+          '  • CNSS : 9,18 %\n' +
+          '  • CAVIS : 1,00 %\n' +
+          '  • CSS : 0,50 %\n' +
+          '  • Total salarié : 10,68 %\n\n' +
+          '🏢 Employeur :\n' +
+          '  • CNSS : 16,57 %\n' +
+          '  • Total employeur : 16,57 %',
+        cite: 'JORT n°3-2026',
+      };
+    }
+
+    // Congés légaux
+    if (/conge.*legal|legal.*conge|conge.*tunisi|droit.*conge|duree.*conge|nb.*conge|jours.*conge|conge.*annuel|conge.*loi/.test(t)) {
+      return {
+        text:
+          'Congés légaux en Tunisie (Code du travail) :\n\n' +
+          '📅 Congé annuel payé :\n' +
+          '  • 1 jour ouvrable par mois de service\n' +
+          '  • Minimum 12 jours / an (après 1 an d\'ancienneté)\n' +
+          '  • Peut aller jusqu\'à 18 jours selon convention\n\n' +
+          '🤒 Congé maladie :\n' +
+          '  • Pris en charge par la CNAM après 3 jours\n' +
+          '  • Justificatif médical obligatoire\n\n' +
+          '👶 Congé maternité : 30 jours (secteur privé)\n' +
+          '📌 Jours fériés légaux : 13 jours/an',
+        cite: 'Code du Travail Tunisien',
+      };
+    }
+
+    // Types de contrats
+    if (/type.*contrat|contrat.*type|cdi|cdd|civp|karama|contrat.*travail|forme.*contrat/.test(t)) {
+      return {
+        text:
+          'Types de contrats en Tunisie :\n\n' +
+          '📄 CDI (Contrat à Durée Indéterminée)\n' +
+          '  • Contrat permanent, pas de date de fin\n' +
+          '  • Protection renforcée contre le licenciement\n\n' +
+          '📄 CDD (Contrat à Durée Déterminée)\n' +
+          '  • Durée maximale : 4 ans (renouvellements inclus)\n' +
+          '  • Devient CDI si dépassement de durée\n\n' +
+          '📄 CIVP (Contrat d\'Insertion à la Vie Professionnelle)\n' +
+          '  • Réservé aux primo-demandeurs d\'emploi\n' +
+          '  • Durée : 12 mois renouvelable une fois\n' +
+          '  • Rémunération : au moins le SMIG\n\n' +
+          '💡 SMIG 2026 : 530 TND/mois (40h/sem)',
+        cite: 'Code du Travail Art. 6-22',
+      };
+    }
+
+    // SMIG / Salaire minimum
+    if (/smig|salaire.*(min|base|plancher)|smic/.test(t)) {
+      return {
+        text:
+          'SMIG en Tunisie (2026) :\n' +
+          '  • 40h/semaine : 530 TND/mois\n' +
+          '  • 48h/semaine : 630 TND/mois\n\n' +
+          'Le salaire brut ne peut pas être inférieur à ces montants.',
+        cite: 'Décret n°2025-xxx',
+      };
+    }
+
     return null;
   }
 }
