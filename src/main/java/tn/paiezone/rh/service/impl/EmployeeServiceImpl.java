@@ -13,8 +13,10 @@ import tn.paiezone.rh.domain.Authority;
 import tn.paiezone.rh.domain.Employee;
 import tn.paiezone.rh.domain.EmployeeHistory;
 import tn.paiezone.rh.domain.User;
+import tn.paiezone.rh.repository.DepartmentRepository;
 import tn.paiezone.rh.repository.EmployeeHistoryRepository;
 import tn.paiezone.rh.repository.EmployeeRepository;
+import tn.paiezone.rh.repository.JobPositionRepository;
 import tn.paiezone.rh.repository.UserRepository;
 import tn.paiezone.rh.security.AuthoritiesConstants;
 import tn.paiezone.rh.security.SecurityUtils;
@@ -38,6 +40,8 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
     private final UserRepository userRepository;
     private final UserService userService;
     private final MailService mailService;
+    private final DepartmentRepository departmentRepository;
+    private final JobPositionRepository jobPositionRepository;
 
     public EmployeeServiceImpl(
         EmployeeRepository employeeRepository,
@@ -45,7 +49,9 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
         EmployeeHistoryRepository employeeHistoryRepository,
         UserRepository userRepository,
         UserService userService,
-        MailService mailService
+        MailService mailService,
+        DepartmentRepository departmentRepository,
+        JobPositionRepository jobPositionRepository
     ) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
@@ -53,6 +59,8 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.departmentRepository = departmentRepository;
+        this.jobPositionRepository = jobPositionRepository;
     }
 
     // ── US-09 : Créer un dossier employé ─────────────────────────────────────
@@ -87,10 +95,22 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
             );
         }
 
-        // 4. Forcer createdAt
+        // 4. Vérifier département actif
+        if (dto.getDepartment() != null && dto.getDepartment().getId() != null
+                && departmentRepository.existsByIdAndActiveFalse(dto.getDepartment().getId())) {
+            throw new BusinessException("Le département sélectionné est inactif.", ENTITY_NAME, "departementInactif");
+        }
+
+        // 5. Vérifier poste actif
+        if (dto.getPosition() != null && dto.getPosition().getId() != null
+                && jobPositionRepository.existsByIdAndActiveFalse(dto.getPosition().getId())) {
+            throw new BusinessException("Le poste sélectionné est inactif.", ENTITY_NAME, "posteInactif");
+        }
+
+        // 6. Forcer createdAt
         dto.setCreatedAt(Instant.now());
 
-        // 5. Sauvegarder l'employé
+        // 7. Sauvegarder l'employé
         Employee employee = employeeMapper.toEntity(dto);
         employee = employeeRepository.save(employee);
 
@@ -127,6 +147,18 @@ public class EmployeeServiceImpl implements tn.paiezone.rh.service.EmployeeServi
                 ENTITY_NAME,
                 "nationalIdExists"
             );
+        }
+
+        // Vérifier département actif
+        if (dto.getDepartment() != null && dto.getDepartment().getId() != null
+                && departmentRepository.existsByIdAndActiveFalse(dto.getDepartment().getId())) {
+            throw new BusinessException("Le département sélectionné est inactif.", ENTITY_NAME, "departementInactif");
+        }
+
+        // Vérifier poste actif
+        if (dto.getPosition() != null && dto.getPosition().getId() != null
+                && jobPositionRepository.existsByIdAndActiveFalse(dto.getPosition().getId())) {
+            throw new BusinessException("Le poste sélectionné est inactif.", ENTITY_NAME, "posteInactif");
         }
 
         // Enregistrer les modifications dans l'historique

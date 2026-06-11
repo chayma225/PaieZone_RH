@@ -11,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.Employee;
 import tn.paiezone.rh.domain.LeaveBalance;
 import tn.paiezone.rh.domain.LeaveRequest;
 import tn.paiezone.rh.domain.LeaveType;
 import tn.paiezone.rh.domain.PublicHoliday;
 import tn.paiezone.rh.domain.enumeration.LeaveStatus;
+import tn.paiezone.rh.domain.enumeration.LeaveTypeName;
 import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.LeaveBalanceRepository;
 import tn.paiezone.rh.repository.LeaveRequestRepository;
@@ -110,6 +112,43 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
         log.info("📋 Congé demandé : emp#{} {} → {} ({} j)", dto.getEmployee().getId(), dto.getStartDate(), dto.getEndDate(), workingDays);
 
+        return leaveRequestMapper.toDto(saved);
+    }
+
+    @Override
+    public LeaveRequestDTO submitUnjustified(Long employeeId, LocalDate startDate, LocalDate endDate, int days, String comment) {
+        Employee emp = employeeRepository.findById(employeeId)
+            .orElseThrow(() -> new IllegalStateException("Employé introuvable : " + employeeId));
+        Company company = emp.getCompany();
+
+        LeaveType absenceType = leaveTypeRepository
+            .findByNameAndCompanyId(LeaveTypeName.ABSENCE_NON_JUSTIFIEE, company.getId())
+            .orElseGet(() -> {
+                LeaveType lt = new LeaveType();
+                lt.setName(LeaveTypeName.ABSENCE_NON_JUSTIFIEE);
+                lt.setLabel("Absence non justifiée");
+                lt.setMaxDaysPerYear(365);
+                lt.setCarryOverDays(0);
+                lt.setPaid(false);
+                lt.setRequiresMedical(false);
+                lt.setActive(true);
+                lt.setCompany(company);
+                return leaveTypeRepository.save(lt);
+            });
+
+        LeaveRequest lr = new LeaveRequest();
+        lr.setEmployee(emp);
+        lr.setLeaveType(absenceType);
+        lr.setStartDate(startDate);
+        lr.setEndDate(endDate != null ? endDate : startDate);
+        lr.setNumberOfDays(Math.max(1, days));
+        lr.setEmployeeComment(comment != null && !comment.isBlank() ? comment : "Absence non justifiée");
+        lr.setStatus(LeaveStatus.APPROVED);
+        lr.setRequestedAt(Instant.now());
+        lr.setProcessedAt(Instant.now());
+
+        LeaveRequest saved = leaveRequestRepository.save(lr);
+        log.info("🚫 Absence non justifiée : emp#{} {} → {} ({} j)", employeeId, startDate, endDate, days);
         return leaveRequestMapper.toDto(saved);
     }
 

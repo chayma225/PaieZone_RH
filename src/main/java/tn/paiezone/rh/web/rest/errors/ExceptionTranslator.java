@@ -62,6 +62,28 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         this.env = env;
     }
 
+    @ExceptionHandler(tn.paiezone.rh.service.exception.BusinessException.class)
+    public ResponseEntity<Object> handleBusinessException(
+            tn.paiezone.rh.service.exception.BusinessException ex,
+            NativeWebRequest request) {
+        LOG.debug("BusinessException: {}", ex.getMessage());
+        ProblemDetailWithCause problem = ProblemDetailWithCauseBuilder.instance()
+            .withStatus(HttpStatus.UNPROCESSABLE_ENTITY.value())
+            .withType(ErrorConstants.DEFAULT_TYPE)
+            .withTitle("Règle métier non respectée")
+            .withDetail(ex.getMessage())
+            .build();
+        problem.setProperty(MESSAGE_KEY, ex.getErrorKey() != null ? "error." + ex.getErrorKey() : "error.business");
+        problem.setProperty(PATH_KEY, getPathValue(request));
+        if (ex.getEntity() != null) problem.setProperty("entityName", ex.getEntity());
+        if (ex.getErrorKey() != null) problem.setProperty("errorKey", ex.getErrorKey());
+        HttpHeaders headers = ex.getEntity() != null && ex.getErrorKey() != null
+            ? HeaderUtil.createFailureAlert(applicationName, true, ex.getEntity(), ex.getErrorKey(), ex.getMessage())
+            : null;
+        return handleExceptionInternal(ex, problem, headers != null ? headers : new HttpHeaders(),
+            HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
+
     @ExceptionHandler
     public ResponseEntity<Object> handleAnyException(Throwable ex, NativeWebRequest request) {
         LOG.debug("Converting Exception to Problem Details:", ex);

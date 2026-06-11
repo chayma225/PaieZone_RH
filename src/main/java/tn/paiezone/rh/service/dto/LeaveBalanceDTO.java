@@ -34,7 +34,6 @@ public class LeaveBalanceDTO implements Serializable {
     @NotNull
     private BigDecimal remaining;
 
-    @NotNull
     private Instant lastUpdatedAt;
 
     @NotNull

@@ -13,9 +13,11 @@ import tn.paiezone.rh.domain.Company;
 import tn.paiezone.rh.domain.PayrollPeriod;
 import tn.paiezone.rh.domain.enumeration.PayrollStatus;
 import tn.paiezone.rh.repository.CompanyRepository;
+import tn.paiezone.rh.repository.EmployeeRepository;
 import tn.paiezone.rh.repository.PaySlipRepository;
 import tn.paiezone.rh.repository.PayrollPeriodRepository;
 import tn.paiezone.rh.repository.UserProfileRepository;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.security.SecurityUtils;
 import tn.paiezone.rh.service.AccountingGenerationService;
 import tn.paiezone.rh.service.PayrollCalculationService;
@@ -31,8 +33,11 @@ import tn.paiezone.rh.service.mapper.PayrollPeriodMapper;
 @Slf4j
 public class PayrollPeriodServiceImpl implements PayrollPeriodService {
 
+    private static final String ENTITY_NAME = "payrollPeriod";
+
     private final PayrollPeriodRepository periodRepository;
     private final PaySlipRepository paySlipRepository;
+    private final EmployeeRepository employeeRepository;
     private final PayrollPeriodMapper periodMapper;
     private final CompanyRepository companyRepository;
     private final PayrollCalculationService calculationService;
@@ -58,7 +63,9 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
             .orElseThrow(() -> new EntityNotFoundException("Aucune société trouvée."));
 
         if (periodRepository.existsByCompanyIdAndMonthAndYear(company.getId(), dto.getMonth(), dto.getYear())) {
-            throw new IllegalArgumentException("Une période existe déjà pour " + dto.getMonth() + "/" + dto.getYear());
+            throw new BusinessException(
+                "Une période existe déjà pour " + dto.getMonth() + "/" + dto.getYear() + ".",
+                ENTITY_NAME, "periodeExistante");
         }
 
         PayrollPeriod entity = periodMapper.toEntity(dto);
@@ -83,7 +90,8 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
             .findById(dto.getId())
             .orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + dto.getId()));
 
-        if (existing.getStatus() == PayrollStatus.LOCKED) throw new IllegalStateException("Impossible de modifier une période clôturée.");
+        if (existing.getStatus() == PayrollStatus.LOCKED)
+            throw new BusinessException("Impossible de modifier une période clôturée.", ENTITY_NAME, "periodeLocked");
 
         periodMapper.partialUpdate(existing, dto);
         existing.setLastModifiedBy(SecurityUtils.getCurrentUserLogin().orElse("system"));
@@ -144,8 +152,10 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
     @Override
     public void delete(Long id) {
         PayrollPeriod p = periodRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + id));
-        if (p.getStatus() == PayrollStatus.LOCKED) throw new IllegalStateException("Impossible de supprimer une période clôturée.");
-        if (p.getStatus() == PayrollStatus.VALIDATED) throw new IllegalStateException("Impossible de supprimer une période validée.");
+        if (p.getStatus() == PayrollStatus.LOCKED)
+            throw new BusinessException("Impossible de supprimer une période clôturée.", ENTITY_NAME, "periodeLocked");
+        if (p.getStatus() == PayrollStatus.VALIDATED)
+            throw new BusinessException("Impossible de supprimer une période validée.", ENTITY_NAME, "periodeValidated");
         periodRepository.deleteById(id);
         log.info("🗑 Période supprimée : ID={}", id);
     }
@@ -166,9 +176,20 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
         PayrollPeriod p = periodRepository
             .findById(periodId)
             .orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + periodId));
-        if (p.getStatus() != PayrollStatus.CALCULATED) throw new IllegalStateException(
-            "La période doit être CALCULATED. Statut : " + p.getStatus()
-        );
+        if (p.getStatus() != PayrollStatus.CALCULATED)
+            throw new BusinessException(
+                "La période doit être à l'état CALCULÉ pour être validée. Statut actuel : " + p.getStatus() + ".",
+                ENTITY_NAME, "periodeNonCalculee");
+
+        if (employeeRepository.countByActiveTrue() == 0)
+            throw new BusinessException("Aucun employé actif. Impossible de valider la période.", ENTITY_NAME, "aucunEmployeActif");
+
+        long pending = paySlipRepository.countByPayrollPeriodIdAndStatusNot(p.getId(), PayrollStatus.CALCULATED);
+        if (pending > 0)
+            throw new BusinessException(
+                pending + " bulletin(s) non calculé(s). Calculez tous les bulletins avant de valider.",
+                ENTITY_NAME, "bulletinsNonCalcules");
+
         p.setStatus(PayrollStatus.VALIDATED);
         p.setValidatedAt(Instant.now());
         periodRepository.save(p);
@@ -187,9 +208,10 @@ public class PayrollPeriodServiceImpl implements PayrollPeriodService {
         PayrollPeriod p = periodRepository
             .findById(periodId)
             .orElseThrow(() -> new EntityNotFoundException("Période introuvable : " + periodId));
-        if (p.getStatus() != PayrollStatus.VALIDATED) throw new IllegalStateException(
-            "La période doit être VALIDATED. Statut : " + p.getStatus()
-        );
+        if (p.getStatus() != PayrollStatus.VALIDATED)
+            throw new BusinessException(
+                "La période doit être à l'état VALIDÉ pour être clôturée. Statut actuel : " + p.getStatus() + ".",
+                ENTITY_NAME, "periodeNonValidee");
         p.setStatus(PayrollStatus.LOCKED);
         p.setLockedAt(Instant.now());
         p.setClosedBy(SecurityUtils.getCurrentUserLogin().orElse("system"));

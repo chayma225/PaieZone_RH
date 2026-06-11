@@ -110,6 +110,7 @@ public class DepartmentResource {
             AuthoritiesConstants.RH_COMPTABLE +
             "')"
     )
+    @Auditable(action = "TOGGLE_ACTIVE", entityType = "Department")
     public ResponseEntity<DepartmentDTO> partialUpdateDepartment(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody DepartmentDTO departmentDTO

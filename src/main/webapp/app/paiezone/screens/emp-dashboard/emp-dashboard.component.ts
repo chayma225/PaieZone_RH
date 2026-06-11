@@ -213,11 +213,11 @@ const LEAVE_META: Record<string, { label: string; color: string; icon: string }>
                   <div class="team-avatar" [attr.data-bg]="data.empBgIdx(m.id)">{{ data.initials(m) }}</div>
                   <div class="team-info">
                     <div class="team-name">{{ data.fullName(m) }}</div>
-                    <div class="team-role">{{ m.role || m.cat }}</div>
+                    <div class="team-role">{{ m.role }}</div>
                   </div>
-                  <button class="icon-btn" title="Envoyer un message">
+                  <a [href]="'mailto:' + m.email" class="icon-btn" title="Contacter par Outlook">
                     <pz-icon name="Mail" [size]="15" [strokeWidth]="1.4" />
-                  </button>
+                  </a>
                 </div>
               }
             </div>

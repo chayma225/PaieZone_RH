@@ -22,8 +22,7 @@
   <!-- Title -->
   <h1>Code de <em>vérification</em></h1>
   <p class="sub">
-    Saisissez le code à 6 chiffres
-    {{ method() === 'app' ? 'généré par votre application (Google Authenticator, Authy…)' : 'envoyé par SMS' }}.
+    Saisissez le code à 6 chiffres généré par votre application (Google Authenticator, Authy…).
     @if (email()) {
       <br />Compte&nbsp;: <strong>{{ email() }}</strong>
     }
@@ -55,34 +54,6 @@
         [disabled]="busy() || verified()"
       />
     }
-  </div>
-
-  <!-- Resend -->
-  <div class="method-row">
-    <span>Pas reçu le code ?</span>
-    @if (canResend()) {
-      <button class="link-pale" type="button" (click)="resend()">Renvoyer</button>
-    } @else {
-      <span>Renvoyer dans {{ resendCooldown() }}s</span>
-    }
-  </div>
-
-  <!-- Method toggle -->
-  <div class="method-switch">
-    <button type="button" [class.active]="method() === 'app'" (click)="setMethod('app')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <rect x="3" y="3" width="18" height="18" rx="3" />
-        <path d="M9 9h6M9 12h6M9 15h4" />
-      </svg>
-      Application
-    </button>
-    <button type="button" [class.active]="method() === 'sms'" (click)="setMethod('sms')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <rect x="5" y="2" width="14" height="20" rx="2" />
-        <circle cx="12" cy="17" r="1" fill="currentColor" />
-      </svg>
-      SMS
-    </button>
   </div>
 
   <!-- Verify button (shown when not auto-submitting) -->

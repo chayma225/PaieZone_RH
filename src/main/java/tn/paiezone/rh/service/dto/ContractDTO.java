@@ -66,7 +66,6 @@ public class ContractDTO implements Serializable {
     @Lob
     private String notes;
 
-    @NotNull
     private Instant createdAt;
 
     @NotNull

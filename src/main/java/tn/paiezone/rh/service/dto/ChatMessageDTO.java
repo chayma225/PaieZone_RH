@@ -13,7 +13,6 @@ public class ChatMessageDTO {
     @NotNull
     private String content;
 
-    @NotNull
     private Instant sentAt;
 
     private String intent;

@@ -9,6 +9,8 @@ import tn.paiezone.rh.domain.enumeration.LeaveTypeName;
 public interface LeaveTypeRepository extends JpaRepository<LeaveType, Long> {
     Optional<LeaveType> findByName(LeaveTypeName name);
 
+    Optional<LeaveType> findByNameAndCompanyId(LeaveTypeName name, Long companyId);
+
     List<LeaveType> findByActiveTrueOrderByNameAsc();
 
     List<LeaveType> findByCompanyIdAndActiveTrueOrderByNameAsc(Long companyId);

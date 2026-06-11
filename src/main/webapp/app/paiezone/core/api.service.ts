@@ -221,7 +221,7 @@ export class ApiService {
     leaveTypeId: number;
     startDate: string;
     endDate: string;
-    numberOfDays: number;
+    numberOfDays?: number;
     comment?: string;
     employeeId?: number;
     status?: string;
@@ -462,6 +462,10 @@ export class ApiService {
 
   cancelSubscription(companyId: number): Observable<Company> {
     return this.http.patch<any>(`/api/companies/${companyId}/cancel`, {}).pipe(map(d => this.mapCompany(d)));
+  }
+
+  deleteCompany(companyId: number): Observable<void> {
+    return this.http.delete<void>(`/api/companies/${companyId}`);
   }
 
   patchEmployee(id: number, patch: Record<string, any>): Observable<any> {
@@ -939,6 +943,7 @@ export class ApiService {
       submitted: d.requestedAt ?? '',
       status: (statusMap[d.status] ?? 'pending') as any,
       note: d.employeeComment ?? '',
+      managerComment: d.managerComment ?? '',
     };
   }
 

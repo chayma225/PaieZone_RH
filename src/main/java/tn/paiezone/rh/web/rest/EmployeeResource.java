@@ -45,6 +45,7 @@ import tn.paiezone.rh.service.dto.CompanyDTO;
 import tn.paiezone.rh.service.dto.DepartmentDTO;
 import tn.paiezone.rh.service.dto.EmployeeDTO;
 import tn.paiezone.rh.service.dto.JobPositionDTO;
+import tn.paiezone.rh.service.exception.BusinessException;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 @RestController
@@ -146,15 +147,22 @@ public class EmployeeResource {
 
         // Département
         if (body.get("departmentId") != null) {
+            Long deptId = Long.valueOf(body.get("departmentId").toString());
+            Department dept = departmentRepository.findById(deptId)
+                .orElseThrow(() -> new BadRequestAlertException("Département introuvable.", ENTITY_NAME, "nodepartment"));
+            if (!Boolean.TRUE.equals(dept.getActive())) {
+                throw new BusinessException("Le département sélectionné est inactif.", ENTITY_NAME, "departementInactif");
+            }
             DepartmentDTO deptDto = new DepartmentDTO();
-            deptDto.setId(Long.valueOf(body.get("departmentId").toString()));
+            deptDto.setId(dept.getId());
             dto.setDepartment(deptDto);
         } else {
             Department dept = departmentRepository
                 .findAll()
                 .stream()
+                .filter(d -> Boolean.TRUE.equals(d.getActive()))
                 .findFirst()
-                .orElseThrow(() -> new BadRequestAlertException("Veuillez créer au moins un département", ENTITY_NAME, "nodepartment"));
+                .orElseThrow(() -> new BadRequestAlertException("Veuillez créer au moins un département actif", ENTITY_NAME, "nodepartment"));
             DepartmentDTO deptDto = new DepartmentDTO();
             deptDto.setId(dept.getId());
             dto.setDepartment(deptDto);
@@ -162,8 +170,14 @@ public class EmployeeResource {
 
         // Poste
         if (body.get("positionId") != null) {
+            Long posId = Long.valueOf(body.get("positionId").toString());
+            JobPosition pos = jobPositionRepository.findById(posId)
+                .orElseThrow(() -> new BadRequestAlertException("Poste introuvable.", ENTITY_NAME, "noposition"));
+            if (!Boolean.TRUE.equals(pos.getActive())) {
+                throw new BusinessException("Le poste sélectionné est inactif.", ENTITY_NAME, "posteInactif");
+            }
             JobPositionDTO posDto = new JobPositionDTO();
-            posDto.setId(Long.valueOf(body.get("positionId").toString()));
+            posDto.setId(pos.getId());
             dto.setPosition(posDto);
         } else {
             String posTitle = body.get("positionTitle") != null ? body.get("positionTitle").toString() : "Collaborateur";
@@ -289,7 +303,13 @@ public class EmployeeResource {
         if (body.get("active") != null) emp.setActive(Boolean.valueOf(body.get("active").toString()));
 
         if (body.get("departmentId") != null) {
-            departmentRepository.findById(Long.valueOf(body.get("departmentId").toString())).ifPresent(emp::setDepartment);
+            Long deptId = Long.valueOf(body.get("departmentId").toString());
+            Department dept = departmentRepository.findById(deptId)
+                .orElseThrow(() -> new BadRequestAlertException("Département introuvable.", ENTITY_NAME, "nodepartment"));
+            if (!Boolean.TRUE.equals(dept.getActive())) {
+                throw new BusinessException("Le département sélectionné est inactif.", ENTITY_NAME, "departementInactif");
+            }
+            emp.setDepartment(dept);
         }
 
         if (body.get("positionTitle") != null) {

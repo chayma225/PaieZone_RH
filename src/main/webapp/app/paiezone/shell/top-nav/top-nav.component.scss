@@ -114,6 +114,36 @@
   }
 }
 
+.nav-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--pz-line);
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+
+.pz-nav-tab.emp-tab {
+  color: var(--pz-muted);
+
+  &:hover {
+    color: var(--pz-pos);
+    background: var(--pz-pos-soft);
+  }
+
+  &.active {
+    color: var(--pz-pos-ink);
+    background: var(--pz-pos-soft);
+
+    .ico {
+      color: var(--pz-pos);
+    }
+  }
+
+  &:hover .ico {
+    color: var(--pz-pos);
+  }
+}
+
 .pz-top-right {
   display: flex;
   align-items: center;

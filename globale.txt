@@ -1,0 +1,698 @@
+
+
+ ---                                                                                                                  
+  Rapport de vérification — globale.txt                                                                                
+                                                                                                                       
+  DIAGRAMME draw.io                                                                                                    
+                                                                                                                       
+  Acteurs présents (5) :                                                                                               
+  - Employé, RH Comptable, Admin Entreprise, Super Admin, Utilisateur (acteur générique)                               
+                                                                                                                       
+  Cas d'utilisation présents (8) :                                                                                     
+                                                                                                                       
+  ┌─────────────────────────────────┬────────────────────────────────┐                                                 
+  │               UC                │         Épics couverts         │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ s'authentifier                  │ Épic 1 ✓                       │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ gérer paie                      │ Épics 11, 15 ✓                 │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ gérer la conformité légale      │ Épics 10, 14 ✓                 │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ gérer intégration compatable    │ Épic 13 ✓ (TYPO → "comptable") │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ Gérer le Capital Humain         │ Épics 2,3,4,5,6,7,8,9 ✓        │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ Gérer les Congés et Présences   │ Épic 12 ✓                      │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ Interagir avec le Chatbot RH IA │ Épic 16 ✓                      │                                                 
+  ├─────────────────────────────────┼────────────────────────────────┤                                                 
+  │ Gérer la Plateforme SaaS        │ Épics 17, 19 ✓                 
+ ---                                                                                                                  
+  PROBLÈMES DÉTECTÉS                                                                                                   
+                                                                                                                       
+  🔴 CRITIQUE — UC manquant :                                                                                          
+                                                                                                                       
+  ▎ Épic 18 "Gestion des conventions sectorielles" (5 User Stories, acteur : Super Admin) n'a aucun UC correspondant   
+  ▎ dans le diagramme. Il faut ajouter un ellipse Gérer les Conventions Sectorielles.                                  
+                                                                                                                       
+  🟠 IMPORTANT — Connexion acteur manquante :                                                                          
+                                                                                                                       
+  ▎ Super Admin n'est relié qu'à "Gérer la Plateforme SaaS". Or selon l'Épic 10 du backlog, c'est lui qui gère les     
+  ▎ paramètres réglementaires → il manque un lien Super Admin → "gérer la conformité légale".                          
+                                                                                                                       
+  🟡 TYPO dans le diagramme :                                                                                          
+                                                                                                                       
+  ▎ UC id=15 : gérer intégration compatable → corriger en gérer intégration comptable                                  
+                                                                                                                       
+  🟡 Généralisations acteurs incomplètes :                                                                             
+                                                                                                                       
+  ▎ RH Comptable et Admin ont une flèche de généralisation vers "Utilisateur", mais Employé et Super Admin n'en ont    
+  ▎ pas. Pour être cohérent, les 4 acteurs spécifiques devraient pointer vers Utilisateur.                             
+                                                                                                                       
+  🔵 MINEUR — Doublon d'arête :                                                                                        
+                                                                                                                       
+  ▎ Edges 19 et 20 font tous deux partir de RH Comptable vers "Gérer le Capital Humain" avec des coordonnées très      
+  ▎ proches — l'un est redondant.                                                                                      
+                                                            
+
+
+
+
+┌─────┬─────────────────────────────────────────────────────────────────────────┬────────┐                           
+  │  #  │                               Correction                                │ Statut │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 1   │ Typo compatable → comptable                                             │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 2   │ Suppression arête doublon RH→Capital Humain                             │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 3   │ Ajout UC "Gérer les Conventions Sectorielles" (ellipse, position y=340) │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 4   │ Lien Super Admin → Conventions Sectorielles                             │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 5   │ Lien Super Admin → gérer la conformité légale                           │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 6   │ Généralisation Employé → Utilisateur (flèche creuse)                    │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 7   │ Généralisation Super Admin → Utilisateur (flèche creuse)                │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 8   │ <<include>> Conventions Sectorielles → s'authentifier                   │ ✅     │                           
+  ├─────┼─────────────────────────────────────────────────────────────────────────┼────────┤                           
+  │ 9   │ LaTeX Épic 17 : ajout \multirow{1}{3.2cm}{...}                          │ ✅ 
+
+
+
+
+<mxGraphModel dx="6666" dy="3425" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;strokeWidth=1;align=center;fontStyle=1;fontSize=15;" value="" vertex="1">
+      <mxGeometry height="1350" width="860" x="-1150" y="-900" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-18">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1220" y="190" />
+          <mxPoint x="-1035" y="190" />
+          <mxPoint x="-1035" y="-60" />
+        </Array>
+        <mxPoint x="-1230" y="190" as="sourcePoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-7">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="-1230" y="203" as="sourcePoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-4" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="employé" vertex="1">
+      <mxGeometry height="70" width="40" x="-1280" y="157.1199999999999" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-5" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="Rh comptable" vertex="1">
+      <mxGeometry height="70" width="40" x="-1280" y="-728.1199999999999" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1260" y="-520" />
+          <mxPoint x="-1260" y="-520" />
+        </Array>
+        <mxPoint x="-1260" y="-180" as="sourcePoint" />
+        <mxPoint x="-1260" y="-630" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=15;" value="&lt;p dir=&quot;auto&quot; style=&quot;white-space: pre-wrap;&quot;&gt;Interagir avec le &lt;/p&gt;&lt;p dir=&quot;auto&quot; style=&quot;white-space: pre-wrap;&quot;&gt;Chatbot RH IA&lt;/p&gt;" vertex="1">
+      <mxGeometry height="70" width="185" x="-915.5" y="40" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-8" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1175" y="-710" />
+          <mxPoint x="-1175" y="-760" />
+          <mxPoint x="-900" y="-760" />
+        </Array>
+        <mxPoint x="-1230" y="-710" as="sourcePoint" />
+        <mxPoint x="-900.06" y="-772.0000000000005" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;align=center;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontStyle=1;fontSize=15;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;font&gt;gérer la&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;font&gt;conformité légale&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="76" width="180" x="-915.5" y="-810" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=15;" value="gérer paie" vertex="1">
+      <mxGeometry height="81.88" width="180" x="-915.5" y="-658.1199999999999" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-11" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-10" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="-915" y="-700" />
+        </Array>
+        <mxPoint x="-1230" y="-700" as="sourcePoint" />
+        <mxPoint x="-855.5" y="-770" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1260" y="-10" />
+          <mxPoint x="-1260" y="-10" />
+        </Array>
+        <mxPoint x="-1260" y="150" as="sourcePoint" />
+        <mxPoint x="-1260" y="-80" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-13" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1190" y="-150" />
+          <mxPoint x="-1190" y="-270" />
+        </Array>
+        <mxPoint x="-1230" y="-150" as="sourcePoint" />
+        <mxPoint x="-915.5" y="-269.9499999999998" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-14" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="Admin entreprise&amp;nbsp;" vertex="1">
+      <mxGeometry height="70" width="40" x="-1280" y="-175.8800000000001" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=15;" value="gérer intégration comptable" vertex="1">
+      <mxGeometry height="81.88" width="180" x="-915.5" y="-490" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-16" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;entryX=0.024;entryY=0.651;entryDx=0;entryDy=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;entryPerimeter=0;" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1170" y="-680" />
+          <mxPoint x="-1170" y="-460" />
+          <mxPoint x="-916" y="-460" />
+          <mxPoint x="-916" y="-459" />
+        </Array>
+        <mxPoint x="-1230" y="-680" as="sourcePoint" />
+        <mxPoint x="-911.1800000000003" y="-458.59612000000004" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=15;" value="&lt;p dir=&quot;auto&quot; style=&quot;white-space: pre-wrap;&quot;&gt;Gérer le Capital Humain&lt;/p&gt;" vertex="1">
+      <mxGeometry height="81.88" width="181.5" x="-918.5" y="-320" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-18" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=15;" value="&lt;p dir=&quot;auto&quot; style=&quot;white-space: pre-wrap;&quot;&gt;Gérer les Congés et Présences&lt;/p&gt;" vertex="1">
+      <mxGeometry height="81.88" width="180" x="-915.5" y="-100" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-19" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;entryX=-0.001;entryY=0.485;entryDx=0;entryDy=0;entryPerimeter=0;" target="oJ6NCdtiyOrD2rtd8vPq-17" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1189" y="-660" />
+          <mxPoint x="-1189" y="-280" />
+        </Array>
+        <mxPoint x="-1230" y="-660" as="sourcePoint" />
+        <mxPoint x="-920" y="-280" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-21" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=15;" value="&lt;p dir=&quot;auto&quot; style=&quot;white-space: pre-wrap;&quot;&gt;Gérer la Plateforme SaaS&lt;/p&gt;" vertex="1">
+      <mxGeometry height="81.88" width="180" x="-918.5" y="220" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-22" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=15;" value="&lt;p dir=&quot;auto&quot; style=&quot;white-space: pre-wrap;&quot;&gt;s&#39;authentifier &lt;/p&gt;" vertex="1">
+      <mxGeometry height="81.88" width="180" x="-485.5" y="-260" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-23" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-9" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.652;entryY=0.011;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-22" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.4649" y="-2" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="-725.5" y="-772.8299999999999" as="sourcePoint" />
+        <mxPoint x="-145.5" y="-260" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-24" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-10" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;exitX=0.972;exitY=0.368;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.554;entryY=0.005;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-22" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.3313" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="-740" y="-632" />
+          <mxPoint x="-386" y="-632" />
+        </Array>
+        <mxPoint x="-685.5" y="-632.3299999999999" as="sourcePoint" />
+        <mxPoint x="-94.5" y="-250" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-25" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.465;entryY=-0.01;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-22" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.0939" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <mxPoint x="-738" y="-450" as="sourcePoint" />
+        <mxPoint x="-108" y="72" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-26" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-17" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.369;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-22" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="0.4058" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="-419.5" y="-279" />
+          <mxPoint x="-419.5" y="-270" />
+          <mxPoint x="-419.5" y="-270" />
+        </Array>
+        <mxPoint x="-738.5" y="-310" as="sourcePoint" />
+        <mxPoint x="-175.5" y="-260" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-27" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-7" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-22" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.1821" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <mxPoint x="-330.5" y="-120" as="sourcePoint" />
+        <mxPoint x="252" y="90" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-28" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-18" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.395;entryY=0.978;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-22" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="0.063" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <Array as="points">
+          <mxPoint x="-735.5" y="-50" />
+          <mxPoint x="-414.5" y="-50" />
+        </Array>
+        <mxPoint x="-315.5" y="-72" as="sourcePoint" />
+        <mxPoint x="-174.5" y="-180" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-29" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;entryX=0.614;entryY=0.97;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-22" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.3716" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <Array as="points">
+          <mxPoint x="-730" y="261" />
+          <mxPoint x="-730" y="260" />
+          <mxPoint x="-375" y="260" />
+        </Array>
+        <mxPoint x="-730" y="261" as="sourcePoint" />
+        <mxPoint x="-84.5" y="-150" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-30" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-9" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-10" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="-665.5" y="-780" as="sourcePoint" />
+        <mxPoint x="-35.5" y="-258" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-31" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=1;entryDx=0;entryDy=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-10" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points" />
+        <mxPoint x="-825.5" y="-490" as="sourcePoint" />
+        <mxPoint x="-825.5" y="-570" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-32" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-15" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <Array as="points">
+          <mxPoint x="-825.5" y="-320" />
+        </Array>
+        <mxPoint x="-805.5" y="-390" as="sourcePoint" />
+        <mxPoint x="-825.5" y="-320" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-33" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;entryX=0.021;entryY=0.375;entryDx=0;entryDy=0;entryPerimeter=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-18" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1036" y="-690" />
+          <mxPoint x="-1036" y="-69" />
+        </Array>
+        <mxPoint x="-1230" y="-690" as="sourcePoint" />
+        <mxPoint x="-907.5" y="-70" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-34" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-21">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1190" y="-140" />
+          <mxPoint x="-1190" y="261" />
+        </Array>
+        <mxPoint x="-1230" y="-140" as="sourcePoint" />
+        <mxPoint x="-928.5" y="119.57000000000016" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-35" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-10" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;exitX=1;exitY=1;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;entryX=0.961;entryY=0.366;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-17" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.3254" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="-649.5" y="-589" />
+          <mxPoint x="-649.5" y="-290" />
+        </Array>
+        <mxPoint x="-775.4956495537717" y="-588.5691775794544" as="sourcePoint" />
+        <mxPoint x="-769.8699999999999" y="-300" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-36" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-18" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-17" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="-765" y="-150" as="sourcePoint" />
+        <mxPoint x="-892" y="-89" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-37" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;curved=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" target="oJ6NCdtiyOrD2rtd8vPq-21">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="-1220" y="390" as="sourcePoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-38" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="Super admin" vertex="1">
+      <mxGeometry height="70" width="40" x="-1280" y="344.1199999999999" as="geometry" />
+    </mxCell>
+    <mxCell id="oJ6NCdtiyOrD2rtd8vPq-39" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=20;fontStyle=1;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;diagramme de cas d&#39;utilisation globale&lt;/font&gt;" vertex="1">
+      <mxGeometry height="30" width="770" x="-1135" y="-900" as="geometry" />
+    </mxCell>
+    <mxCell id="hZRzoiSYoPdxNc2e8w4W-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;" value="Utilisateur" vertex="1">
+      <mxGeometry height="70" width="40" x="-1450" y="-470" as="geometry" />
+    </mxCell>
+    <mxCell id="hZRzoiSYoPdxNc2e8w4W-2" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1430" y="-693" />
+        </Array>
+        <mxPoint x="-1410" y="100" as="sourcePoint" />
+        <mxPoint x="-1430" y="-480" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="hZRzoiSYoPdxNc2e8w4W-6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;align=center;fontStyle=1;fontSize=12;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1280" y="-150" />
+          <mxPoint x="-1430" y="-150" />
+        </Array>
+        <mxPoint x="-1280" y="-150" as="sourcePoint" />
+        <mxPoint x="-1430" y="-380" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="hZRzoiSYoPdxNc2e8w4W-7" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-1" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.022;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.002;entryY=0.022;entryDx=0;entryDy=0;entryPerimeter=0;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;" target="oJ6NCdtiyOrD2rtd8vPq-1" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <mxPoint x="-1063" y="-820" as="sourcePoint" />
+        <mxPoint x="-288" y="-860" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="new-uc-conventions" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;align=center;fontStyle=1;fontSize=15;" value="Gérer les Conventions Sectorielles" vertex="1">
+      <mxGeometry height="70" width="210" x="-700" y="340" as="geometry" />
+    </mxCell>
+    <mxCell id="new-edge-sa-conv" edge="1" parent="1" target="new-uc-conventions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="-1220" y="370" as="sourcePoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="new-edge-sa-conf" edge="1" parent="1" target="oJ6NCdtiyOrD2rtd8vPq-9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1050" y="379" />
+          <mxPoint x="-1050" y="-772" />
+        </Array>
+        <mxPoint x="-1230" y="379" as="sourcePoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="new-gen-emp-util" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1420" y="192" />
+        </Array>
+        <mxPoint x="-1250" y="192" as="sourcePoint" />
+        <mxPoint x="-1430" y="-435" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="new-gen-sa-util" edge="1" parent="1" source="oJ6NCdtiyOrD2rtd8vPq-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="-1420" y="379" />
+        </Array>
+        <mxPoint x="-1250" y="379" as="sourcePoint" />
+        <mxPoint x="-1430" y="-435" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="new-incl-conv-auth" edge="1" parent="1" source="new-uc-conventions" target="oJ6NCdtiyOrD2rtd8vPq-22" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>
+----------------------------------------------
+\caption{Product Backlog complet de PaieZone RH}
+\label{tab:backlog}
+\endlastfoot
+
+% ── Épic 1 ───────────────────────────────────────────────
+1 & \multirow{1}{3.2cm}{Gestion de l'authentification et des accès}
+  & En tant qu'utilisateur, je souhaite m'authentifier~\cite{jwt}
+  & Afin d'accéder au système de manière sécurisée
+  & Critique \\ \hline
+
+% ── Épic 2 ───────────────────────────────────────────────
+2 & \multirow{7}{3.2cm}{Gestion des entreprises}
+  & En tant qu'Admin, je souhaite créer mon entreprise
+  & Afin de l'enregistrer dans le système
+  & Critique \\ \cline{3-5}
+  & & En tant qu'Admin, je souhaite modifier les informations de mon entreprise
+  & Afin de maintenir les données de l'organisation à jour
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin, je souhaite désactiver mon entreprise
+  & Afin de suspendre son accès
+  & Haute \\ \cline{3-5}
+  & & En tant que Super Admin, je souhaite affecter un abonnement à une entreprise
+  & Afin de gérer ses droits d'accès à la plateforme
+  & Critique \\ \cline{3-5}
+  & & En tant que Super Admin, je souhaite modifier un abonnement
+  & Afin de changer le plan souscrit
+  & Moyenne \\ \cline{3-5}
+  & & En tant que Super Admin, je souhaite suspendre une entreprise
+  & Afin de bloquer temporairement son accès au système
+  & Haute \\ \cline{3-5}
+  & & En tant que Super Admin, je souhaite réactiver une entreprise suspendue
+  & Afin de lui restituer l'accès au système
+  & Haute \\ \hline
+
+% ── Épic 3 ───────────────────────────────────────────────
+3 & \multirow{3}{3.2cm}{Gestion des utilisateurs et des habilitations}
+  & En tant qu'Admin, je souhaite créer un utilisateur
+  & Afin de lui donner un accès (RBAC~\cite{rbac})
+  & Critique \\ \cline{3-5}
+  & & En tant qu'Admin, je souhaite modifier un utilisateur
+  & Afin de mettre à jour ses données et ses accès
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin, je souhaite désactiver un utilisateur
+  & Afin de retirer son accès
+  & Haute \\ \hline
+
+% ── Épic 4 ───────────────────────────────────────────────
+4 & \multirow{2}{3.2cm}{Traçabilité et journal d'audit}
+  & En tant qu'Admin, je souhaite consulter le journal d'audit
+  & Afin de voir les actions effectuées
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin, je souhaite filtrer le journal d'audit
+  & Afin de rechercher des actions spécifiques
+  & Moyenne \\ \hline
+
+% ── Épic 5 ───────────────────────────────────────────────
+5 & \multirow{6}{3.2cm}{Gestion de la structure organisationnelle}
+  & En tant qu'Admin/RH, je souhaite créer un département
+  & Afin de structurer l'entreprise
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite modifier un département
+  & Afin de mettre à jour la structure
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite désactiver un département
+  & Afin de le retirer de la structure
+  & Moyenne \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite créer un poste
+  & Afin de définir un rôle
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite modifier un poste
+  & Afin de l'adapter aux besoins
+  & Moyenne \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite désactiver un poste
+  & Afin de le retirer de la structure
+  & Moyenne \\ \hline
+
+% ── Épic 6 ───────────────────────────────────────────────
+6 & \multirow{6}{3.2cm}{Gestion du capital humain}
+  & En tant qu'Admin/RH, je souhaite consulter la liste des employés
+  & Afin d'avoir une vue d'ensemble du personnel
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite créer un employé
+  & Afin de l'ajouter au système
+  & Critique \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite consulter le profil d'un employé
+  & Afin de voir ses informations détaillées
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite modifier un employé
+  & Afin de mettre à jour ses données
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite désactiver un employé
+  & Afin de gérer sa sortie de l'organisation
+  & Haute \\ \cline{3-5}
+  & & En tant qu'Admin/RH, je souhaite importer une liste d'employés via un fichier Excel
+  & Afin d'alimenter le système en masse sans saisie manuelle
+  & Moyenne \\ \hline
+
+% ── Épic 7 ───────────────────────────────────────────────
+7 & \multirow{3}{3.2cm}{Gestion du cycle de vie des contrats de travail}
+  & En tant que RH, je souhaite associer un contrat à un employé~\cite{cdt}
+  & Afin de formaliser la relation de travail
+  & Critique \\ \cline{3-5}
+  & & En tant que RH, je souhaite modifier un contrat
+  & Afin de changer ses conditions
+  & Haute \\ \cline{3-5}
+  & & En tant que RH, je souhaite résilier un contrat
+  & Afin de terminer une relation de travail
+  & Haute \\ \hline
+
+% ── Épic 8 ───────────────────────────────────────────────
+8 & \multirow{1}{3.2cm}{Gestion des documents administratifs et légaux}
+  & En tant que RH, je souhaite déposer un document
+  & Afin de le stocker dans le dossier employé
+  & Moyenne \\ \hline
+
+% ── Épic 9 ───────────────────────────────────────────────
+9 & \multirow{1}{3.2cm}{Historisation et suivi}
+  & En tant qu'Admin/RH, je souhaite consulter l'historique des modifications
+  & Afin de tracer les changements du dossier employé
+  & Haute \\ \hline
+
+% ── Épic 10 ──────────────────────────────────────────────
+10 & \multirow{4}{3.2cm}{Gestion des paramètres réglementaires}
+   & En tant que Super Admin, je souhaite consulter la liste des paramètres réglementaires~\cite{loifinance}
+   & Afin de vérifier les taux légaux en vigueur
+   & Haute \\ \cline{3-5}
+   & & En tant que Super Admin, je souhaite ajouter un nouveau paramètre réglementaire
+   & Afin d'intégrer une nouvelle règle légale
+   & Haute \\ \cline{3-5}
+   & & En tant que Super Admin, je souhaite modifier un paramètre réglementaire
+   & Afin de mettre à jour les taux conformément à la loi
+   & Haute \\ \cline{3-5}
+   & & En tant que Super Admin, je souhaite consulter l'historique des modifications des paramètres
+   & Afin de garantir la traçabilité réglementaire
+   & Moyenne \\ \hline
+
+% ── Épic 11 ──────────────────────────────────────────────
+11 & \multirow{13}{3.2cm}{Gestion de la paie}
+   & En tant que RH, je souhaite créer une période de paie
+   & Afin de lancer le cycle de traitement des salaires
+   & Critique \\ \cline{3-5}
+   & & En tant que RH, je souhaite modifier une période de paie
+   & Afin de corriger les données avant clôture
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite clôturer une période de paie
+   & Afin de valider et verrouiller les calculs
+   & Critique \\ \cline{3-5}
+   & & En tant que RH, je souhaite lancer le calcul de tous les bulletins d'une période
+   & Afin de générer automatiquement les salaires nets~\cite{loifinance}
+   & Critique \\ \cline{3-5}
+   & & En tant que RH, je souhaite créer une rubrique de paie
+   & Afin de structurer les éléments de calcul
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite modifier une rubrique de paie
+   & Afin de l'adapter aux besoins de la société
+   & Moyenne \\ \cline{3-5}
+   & & En tant que RH, je souhaite ajouter une prime à un employé
+   & Afin d'augmenter sa rémunération pour une période
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite modifier une prime
+   & Afin d'ajuster son montant avant le calcul
+   & Moyenne \\ \cline{3-5}
+   & & En tant que RH, je souhaite valider une demande d'avance
+   & Afin d'accorder le soutien financier sollicité
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite refuser une demande d'avance
+   & Afin d'informer l'employé du rejet de sa demande
+   & Haute \\ \cline{3-5}
+   & & En tant qu'employé, je souhaite demander une avance sur salaire
+   & Afin de recevoir un soutien financier ponctuel
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite générer un bulletin de paie
+   & Afin de le distribuer à l'employé concerné
+   & Critique \\ \cline{3-5}
+   & & En tant que RH, je souhaite générer un fichier CNSS~\cite{cnss_reg}
+   & Afin de déclarer les salariés auprès de la CNSS
+   & Critique \\ \hline
+
+% ── Épic 12 ──────────────────────────────────────────────
+12 & \multirow{5}{3.2cm}{Gestion des congés et des absences}
+   & En tant que RH, je souhaite créer un type de congé
+   & Afin de définir les règles et quotas associés
+   & Haute \\ \cline{3-5}
+   & & En tant qu'employé, je souhaite demander un congé
+   & Afin de m'absenter légitimement
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite valider une demande de congé
+   & Afin de gérer la disponibilité de l'équipe
+   & Haute \\ \cline{3-5}
+   & & En tant qu'employé, je souhaite consulter mon solde de congé
+   & Afin de planifier mes absences
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite gérer les jours fériés
+   & Afin de les intégrer dans le calcul de paie~\cite{loifinance}
+   & Moyenne \\ \hline
+% ── Épic 13 ──────────────────────────────────────────────
+13 & \multirow{2}{3.2cm}{Intégration comptable et finance RH}
+   & En tant qu'Admin/RH, je souhaite configurer le plan comptable
+   & Afin de structurer la comptabilité de la société
+   & Haute \\ \cline{3-5}
+   & & En tant qu'Admin/RH, je souhaite exporter les données comptables au format SAGE
+   & Afin de les synchroniser avec le logiciel comptable
+   & Haute \\ \hline
+
+% ── Épic 14 ──────────────────────────────────────────────
+14 & \multirow{4}{3.2cm}{Conformité et déclarations réglementaires}
+   & En tant que RH, je souhaite générer une déclaration CNSS salarié~\cite{cnss_reg}
+   & Afin de respecter les obligations légales
+   & Critique \\ \cline{3-5}
+   & & En tant que RH, je souhaite générer une déclaration CNSS employeur~\cite{cnss_reg}
+   & Afin de respecter les obligations légales
+   & Critique \\ \cline{3-5}
+   & & En tant que RH, je souhaite générer une déclaration CAVIS~\cite{cnss_reg}
+   & Afin de satisfaire aux obligations réglementaires
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite générer une déclaration IRPP~\cite{loifinance}
+   & Afin de déclarer les retenues à la source
+   & Critique \\ \hline
+
+% ── Épic 15 ──────────────────────────────────────────────
+15 & \multirow{2}{3.2cm}{Génération des documents officiels RH}
+   & En tant que RH, je souhaite générer une attestation de salaire
+   & Afin de justifier les revenus d'un employé
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite générer un certificat de travail~\cite{cdt}
+   & Afin d'attester de la relation contractuelle
+   & Haute \\ \hline
+
+% ── Épic 16 ──────────────────────────────────────────────
+16 & \multirow{3}{3.2cm}{Assistant RH intelligent (Chatbot)}
+   & En tant qu'utilisateur, je souhaite accéder à un assistant conversationnel RH~\cite{chatbot_hr}
+   & Afin d'obtenir des réponses rapides à mes questions administratives
+   & Moyenne \\ \cline{3-5}
+   & & En tant qu'employé, je souhaite demander un congé via le chatbot
+   & Afin de simplifier la soumission de ma demande
+   & Moyenne \\ \cline{3-5}
+   & & En tant qu'employé, je souhaite consulter mon bulletin via le chatbot~\cite{rag_paper}
+   & Afin d'y accéder rapidement sans navigation manuelle
+   & Moyenne \\ \hline
+
+% ── Épic 17 ──────────────────────────────────────────────
+17 & \multirow{1}{3.2cm}{Reporting Super Admin}
+   & En tant que Super Admin, je souhaite télécharger un rapport mensuel d'activité
+   & Afin d'obtenir une synthèse exportable de l'utilisation de la plateforme
+   & Moyenne \\ \hline
+
+% ── Épic 18 ──────────────────────────────────────────────
+18 & \multirow{5}{3.2cm}{Gestion des conventions sectorielles}
+   & En tant que Super Admin, je souhaite ajouter un secteur d'activité avec ses règles conventionnelles
+   & Afin de couvrir les spécificités légales par secteur
+   & Haute \\ \cline{3-5}
+   & & En tant que Super Admin, je souhaite modifier les règles d'une convention sectorielle
+   & Afin de les maintenir conformes aux accords en vigueur
+   & Haute \\ \cline{3-5}
+   & & En tant que Super Admin, je souhaite supprimer une convention sectorielle obsolète
+   & Afin de garder le référentiel à jour
+   & Moyenne \\ \cline{3-5}
+   & & En tant que Super Admin, je souhaite uploader un PDF de convention collective
+   & Afin de l'associer au secteur concerné comme document de référence
+   & Moyenne \\ \cline{3-5}
+   & & En tant que Super Admin, je souhaite interroger l'IA sur une convention sectorielle
+   & Afin d'obtenir une interprétation rapide des règles applicables
+   & Faible \\ \hline
+% ── Épic 19 ──────────────────────────────────────────────
+19 & \multirow{4}{3.2cm}{Tableaux de bord et statistiques}
+   & En tant que Super Admin, je souhaite visualiser les statistiques globales de la plateforme
+   & Afin de suivre l'activité globale et la santé du système
+   & Haute \\ \cline{3-5}
+   & & En tant qu'Admin, je souhaite visualiser les statistiques de mon entreprise
+   & Afin d'avoir une vue d'ensemble sur les effectifs et la masse salariale
+   & Haute \\ \cline{3-5}
+   & & En tant que RH, je souhaite visualiser les statistiques RH de la période
+   & Afin de suivre les indicateurs de paie, congés et absences
+   & Haute \\ \cline{3-5}
+   & & En tant qu'employé, je souhaite visualiser un tableau de bord personnel
+   & Afin de consulter mes informations de paie, congés et contrat en un seul endroit
+   & Moyenne \\ \hline
+\end{xltabular}
+\renewcommand{\arraystretch}{1.0}

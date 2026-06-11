@@ -26,7 +26,6 @@ public class ChatSessionDTO {
     @NotNull
     private ChatSessionStatus status;
 
-    @NotNull
     private Instant startedAt;
 
     private Instant endedAt;

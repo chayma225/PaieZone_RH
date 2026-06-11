@@ -1,0 +1,790 @@
+<mxGraphModel dx="2555" dy="1410" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;opacity=20;strokeWidth=2;perimeterSpacing=5;" value="" vertex="1">
+      <mxGeometry height="1565" width="916" x="334" y="400" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillStyle=auto;strokeWidth=1;opacity=40;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="" vertex="1">
+      <mxGeometry height="420" width="622.5" x="366" y="1535" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillStyle=auto;strokeWidth=1;opacity=40;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="" vertex="1">
+      <mxGeometry height="130" width="622.5" x="366" y="1355" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillStyle=auto;strokeWidth=1;opacity=40;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="" vertex="1">
+      <mxGeometry height="255" width="622.5" x="366" y="1115" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillStyle=auto;strokeWidth=1;opacity=40;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="" vertex="1">
+      <mxGeometry height="250" width="622.5" x="367.5" y="445" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillStyle=auto;strokeWidth=1;opacity=40;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="" vertex="1">
+      <mxGeometry height="360" width="622.5" x="366" y="729" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-7" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Super Admin&lt;/font&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="220" y="1768.75" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-8" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Rh comptable&lt;/font&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="220" y="885" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Consulter le&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;journal d&#39;audit&lt;/font&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="140" x="390" y="1410" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-10" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;curved=0;fontFamily=Times New Roman;entryX=0.021;entryY=0.571;entryDx=0;entryDy=0;entryPerimeter=0;" target="EXcYTAr-0H028NDu9Mm0-14" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="258" y="1795" />
+          <mxPoint x="318" y="1795" />
+          <mxPoint x="318" y="1735" />
+        </Array>
+        <mxPoint x="258" y="1795" as="sourcePoint" />
+        <mxPoint x="367" y="1735" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-11" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;curved=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-22" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="320" y="905" />
+          <mxPoint x="320" y="839" />
+          <mxPoint x="390" y="839" />
+        </Array>
+        <mxPoint x="260" y="905" as="sourcePoint" />
+        <mxPoint x="490" y="766.25" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-12" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="320" y="1315" />
+          <mxPoint x="320" y="1223" />
+        </Array>
+        <mxPoint x="260" y="1315" as="sourcePoint" />
+        <mxPoint x="390" y="1222.87" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-13" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="260" y="1335" />
+          <mxPoint x="320" y="1335" />
+          <mxPoint x="320" y="1435" />
+        </Array>
+        <mxPoint x="260" y="1335" as="sourcePoint" />
+        <mxPoint x="390" y="1435" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-14" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Consulter la liste&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;&amp;nbsp;globale des entreprises&lt;/font&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="70" width="182.5" x="386.25" y="1695" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Consulter la liste des abonnements&lt;/font&gt;" vertex="1">
+      <mxGeometry height="66.25" width="182.5" x="390" y="1828.75" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-16" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Affecter un abonnement&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="185" x="655" y="1805" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Résilier un abonnement&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="185" x="655" y="1905" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-18" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Modifier un abonnement&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="185" x="655" y="1855" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-19" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-16" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-15" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.0495" y="3" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="712.5" y="1828.75" as="sourcePoint" />
+        <mxPoint x="872.5" y="1828.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-20" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-18" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0.977;entryY=0.728;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-15" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.0705" y="3" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="781.5" y="1833.75" as="sourcePoint" />
+        <mxPoint x="736.5" y="1855.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-21" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-17" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0.798;entryY=0.941;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-15" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="-0.2172" y="3" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="765.5" y="1866.75" as="sourcePoint" />
+        <mxPoint x="712.5" y="1863.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-22" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Consulter la liste des départements&lt;/font&gt;" vertex="1">
+      <mxGeometry height="70" width="170" x="390" y="805" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-23" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Créer un&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;font-size: 15px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;département&lt;/span&gt;" vertex="1">
+      <mxGeometry height="38.75" width="190" x="670" y="776" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-24" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Désactiver un&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;font-size: 15px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;département&lt;/span&gt;" vertex="1">
+      <mxGeometry height="45" width="190" x="670" y="869" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-25" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Modifier un département&lt;/font&gt;" vertex="1">
+      <mxGeometry height="42.5" width="190" x="670" y="822.5" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-26" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-23" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-22" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.037" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="907" y="823.75" as="sourcePoint" />
+        <mxPoint x="1067" y="823.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-27" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-25" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="EXcYTAr-0H028NDu9Mm0-22" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.0904" y="2" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="976" y="828.75" as="sourcePoint" />
+        <mxPoint x="630" y="833.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-28" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-24" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=1;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-22" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.0147" y="-2" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="850" y="883.75" as="sourcePoint" />
+        <mxPoint x="907" y="858.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-29" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Consulter la liste des postes&lt;/font&gt;" vertex="1">
+      <mxGeometry height="70" width="165" x="390" y="968.75" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-30" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Créer un poste&lt;/font&gt;" vertex="1">
+      <mxGeometry height="33.75" width="190" x="670" y="955" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Désactiver un poste&lt;/font&gt;" vertex="1">
+      <mxGeometry height="36.25" width="190" x="670" y="1038.75" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-32" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Modifier un poste&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="190" x="670" y="995" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-33" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-30" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-29" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.0892" y="4" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="817" y="988.1300000000001" as="sourcePoint" />
+        <mxPoint x="977" y="988.1300000000001" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-34" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-32" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-29" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.0237" y="-1" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="886" y="993.1300000000001" as="sourcePoint" />
+        <mxPoint x="841" y="1015.1300000000001" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-35" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-31" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=-0.003;exitY=0.392;exitDx=0;exitDy=0;exitPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-29" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="-0.1671" y="2" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="857.9200000000001" y="1057.44" as="sourcePoint" />
+        <mxPoint x="601.6700000000001" y="1033.1299999999999" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-36" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Consulter la liste des utilisateurs&lt;/font&gt;" vertex="1">
+      <mxGeometry height="70" width="160" x="390" y="1188.75" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-37" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Créer un utilisateur&lt;/font&gt;" vertex="1">
+      <mxGeometry height="42.5" width="180" x="670" y="1155" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-38" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Désactiver un&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;font-size: 15px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;utilisateur&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40.63" width="180" x="670" y="1274.37" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-39" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Modifier un&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;font-size: 15px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;utilisateur&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="180" x="670" y="1215" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-40" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-37" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-36" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.1085" y="-1" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="567" y="1217.5" as="sourcePoint" />
+        <mxPoint x="727" y="1217.5" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-41" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-39" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-36" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="-0.0543" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="636" y="1222.5" as="sourcePoint" />
+        <mxPoint x="591" y="1244.5" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-42" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-38" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.508;exitDx=0;exitDy=0;exitPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-36" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="-0.151" y="-3" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="620" y="1255.5" as="sourcePoint" />
+        <mxPoint x="567" y="1252.5" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-43" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Assigner un rôle" vertex="1">
+      <mxGeometry height="40" width="100" x="880" y="1135" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-44" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-43" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;&amp;lt;&amp;lt;include&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="780" y="1155" as="sourcePoint" />
+        <mxPoint x="907" y="1109.95" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-45" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Filtrer le journal d&#39;audit" vertex="1">
+      <mxGeometry height="50" width="170" x="670" y="1410" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-46" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;span data-path-to-node=&quot;7,2,0,0&quot;&gt;&lt;b data-path-to-node=&quot;7,2,0,0&quot; data-index-in-node=&quot;0&quot;&gt;&lt;/b&gt;&lt;/span&gt;&lt;span data-path-to-node=&quot;7,2,1,0&quot;&gt;&lt;font style=&quot;font-size: 17px;&quot;&gt;S&#39;inscrire et&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;div&gt;&lt;span data-path-to-node=&quot;7,2,1,0&quot;&gt;&lt;font style=&quot;font-size: 17px;&quot;&gt;enregistrer la société&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="80" width="200" x="540" y="485" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-47" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-87" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-60">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="20.000000000000455" y="830.2222222222222" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-48" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-23" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.5461" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1222" y="795" />
+          <mxPoint x="1222" y="1210" />
+        </Array>
+        <mxPoint x="-300" y="725" as="sourcePoint" />
+        <mxPoint x="-140" y="725" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-49" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-25" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.744;entryY=0.051;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.489" y="-1" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="-343" y="385" as="sourcePoint" />
+        <mxPoint x="-100" y="847" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-50" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-24" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0.618;entryY=-0.006;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.4318" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="-450" y="924" as="sourcePoint" />
+        <mxPoint x="-100" y="897" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-51" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-30" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.3278" y="-3" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="-343" y="471.88" as="sourcePoint" />
+        <mxPoint x="-135" y="831.8800000000001" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-52" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-32" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.383;entryY=0.04;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.2459" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="-343" y="525" as="sourcePoint" />
+        <mxPoint x="-153" y="839" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-53" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-31" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.299;entryY=0.051;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.1498" y="2" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="-343" y="575" as="sourcePoint" />
+        <mxPoint x="-171" y="848" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-54" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-37" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;exitX=0.995;exitY=0.601;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.126;entryY=0.169;entryDx=0;entryDy=0;entryPerimeter=0;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="0.2367" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <Array as="points">
+          <mxPoint x="1110" y="1180" />
+        </Array>
+        <mxPoint x="830" y="1183" as="sourcePoint" />
+        <mxPoint x="1230" y="1180" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-55" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-87" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Times New Roman;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="1" y="200" as="geometry">
+        <mxPoint x="-199" y="-200" as="offset" />
+        <Array as="points" />
+        <mxPoint x="770" y="1252" as="sourcePoint" />
+        <mxPoint x="1230" y="1235" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-56" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-38" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;entryX=0.128;entryY=0.841;entryDx=0;entryDy=0;entryPerimeter=0;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="0.2066" y="-3" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="850" y="1292" />
+          <mxPoint x="1111" y="1292" />
+        </Array>
+        <mxPoint x="-514.5" y="831.8800000000001" as="sourcePoint" />
+        <mxPoint x="1230" y="1292" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-57" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-16" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;entryX=0.605;entryY=0.99;entryDx=0;entryDy=0;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.5774" as="geometry">
+        <mxPoint x="-1" as="offset" />
+        <mxPoint x="-334.5" y="1193.72" as="sourcePoint" />
+        <mxPoint x="-135.5" y="970.72" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-58" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-18" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;entryX=0.726;entryY=0.885;entryDx=0;entryDy=0;entryPerimeter=0;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.6103" as="geometry">
+        <mxPoint x="-1" as="offset" />
+        <mxPoint x="-334.5" y="1243.72" as="sourcePoint" />
+        <mxPoint x="1340" y="1275" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-59" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-17" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;entryX=1;entryY=1;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.637" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <mxPoint x="-334.5000000000059" y="1286.0200000000002" as="sourcePoint" />
+        <mxPoint x="-91" y="945" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-60" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=bottom;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;lt;&amp;lt;system&amp;gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;système d&#39;audit&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="65.63" width="140" x="1290" y="1202.1899999999996" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-61" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-29" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="260" y="925" />
+          <mxPoint x="320" y="925" />
+          <mxPoint x="320" y="1004" />
+        </Array>
+        <mxPoint x="260" y="925" as="sourcePoint" />
+        <mxPoint x="620" y="828.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-62" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;curved=0;fontFamily=Times New Roman;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="EXcYTAr-0H028NDu9Mm0-15" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="260" y="1815" />
+          <mxPoint x="320" y="1815" />
+          <mxPoint x="320" y="1862" />
+        </Array>
+        <mxPoint x="260" y="1815" as="sourcePoint" />
+        <mxPoint x="320" y="1862" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-63" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=Times New Roman;" value="Gestion des Tenants &amp;amp; Abonnements&amp;nbsp;" vertex="1">
+      <mxGeometry height="30" width="220" x="367.5" y="1535" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontStyle=1;fontSize=13;fontFamily=Times New Roman;" value="Gestion des Utilisateurs&amp;nbsp;" vertex="1">
+      <mxGeometry height="30" width="145" x="367.5" y="1115" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-65" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Admin&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;&amp;nbsp;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="220" y="1295" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-66" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" value="&amp;nbsp;Journal d&#39;Audit &amp;amp; Traçabilité" vertex="1">
+      <mxGeometry height="30" width="182.5" x="367.5" y="1355" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-67" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-70" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;align=center;fontStyle=1;fontSize=13;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-46">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-68" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontStyle=1;fontSize=13;fontFamily=Times New Roman;" value="Gestion de la Structure Organisationnelle" vertex="1">
+      <mxGeometry height="30" width="232.5" x="367.5" y="735" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-69" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-45" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontStyle=1;fontSize=13;fontFamily=Times New Roman;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="EXcYTAr-0H028NDu9Mm0-9" value="&lt;span&gt;&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;&lt;/span&gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="650" y="1432.5" as="sourcePoint" />
+        <mxPoint x="540" y="1442.5" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-70" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Visiteur&amp;nbsp;" vertex="1">
+      <mxGeometry height="60" width="30" x="220" y="505" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-71" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;fontFamily=Times New Roman;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="235" y="815" />
+          <mxPoint x="235" y="815" />
+        </Array>
+        <mxPoint x="235" y="908.75" as="sourcePoint" />
+        <mxPoint x="234.56999999999994" y="735" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-72" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=13;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontStyle=1;fontFamily=Times New Roman;" value="&lt;br&gt;&lt;div&gt;&lt;strong data-start=&quot;467&quot; data-end=&quot;536&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Diagramme de cas d&#39;utilisation du Sprint 1&amp;nbsp;&lt;/font&gt;&lt;/strong&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="25" width="350" x="580" y="400" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-73" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;S&#39;authentifier&lt;/font&gt;" vertex="1">
+      <mxGeometry height="80" width="200" x="540" y="605" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-74" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-75" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;align=center;fontStyle=1;fontSize=13;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-73">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-75" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Utilisateur&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Authentifié&lt;/font&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="220" y="625" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-76" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font face=&quot;Times New Roman&quot; style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Authentification &amp;amp; Inscription&lt;/b&gt;&lt;/font&gt;" vertex="1">
+      <mxGeometry height="20" width="190" x="370" y="445" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-77" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Consulter les informations de l&#39;entreprise&lt;/font&gt;" vertex="1">
+      <mxGeometry height="80" width="182.5" x="386.25" y="1595" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-78" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Modifier une entreprise&lt;/font&gt;" vertex="1">
+      <mxGeometry height="50" width="185" x="655" y="1610" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-79" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;span data-path-to-node=&quot;3,4,0,0&quot;&gt;&lt;b data-path-to-node=&quot;3,4,0,0&quot; data-index-in-node=&quot;0&quot;&gt;&lt;/b&gt;&lt;/span&gt;&lt;span data-path-to-node=&quot;3,4,1,0&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Désactiver une entreprise&lt;/font&gt;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="50" width="185" x="655" y="1705" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-80" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-78" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="EXcYTAr-0H028NDu9Mm0-77" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="-0.0667" y="-10" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="840" y="1655" as="sourcePoint" />
+        <mxPoint x="550" y="1635" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-81" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-79" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="EXcYTAr-0H028NDu9Mm0-14" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="-0.0667" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="675" y="1725" as="sourcePoint" />
+        <mxPoint x="600" y="1725" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-82" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="234" y="1293" />
+        </Array>
+        <mxPoint x="234" y="1293" as="sourcePoint" />
+        <mxPoint x="233.75" y="968.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-83" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;fontFamily=Times New Roman;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="130" y="1789" />
+          <mxPoint x="130" y="645" />
+        </Array>
+        <mxPoint x="160" y="1815" as="sourcePoint" />
+        <mxPoint x="210" y="645" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-84" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;entryX=0.443;entryY=1.023;entryDx=0;entryDy=0;entryPerimeter=0;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.5086" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <mxPoint x="840" y="1726" as="sourcePoint" />
+        <mxPoint x="1300" y="1275" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-85" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;entryX=0.293;entryY=0.977;entryDx=0;entryDy=0;entryPerimeter=0;" target="EXcYTAr-0H028NDu9Mm0-87" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.4263" as="geometry">
+        <mxPoint x="-1" as="offset" />
+        <mxPoint x="840" y="1635" as="sourcePoint" />
+        <mxPoint x="1280" y="1275" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-86" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-39" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Times New Roman;" target="EXcYTAr-0H028NDu9Mm0-87" value="">
+      <mxGeometry relative="1" width="160" x="0.3684" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points" />
+        <mxPoint x="850" y="1235" as="sourcePoint" />
+        <mxPoint x="1230" y="1235" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-87" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="«Technical»&lt;div&gt;&amp;nbsp;Enregistrer Action d&#39;Audit&lt;/div&gt;" vertex="1">
+      <mxGeometry height="70" width="153" x="1091" y="1200" as="geometry" />
+    </mxCell>
+    <mxCell id="EXcYTAr-0H028NDu9Mm0-88" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="EXcYTAr-0H028NDu9Mm0-77" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="310" y="1360" />
+          <mxPoint x="310" y="1635" />
+        </Array>
+        <mxPoint x="260" y="1360" as="sourcePoint" />
+        <mxPoint x="310" y="1645" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <!-- ═══ 1.3 Activer la 2FA ═══ (Authentification & Inscription) -->
+    <mxCell id="NEWUC-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Activer la 2FA&lt;/font&gt;" vertex="1">
+      <mxGeometry height="50" width="165" x="760" y="615" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-2" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-75" target="NEWUC-1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══ 3.5 Gérer mon profil ═══ (Gestion des Utilisateurs) -->
+    <mxCell id="NEWUC-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Gérer mon profil&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="165" x="390" y="1285" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-4" edge="1" parent="1" source="EXcYTAr-0H028NDu9Mm0-75" target="NEWUC-3" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══ 3.2 Inviter un utilisateur ═══ (Gestion des Utilisateurs) -->
+    <mxCell id="NEWUC-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Inviter un utilisateur&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="180" x="670" y="1325" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-6" edge="1" parent="1" source="NEWUC-5" target="EXcYTAr-0H028NDu9Mm0-36" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-7" edge="1" parent="1" source="NEWUC-5" target="EXcYTAr-0H028NDu9Mm0-87" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══ 2.3 Suspendre une entreprise ═══ (Gestion des Tenants) -->
+    <mxCell id="NEWUC-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Suspendre une entreprise&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="185" x="655" y="1760" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-9" edge="1" parent="1" source="NEWUC-8" target="EXcYTAr-0H028NDu9Mm0-14" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-10" edge="1" parent="1" source="NEWUC-8" target="EXcYTAr-0H028NDu9Mm0-87" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══ 2.4 Réactiver une entreprise ═══ (Gestion des Tenants) -->
+    <mxCell id="NEWUC-11" parent="1" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Réactiver une entreprise&lt;/font&gt;" vertex="1">
+      <mxGeometry height="40" width="185" x="655" y="1807" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-12" edge="1" parent="1" source="NEWUC-11" target="EXcYTAr-0H028NDu9Mm0-14" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="NEWUC-13" edge="1" parent="1" source="NEWUC-11" target="EXcYTAr-0H028NDu9Mm0-87" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>
+---------------------------------------------backlog 
+% ── Authentification & Inscription ───────────────────────────
+\multirow{3}{2.5cm}{\centering\makecell[c]{\textbf{Authentifica-}\\ \textbf{tion \&}\\ \textbf{Inscription}}}
+& \textbf{1.1} En tant qu'utilisateur, je souhaite m'authentifier à travers un login
+et un mot de passe afin d'accéder au système.
+& - Créer l'interface de la page de connexion (formulaire).\newline
+- Implémenter la logique d'authentification (JWT / Spring Security).\newline
+- Tester l'authentification selon les différents rôles.
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{1.2} En tant qu'Admin, je souhaite m'inscrire en fournissant mes informations
+et celles de ma société afin de créer mon espace de gestion et d'en devenir le responsable.
+& - Créer l'interface de la page d'inscription (formulaire).\newline
+- Gérer la logique de création simultanée du compte Admin et de la Société
+(Tenant Provisioning).\newline
+- Tester la procédure d'inscription complète.
+& \textbf{3} \\ \cline{2-4}
+
+& \textbf{1.3} En tant qu'utilisateur, je souhaite activer la vérification en deux
+étapes (2FA~\cite{totp}) afin de renforcer la sécurité de mon compte.
+& - Intégrer la génération de code TOTP (Google Authenticator).\newline
+- Développer l'API de validation du code 2FA à la connexion.\newline
+- Tester l'activation, la désactivation et la vérification du code.
+& \textbf{2} \\ \hline
+
+% ── Gestion de l'Entreprise ──────────────────────────────────
+\multirow{4}{2.5cm}{\centering\makecell[c]{\textbf{Gestion de}\\ \textbf{l'Entreprise}}}
+& \textbf{2.1} En tant qu'Admin, je souhaite modifier une entreprise afin de mettre
+à jour ses informations.
+& - Développer l'interface de mise à jour des données de l'entreprise.\newline
+- Implémenter l'API backend pour la modification des informations de la société.\newline
+- Tester la persistance des modifications en base de données.
+& \textbf{1.5} \\ \cline{2-4}
+
+& \textbf{2.2} En tant qu'Admin, je souhaite désactiver une entreprise afin de
+suspendre son accès.
+& - Implémenter la logique de désactivation / blocage de l'accès au niveau backend.\newline
+- Tester l'impact de la désactivation sur les accès de l'ensemble des utilisateurs
+de cette entreprise.
+& \textbf{1.5} \\ \cline{2-4}
+
+& \textbf{2.3} En tant que Super Admin, je souhaite suspendre une entreprise afin
+de bloquer temporairement son accès au système.
+& - Implémenter la logique backend de suspension temporaire.\newline
+- Notifier les utilisateurs concernés de la suspension.\newline
+- Tester le blocage effectif des accès pendant la suspension.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{2.4} En tant que Super Admin, je souhaite réactiver une entreprise suspendue
+afin de lui restituer l'accès au système.
+& - Implémenter la logique de réactivation et restauration des accès.\newline
+- Tester la restitution complète des droits après réactivation.
+& \textbf{1} \\ \hline
+
+% ── Gestion des Abonnements ──────────────────────────────────
+\multirow{3}{2.5cm}{\centering\makecell[c]{\textbf{Gestion des}\\ \textbf{Abonnements}\\ \textbf{(SaaS)}}}
+& \textbf{2.5} En tant que Super Admin, je souhaite affecter un abonnement afin de
+gérer les droits d'accès d'une entreprise cliente.
+& - Concevoir l'interface de gestion des plans d'abonnements pour le Super Admin.\newline
+- Implémenter la logique d'affectation initiale d'un plan à une entreprise.
+& \textbf{1.5} \\ \cline{2-4}
+
+& \textbf{2.6} En tant que Super Admin, je souhaite modifier un abonnement afin de
+changer le plan souscrit par une entreprise.
+& - Ajouter les contrôles de modification de forfait sur l'interface.\newline
+- Implémenter les règles de gestion des paliers et des restrictions d'accès selon
+le nouveau plan.\newline
+- Tester le passage fonctionnel d'un plan à un autre (upgrade/downgrade).
+& \textbf{1.5} \\ \cline{2-4}
+
+& \textbf{2.7} En tant que Super Admin, je souhaite résilier un abonnement afin de
+mettre fin au contrat d'une entreprise cliente et bloquer son accès à la plateforme.
+& - Implémenter la logique de résiliation et de désactivation des accès liés au contrat.\newline
+- Notifier l'entreprise concernée de la résiliation.\newline
+- Tester le blocage effectif des accès après résiliation.
+& \textbf{1} \\ \hline
+
+% ── Gestion des Utilisateurs ─────────────────────────────────
+\multirow{5}{2.5cm}{\centering\makecell[c]{\textbf{Gestion des}\\ \textbf{Utilisateurs}}}
+& \textbf{3.1} En tant qu'Admin, je souhaite créer un utilisateur afin de lui donner
+un accès direct à la plateforme.
+& - Concevoir l'interface du formulaire d'ajout d'un nouvel utilisateur.\newline
+- Développer l'API REST pour l'insertion de l'utilisateur lié à la société.
+& \textbf{1.5} \\ \cline{2-4}
+
+& \textbf{3.2} En tant qu'Admin, je souhaite inviter un utilisateur par e-mail afin
+qu'il puisse définir son mot de passe lors de sa première connexion.
+& - Implémenter le service de génération de token d'invitation (validité~: 7 jours).\newline
+- Développer l'API REST \texttt{/api/invitations/accept}.\newline
+- Tester le flux complet~: envoi email $\rightarrow$ activation du compte
+$\rightarrow$ définition du mot de passe.
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{3.3} En tant qu'Admin, je souhaite modifier un utilisateur afin de mettre
+à jour ses données et ses accès.
+& - Concevoir l'interface de modification et la table de consultation des utilisateurs.\newline
+- Développer l'API REST pour la mise à jour des profils.\newline
+- Tester l'attribution et la modification des rôles.
+& \textbf{1.5} \\ \cline{2-4}
+
+& \textbf{3.4} En tant qu'Admin, je souhaite désactiver un utilisateur afin de
+retirer immédiatement son accès à la plateforme.
+& - Implémenter la logique backend de désactivation du compte utilisateur.\newline
+- Tester le refus d'accès pour un utilisateur désactivé.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{3.5} En tant qu'utilisateur, je souhaite gérer mon profil afin de mettre
+à jour mes informations personnelles et mes préférences.
+& - Concevoir l'interface de consultation et modification du profil utilisateur.\newline
+- Développer l'API REST de mise à jour du profil.\newline
+- Tester la persistance des modifications du profil.
+& \textbf{1.5} \\ \hline
+
+% ── Journal d'Audit ──────────────────────────────────────────
+\multirow{2}{2.5cm}{\centering\makecell[c]{\textbf{Journal}\\ \textbf{d'Audit}}}
+& \textbf{4.1} En tant qu'Admin, je souhaite consulter le journal d'audit afin de
+voir les actions effectuées.
+& - Créer le composant d'affichage de l'historique des actions (tableau UI).\newline
+- Implémenter le système d'interception et d'enregistrement automatique des
+actions (AOP / Spring).
+& \textbf{1.5} \\ \cline{2-4}
+
+& \textbf{4.2} En tant qu'Admin, je souhaite filtrer le journal d'audit afin de
+rechercher des actions spécifiques.
+& - Mettre en place les composants graphiques des filtres (par date, par utilisateur,
+par action).\newline
+- Développer la logique de filtrage des requêtes côté backend.
+& \textbf{1.5} \\ \hline
+
+% ── Gestion Organisationnelle ────────────────────────────────
+\multirow{6}{2.5cm}{\centering\makecell[c]{\textbf{Gestion}\\ \textbf{Organisation-}\\ \textbf{nelle}}}
+& \textbf{5.1} En tant qu'Admin/RH, je souhaite créer un département afin de
+structurer l'entreprise.
+& - Concevoir l'interface de création d'un département.\newline
+- Développer le service backend d'insertion avec les validations nécessaires.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{5.2} En tant qu'Admin/RH, je souhaite modifier un département afin de
+mettre à jour la structure.
+& - Créer l'interface de modification des informations d'un département.\newline
+- Mettre à jour le service backend correspondant.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{5.3} En tant qu'Admin/RH, je souhaite désactiver un département afin de
+le retirer de la structure.
+& - Implémenter la logique de désactivation logique d'un département.\newline
+- Tester la désactivation d'un département contenant encore des postes actifs.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{5.4} En tant qu'Admin/RH, je souhaite créer un poste afin de définir
+un rôle au sein d'un département.
+& - Concevoir l'interface de création d'un poste (rattaché à un département).\newline
+- Développer le service d'insertion backend pour les postes.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{5.5} En tant qu'Admin/RH, je souhaite modifier un poste afin d'adapter
+ses attributs.
+& - Créer l'interface de modification des données d'un poste.\newline
+- Implémenter la mise à jour des données en base.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{5.6} En tant qu'Admin/RH, je souhaite désactiver un poste afin de le
+retirer de la structure organisationnelle.
+& - Implémenter la logique backend de retrait/désactivation d'un poste.\newline
+- Tester la cohérence de l'organigramme suite à cette suppression.
+& \textbf{1} \\ \hline
+
+\caption{Backlog détaillé du premier Sprint}
+\label{tab:backlog-sprint1}
+\end{longtable}
+\end{small}
+\renewcommand{\arraystretch}{1.0}
+
+  ---
+  Analyse : Backlog vs Diagramme de cas d'utilisation
+  
+  ┌─────┬────────────────────────────────────────┬───────────────────┐
+  │  #  │          User Story (Backlog)          │ Présent dans UC ? │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 1.1 │ S'authentifier                         │ ✅                │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 1.2 │ S'inscrire et enregistrer la société   │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 1.3 │ Activer la 2FA                         │ ❌  MANQUANT       │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 2.1 │ Modifier une entreprise                │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 2.2 │ Désactiver une entreprise              │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 2.3 │ Suspendre une entreprise (Super Admin) │ ❌  MANQUANT       │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 2.4 │ Réactiver une entreprise (Super Admin) │ ❌  MANQUANT       │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 2.5 │ Affecter un abonnement                 │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 2.6 │ Modifier un abonnement                 │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 3.1 │ Créer un utilisateur                   │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 3.2 │ Inviter un utilisateur par e-mail      │ ❌  MANQUANT       │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 3.3 │ Modifier un utilisateur                │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 3.4 │ Désactiver un utilisateur              │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 3.5 │ Gérer mon profil                       │ ❌  MANQUANT       │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 4.1 │ Consulter le journal d'audit           │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 4.2 │ Filtrer le journal d'audit             │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 5.1 │ Créer un département                   │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 5.2 │ Modifier un département                │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 5.3 │ Désactiver un département              │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 5.4 │ Créer un poste                         │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 5.5 │ Modifier un poste                      │ ✅                 │
+  ├─────┼────────────────────────────────────────┼───────────────────┤
+  │ 5.6 │ Désactiver un poste                    │ ✅                 │
+  └─────┴────────────────────────────────────────┴───────────────────┘
+
+  ⚠️ Extra dans le diagramme (absent du backlog) : "Résilier un abonnement" — soit à supprimer, soit à ajouter comme US 2.7 dans le backlog.
+
+  ---
+  5 cas d'utilisation manquants + 3 cellules à modifier
+
+● Le fichier est mis à jour. Voici le résumé complet :
+
+  ---
+  Ce qui a été corrigé dans sp1.txt
+
+  5 cas d'utilisation ajoutés
+
+  ┌────────────────────────────────┬────────────────────────────────┬──────────────────────────────┬────────────────────────────────┐
+  │           UC ajouté            │            Section             │          Connecté à          │            Relation            │
+  ├────────────────────────────────┼────────────────────────────────┼──────────────────────────────┼────────────────────────────────┤
+  │ Activer la 2FA (1.3)           │ Authentification & Inscription │ Utilisateur Authentifié      │ association                    │
+  ├────────────────────────────────┼────────────────────────────────┼──────────────────────────────┼────────────────────────────────┤
+  │ Gérer mon profil (3.5)         │ Gestion des Utilisateurs       │ Utilisateur Authentifié      │ association                    │
+  ├────────────────────────────────┼────────────────────────────────┼──────────────────────────────┼────────────────────────────────┤
+  │ Inviter un utilisateur (3.2)   │ Gestion des Utilisateurs       │ Consulter liste utilisateurs │ <<extend>> + <<include>> audit │
+  ├────────────────────────────────┼────────────────────────────────┼──────────────────────────────┼────────────────────────────────┤
+  │ Suspendre une entreprise (2.3) │ Gestion des Tenants            │ Consulter liste globale      │ <<extend>> + <<include>> audit │
+  ├────────────────────────────────┼────────────────────────────────┼──────────────────────────────┼────────────────────────────────┤
+  │ Réactiver une entreprise (2.4) │ Gestion des Tenants            │ Consulter liste globale      │ <<extend>> + <<include>> audit │
+  └────────────────────────────────┴────────────────────────────────┴──────────────────────────────┴────────────────────────────────┘
+
+  1 cellule modifiée
+
+  - Section Gestion des Utilisateurs : hauteur agrandie de 217.5 → 255 (pour contenir les 2 nouveaux cas)
+
+  ---
+  ⚠️ Action manuelle requise dans draw.io
+
+  "Résilier un abonnement" est présent dans le diagramme mais absent du backlog. Vous devez choisir :
+  - Le supprimer du diagramme (en supprimant la cellule id="EXcYTAr-0H028NDu9Mm0-17" et ses arêtes -21 et -59)
+  - OU l'ajouter comme US 2.7 dans le backlog

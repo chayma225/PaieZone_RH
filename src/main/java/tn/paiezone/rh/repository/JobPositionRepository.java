@@ -12,6 +12,7 @@ import tn.paiezone.rh.domain.JobPosition;
 @SuppressWarnings("unused")
 @Repository
 public interface JobPositionRepository extends JpaRepository<JobPosition, Long> {
+    boolean existsByIdAndActiveFalse(Long id);
     long countByCompanyId(Long companyId);
     List<JobPosition> findByCompanyId(Long companyId);
     Optional<JobPosition> findByTitleIgnoreCaseAndCompanyId(String title, Long companyId);

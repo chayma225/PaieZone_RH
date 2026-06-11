@@ -24,6 +24,9 @@ const ACTION_LABELS: Record<string, string> = {
   LOCK: 'Verrouillage',
   APPROVE: 'Approbation',
   REJECT: 'Rejet',
+  CALCULATE: 'Calcul paie',
+  CALCULATE_PAYROLL: 'Calcul paie',
+  TOGGLE_ACTIVE: 'Activation/Désactivation',
   NOTIFICATION_CONTRACT_EXPIRATION: 'Notif. contrat',
   NOTIFICATION_LEAVE: 'Notif. congé',
   NOTIFICATION_PAYROLL: 'Notif. paie',
@@ -55,16 +58,6 @@ const JHIPSTER_ROLE_MAP: Record<string, string> = {
 
       <!-- Barre de filtres -->
       <div class="filters-bar">
-        <label class="filter-search">
-          <pz-icon name="Search" [size]="14" />
-          <input
-            type="text"
-            placeholder="Rechercher un utilisateur…"
-            [value]="searchQ()"
-            (input)="searchQ.set($any($event.target).value)"
-          />
-        </label>
-
         <select class="pz-select" [value]="actionFilter()" (change)="actionFilter.set($any($event.target).value)">
           <option value="">Toutes les actions</option>
           @for (a of actions(); track a) {
@@ -78,6 +71,23 @@ const JHIPSTER_ROLE_MAP: Record<string, string> = {
             <option [value]="e">{{ e }}</option>
           }
         </select>
+
+        <label class="filter-date-label">Du</label>
+        <input
+          type="date"
+          class="pz-select"
+          [value]="dateFrom()"
+          (change)="dateFrom.set($any($event.target).value)"
+          style="width:140px;cursor:pointer"
+        />
+        <label class="filter-date-label">Au</label>
+        <input
+          type="date"
+          class="pz-select"
+          [value]="dateTo()"
+          (change)="dateTo.set($any($event.target).value)"
+          style="width:140px;cursor:pointer"
+        />
 
         @if (hasFilters()) {
           <button class="reset-btn" (click)="clearFilters()"><pz-icon name="X" [size]="13" /> Réinitialiser</button>
@@ -257,6 +267,13 @@ const JHIPSTER_ROLE_MAP: Record<string, string> = {
         font-size: 13px;
         cursor: pointer;
         outline: none;
+      }
+
+      .filter-date-label {
+        font-size: 12px;
+        color: var(--pz-muted);
+        white-space: nowrap;
+        padding: 0 2px;
       }
 
       .reset-btn {
@@ -499,9 +516,10 @@ export default class AdminAuditComponent {
   protected readonly data = inject(DataService);
   private readonly api = inject(ApiService);
 
-  protected readonly searchQ = signal('');
   protected readonly actionFilter = signal('');
   protected readonly entityFilter = signal('');
+  protected readonly dateFrom = signal('');
+  protected readonly dateTo = signal('');
   protected readonly expandedId = signal<number | null>(null);
 
   private readonly userNames = signal<Map<string, string>>(new Map());
@@ -509,20 +527,15 @@ export default class AdminAuditComponent {
 
   protected readonly filtered = computed(() => {
     let list = this.data.audit();
-    const q = this.searchQ().toLowerCase();
     const action = this.actionFilter();
     const entity = this.entityFilter();
+    const from = this.dateFrom();
+    const to = this.dateTo();
 
-    if (q) {
-      list = list.filter(e => {
-        const login = e.user.toLowerCase();
-        const fullName = (this.userNames().get(e.user) ?? '').toLowerCase();
-        const disp = this.isScheduler(e) ? 'planificateur auto' : e.user === 'system' ? 'compte système' : fullName || login;
-        return login.includes(q) || fullName.includes(q) || disp.includes(q);
-      });
-    }
     if (action) list = list.filter(e => e.action === action);
     if (entity) list = list.filter(e => e.entity === entity);
+    if (from) list = list.filter(e => e.date >= from);
+    if (to) list = list.filter(e => e.date <= to + 'T23:59:59');
 
     return list;
   });
@@ -549,7 +562,7 @@ export default class AdminAuditComponent {
     ].sort(),
   );
 
-  protected readonly hasFilters = computed(() => !!(this.searchQ() || this.actionFilter() || this.entityFilter()));
+  protected readonly hasFilters = computed(() => !!(this.actionFilter() || this.entityFilter() || this.dateFrom() || this.dateTo()));
 
   constructor() {
     this.data.loadAudit();
@@ -671,6 +684,8 @@ export default class AdminAuditComponent {
       userprofile: 'profil utilisateur',
       bonus: 'prime',
       auditlog: "journal d'audit",
+      department: 'département',
+      departments: 'département',
     };
     const nom = entityFr[(e.entity ?? '').toLowerCase()] ?? (e.entity || 'enregistrement');
     const id = e.entityId ? ` #${e.entityId}` : '';
@@ -688,6 +703,11 @@ export default class AdminAuditComponent {
         return `Déconnexion du compte`;
       case 'EXPORT':
         return `Export ${nom}`;
+      case 'CALCULATE':
+      case 'CALCULATE_PAYROLL':
+        return `Calcul de la paie — ${nom}${id}`;
+      case 'TOGGLE_ACTIVE':
+        return `Activation/Désactivation du ${nom}${id}`;
       case 'VALIDATE':
         return `Validation du ${nom}${id}`;
       case 'LOCK':
@@ -742,8 +762,9 @@ export default class AdminAuditComponent {
   }
 
   protected clearFilters(): void {
-    this.searchQ.set('');
     this.actionFilter.set('');
     this.entityFilter.set('');
+    this.dateFrom.set('');
+    this.dateTo.set('');
   }
 }

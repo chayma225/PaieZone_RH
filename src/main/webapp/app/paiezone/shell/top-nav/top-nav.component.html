@@ -1,12 +1,15 @@
 <header class="pz-topnav">
   <div class="pz-brand">
-    <div class="pz-brand-mark">PZ</div>
+    <div class="pz-brand-mark" style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;letter-spacing:-0.02em;box-shadow:0 2px 8px rgba(79,70,229,.25);flex-shrink:0">PZ</div>
     <div class="pz-brand-name">paie<span>zone</span> RH</div>
   </div>
 
   <nav class="pz-nav-tabs">
     @for (tab of roleService.config().tabs; track tab.id) {
-      <a class="pz-nav-tab" [routerLink]="['/paiezone', tab.id]" routerLinkActive="active">
+      @if (tab.separator) {
+        <span class="nav-sep"></span>
+      }
+      <a class="pz-nav-tab" [class.emp-tab]="tab.separator" [routerLink]="['/paiezone', tab.id]" routerLinkActive="active">
         <span class="ico"><pz-icon [name]="tab.icon" /></span>
         {{ tab.label }}
         @if (tab.badge) {
@@ -19,7 +22,12 @@
   <div class="pz-top-right">
     <div class="pz-topbar-search">
       <pz-icon name="Search" [size]="14" [strokeWidth]="1.6" />
-      <input placeholder="Rechercher…" />
+      <input
+        placeholder="Rechercher…"
+        [value]="data.searchQuery()"
+        (input)="onSearch($any($event.target).value)"
+        (keydown.escape)="data.searchQuery.set('')"
+      />
       <span class="kbd">⌘K</span>
     </div>
     <div class="notif-anchor">

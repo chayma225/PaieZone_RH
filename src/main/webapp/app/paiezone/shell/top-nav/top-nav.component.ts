@@ -1,10 +1,12 @@
 import { Component, ChangeDetectionStrategy, signal, inject, HostListener } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 import IconComponent from '../../core/icon/icon.component';
 import { RoleService } from '../../core/role.service';
 import { NotificationService } from '../../core/notification.service';
+import { DataService } from '../../core/data.service';
 import { LoginService } from 'app/login/login.service';
 import type { Role } from '../../core/types';
 
@@ -19,11 +21,22 @@ import type { Role } from '../../core/types';
 export default class TopNavComponent {
   protected readonly roleService = inject(RoleService);
   protected readonly notif = inject(NotificationService);
+  protected readonly data = inject(DataService);
   private readonly router = inject(Router);
   private readonly loginService = inject(LoginService);
 
   protected readonly menuOpen = signal(false);
   protected readonly notifOpen = signal(false);
+
+  constructor() {
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => this.data.searchQuery.set(''));
+  }
+
+  protected onSearch(q: string): void {
+    this.data.searchQuery.set(q);
+  }
 
   protected toggleMenu(ev: Event): void {
     ev.stopPropagation();

@@ -75,7 +75,7 @@ export default class RhEmployeesComponent implements OnInit {
 
   protected readonly filtered = computed(() => {
     const d = this.dept();
-    const q = this.searchQ().toLowerCase().trim();
+    const q = (this.searchQ() || this.data.searchQuery()).toLowerCase().trim();
     return this.data.employees().filter(e => {
       if (d !== 'Tous' && e.dept !== d) return false;
       if (q && !this.data.fullName(e).toLowerCase().includes(q) && !e.matricule.toLowerCase().includes(q)) return false;

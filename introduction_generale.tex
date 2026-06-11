@@ -1,0 +1,35 @@
+\chapter*{Introduction Générale}
+\addcontentsline{toc}{chapter}{Introduction Générale}
+
+Dans un contexte de transformation numérique accélérée, la gestion des ressources
+humaines et de la paie constitue un levier stratégique pour toute organisation. En
+Tunisie, ce domaine est régi par un cadre juridique dense et évolutif~: cotisations
+CNSS, barème progressif de l'IRPP, taux CAVIS, Contribution Sociale de Solidarité et
+dispositions annuelles de la Loi de Finances~\cite{loifinance}. Garantir simultanément
+la conformité légale et la maîtrise de la charge administrative représente un défi
+structurel permanent pour les PME et les cabinets d'expertise comptable tunisiens.
+
+L'analyse du marché révèle une coexistence préoccupante entre des pratiques manuelles
+fondées sur Excel et des logiciels de bureau isolés aux fonctionnalités figées, dépourvus
+de mobilité, d'architecture multi-tenant et d'intelligence artificielle. Ces lacunes
+engendrent des risques de non-conformité et une inefficacité opérationnelle qui pèsent
+directement sur la compétitivité des entreprises.
+
+C'est dans ce cadre que s'inscrit notre projet de fin d'études, réalisé au sein de
+\textbf{Grow Up Technologies}, visant à concevoir et développer \textbf{PaieZone~RH}~---
+une plateforme \textit{SaaS} multi-tenant de gestion RH et de paie intégrée à
+\textit{ComptaZone}. Le projet poursuit quatre objectifs~: automatiser le cycle RH
+complet, garantir la conformité à la Loi de Finances 2026 via un moteur de calcul
+paramétrable, assurer l'isolation des données par schéma PostgreSQL dédié par tenant,
+et déployer \textbf{PaieBot}~--- un assistant conversationnel RH local basé sur
+Ollama/phi3, combinant un pipeline Text-to-SQL sécurisé et une architecture
+RAG~\cite{rag} pour les questions réglementaires.
+
+Le développement a suivi la méthodologie \textbf{Scrum}~\cite{scrum}, structuré en
+quatre sprints de trois semaines couvrant 61 User Stories réparties en seize épics.
+La conception s'appuie sur \textbf{UML}~\cite{uml} et l'architecture \textit{N-tiers}
+de \textbf{JHipster~9.x}~\cite{jhipster} (\textbf{Spring Boot~4.0}~\cite{springboot}
++ \textbf{Angular~18}~\cite{angular}). Ce rapport s'organise en six chapitres~:
+le premier expose le contexte général~; le second couvre la planification et
+l'architecture~; les chapitres trois à six détaillent successivement la réalisation
+de chaque sprint, depuis le socle technique jusqu'au déploiement de l'assistant IA.

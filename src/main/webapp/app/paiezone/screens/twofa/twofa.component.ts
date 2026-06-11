@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject, viewChildren, ElementRef, OnInit, OnDestroy, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, viewChildren, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -132,22 +132,22 @@ import { DataService } from '../../core/data.service';
       .otp-row input {
         width: 52px;
         height: 62px;
-        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        border: 1.5px solid rgba(255, 255, 255, 0.35);
         border-radius: 14px;
         text-align: center;
         font-size: 26px;
         font-weight: 700;
         font-family: 'JetBrains Mono', monospace;
-        color: #fff;
-        background: rgba(255, 255, 255, 0.05);
+        color: #0e0420;
+        background: #fff;
         outline: 0;
         transition: all 0.15s;
-        caret-color: #c4b5fd;
+        caret-color: #7c3aed;
       }
       .otp-row input:focus {
         border-color: #c4b5fd;
-        background: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 0 0 4px rgba(196, 181, 253, 0.2);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(196, 181, 253, 0.3);
         transform: translateY(-2px);
       }
       .otp-row input:disabled {
@@ -175,63 +175,6 @@ import { DataService } from '../../core/data.service';
         }
       }
 
-      /* Method row */
-      .method-row {
-        display: flex;
-        gap: 6px;
-        justify-content: center;
-        font-size: 13px;
-        margin-bottom: 20px;
-        color: rgba(250, 250, 247, 0.55);
-      }
-
-      .link-pale {
-        color: #c4b5fd;
-        font-weight: 600;
-        background: transparent;
-        border: 0;
-        cursor: pointer;
-        font: inherit;
-        padding: 0;
-        transition: color 0.15s;
-      }
-      .link-pale:hover {
-        color: #fff;
-      }
-
-      /* Method switch */
-      .method-switch {
-        display: flex;
-        gap: 4px;
-        padding: 4px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        margin-bottom: 28px;
-      }
-      .method-switch button {
-        flex: 1;
-        height: 36px;
-        border: 0;
-        background: transparent;
-        border-radius: 9px;
-        font: inherit;
-        font-size: 13px;
-        font-weight: 500;
-        color: rgba(250, 250, 247, 0.5);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.15s;
-      }
-      .method-switch button.active {
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      }
-
       /* Submit */
       .btn-submit {
         width: 100%;
@@ -243,12 +186,12 @@ import { DataService } from '../../core/data.service';
         border-radius: 999px;
         border: none;
         cursor: pointer;
-        background: linear-gradient(135deg, #fff, #ddd6fe);
-        color: #0e0420;
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: #fff;
         font-size: 15px;
         font-weight: 700;
         font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-        box-shadow: 0 10px 30px rgba(196, 181, 253, 0.3);
+        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.35);
         transition: all 0.2s ease;
         margin-bottom: 20px;
       }
@@ -265,8 +208,8 @@ import { DataService } from '../../core/data.service';
         width: 16px;
         height: 16px;
         border-radius: 50%;
-        border: 2px solid rgba(14, 4, 32, 0.3);
-        border-top-color: #0e0420;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
         animation: spin 0.7s linear infinite;
       }
       @keyframes spin {
@@ -305,7 +248,7 @@ import { DataService } from '../../core/data.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class TwoFaComponent implements OnInit, OnDestroy {
+export default class TwoFaComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
@@ -319,48 +262,15 @@ export default class TwoFaComponent implements OnInit, OnDestroy {
   protected readonly busy = signal(false);
   protected readonly verified = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly method = signal<'app' | 'sms'>('app');
-  protected readonly resendCooldown = signal(30);
   protected readonly email = signal<string | null>(null);
 
-  protected readonly canResend = computed(() => this.resendCooldown() === 0);
   protected readonly cells = viewChildren<ElementRef<HTMLInputElement>>('cell');
-
-  private timer: ReturnType<typeof setInterval> | undefined;
 
   ngOnInit(): void {
     const emailFromQuery = this.route.snapshot.queryParamMap.get('email');
     const emailFromSession = this.session.retrieve('2fa_login');
     this.email.set(emailFromQuery ?? emailFromSession ?? null);
-    this.startCooldown();
     queueMicrotask(() => this.cells()[0]?.nativeElement.focus());
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this.timer);
-  }
-
-  setMethod(m: 'app' | 'sms'): void {
-    this.method.set(m);
-    this.digits.set(['', '', '', '', '', '']);
-    this.error.set(null);
-    queueMicrotask(() => this.cells()[0]?.nativeElement.focus());
-  }
-
-  resend(): void {
-    this.startCooldown();
-    this.error.set(null);
-    this.digits.set(['', '', '', '', '', '']);
-    queueMicrotask(() => this.cells()[0]?.nativeElement.focus());
-  }
-
-  private startCooldown(): void {
-    this.resendCooldown.set(30);
-    clearInterval(this.timer);
-    this.timer = setInterval(() => {
-      this.resendCooldown.update(v => Math.max(0, v - 1));
-      if (this.resendCooldown() === 0) clearInterval(this.timer);
-    }, 1000);
   }
 
   onInput(i: number, ev: Event): void {

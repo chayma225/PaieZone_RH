@@ -343,9 +343,9 @@ import IconComponent from '../../core/icon/icon.component';
         font-weight: 700;
       }
       .pz-btn.pz-primary {
-        background: linear-gradient(135deg, #fff, #ddd6fe);
-        color: #0e0420;
-        box-shadow: 0 10px 30px rgba(196, 181, 253, 0.3);
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.35);
       }
       .pz-btn.pz-primary:hover:not([disabled]) {
         box-shadow: 0 14px 40px rgba(196, 181, 253, 0.5);
@@ -361,8 +361,8 @@ import IconComponent from '../../core/icon/icon.component';
         width: 16px;
         height: 16px;
         border-radius: 50%;
-        border: 2px solid rgba(14, 4, 32, 0.3);
-        border-top-color: #0e0420;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
         animation: spin 0.7s linear infinite;
       }
       @keyframes spin {

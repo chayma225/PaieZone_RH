@@ -25,7 +25,6 @@ public class EmployeeHistoryDTO implements Serializable {
     @Size(max = 500)
     private String newValue;
 
-    @NotNull
     private Instant changedAt;
 
     @Size(max = 100)

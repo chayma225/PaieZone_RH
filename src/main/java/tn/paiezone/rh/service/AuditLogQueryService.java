@@ -58,7 +58,7 @@ public class AuditLogQueryService extends QueryService<AuditLog> {
 
     private Specification<AuditLog> tenantSpec(Specification<AuditLog> spec) {
         Long companyId = tenantContextService.getCurrentCompanyId();
-        if (companyId == null) return spec;
+        if (companyId == null || companyId < 0) return spec;
         return spec.and((root, query, cb) -> cb.equal(root.get("company").get("id"), companyId));
     }
 

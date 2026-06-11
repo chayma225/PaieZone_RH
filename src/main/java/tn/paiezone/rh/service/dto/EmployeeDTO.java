@@ -103,7 +103,6 @@ public class EmployeeDTO implements Serializable {
     @Lob
     private String notes;
 
-    @NotNull
     private Instant createdAt;
 
     private Instant updatedAt;

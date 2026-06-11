@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
+import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.service.PayrollPeriodService;
 import tn.paiezone.rh.service.dto.BulkCalculationResultDTO;
 import tn.paiezone.rh.service.dto.PayrollPeriodDTO;
@@ -115,6 +116,7 @@ public class PayrollPeriodResource {
 
     @PostMapping("/{id}/calculate-all")
     @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    @Auditable(action = "CALCULATE_PAYROLL", entityType = "PayrollPeriod")
     public ResponseEntity<BulkCalculationResultDTO> calculateAll(@PathVariable Long id) {
         log.debug("REST POST /payroll-periods/{}/calculate-all", id);
         BulkCalculationResultDTO result = periodService.triggerCalculation(id);
@@ -123,6 +125,7 @@ public class PayrollPeriodResource {
 
     @PostMapping("/{id}/validate")
     @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    @Auditable(action = "VALIDATE", entityType = "PayrollPeriod")
     public ResponseEntity<Void> validatePeriod(@PathVariable Long id) {
         log.debug("REST POST /payroll-periods/{}/validate", id);
         periodService.validatePeriod(id);
@@ -131,6 +134,7 @@ public class PayrollPeriodResource {
 
     @PostMapping("/{id}/lock")
     @PreAuthorize("hasAnyRole('ADMIN', 'RH_MANAGER', 'USER')")
+    @Auditable(action = "LOCK", entityType = "PayrollPeriod")
     public ResponseEntity<Void> lockPeriod(@PathVariable Long id) {
         log.debug("REST POST /payroll-periods/{}/lock", id);
         periodService.lockPeriod(id);

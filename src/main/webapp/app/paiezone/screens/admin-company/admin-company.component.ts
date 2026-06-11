@@ -107,7 +107,12 @@ import { ActivitySector } from '../../core/types';
           <!-- Logo -->
           <div class="pz-card logo-card">
             <div class="logo-label">Logo de l'entreprise</div>
-            <div class="logo-preview">
+            <div class="logo-preview" style="cursor:pointer;position:relative" (click)="fileInput.click()" title="Cliquer pour changer le logo">
+              @if (logoUploading()) {
+                <div style="position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.35);border-radius:12px">
+                  <span style="color:#fff;font-size:12px">Envoi…</span>
+                </div>
+              }
               @if (company()?.logoUrl) {
                 <img class="logo-img" [src]="company()!.logoUrl!" alt="Logo" />
               } @else {
@@ -126,9 +131,12 @@ import { ActivitySector } from '../../core/types';
                 <span class="err-txt">{{ logoErr() }}</span>
               } @else {
                 <pz-icon name="Upload" [size]="12" class="hint-ico" />
-                Activer "Modifier" pour téléverser
+                Cliquer sur le logo pour téléverser
               }
             </div>
+            <button class="pz-btn pz-sm pz-ghost" style="margin-top:8px;width:100%" (click)="fileInput.click()" [disabled]="logoUploading()">
+              <pz-icon name="Upload" [size]="13" /> {{ logoUploading() ? 'Envoi en cours…' : 'Changer le logo' }}
+            </button>
             <div class="logo-formats">PNG, JPG ou SVG · 2 Mo max</div>
           </div>
 
@@ -168,11 +176,11 @@ import { ActivitySector } from '../../core/types';
 
           <!-- Données système -->
           <div class="pz-card sys-card">
-            <div class="sys-title">Données système</div>
+            <div class="sys-title">Informations système</div>
             <div class="sys-rows">
               <div class="sys-row">
-                <span class="sys-lbl">Schéma BD</span>
-                <span class="sys-val pz-mono">{{ company()?.schema || '—' }}</span>
+                <span class="sys-lbl">Matricule fiscal</span>
+                <span class="sys-val pz-mono">{{ company()?.taxId || '—' }}</span>
               </div>
               <div class="sys-row">
                 <span class="sys-lbl">Région</span>
@@ -183,8 +191,12 @@ import { ActivitySector } from '../../core/types';
                 <span class="sys-val">{{ fmtDate(company()?.createdAt) }}</span>
               </div>
               <div class="sys-row">
-                <span class="sys-lbl">Tenant</span>
-                <span class="sys-val pz-mono">#{{ company()?.id ?? '—' }}</span>
+                <span class="sys-lbl">Abonnement actif</span>
+                <span class="sys-val">
+                  <span class="pz-pill" [class.pos]="company()?.status === 'ACTIVE'" [class.warn]="company()?.status === 'TRIAL'">
+                    {{ company()?.status === 'ACTIVE' ? 'Actif' : company()?.status === 'TRIAL' ? 'Essai' : (company()?.status ?? '—') }}
+                  </span>
+                </span>
               </div>
             </div>
           </div>

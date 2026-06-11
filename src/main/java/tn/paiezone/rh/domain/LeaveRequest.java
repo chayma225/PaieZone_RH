@@ -16,7 +16,7 @@ import tn.paiezone.rh.domain.enumeration.LeaveStatus;
  */
 @Entity
 @Table(name = "leave_request")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+                        @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class LeaveRequest implements Serializable {
 

@@ -5,6 +5,7 @@ export interface RoleTab {
   label: string;
   icon: string;
   badge?: number;
+  separator?: boolean;
 }
 
 export interface RoleConfig {
@@ -106,6 +107,7 @@ export interface LeaveRequest {
   submitted: string;
   status: 'pending' | 'approved' | 'rejected';
   note: string;
+  managerComment?: string;
 }
 
 export interface Advance {

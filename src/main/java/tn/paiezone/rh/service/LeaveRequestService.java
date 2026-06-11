@@ -1,5 +1,6 @@
 package tn.paiezone.rh.service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import tn.paiezone.rh.service.dto.LeaveRequestDTO;
 
@@ -8,6 +9,8 @@ import tn.paiezone.rh.service.dto.LeaveRequestDTO;
  */
 public interface LeaveRequestService {
     LeaveRequestDTO submit(LeaveRequestDTO dto);
+
+    LeaveRequestDTO submitUnjustified(Long employeeId, LocalDate startDate, LocalDate endDate, int days, String comment);
 
     LeaveRequestDTO approve(Long id, Long approvedById);
 

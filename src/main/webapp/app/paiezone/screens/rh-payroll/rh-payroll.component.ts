@@ -75,6 +75,9 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
       @if (activeTab() === 'periods') {
         <div class="pz-card">
           <div class="card-head"><div class="card-title">Périodes de paie</div></div>
+          @if (periodeActionErr()) {
+            <div class="pz-err" style="margin:0 16px 12px">{{ periodeActionErr() }}</div>
+          }
           <table class="pz-table">
             <thead>
               <tr>
@@ -353,7 +356,6 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
             @for (y of holidayYears; track y) {
               <button class="hol-year-chip" [class.active]="holidayYear === y" (click)="setHolidayYear(y)">{{ y }}</button>
             }
-            <button class="pz-btn pz-sm" style="margin-left:4px"><pz-icon name="Upload" [size]="13" /> Exporter</button>
             <button class="pz-btn pz-sm pz-primary" (click)="openCreateHoliday()">
               <pz-icon name="Plus" [size]="13" [strokeWidth]="2" /> Ajouter un jour férié
             </button>
@@ -362,15 +364,15 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
 
         <!-- 4 Stats -->
         <div class="hol-stats">
-          <div class="hol-stat">
-            <div class="hol-stat-ico">⭐</div>
+          <div class="hol-stat" style="border-left:4px solid #4f46e5">
+            <div class="hol-stat-ico" style="color:#4f46e5">⭐</div>
             <div>
-              <div class="hol-stat-num">{{ holidays().length }}</div>
+              <div class="hol-stat-num" style="color:#4f46e5">{{ holidays().length }}</div>
               <div class="hol-stat-lbl">Jours fériés</div>
               <div class="hol-stat-sub">année {{ holidayYear }}</div>
             </div>
           </div>
-          <div class="hol-stat">
+          <div class="hol-stat" style="border-left:4px solid #7c3aed">
             <div class="hol-stat-ico" style="color:#7c3aed">📍</div>
             <div>
               <div class="hol-stat-num" style="color:#7c3aed">{{ fixedCount() }}</div>
@@ -378,7 +380,7 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
               <div class="hol-stat-sub">récurrentes chaque année</div>
             </div>
           </div>
-          <div class="hol-stat">
+          <div class="hol-stat" style="border-left:4px solid #0ea5e9">
             <div class="hol-stat-ico" style="color:#0ea5e9">☽</div>
             <div>
               <div class="hol-stat-num" style="color:#0ea5e9">{{ variableCount() }}</div>
@@ -386,7 +388,7 @@ const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juill
               <div class="hol-stat-sub">calendrier hégirien</div>
             </div>
           </div>
-          <div class="hol-stat">
+          <div class="hol-stat" style="border-left:4px solid #f59e0b">
             <div class="hol-stat-ico" style="color:#f59e0b">🗓</div>
             <div>
               <div class="hol-stat-num" style="color:#f59e0b">{{ monthsWithHolidays().length }}</div>
@@ -1237,6 +1239,7 @@ export default class RhPayrollComponent {
   protected readonly api = inject(ApiService);
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
+  protected readonly periodeActionErr = signal('');
   protected readonly activeTab = signal<Tab>('periods');
 
   // Bulletins
@@ -1403,19 +1406,35 @@ export default class RhPayrollComponent {
 
   calculate(id: number) {
     this.busy.set(true);
-    this.api.calculatePayroll(id).subscribe({ next: () => this.reloadPeriods(), error: () => this.busy.set(false) });
+    this.periodeActionErr.set('');
+    this.api.calculatePayroll(id).subscribe({
+      next: () => this.reloadPeriods(),
+      error: (err: any) => { this.periodeActionErr.set(err?.error?.detail ?? 'Erreur lors du calcul.'); this.busy.set(false); },
+    });
   }
   recalculate(id: number) {
     this.busy.set(true);
-    this.api.recalculatePayroll(id).subscribe({ next: () => this.reloadPeriods(), error: () => this.busy.set(false) });
+    this.periodeActionErr.set('');
+    this.api.recalculatePayroll(id).subscribe({
+      next: () => this.reloadPeriods(),
+      error: (err: any) => { this.periodeActionErr.set(err?.error?.detail ?? 'Erreur lors du recalcul.'); this.busy.set(false); },
+    });
   }
   validate(id: number) {
     this.busy.set(true);
-    this.api.validatePayroll(id).subscribe({ next: () => this.reloadPeriods(), error: () => this.busy.set(false) });
+    this.periodeActionErr.set('');
+    this.api.validatePayroll(id).subscribe({
+      next: () => this.reloadPeriods(),
+      error: (err: any) => { this.periodeActionErr.set(err?.error?.detail ?? 'Erreur lors de la validation.'); this.busy.set(false); },
+    });
   }
   lock(id: number) {
     this.busy.set(true);
-    this.api.lockPayroll(id).subscribe({ next: () => this.reloadPeriods(), error: () => this.busy.set(false) });
+    this.periodeActionErr.set('');
+    this.api.lockPayroll(id).subscribe({
+      next: () => this.reloadPeriods(),
+      error: (err: any) => { this.periodeActionErr.set(err?.error?.detail ?? 'Erreur lors de la clôture.'); this.busy.set(false); },
+    });
   }
 
   private reloadPeriods() {
@@ -1665,7 +1684,15 @@ export default class RhPayrollComponent {
     this.holidayLoading.set(true);
     this.api.publicHolidays(this.holidayYear).subscribe({
       next: list => {
-        this.holidays.set(list);
+        // Déduplication par (holidayDate + name) — évite l'affichage de doublons en base
+        const seen = new Set<string>();
+        const unique = list.filter(h => {
+          const key = `${h.holidayDate}|${h.name}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+        this.holidays.set(unique);
         this.holidayLoading.set(false);
       },
       error: () => this.holidayLoading.set(false),
@@ -1705,6 +1732,16 @@ export default class RhPayrollComponent {
     }
     if (!this.holidayForm.holidayDate) {
       this.holidayErrMsg.set('La date est obligatoire.');
+      return;
+    }
+    const editId = this.editHolidayId();
+    const duplicate = this.holidays().some(h =>
+      h.holidayDate === this.holidayForm.holidayDate &&
+      h.name.trim().toLowerCase() === this.holidayForm.name.trim().toLowerCase() &&
+      h.id !== editId
+    );
+    if (duplicate) {
+      this.holidayErrMsg.set('Ce jour férié existe déjà pour cette date.');
       return;
     }
     this.busy.set(true);

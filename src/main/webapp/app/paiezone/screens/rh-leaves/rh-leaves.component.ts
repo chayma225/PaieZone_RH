@@ -274,14 +274,6 @@ type Tab = 'demandes' | 'types';
                   <button class="pz-modal-close" (click)="closeCalLeave()"><pz-icon name="X" [size]="16" /></button>
                 </div>
                 <div class="pz-modal-body">
-                  <!-- Bandeau type fixe -->
-                  <div
-                    style="display:flex;align-items:center;gap:8px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:12px;color:#991b1b;margin-bottom:4px"
-                  >
-                    <pz-icon name="AlertTriangle" [size]="13" />
-                    Type : <strong>Absence non justifiée</strong> · Non payée · Impact sur la paie
-                  </div>
-
                   <div class="pz-field">
                     <label>Employé *</label>
                     <select [(ngModel)]="calLeaveForm.employeeId">
@@ -291,25 +283,15 @@ type Tab = 'demandes' | 'types';
                       }
                     </select>
                   </div>
-                  <div style="display:flex;gap:10px">
-                    <div class="pz-field" style="flex:1">
-                      <label>Date début *</label>
-                      <input type="date" [(ngModel)]="calLeaveForm.startDate" style="color-scheme:light" (change)="calRecalcDays()" />
-                    </div>
-                    <div class="pz-field" style="flex:1">
-                      <label>Date fin *</label>
-                      <input
-                        type="date"
-                        [(ngModel)]="calLeaveForm.endDate"
-                        [min]="calLeaveForm.startDate"
-                        style="color-scheme:light"
-                        (change)="calRecalcDays()"
-                      />
-                    </div>
-                  </div>
                   <div class="pz-field">
-                    <label>Nombre de jours ouvrés</label>
-                    <input type="number" [(ngModel)]="calLeaveForm.days" min="1" />
+                    <label>Jusqu'au</label>
+                    <input
+                      type="date"
+                      [(ngModel)]="calLeaveForm.endDate"
+                      [min]="calLeaveForm.startDate"
+                      style="color-scheme:light"
+                      (change)="calRecalcDays()"
+                    />
                   </div>
                   <div class="pz-field">
                     <label>Motif / Remarque</label>
@@ -512,10 +494,6 @@ type Tab = 'demandes' | 'types';
                 Date de début dans le passé — la demande sera automatiquement refusée.
               </div>
             }
-            <div class="pz-field">
-              <label>Nombre de jours ouvrables</label>
-              <input type="number" [(ngModel)]="form.days" min="1" />
-            </div>
             <div class="pz-field">
               <label>Commentaire (optionnel)</label>
               <textarea [(ngModel)]="form.comment" rows="2" placeholder="Motif…"></textarea>
@@ -1118,7 +1096,7 @@ export default class RhLeavesComponent {
 
   protected leaveTypes = signal<{ id: number; name: string }[]>([]);
   protected readonly today = new Date().toISOString().slice(0, 10);
-  protected form = { leaveTypeId: 0, employeeId: 0, startDate: '', endDate: '', days: 1, comment: '' };
+  protected form = { leaveTypeId: 0, employeeId: 0, startDate: '', endDate: '', comment: '' };
 
   // Leave type management
   protected readonly leaveTypeList = signal<LeaveType[]>([]);
@@ -1219,10 +1197,10 @@ export default class RhLeavesComponent {
   protected readonly showCalLeaveModal = signal(false);
   protected readonly calLeaveBusy = signal(false);
   protected readonly calLeaveErr = signal('');
-  protected calLeaveForm = { employeeId: 0, leaveTypeId: 0, startDate: '', endDate: '', days: 1, comment: '' };
+  protected calLeaveForm = { employeeId: 0, startDate: '', endDate: '', days: 1, comment: '' };
 
   openCalLeave(dateStr: string): void {
-    this.calLeaveForm = { employeeId: 0, leaveTypeId: 0, startDate: dateStr, endDate: dateStr, days: 1, comment: '' };
+    this.calLeaveForm = { employeeId: 0, startDate: dateStr, endDate: dateStr, days: 1, comment: '' };
     this.calLeaveErr.set('');
     if (!this.leaveTypes().length) {
       this.api.leaveTypes().subscribe({ next: lt => this.leaveTypes.set(lt), error: () => {} });
@@ -1251,17 +1229,8 @@ export default class RhLeavesComponent {
 
   submitCalLeave(): void {
     const f = this.calLeaveForm;
-    if (!f.employeeId || !f.startDate || !f.endDate || f.days < 1) {
-      this.calLeaveErr.set('Veuillez remplir tous les champs obligatoires.');
-      return;
-    }
-
-    // Trouver automatiquement le type ABSENCE_NON_JUSTIFIEE
-    const absenceType = this.leaveTypes().find(
-      t => (t.name ?? '').toUpperCase().includes('ABSENCE') || (t.name ?? '').toUpperCase() === 'ABSENCE_NON_JUSTIFIEE',
-    );
-    if (!absenceType) {
-      this.calLeaveErr.set('Type « Absence non justifiée » introuvable. Rechargez la page.');
+    if (!f.employeeId) {
+      this.calLeaveErr.set('Veuillez sélectionner un employé.');
       return;
     }
 
@@ -1269,10 +1238,10 @@ export default class RhLeavesComponent {
     this.calLeaveErr.set('');
     this.api
       .createLeaveRequest({
-        leaveTypeId: absenceType.id,
+        leaveTypeId: 0,
         employeeId: f.employeeId,
         startDate: f.startDate,
-        endDate: f.endDate,
+        endDate: f.endDate || f.startDate,
         numberOfDays: f.days,
         comment: f.comment || 'Absence non justifiée',
         status: 'APPROVED',
@@ -1312,7 +1281,7 @@ export default class RhLeavesComponent {
   ];
 
   openCreate() {
-    this.form = { leaveTypeId: 0, employeeId: 0, startDate: '', endDate: '', days: 1, comment: '' };
+    this.form = { leaveTypeId: 0, employeeId: 0, startDate: '', endDate: '', comment: '' };
     this.errMsg.set('');
     if (!this.leaveTypes().length) {
       this.api.leaveTypes().subscribe({ next: lt => this.leaveTypes.set(lt), error: () => {} });
@@ -1324,8 +1293,8 @@ export default class RhLeavesComponent {
   }
 
   submitCreate() {
-    if (!this.form.leaveTypeId || !this.form.employeeId || !this.form.startDate || !this.form.endDate || this.form.days < 1) {
-      this.errMsg.set('Veuillez sélectionner un employé, un type de congé, les dates et le nombre de jours.');
+    if (!this.form.leaveTypeId || !this.form.employeeId || !this.form.startDate || !this.form.endDate) {
+      this.errMsg.set('Veuillez sélectionner un employé, un type de congé et les dates.');
       return;
     }
     this.busy.set(true);
@@ -1336,7 +1305,6 @@ export default class RhLeavesComponent {
         employeeId: this.form.employeeId,
         startDate: this.form.startDate,
         endDate: this.form.endDate,
-        numberOfDays: this.form.days,
         comment: this.form.comment || undefined,
       })
       .subscribe({

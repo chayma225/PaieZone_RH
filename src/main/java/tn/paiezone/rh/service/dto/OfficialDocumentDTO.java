@@ -28,7 +28,6 @@ public class OfficialDocumentDTO implements Serializable {
     @NotNull
     private Integer year;
 
-    @NotNull
     private Instant generatedAt;
 
     @Size(max = 500)

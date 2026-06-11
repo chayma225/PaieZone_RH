@@ -1,0 +1,541 @@
+% =========================================================
+% GUIDE : CAPTURES D'ÉCRAN À INSÉRER — PaieZone RH
+% Rapport PFE — Méthodologie Scrum — 4 sprints
+% =========================================================
+% Pour chaque interface :
+%   - Sous-section exacte (label LaTeX)
+%   - Nom de fichier image suggéré
+%   - Référence figure déjà déclarée dans le rapport
+%   - Ce qui doit apparaître à l'écran
+% =========================================================
+% IMPORTANT : Remplace \includegraphics[...]{scrum.png}
+% par \includegraphics[...]{NOM_FICHIER_IMAGE} dans ton
+% fichier .tex correspondant.
+% =========================================================
+
+% =========================================================
+% CHAPITRE 3 — Sprint 1 : Infrastructure & Admin
+% Objectif : Socle technique, sécurité, multi-tenant
+% =========================================================
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Inscription et initialisation
+%                de l'espace société}
+% Position : Après le texte introductif, avant la légende
+% Label figure : fig:ui-inscription
+% Fichier image : sp1_inscription.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Page d'inscription de PaieZone.
+%   Deux blocs de formulaire visibles simultanément :
+%   (1) Informations personnelles de l'admin
+%       (prénom, nom, e-mail, mot de passe)
+%   (2) Informations légales de l'entreprise
+%       (raison sociale, matricule fiscal, adresse)
+%   Bouton "S'inscrire" en bas.
+%   URL : /register ou /signup
+%
+% Code LaTeX (remplace scrum.png) :
+% \includegraphics[width=0.7\textwidth]{sp1_inscription}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Authentification et accès}
+% Capture 1/5 — Page de connexion
+% Label figure : fig:ui-login
+% Fichier image : sp1_login.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Page de connexion.
+%   Champ e-mail + champ mot de passe + bouton "Se connecter".
+%   Logo PaieZone visible en haut.
+%   URL : /login
+%
+% Code LaTeX :
+% \includegraphics[width=0.75\textwidth]{sp1_login}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Authentification et accès}
+% Capture 2/5 — Dashboard Super Admin
+% Label figure : fig:ui-dashboard-Superadmin
+% Fichier image : sp1_dashboard_superadmin.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Tableau de bord Super Admin après connexion.
+%   Widgets statistiques visibles :
+%   - Nombre total d'entreprises clientes
+%   - Abonnements actifs / expirés
+%   - Graphique ou liste des sociétés
+%   Barre de navigation latérale avec les modules SA
+%   URL : /saas-dash ou /super-admin/dashboard
+%
+% Code LaTeX :
+% \includegraphics[width=0.75\textwidth]{sp1_dashboard_superadmin}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Authentification et accès}
+% Capture 3/5 — Dashboard Administrateur
+% Label figure : fig:ui-dashboard-admin
+% Fichier image : sp1_dashboard_admin.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Tableau de bord Admin Entreprise.
+%   Widgets : effectif total, utilisateurs actifs,
+%   abonnement en cours (plan + expiration),
+%   dernières actions du journal d'audit.
+%   Barre de navigation avec modules Admin.
+%   URL : /admin/dashboard
+%
+% Code LaTeX :
+% \includegraphics[width=0.75\textwidth]{sp1_dashboard_admin}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Authentification et accès}
+% Capture 4/5 — Dashboard Employé
+% Label figure : fig:ui-dashboard-employe
+% Fichier image : sp1_dashboard_employe.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Tableau de bord Employé.
+%   Widgets : solde de congés restants, prochain bulletin,
+%   dernières demandes en cours.
+%   Navigation limitée aux modules Employé.
+%   URL : /employee/dashboard
+%
+% Code LaTeX :
+% \includegraphics[width=0.75\textwidth]{sp1_dashboard_employe}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Authentification et accès}
+% Capture 5/5 — Dashboard RH Comptable
+% Label figure : fig:ui-dashboard-rh
+% Fichier image : sp1_dashboard_rh.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Tableau de bord RH Comptable.
+%   Widgets : effectif actif, congés en attente de validation,
+%   bulletins à calculer pour la période courante.
+%   Navigation RH (Employés, Paie, Congés, Chatbot).
+%   URL : /rh/dashboard
+%
+% Code LaTeX :
+% \includegraphics[width=0.75\textwidth]{sp1_dashboard_rh}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des utilisateurs}
+% Capture 1/2 — Liste des utilisateurs
+% Label figure : fig:ui-users-list
+% Fichier image : sp1_users_list.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Tableau paginé des utilisateurs de la société.
+%   Colonnes : Nom, Prénom, E-mail, Rôle, Statut (Actif/Inactif).
+%   Boutons : Ajouter, Inviter, Modifier, Désactiver.
+%   Barre de recherche en haut.
+%   URL : /admin/users
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp1_users_list}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des utilisateurs}
+% Capture 2/2 — Formulaire création/modification
+% Label figure : fig:ui-users-form
+% Fichier image : sp1_users_form.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Modal ou page de formulaire.
+%   Champs : Prénom, Nom, E-mail, Rôle (liste déroulante).
+%   Deux boutons en bas : "Annuler" et "Enregistrer".
+%   Si formulaire d'invitation : champ e-mail uniquement
+%   + message "Un lien d'activation sera envoyé".
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp1_users_form}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Journal d'audit}
+% Label figure : fig:ui-audit-list
+% Fichier image : sp1_audit_list.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Tableau du journal d'audit.
+%   Colonnes : Date/Heure, Utilisateur, Action (CREATE/UPDATE/DELETE),
+%   Entité cible, Valeur avant, Valeur après.
+%   Filtres visibles : par date, par utilisateur, par type d'action.
+%   URL : /admin/audit-logs
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp1_audit_list}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion Organisationnelle}
+% Label figure : fig:ui-org
+% Fichier image : sp1_org_structure.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface de gestion des départements et postes.
+%   Liste des départements avec bouton "Ajouter département".
+%   Pour chaque département : liste des postes associés
+%   + bouton "Ajouter poste".
+%   Statut Actif/Inactif visible pour chaque ligne.
+%   URL : /admin/organization
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp1_org_structure}
+
+
+% =========================================================
+% CHAPITRE 4 — Sprint 2 : Gestion du Capital Humain
+% Objectif : Employés, contrats, documents administratifs
+% =========================================================
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des employés}
+% Capture 1/3 — Liste des employés
+% Label figure : fig:ui-employees-list
+% Fichier image : sp2_employees_list.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Tableau paginé du personnel.
+%   Colonnes : Matricule, Nom complet, Département, Poste, Statut.
+%   Barre de recherche multicritère + filtres Département/Statut.
+%   Boutons : Ajouter, Voir profil, Modifier, Désactiver.
+%   URL : /rh/employees
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp2_employees_list}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des employés}
+% Capture 2/3 — Formulaire de création/modification
+% Label figure : fig:ui-employee-form
+% Fichier image : sp2_employee_form.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Formulaire multi-onglets ou multi-sections.
+%   Visible : Identité (nom FR + arabe, CIN, CNSS, genre),
+%   Fiscal (situation familiale, enfants, chef famille),
+%   Contact (adresse, e-mail pro, téléphone, RIB),
+%   Poste (département, poste, date embauche).
+%   Champs obligatoires marqués (*).
+%   URL : /rh/employees/new ou /rh/employees/{id}/edit
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp2_employee_form}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des employés}
+% Capture 3/3 — Vue détaillée du profil
+% Label figure : fig:ui-employee-profile
+% Fichier image : sp2_employee_profile.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Page de profil complet d'un employé.
+%   Onglets visibles : Informations, Contrats, Documents, Historique.
+%   En-tête : photo (optionnelle), matricule, nom, poste, département.
+%   Onglet "Informations" actif montrant les données RH.
+%   URL : /rh/employees/{id}
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp2_employee_profile}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des contrats de travail}
+% Label figure : fig:ui-contracts-list
+% Fichier image : sp2_contracts_section.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Onglet "Contrats" du profil employé.
+%   Tableau : Référence, Type (CDI/CDD/CIVP/KARAMA/Intérimaire/Stage),
+%   Date début, Date fin, Salaire brut, Statut (ACTIF/RÉSILIÉ).
+%   Bouton "Associer un contrat" visible.
+%   Pour le contrat actif : boutons "Modifier" et "Résilier".
+%   URL : /rh/employees/{id} (onglet Contrats)
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp2_contracts_section}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des documents administratifs}
+% Label figure : fig:ui-documents
+% Fichier image : sp2_documents_section.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Onglet "Documents" du profil employé.
+%   Tableau : Nom fichier, Type (CONTRAT/ATTESTATION/DIPLOME/AUTRE),
+%   Date de dépôt, Actions (Télécharger, Supprimer).
+%   Bouton "Ajouter un document" avec modal de sélection de type.
+%   URL : /rh/employees/{id} (onglet Documents)
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp2_documents_section}
+
+
+% =========================================================
+% CHAPITRE 5 — Sprint 3 : Paie, Congés, Avances
+% Objectif : Moteur de calcul, bulletins PDF, LF 2026
+% =========================================================
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des paramètres réglementaires}
+% Label figure : fig:ui-params
+% Fichier image : sp3_params_reglementaires.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface Super Admin — Paramètres légaux.
+%   Tableau des constantes : Taux CNSS salarié (9,18% ou 9,68%),
+%   CNSS patronal, CAVIS (1%), CSS (0,5%), TFP (1%),
+%   Barème IRPP (tranches), SMIG.
+%   Boutons "Ajouter paramètre" et "Modifier".
+%   Colonne "Année d'application" (ex : 2026).
+%   URL : /super-admin/payroll-params
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp3_params_reglementaires}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des périodes de paie}
+% Label figure : fig:ui-periodes
+% Fichier image : sp3_periodes_paie.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface des périodes de paie.
+%   Tableau : Mois/Année, Statut (OUVERTE / CALCULÉE / CLÔTURÉE),
+%   Date de création, Nombre de bulletins.
+%   Bouton "Créer nouvelle période" visible.
+%   Actions par ligne : "Calculer" (si OUVERTE), "Clôturer" (si CALCULÉE).
+%   URL : /rh/payroll-periods
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp3_periodes_paie}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Calcul et visualisation des bulletins de paie}
+% Label figure : fig:ui-bulletins
+% Fichier image : sp3_bulletins_paie.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface des bulletins d'une période.
+%   Tableau : Matricule, Employé, Salaire brut, CNSS salarié,
+%   CAVIS, CSS, IRPP, Net à payer.
+%   Bouton "Calculer la période" en haut.
+%   Pour chaque bulletin : bouton "Télécharger PDF" et "Envoyer par e-mail".
+%   OU : aperçu d'un bulletin PDF généré (pages avec mentions légales).
+%   URL : /rh/payroll-periods/{id}/payslips
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp3_bulletins_paie}
+
+% ---------------------------------------------------------
+% ASTUCE : Ajoute une 2e capture — aperçu du bulletin PDF généré
+% Label figure : fig:ui-bulletin-pdf  (NOUVELLE figure à ajouter)
+% Fichier image : sp3_bulletin_pdf.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Aperçu d'un bulletin de paie généré en PDF (fenêtre navigateur).
+%   En-tête : Logo société + Période (ex: Mai 2026).
+%   Corps : Rubriques de paie (Salaire brut, Primes, CNSS, IRPP, Net).
+%   Pied de page : Signature + Cachet.
+%   (Ce PDF est produit par JasperReports / Flying Saucer)
+%
+% Code LaTeX à ajouter après fig:ui-bulletins :
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.70\textwidth]{sp3_bulletin_pdf}
+%   \caption{Aperçu du bulletin de paie généré au format PDF}
+%   \label{fig:ui-bulletin-pdf}
+% \end{figure}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des primes et des avances}
+% Label figure : fig:ui-primes
+% Fichier image : sp3_primes_avances.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface de gestion des éléments variables.
+%   Deux onglets : "Primes" et "Avances".
+%   Onglet Primes : tableau des primes ajoutées pour la période
+%   (Employé, Type prime, Montant, Statut).
+%   OU onglet Avances : tableau des demandes
+%   (Employé, Montant demandé, Date, Statut REQUESTED/APPROVED/REJECTED),
+%   + boutons "Approuver" et "Refuser".
+%   URL : /rh/payroll-periods/{id}/variables
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp3_primes_avances}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion des congés et des absences}
+% Label figure : fig:ui-conges
+% Fichier image : sp3_conges.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface de gestion des congés (vue RH ou Employé).
+%
+%   VUE RH (recommandée) :
+%   Tableau des demandes en attente : Employé, Dates, Type,
+%   Jours demandés, Statut (EN ATTENTE / APPROUVÉ / REFUSÉ).
+%   Boutons "Valider" et "Refuser" par ligne.
+%
+%   VUE EMPLOYÉ (alternative) :
+%   Calendrier interactif avec les congés posés.
+%   Compteur de solde en temps réel (ex: "12 jours restants").
+%   Bouton "Soumettre une demande".
+%
+%   URL : /rh/leave-requests ou /employee/leaves
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp3_conges}
+
+
+% =========================================================
+% CHAPITRE 6 — Sprint 4 : Comptabilité, Conformité, Chatbot
+% Objectif : Export SAGE, déclarations légales, PaieBot IA
+% =========================================================
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Gestion comptable et export SAGE}
+% Label figure : fig:ui-comptabilite
+% Fichier image : sp4_comptabilite_sage.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface de l'onglet Comptabilité.
+%   Tableau du plan comptable : Numéro de compte, Libellé,
+%   Type (DEBIT/CREDIT), Actions (Modifier, Supprimer).
+%   Bouton "Exporter SAGE (.csv)" visible en haut à droite.
+%   URL : /rh/accounting ou /admin/accounting
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp4_comptabilite_sage}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Conformité réglementaire}
+% Label figure : fig:ui-conformite
+% Fichier image : sp4_conformite_declarations.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface de l'onglet Conformité.
+%   Quatre boutons/cards de génération :
+%   (1) Déclaration CNSS salarié (trimestrielle)
+%   (2) Déclaration CNSS patronal (trimestrielle)
+%   (3) Déclaration CAVIS (trimestrielle)
+%   (4) Déclaration IRPP (annuelle)
+%   Chaque card : période sélectionnable + bouton "Générer".
+%   URL : /rh/compliance
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp4_conformite_declarations}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Documents administratifs RH}
+% Label figure : fig:ui-docs-rh
+% Fichier image : sp4_docs_rh_generation.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Interface de génération des documents officiels.
+%   Accessible depuis la liste des employés ou le profil.
+%   Deux boutons visibles :
+%   - "Attestation de salaire (PDF)"
+%   - "Certificat de travail (PDF)"
+%   OU : aperçu d'une attestation PDF générée (template légal).
+%   URL : /rh/employees (boutons d'action sur la ligne)
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp4_docs_rh_generation}
+
+% ---------------------------------------------------------
+% Sous-section : \subsection{Assistant conversationnel RH (PaieBot)}
+% Label figure : fig:ui-chatbot
+% Fichier image : sp4_paibot_chatbot.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Composant chatbot flottant en bas à droite de l'écran.
+%   Bulle de chat ouverte avec une conversation exemple.
+%   Questions et réponses visibles (en français) :
+%   Ex Employé : "Quel est mon salaire net ce mois ?"
+%   Réponse PaieBot : "Votre salaire net pour Mai 2026 est de 2 450 TND."
+%   Ex Admin : "Combien d'employés actifs dans la société ?"
+%   Réponse : "Votre société compte 47 employés actifs."
+%   Icône PaieBot visible + barre de saisie en bas.
+%   Contexte de la page arrière-plan : Dashboard Admin ou RH.
+%
+% Code LaTeX :
+% \includegraphics[width=0.70\textwidth]{sp4_paibot_chatbot}
+
+% ---------------------------------------------------------
+% ASTUCE : Ajoute une 2e capture — réponse RAG réglementaire
+% Label figure : fig:ui-chatbot-rag  (NOUVELLE figure à ajouter)
+% Fichier image : sp4_paibot_rag.png
+% ---------------------------------------------------------
+% Ce que doit montrer la capture :
+%   Même composant chatbot.
+%   Question réglementaire visible :
+%   Ex : "Quel est le taux CNSS salarié en 2026 ?"
+%   Réponse PaieBot issue du pipeline LEGAL_RAG :
+%   "Selon la Loi de Finances 2026, le taux CNSS salarié est de 9,68%..."
+%   Source documentaire citée en bas de la réponse (optionnel).
+%   Badge "Réglementation" ou indication du type de pipeline visible.
+%
+% Code LaTeX à ajouter après fig:ui-chatbot :
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.70\textwidth]{sp4_paibot_rag}
+%   \caption{PaieBot --- Réponse réglementaire via pipeline RAG (LEGAL\_RAG)}
+%   \label{fig:ui-chatbot-rag}
+% \end{figure}
+
+
+% =========================================================
+% RÉCAPITULATIF GÉNÉRAL — Toutes les captures à prendre
+% =========================================================
+%
+% SPRINT 1 (Chapitre 3) — 9 captures obligatoires + 0 optionnelles :
+%   1. sp1_inscription.png         → fig:ui-inscription
+%   2. sp1_login.png               → fig:ui-login
+%   3. sp1_dashboard_superadmin.png→ fig:ui-dashboard-Superadmin
+%   4. sp1_dashboard_admin.png     → fig:ui-dashboard-admin
+%   5. sp1_dashboard_employe.png   → fig:ui-dashboard-employe
+%   6. sp1_dashboard_rh.png        → fig:ui-dashboard-rh
+%   7. sp1_users_list.png          → fig:ui-users-list
+%   8. sp1_users_form.png          → fig:ui-users-form
+%   9. sp1_audit_list.png          → fig:ui-audit-list
+%  10. sp1_org_structure.png       → fig:ui-org
+%
+% SPRINT 2 (Chapitre 4) — 5 captures obligatoires :
+%   1. sp2_employees_list.png      → fig:ui-employees-list
+%   2. sp2_employee_form.png       → fig:ui-employee-form
+%   3. sp2_employee_profile.png    → fig:ui-employee-profile
+%   4. sp2_contracts_section.png   → fig:ui-contracts-list
+%   5. sp2_documents_section.png   → fig:ui-documents
+%
+% SPRINT 3 (Chapitre 5) — 5 captures obligatoires + 1 recommandée :
+%   1. sp3_params_reglementaires.png → fig:ui-params
+%   2. sp3_periodes_paie.png         → fig:ui-periodes
+%   3. sp3_bulletins_paie.png        → fig:ui-bulletins
+%   4. sp3_primes_avances.png        → fig:ui-primes
+%   5. sp3_conges.png                → fig:ui-conges
+%   6. sp3_bulletin_pdf.png          → fig:ui-bulletin-pdf [RECOMMANDÉE]
+%
+% SPRINT 4 (Chapitre 6) — 4 captures obligatoires + 1 recommandée :
+%   1. sp4_comptabilite_sage.png         → fig:ui-comptabilite
+%   2. sp4_conformite_declarations.png   → fig:ui-conformite
+%   3. sp4_docs_rh_generation.png        → fig:ui-docs-rh
+%   4. sp4_paibot_chatbot.png            → fig:ui-chatbot
+%   5. sp4_paibot_rag.png                → fig:ui-chatbot-rag [RECOMMANDÉE]
+%
+% TOTAL : 24 captures obligatoires + 2 recommandées = 26 images
+%
+% =========================================================
+% COMMENT REMPLACER scrum.png DANS TES .tex :
+% =========================================================
+% Dans chaque chapitre (chapitre3.tex ... chapitre6.tex),
+% remplace chaque occurrence de :
+%   \includegraphics[...]{scrum.png}
+% par le nom de fichier image correspondant indiqué ci-dessus.
+%
+% Place tes captures dans le même dossier que tes .tex
+% (C:\Users\chayma\PaieZoneRH\pfe_rapport_extracted\pfe_rapport\)
+%
+% Formats acceptés par LaTeX : .png, .jpg, .pdf
+% Résolution recommandée : 1280x720 minimum (format 16:9)
+% =========================================================

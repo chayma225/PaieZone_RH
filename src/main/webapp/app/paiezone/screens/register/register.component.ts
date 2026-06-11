@@ -24,6 +24,78 @@ interface Step3Data {
   password: string;
 }
 
+const FALLBACK_SECTORS: ActivitySector[] = [
+  { id: -1,  code: 'AGRO',     label: 'Agriculture, pêche et agroalimentaire',        description: null, active: true },
+  { id: -2,  code: 'IND',      label: 'Industries manufacturières',                   description: null, active: true },
+  { id: -3,  code: 'BTP',      label: 'BTP – Bâtiment et Travaux Publics',            description: null, active: true },
+  { id: -4,  code: 'COM',      label: 'Commerce et distribution',                     description: null, active: true },
+  { id: -5,  code: 'TRANS',    label: 'Transport et logistique',                      description: null, active: true },
+  { id: -6,  code: 'TIC',      label: 'Technologies de l\'information (TIC)',          description: null, active: true },
+  { id: -7,  code: 'FIN',      label: 'Services financiers et bancaires',             description: null, active: true },
+  { id: -8,  code: 'SANTE',    label: 'Santé et services médicaux',                   description: null, active: true },
+  { id: -9,  code: 'EDU',      label: 'Éducation et formation',                       description: null, active: true },
+  { id: -10, code: 'TOUR',     label: 'Tourisme, hôtellerie et restauration',         description: null, active: true },
+  { id: -11, code: 'ENERG',    label: 'Énergie et mines',                             description: null, active: true },
+  { id: -12, code: 'TEXT',     label: 'Textile, habillement et cuir',                 description: null, active: true },
+  { id: -13, code: 'CHIM',     label: 'Chimie, plastique et caoutchouc',              description: null, active: true },
+  { id: -14, code: 'SERV',     label: 'Services aux entreprises',                     description: null, active: true },
+  { id: -15, code: 'IMM',      label: 'Immobilier et gestion de patrimoine',          description: null, active: true },
+  { id: -16, code: 'MED',      label: 'Médias et communication',                      description: null, active: true },
+  { id: -17, code: 'SPORT',    label: 'Sport et loisirs',                             description: null, active: true },
+  { id: -18, code: 'PUB',      label: 'Administration et secteur public',             description: null, active: true },
+];
+
+const TUNISIAN_CITIES: string[] = [
+  // Grand Tunis
+  'Tunis', 'La Marsa', 'Carthage', 'Sidi Bou Saïd', 'La Goulette', 'Le Bardo', 'Ettadhamen', 'Kalâat el-Andalous',
+  // Ariana
+  'Ariana', 'Raoued', 'La Soukra', 'Mnihla',
+  // Ben Arous
+  'Ben Arous', 'Ezzahra', 'Hammam Lif', 'Hammam Chott', 'Radès', 'Mégrine', 'Mohamedia', 'Fouchana', 'Mornag',
+  // Manouba
+  'Manouba', 'Oued Ellil', 'Douar Hicher', 'Borj El Amri', 'Tébourba',
+  // Nabeul
+  'Nabeul', 'Hammamet', 'Kelibia', 'Grombalia', 'Soliman', 'Korbous', 'Bou Argoub', 'Menzel Bouzelfa', 'Takelsa',
+  // Zaghouan
+  'Zaghouan', 'Zriba', 'Hammam Zriba', 'El Fahs',
+  // Bizerte
+  'Bizerte', 'Menzel Bourguiba', 'Mateur', 'Sejnane', 'Ras Jebel', 'Menzel Jemil', 'Tinja', 'Joumine',
+  // Béja
+  'Béja', 'Testour', 'Medjez el-Bab', 'Nefza', 'Goubellat',
+  // Jendouba
+  'Jendouba', 'Tabarka', 'Ain Draham', 'Fernana', 'Bou Salem', 'Ghardimaou',
+  // Le Kef
+  'Le Kef', 'Tajerouine', 'Dahmani', 'Sakiet Sidi Youssef',
+  // Siliana
+  'Siliana', 'Makthar', 'Rouhia', 'Bargou', 'Gaâfour',
+  // Sousse
+  'Sousse', 'Kantaoui', 'Akouda', 'Hammam Sousse', 'M\'Saken', 'Kalaa Kebira', 'Kalaa Sghira', 'Enfida', 'Hergla',
+  // Monastir
+  'Monastir', 'Ksar Hellal', 'Moknine', 'Sayada', 'Bekalta', 'Bembla', 'Jammel', 'Téboulba',
+  // Mahdia
+  'Mahdia', 'Ksour Essef', 'El Jem', 'Chebba', 'Kerker', 'Bou Merdes',
+  // Sfax
+  'Sfax', 'Sakiet Ezzit', 'Sakiet Eddaïr', 'Thyna', 'Ghraïba', 'El Hencha', 'Mahras', 'Djebeniana',
+  // Kairouan
+  'Kairouan', 'Sbikha', 'El Oueslatia', 'Haffouz', 'Bouhajla', 'Oueslatia',
+  // Kasserine
+  'Kasserine', 'Thala', 'Sbeitla', 'Fériana', 'Haïdra', 'Jedeliane',
+  // Sidi Bouzid
+  'Sidi Bouzid', 'Regueb', 'Souk Jedid', 'Bir El Hafey', 'Meknassi',
+  // Gabès
+  'Gabès', 'El Hamma', 'Matmata', 'Mareth', 'Chenini',
+  // Médenine
+  'Médenine', 'Ben Gardane', 'Djerba – Houmt Souk', 'Djerba – Midoun', 'Zarzis', 'Beni Khedache',
+  // Tataouine
+  'Tataouine', 'Ghomrassen', 'Remada', 'Bir Lahmar',
+  // Gafsa
+  'Gafsa', 'El Ksar', 'Redeyef', 'Moulares', 'Métlaoui', 'El Guettar',
+  // Tozeur
+  'Tozeur', 'Nefta', 'Degache', 'Hazoua',
+  // Kébili
+  'Kébili', 'Douz', 'Souk Lahad', 'El Faouar',
+].sort((a, b) => a.localeCompare(b, 'fr'));
+
 @Component({
   selector: 'pz-register',
   standalone: true,
@@ -329,13 +401,14 @@ interface Step3Data {
         transform: translateY(-1px);
       }
       .pz-btn.primary {
-        background: linear-gradient(135deg, #fff, #ddd6fe);
-        color: #0e0420;
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+        color: #ffffff;
         border-color: transparent;
-        box-shadow: 0 10px 30px rgba(196, 181, 253, 0.3);
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4);
       }
       .pz-btn.primary:hover {
-        box-shadow: 0 14px 40px rgba(196, 181, 253, 0.5);
+        background: linear-gradient(135deg, #6d28d9, #4338ca);
+        box-shadow: 0 14px 40px rgba(79, 70, 229, 0.55);
         transform: translateY(-2px);
       }
       .pz-btn.primary[disabled] {
@@ -645,8 +718,8 @@ interface Step3Data {
               <input id="su-tax" class="input" type="text" placeholder="1234567/A" [(ngModel)]="step2.taxId" name="taxId" required />
             </div>
             <div class="field">
-              <label for="su-cnss">ID CNSS</label>
-              <input id="su-cnss" class="input" type="text" placeholder="12500-0001" [(ngModel)]="step2.cnssId" name="cnssId" />
+              <label for="su-cnss">Numéro CNSS <span style="font-size:11px;color:var(--pz-muted)">(8 chiffres)</span></label>
+              <input id="su-cnss" class="input" type="text" placeholder="12345678" [(ngModel)]="step2.cnssId" name="cnssId" maxlength="12" />
             </div>
           </div>
           <div class="field">
@@ -663,20 +736,14 @@ interface Step3Data {
               <label for="su-city">Ville <span class="req">*</span></label>
               <select id="su-city" class="input" [(ngModel)]="step2.city" name="city" required>
                 <option value="">Sélectionner…</option>
-                <option>Tunis</option>
-                <option>Ariana</option>
-                <option>Sousse</option>
-                <option>Sfax</option>
-                <option>Bizerte</option>
-                <option>Hammamet</option>
-                <option>Nabeul</option>
-                <option>Monastir</option>
-                <option>Kairouan</option>
+                @for (c of CITIES; track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
               </select>
             </div>
             <div class="field">
-              <label for="su-phone">Téléphone</label>
-              <input id="su-phone" class="input" type="tel" placeholder="+216 …" [(ngModel)]="step2.phone" name="phone" />
+              <label for="su-phone">Téléphone <span class="req">*</span></label>
+              <input id="su-phone" class="input" type="tel" placeholder="20123456" [(ngModel)]="step2.phone" name="phone" maxlength="12" required />
             </div>
           </div>
           <div class="btn-row">
@@ -909,13 +976,17 @@ export default class RegisterComponent implements OnInit {
   protected readonly errMsg = signal('');
   protected readonly showPwd = signal(false);
   protected readonly sectors = signal<ActivitySector[]>([]);
+  protected readonly CITIES = TUNISIAN_CITIES;
 
   protected step2: Step2Data = { companyName: '', taxId: '', cnssId: '', city: '', phone: '', activitySectorId: null };
 
   ngOnInit(): void {
     this.http.get<ActivitySector[]>(this.appConfig.getEndpointFor('api/activity-sectors')).subscribe({
-      next: list => this.sectors.set(list.filter(s => s.active)),
-      error: () => {},
+      next: list => {
+        const active = list.filter(s => s.active);
+        this.sectors.set(active.length ? active : FALLBACK_SECTORS);
+      },
+      error: () => this.sectors.set(FALLBACK_SECTORS),
     });
   }
   protected step3: Step3Data = { firstName: '', lastName: '', email: '', password: '' };
@@ -945,6 +1016,26 @@ export default class RegisterComponent implements OnInit {
     if (!this.step2.taxId.trim()) {
       this.errMsg.set('Le matricule fiscal est obligatoire.');
       return false;
+    }
+    if (!/^\d{7}\/[A-Za-z]([/A-Za-z0-9]*)?$/.test(this.step2.taxId.trim())) {
+      this.errMsg.set('Format du matricule fiscal invalide. Exemple : 1234567/A');
+      return false;
+    }
+    if (!this.step2.phone.trim()) {
+      this.errMsg.set('Le numéro de téléphone est obligatoire.');
+      return false;
+    }
+    const phoneDigits = this.step2.phone.replace(/\D/g, '');
+    if (phoneDigits.length !== 8) {
+      this.errMsg.set('Le numéro de téléphone doit contenir exactement 8 chiffres.');
+      return false;
+    }
+    if (this.step2.cnssId.trim()) {
+      const cnssDigits = this.step2.cnssId.replace(/\D/g, '');
+      if (cnssDigits.length !== 8) {
+        this.errMsg.set('Le numéro CNSS doit contenir exactement 8 chiffres (ex : 12345678).');
+        return false;
+      }
     }
     if (!this.step2.city) {
       this.errMsg.set('Veuillez sélectionner une ville.');

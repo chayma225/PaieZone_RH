@@ -37,7 +37,6 @@ public class AuditLogDTO implements Serializable {
     @Size(max = 255)
     private String userAgent;
 
-    @NotNull
     private Instant occurredAt;
 
     private UserProfileDTO user;

@@ -131,7 +131,7 @@ const LEAVE_LABEL: Record<string, string> = {
                   </span>
                 </td>
                 <td>
-                  <button class="pz-btn pz-sm pz-ghost"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /></button>
+                  <button class="pz-btn pz-sm pz-ghost" (click)="selectedLeave.set(l)"><pz-icon name="Eye" [size]="14" [strokeWidth]="1.4" /></button>
                 </td>
               </tr>
             }
@@ -158,12 +158,8 @@ const LEAVE_LABEL: Record<string, string> = {
               </select>
             </div>
             <div class="pz-field-row">
-              <div class="pz-field"><label>Date début</label><input type="date" [(ngModel)]="form.startDate" /></div>
-              <div class="pz-field"><label>Date fin</label><input type="date" [(ngModel)]="form.endDate" /></div>
-            </div>
-            <div class="pz-field">
-              <label>Nombre de jours ouvrables</label>
-              <input type="number" [(ngModel)]="form.numberOfDays" min="1" />
+              <div class="pz-field"><label>Date début</label><input type="date" [(ngModel)]="form.startDate" [min]="today" /></div>
+              <div class="pz-field"><label>Date fin</label><input type="date" [(ngModel)]="form.endDate" [min]="form.startDate || today" /></div>
             </div>
             <div class="pz-field">
               <label>Commentaire (optionnel)</label>
@@ -178,6 +174,64 @@ const LEAVE_LABEL: Record<string, string> = {
             <button class="pz-btn pz-primary" [disabled]="busy()" (click)="submitCreate()">
               {{ busy() ? 'Envoi…' : 'Soumettre' }}
             </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Modal Détail congé -->
+    @if (selectedLeave()) {
+      <div class="pz-overlay" (click)="selectedLeave.set(null)">
+        <div class="pz-modal" (click)="$event.stopPropagation()">
+          <div class="pz-modal-head">
+            <span>Détail du congé #{{ selectedLeave()!.id }}</span>
+            <button class="pz-modal-close" (click)="selectedLeave.set(null)"><pz-icon name="X" [size]="16" /></button>
+          </div>
+          <div class="pz-modal-body">
+            <div class="detail-grid">
+              <div class="detail-row">
+                <span class="detail-label">Type</span>
+                <span class="detail-value">{{ selectedLeave()!.type }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Statut</span>
+                <span class="detail-value">
+                  <span class="pz-pill"
+                    [class.pos]="selectedLeave()!.status === 'approved'"
+                    [class.warn]="selectedLeave()!.status === 'pending'"
+                    [class.danger]="selectedLeave()!.status === 'rejected'">
+                    <span class="dot"></span>{{ statusLabel(selectedLeave()!.status) }}
+                  </span>
+                </span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Période</span>
+                <span class="detail-value pz-mono">{{ selectedLeave()!.from }} → {{ selectedLeave()!.to }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Jours ouvrables</span>
+                <span class="detail-value"><strong>{{ selectedLeave()!.days }}</strong> j</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Soumis le</span>
+                <span class="detail-value pz-mono small">{{ selectedLeave()!.submitted | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              @if (selectedLeave()!.note) {
+                <div class="detail-row">
+                  <span class="detail-label">Votre commentaire</span>
+                  <span class="detail-value">{{ selectedLeave()!.note }}</span>
+                </div>
+              }
+              @if (selectedLeave()!.managerComment) {
+                <div class="detail-row">
+                  <span class="detail-label">Réponse RH</span>
+                  <span class="detail-value" style="color:var(--pz-danger)">{{ selectedLeave()!.managerComment }}</span>
+                </div>
+              }
+            </div>
+          </div>
+          <div class="pz-modal-foot">
+            <button class="pz-btn pz-primary" (click)="selectedLeave.set(null)">Fermer</button>
           </div>
         </div>
       </div>
@@ -407,6 +461,27 @@ const LEAVE_LABEL: Record<string, string> = {
         border-radius: 8px;
         padding: 8px 12px;
       }
+      .detail-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .detail-row {
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+      }
+      .detail-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--pz-muted);
+        min-width: 140px;
+        flex-shrink: 0;
+      }
+      .detail-value {
+        font-size: 13.5px;
+        color: var(--pz-ink);
+      }
       @media (max-width: 1024px) {
         .bal-grid {
           grid-template-columns: 1fr 1fr;
@@ -426,7 +501,9 @@ export default class EmpLeavesComponent implements OnInit {
   protected readonly busy = signal(false);
   protected readonly errMsg = signal('');
   protected readonly showCreate = signal(false);
-  protected form = { leaveTypeId: 0, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
+  protected readonly selectedLeave = signal<any>(null);
+  protected readonly today = new Date().toISOString().slice(0, 10);
+  protected form = { leaveTypeId: 0, startDate: '', endDate: '', comment: '' };
 
   protected readonly balances = computed(() =>
     this.leaveBalancesRaw().map(b => ({
@@ -473,7 +550,7 @@ export default class EmpLeavesComponent implements OnInit {
 
   openCreate() {
     const first = this.leaveTypes()[0]?.id ?? 0;
-    this.form = { leaveTypeId: first, startDate: '', endDate: '', numberOfDays: 1, comment: '' };
+    this.form = { leaveTypeId: first, startDate: '', endDate: '', comment: '' };
     this.errMsg.set('');
     this.showCreate.set(true);
   }
@@ -482,8 +559,8 @@ export default class EmpLeavesComponent implements OnInit {
   }
 
   submitCreate() {
-    if (!this.form.startDate || !this.form.endDate || this.form.numberOfDays < 1) {
-      this.errMsg.set('Veuillez remplir les dates et le nombre de jours.');
+    if (!this.form.startDate || !this.form.endDate) {
+      this.errMsg.set('Veuillez remplir les dates.');
       return;
     }
     this.busy.set(true);
@@ -493,7 +570,6 @@ export default class EmpLeavesComponent implements OnInit {
         leaveTypeId: this.form.leaveTypeId,
         startDate: this.form.startDate,
         endDate: this.form.endDate,
-        numberOfDays: this.form.numberOfDays,
         comment: this.form.comment || undefined,
         employeeId: this.data.myEmployee()?.id,
       })

@@ -1,0 +1,562 @@
+<mxGraphModel dx="2555" dy="1410" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;labelBackgroundColor=default;" value="&lt;font&gt;Rh&amp;nbsp;&lt;/font&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="450" y="1970" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;labelBackgroundColor=default;" value="&lt;strong style=&quot;box-sizing: border-box; margin: 0px; padding: 0px; color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start; white-space: normal;&quot;&gt;Super&amp;nbsp;&lt;/strong&gt;&lt;div&gt;&lt;strong style=&quot;box-sizing: border-box; margin: 0px; padding: 0px; color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start; white-space: normal;&quot;&gt;Admin&lt;/strong&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="450" y="1125" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;labelBackgroundColor=default;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points" />
+        <mxPoint x="464.5" y="2310" as="sourcePoint" />
+        <mxPoint x="464.8800000000001" y="2058.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-4" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;labelBackgroundColor=default;" value="&lt;strong style=&quot;box-sizing: border-box; margin: 0px; padding: 0px; color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start; white-space: normal;&quot;&gt;Employé&lt;/strong&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="450" y="1400" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;textOpacity=0;opacity=20;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
+      <mxGeometry height="1400" width="500" x="530" y="980" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;opacity=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
+      <mxGeometry height="270" width="440" x="550" y="1070" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;&lt;span&gt;Consulter liste&lt;/span&gt;&lt;/font&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;&lt;span&gt;&amp;nbsp;des paramètres&lt;/span&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="140" x="570" y="1135" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;opacity=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
+      <mxGeometry height="730" width="440" x="550" y="1590" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;opacity=30;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
+      <mxGeometry height="180" width="440" x="550" y="1380" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Gestion des Paramètres Réglementaires&lt;/span&gt;" vertex="1">
+      <mxGeometry height="30" width="250" x="550" y="1070" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-11" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Modifier paramètre&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="130" x="750" y="1170" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-12" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Ajouter paramètre&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="130" x="750" y="1120" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-13" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;Créer un&lt;/font&gt;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(20, 20, 19), rgb(220, 220, 219)); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start; background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;e&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: light-dark(rgb(20, 20, 19), rgb(220, 220, 219)); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start; background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;période&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start; background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;de paie&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="140" x="580" y="1625" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-14" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;Créer rubrique&lt;/font&gt;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="570" y="2110" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;Clôturer période&lt;/font&gt;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="580" y="1700" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-16" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&amp;nbsp;Lancer calcul&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;des bulletins&amp;nbsp;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="45" width="140" x="577.5" y="1830" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Ajouter prime&amp;nbsp;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="815" y="1795" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-18" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Modifier prime&amp;nbsp;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="815" y="1855" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-19" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Valider avance&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="774" y="2040" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-20" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&amp;nbsp;Refuser avance&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="774" y="1980" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-21" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&amp;nbsp;Consulter Liste&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;des avances&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="140" x="570" y="1990" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-22" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="WO_5Y82oJjI4bZG0tvBa-29" value="">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-23" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Demander avance&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="800" y="1420" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-24" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="Générer&amp;nbsp;&lt;div&gt;bulletin PDF&lt;/div&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="745" y="1725" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-25" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="Générer bulletin&amp;nbsp;&lt;div&gt;CNSS&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="140" x="745" y="1910" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-26" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Créer type de congé&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="570" y="2260" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-27" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Consulter solde&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;de congés&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="152.5" x="577.5" y="1490" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-28" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span data-path-to-node=&quot;4,2,0,0&quot;&gt;&lt;span data-index-in-node=&quot;0&quot; data-path-to-node=&quot;4,2,0,0&quot;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span data-path-to-node=&quot;4,2,1,0&quot;&gt;&lt;span data-index-in-node=&quot;0&quot; data-path-to-node=&quot;4,2,1,0&quot;&gt;Consulter historique&amp;nbsp;&lt;/span&gt;&lt;/span&gt;&lt;div&gt;&lt;span data-path-to-node=&quot;4,2,1,0&quot;&gt;&lt;span data-index-in-node=&quot;0&quot; data-path-to-node=&quot;4,2,1,0&quot;&gt;des avances&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="160" x="570" y="1410" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-29" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Demander congé&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="800" y="1500" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-30" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Gestion de la Paie&lt;/span&gt;" vertex="1">
+      <mxGeometry height="30" width="150" x="540" y="1590" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-31" parent="1" style="text;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="Portail Employé" vertex="1">
+      <mxGeometry height="40" width="130" x="550" y="1380" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-32" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-16" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0.033;entryY=0.733;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.79;exitY=0.095;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-24" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.2458" y="7" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="712" y="1834.6000000000004" as="sourcePoint" />
+        <mxPoint x="872" y="1834.6000000000004" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-33" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-17" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontSize=8;fontStyle=1;entryX=0.968;entryY=0.278;entryDx=0;entryDy=0;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-16" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="815" y="1795" as="sourcePoint" />
+        <mxPoint x="735" y="1845" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-34" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <mxPoint x="480" y="1160" as="sourcePoint" />
+        <mxPoint x="570" y="1160" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-35" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-12" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0.909;entryY=0.269;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-7" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="687" y="1135" as="sourcePoint" />
+        <mxPoint x="847" y="1135" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-36" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-11" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0.923;entryY=0.755;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-7" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.4469" y="-6" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="753" y="1170" as="sourcePoint" />
+        <mxPoint x="700" y="1178" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-37" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-16" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=0.049;entryY=0.407;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.808;exitY=0.895;exitDx=0;exitDy=0;exitPerimeter=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-25" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.4767" y="-20" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="725" y="1875" as="sourcePoint" />
+        <mxPoint x="780" y="1864" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-38" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;Modifier rubrique&lt;/font&gt;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="136" x="774" y="2110" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-39" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-18" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.951;entryY=0.75;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-16" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="835" y="1835" as="sourcePoint" />
+        <mxPoint x="755" y="1865" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-40" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-20" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0.023;exitY=0.359;exitDx=0;exitDy=0;entryX=0.963;entryY=0.351;entryDx=0;entryDy=0;entryPerimeter=0;exitPerimeter=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-21" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="0.0306" y="1" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="780" y="2010" as="sourcePoint" />
+        <mxPoint x="703" y="2000" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-41" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-19" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0.017;exitY=0.417;exitDx=0;exitDy=0;entryX=0.969;entryY=0.793;entryDx=0;entryDy=0;entryPerimeter=0;exitPerimeter=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-21" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="0.0142" y="1" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="774" y="2030" as="sourcePoint" />
+        <mxPoint x="697" y="2020" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-42" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-23" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-28" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="0.0142" y="1" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="824" y="1477.5" as="sourcePoint" />
+        <mxPoint x="760" y="1445" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-43" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-29" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.976;entryY=0.625;entryDx=0;entryDy=0;fontSize=13;fontStyle=1;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-27" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/font&gt;">
+      <mxGeometry relative="1" width="160" x="0.0142" y="1" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="795" y="1519.5699999999997" as="sourcePoint" />
+        <mxPoint x="745" y="1519.5699999999997" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-44" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-13" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="510" y="2000" />
+          <mxPoint x="510" y="1650" />
+        </Array>
+        <mxPoint x="480" y="2000" as="sourcePoint" />
+        <mxPoint x="580" y="1632.9099999999999" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-45" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-15" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="510" y="2000" />
+          <mxPoint x="510" y="1720" />
+        </Array>
+        <mxPoint x="480" y="2000" as="sourcePoint" />
+        <mxPoint x="590" y="1720" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-46" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-16" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="510" y="2000" />
+          <mxPoint x="510" y="1855" />
+          <mxPoint x="577" y="1855" />
+        </Array>
+        <mxPoint x="490" y="2000" as="sourcePoint" />
+        <mxPoint x="580" y="1725" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-47" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-21" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="570" y="2010" />
+        </Array>
+        <mxPoint x="490" y="2010" as="sourcePoint" />
+        <mxPoint x="595" y="1862.5" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-48" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="510" y="1440" />
+          <mxPoint x="510" y="1440" />
+        </Array>
+        <mxPoint x="490" y="1440" as="sourcePoint" />
+        <mxPoint x="570" y="1440" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-49" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;entryX=0.004;entryY=0.603;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-27" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="510" y="1450" />
+          <mxPoint x="510" y="1520" />
+        </Array>
+        <mxPoint x="490" y="1450" as="sourcePoint" />
+        <mxPoint x="580" y="1325" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-50" parent="1" style="rounded=0;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&amp;lt;&amp;lt;Système&amp;gt;&amp;gt;&lt;div&gt;Système CNSS&amp;nbsp;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="120" x="1030" y="1910" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-51" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-50" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-25" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <mxPoint x="880" y="1770" as="sourcePoint" />
+        <mxPoint x="930" y="1720" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-52" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-26" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="500" y="2020" />
+          <mxPoint x="500" y="2280" />
+        </Array>
+        <mxPoint x="480" y="2020" as="sourcePoint" />
+        <mxPoint x="600" y="2237" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-53" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;endSize=12;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;labelBackgroundColor=default;">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="464.96000000000004" y="1640" />
+        </Array>
+        <mxPoint x="465" y="1960" as="sourcePoint" />
+        <mxPoint x="464.71000000000004" y="1483.75" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-54" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-14" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="500" y="2020" />
+          <mxPoint x="500" y="2130" />
+        </Array>
+        <mxPoint x="480" y="2020" as="sourcePoint" />
+        <mxPoint x="600" y="2010" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-55" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="Consulter l&#39;historique&lt;div&gt;&amp;nbsp;des modifications&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="170" x="570" y="1250" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-56" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;Filtrer l&#39;historique&amp;nbsp;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="130" x="810" y="1255" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-57" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-56" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-55" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="723.5" y="1245" as="sourcePoint" />
+        <mxPoint x="733.5" y="1258" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-58" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;Gérer les jours fériés&lt;/font&gt;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="570" y="2190" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-59" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;entryX=0;entryY=0.5;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-58" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="500" y="2020" />
+          <mxPoint x="500" y="2210" />
+        </Array>
+        <mxPoint x="480" y="2020.04" as="sourcePoint" />
+        <mxPoint x="570" y="2140.04" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-60" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;Modifier une&lt;/font&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(20, 20, 19); font-family: &amp;quot;Segoe UI&amp;quot;, system-ui, sans-serif; text-align: start;&quot;&gt;&lt;font&gt;&amp;nbsp;période&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="40" width="140" x="774" y="1625" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-61" edge="1" parent="1" source="WO_5Y82oJjI4bZG0tvBa-60" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontSize=8;fontStyle=1;entryX=0.968;entryY=0.278;entryDx=0;entryDy=0;entryPerimeter=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" as="geometry">
+        <mxPoint x="821" y="1620" as="sourcePoint" />
+        <mxPoint x="719" y="1648" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-62" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;labelBackgroundColor=default;" value="&lt;font&gt;Admin&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font&gt;&amp;nbsp;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="30" x="450" y="2310" as="geometry" />
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-63" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=default;endArrow=open;endFill=0;dashed=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=8;fontStyle=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" target="WO_5Y82oJjI4bZG0tvBa-14" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+      <mxGeometry relative="1" width="160" x="-0.2973" y="-7" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="770" y="2130" as="sourcePoint" />
+        <mxPoint x="710" y="2126.5" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WO_5Y82oJjI4bZG0tvBa-64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=13;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontStyle=1;fontFamily=Times New Roman;" value="&lt;br&gt;&lt;div&gt;&lt;strong data-start=&quot;467&quot; data-end=&quot;536&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Diagramme de cas d&#39;utilisation du Sprint 3&lt;/font&gt;&lt;/strong&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="25" width="350" x="595" y="990" as="geometry" />
+    </mxCell>
+    <mxCell id="new-uc-valider-conge" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="Valider une demande&lt;div&gt;de congé&lt;/div&gt;" vertex="1">
+      <mxGeometry height="40" width="165" x="774" y="2260" as="geometry" />
+    </mxCell>
+    <mxCell id="new-edge-rh-valider-conge" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;curved=0;fontSize=13;fontStyle=1;labelBackgroundColor=default;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="">
+      <mxGeometry height="50" relative="1" width="50" as="geometry">
+        <Array as="points">
+          <mxPoint x="500" y="2020" />
+          <mxPoint x="500" y="2280" />
+        </Array>
+        <mxPoint x="480" y="2020" as="sourcePoint" />
+        <mxPoint x="774" y="2280" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>
+////////////////////////////////////////////////
+////% ============================================================
+\section{User Stories du troisième sprint}
+\label{sec:s3-userstories}
+% ============================================================
+
+Le tableau~\ref{tab:us-sprint3} présente les vingt-deux User Stories
+identifiées pour le Sprint~3 de PaieZone, réparties sur trois domaines
+fonctionnels~: la gestion des paramètres réglementaires, la gestion
+de la paie, ainsi que la gestion des congés et des absences.
+
+\begin{small}
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{|>{\bfseries}p{1.2cm}|p{9.5cm}|>{\centering\arraybackslash}p{2.5cm}|}
+\hline
+\rowcolor[gray]{0.9} \textbf{ID} & \textbf{User Story} & \textbf{Priorité} \\ \hline
+\endfirsthead
+\hline
+\rowcolor[gray]{0.9} \textbf{ID} & \textbf{User Story} & \textbf{Priorité} \\ \hline
+\endhead
+\hline
+\endfoot
+\hline
+\caption{User Stories du Sprint 3}
+\label{tab:us-sprint3}
+\endlastfoot
+
+10.1 & En tant que Super Admin, je souhaite \textbf{consulter la liste des paramètres réglementaires} afin de vérifier les taux légaux en vigueur. & Haute \\ \hline
+10.2 & En tant que Super Admin, je souhaite \textbf{ajouter un nouveau paramètre réglementaire} afin d'intégrer une nouvelle règle légale dans le système. & Haute \\ \hline
+10.3 & En tant que Super Admin, je souhaite \textbf{modifier un paramètre réglementaire} afin de mettre à jour les taux conformément aux évolutions législatives. & Haute \\ \hline
+10.4 & En tant que Super Admin, je souhaite \textbf{consulter l'historique des modifications des paramètres} afin de garantir la traçabilité des changements réglementaires. & Moyenne \\ \hline
+11.1 & En tant que RH, je souhaite \textbf{créer une période de paie} afin de lancer le cycle de traitement des salaires. & Critique \\ \hline
+11.2 & En tant que RH, je souhaite \textbf{modifier une période de paie} afin de corriger les données avant la clôture. & Haute \\ \hline
+11.3 & En tant que RH, je souhaite \textbf{clôturer une période de paie} afin de valider les calculs et de bloquer toute modification ultérieure. & Critique \\ \hline
+11.4 & En tant que RH, je souhaite \textbf{lancer le calcul de tous les bulletins d'une période} afin de générer automatiquement les salaires nets de l'ensemble du personnel. & Critique \\ \hline
+11.5 & En tant que RH, je souhaite \textbf{créer une rubrique de paie} afin de structurer les éléments de calcul du salaire. & Haute \\ \hline
+11.6 & En tant que RH, je souhaite \textbf{modifier une rubrique de paie} afin de l'adapter aux besoins de la société. & Moyenne \\ \hline
+11.7 & En tant que RH, je souhaite \textbf{ajouter une prime} à un employé afin d'augmenter sa rémunération pour une période donnée. & Haute \\ \hline
+11.8 & En tant que RH, je souhaite \textbf{modifier une prime} afin d'ajuster son montant avant le calcul de la paie. & Moyenne \\ \hline
+11.9 & En tant que RH, je souhaite \textbf{valider une demande d'avance} afin d'accorder le soutien financier sollicité par l'employé. & Haute \\ \hline
+11.10 & En tant que RH, je souhaite \textbf{refuser une demande d'avance} afin d'informer l'employé du rejet de sa demande. & Haute \\ \hline
+11.11 & En tant qu'Employé, je souhaite \textbf{demander une avance sur salaire} afin de recevoir un soutien financier ponctuel. & Haute \\ \hline
+11.12 & En tant que RH, je souhaite \textbf{générer un bulletin de paie} afin de le distribuer à l'employé concerné. & Critique \\ \hline
+11.13 & En tant que RH, je souhaite \textbf{générer un fichier CNSS} afin de déclarer les salariés auprès de la Caisse Nationale de Sécurité Sociale. & Critique \\ \hline
+12.1 & En tant que RH, je souhaite \textbf{créer un type de congé} afin de définir les règles et les quotas associés. & Haute \\ \hline
+12.2 & En tant qu'Employé, je souhaite \textbf{demander un congé} afin de m'absenter légitimement de mon poste de travail. & Haute \\ \hline
+12.3 & En tant que RH, je souhaite \textbf{valider une demande de congé} afin de gérer la disponibilité et la continuité du service. & Haute \\ \hline
+12.4 & En tant qu'Employé, je souhaite \textbf{consulter mon solde de congé} afin de planifier mes absences en connaissance de cause. & Haute \\ \hline
+12.5 & En tant que RH, je souhaite \textbf{gérer les jours fériés} afin de les intégrer automatiquement dans le calcul de la paie et dans la gestion des congés. & Moyenne \\ \hline
+
+\end{longtable}
+\end{small}
+\renewcommand{\arraystretch}{1.0}
+
+% ============================================================
+\section{Backlog du troisième Sprint}
+\label{sec:s3-backlog}
+% ============================================================
+
+Le Tableau~\ref{tab:backlog-sprint3} détaille le backlog complet du
+troisième Sprint, regroupant la gestion des paramètres réglementaires,
+le traitement de la paie, ainsi que le suivi des congés et des absences.
+
+\begin{small}
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{6.2cm}|>{\raggedright\arraybackslash}p{6.2cm}|c|}
+
+\hline
+\rowcolor[gray]{0.9} \textbf{Item} & \textbf{User Story} & \textbf{Tâches} & \makecell{\textbf{Est.}\\\textbf{(j)}} \\ \hline
+\endfirsthead
+\hline
+\rowcolor[gray]{0.9} \textbf{Item} & \textbf{User Story} & \textbf{Tâches} & \makecell{\textbf{Est.}\\\textbf{(j)}} \\ \hline
+\endhead
+\hline
+\endfoot
+\hline
+\caption{Backlog détaillé du troisième Sprint}
+\label{tab:backlog-sprint3}
+\endlastfoot
+
+% ── Gestion des Paramètres Réglementaires ────────────────────
+\multirow{4}{2.8cm}{\centering\makecell[c]{\textbf{Gestion des}\\ \textbf{Paramètres}\\ \textbf{Réglementaires}}}
+& \textbf{10.1} En tant que Super Admin, je souhaite consulter la liste des paramètres réglementaires afin de vérifier les taux légaux en vigueur.
+& - Concevoir l'interface de consultation des paramètres réglementaires.\newline
+- Développer l'API REST de récupération des paramètres actifs.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{10.2} En tant que Super Admin, je souhaite ajouter un nouveau paramètre réglementaire afin d'intégrer une nouvelle règle légale.
+& - Développer le formulaire d'ajout d'un paramètre (taux, date d'entrée en vigueur).\newline
+- Implémenter l'API REST d'insertion avec versionnage.\newline
+- Tester la prise en compte du nouveau taux dans les calculs de paie.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{10.3} En tant que Super Admin, je souhaite modifier un paramètre réglementaire afin de mettre à jour les taux conformément aux évolutions législatives.
+& - Développer l'interface de modification du paramètre.\newline
+- Implémenter la traçabilité des modifications dans le journal d'audit.\newline
+- Tester l'impact de la mise à jour sur les calculs historiques.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{10.4} En tant que Super Admin, je souhaite consulter l'historique des modifications des paramètres afin de garantir la traçabilité des changements réglementaires.
+& - Créer l'interface de consultation de l'historique des paramètres.\newline
+- Développer l'API REST de récupération des versions antérieures.
+& \textbf{1} \\ \hline
+
+% ── Gestion des Périodes de Paie ─────────────────────────────
+\multirow{3}{2.8cm}{\centering\makecell[c]{\textbf{Gestion des}\\ \textbf{Périodes}\\ \textbf{de Paie}}}
+& \textbf{11.1} En tant que RH, je souhaite créer une période de paie afin de lancer le cycle de traitement des salaires.
+& - Concevoir l'interface de création d'une période de paie (mois, année).\newline
+- Développer l'API REST de création de la période.\newline
+- Tester les contraintes de dates et l'unicité de la période.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{11.2} En tant que RH, je souhaite modifier une période de paie afin de corriger les données avant la clôture.
+& - Développer l'interface de modification de la période.\newline
+- Implémenter les contrôles de modification (période non clôturée uniquement).\newline
+- Tester les transitions de statut.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{11.3} En tant que RH, je souhaite clôturer une période de paie afin de valider les calculs et de bloquer toute modification ultérieure.
+& - Implémenter le verrouillage de la période et de tous ses bulletins.\newline
+- Développer l'API REST de clôture avec horodatage.\newline
+- Tester le blocage effectif des modifications post-clôture.
+& \textbf{1} \\ \hline
+
+% ── Calcul des Bulletins de Paie ─────────────────────────────
+\multirow{1}{2.8cm}{\centering\makecell[c]{\textbf{Calcul des}\\ \textbf{Bulletins}\\ \textbf{de Paie}}}
+& \textbf{11.4} En tant que RH, je souhaite lancer le calcul de tous les bulletins d'une période afin de générer automatiquement les salaires nets de l'ensemble du personnel.
+& - Implémenter le moteur de calcul du salaire net (rubriques, cotisations CNSS/CAVIS/CSS, IRPP, primes, avances).\newline
+- Implémenter le traitement en lot.\newline
+- Intégrer les paramètres réglementaires dans le moteur de calcul.\newline
+- Tester les cas limites (prime, avance, mi-temps).
+& \textbf{5} \\ \hline
+
+% ── Rubriques & Primes ────────────────────────────────────────
+\multirow{4}{2.8cm}{\centering\makecell[c]{\textbf{Rubriques}\\ \textbf{\& Primes}}}
+& \textbf{11.5} En tant que RH, je souhaite créer une rubrique de paie afin de structurer les éléments de calcul du salaire.
+& - Concevoir l'interface de création d'une rubrique (type, montant, nature : gain/retenue).\newline
+- Développer l'API REST d'insertion de la rubrique.\newline
+- Tester la prise en compte de la rubrique dans le calcul du bulletin.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{11.6} En tant que RH, je souhaite modifier une rubrique de paie afin de l'adapter aux besoins de la société.
+& - Développer l'interface de modification de la rubrique.\newline
+- Implémenter la mise à jour en base avec contrôle de cohérence.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{11.7} En tant que RH, je souhaite ajouter une prime à un employé afin d'augmenter sa rémunération pour une période donnée.
+& - Développer l'interface et l'API REST de création d'une prime individuelle.\newline
+- Tester l'intégration de la prime dans le calcul du bulletin.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{11.8} En tant que RH, je souhaite modifier une prime afin d'ajuster son montant avant le calcul de la paie.
+& - Développer l'interface de modification de la prime.\newline
+- Implémenter la mise à jour avec contrôle du statut de la période.
+& \textbf{1} \\ \hline
+
+% ── Gestion des Avances ───────────────────────────────────────
+\multirow{3}{2.8cm}{\centering\makecell[c]{\textbf{Gestion}\\ \textbf{des Avances}}}
+& \textbf{11.9} En tant que RH, je souhaite valider une demande d'avance afin d'accorder le soutien financier sollicité par l'employé.
+& - Implémenter le workflow de validation par le RH.\newline
+- Mettre à jour le statut en \texttt{APPROVED}.\newline
+- Tester la déduction automatique de l'avance dans le bulletin.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{11.10} En tant que RH, je souhaite refuser une demande d'avance afin d'informer l'employé du rejet.
+& - Implémenter le workflow de refus avec saisie obligatoire d'une raison.\newline
+- Mettre à jour le statut en \texttt{REJECTED}.\newline
+- Tester la notification de refus à l'employé.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{11.11} En tant qu'Employé, je souhaite demander une avance sur salaire afin de recevoir un soutien financier ponctuel.
+& - Développer l'interface de demande d'avance (formulaire employé : montant, raison).\newline
+- Implémenter les contrôles (contrat actif, plafond autorisé).\newline
+- Tester le cycle complet de la demande à la déduction.
+& \textbf{1} \\ \hline
+
+% ── Génération des Documents de Paie ─────────────────────────
+\multirow{2}{2.8cm}{\centering\makecell[c]{\textbf{Génération}\\ \textbf{des Documents}\\ \textbf{de Paie}}}
+& \textbf{11.12} En tant que RH, je souhaite générer un bulletin de paie afin de le distribuer à l'employé concerné.
+& - Concevoir et implémenter le template PDF du bulletin de paie.\newline
+- Développer le service de génération PDF.\newline
+- Implémenter la mise à disposition du bulletin dans l'espace employé.\newline
+- Tester la conformité du PDF avec les paramètres réglementaires.
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{11.13} En tant que RH, je souhaite générer un fichier CNSS afin de déclarer les salariés auprès de la Caisse Nationale de Sécurité Sociale.
+& - Développer le service de génération du fichier CNSS au format réglementaire.\newline
+- Agréger les montants CNSS salarié et patronal par employé.\newline
+- Tester la conformité du fichier généré avec les exigences légales.
+& \textbf{2} \\ \hline
+
+% ── Gestion des Congés & Absences ─────────────────────────────
+\multirow{5}{2.8cm}{\centering\makecell[c]{\textbf{Gestion des}\\ \textbf{Congés \&}\\ \textbf{Absences}}}
+& \textbf{12.1} En tant que RH, je souhaite créer un type de congé afin de définir les règles et les quotas associés.
+& - Concevoir l'interface de création d'un type de congé (annuel, maladie, sans solde).\newline
+- Développer l'API REST d'insertion avec gestion des quotas.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{12.2} En tant qu'Employé, je souhaite demander un congé afin de m'absenter légitimement de mon poste de travail.
+& - Développer l'interface de demande de congé (formulaire, calendrier).\newline
+- Implémenter les contrôles de solde et de chevauchement.\newline
+- Tester la création de la demande avec le statut \texttt{PENDING}.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{12.3} En tant que RH, je souhaite valider une demande de congé afin de gérer la disponibilité et la continuité du service.
+& - Implémenter le workflow de validation/refus par le RH avec notification.\newline
+- Mettre à jour automatiquement le solde après approbation.\newline
+- Tester la décrémentation du solde.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{12.4} En tant qu'Employé, je souhaite consulter mon solde de congé afin de planifier mes absences en connaissance de cause.
+& - Développer l'interface de consultation du solde de congé par type.\newline
+- Développer l'API REST de récupération du solde en temps réel.
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{12.5} En tant que RH, je souhaite gérer les jours fériés afin de les intégrer automatiquement dans le calcul de la paie et dans la gestion des congés.
+& - Implémenter la gestion des jours fériés (ajout, suppression).\newline
+- Intégrer l'exclusion automatique des jours fériés dans le décompte des congés.\newline
+- Tester la prise en compte des jours fériés dans le calcul de paie.
+& \textbf{1} \\ \hline
+
+\end{longtable}
+\end{small}
+\renewcommand{\arraystretch}{1.0}
+\normalsize

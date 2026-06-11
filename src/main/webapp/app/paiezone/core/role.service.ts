@@ -47,6 +47,7 @@ const ROLES: Record<Role, RoleConfig> = {
       { id: 'rh-payroll', label: 'Paie', icon: 'Cash' },
       { id: 'rh-leaves', label: 'Congés', icon: 'Calendar' },
       { id: 'rh-accounting', label: 'Comptabilité', icon: 'BookOpen' },
+      { id: 'emp-dash', label: 'Mon espace employé', icon: 'User', separator: true },
     ],
     default: 'rh-dash',
   },

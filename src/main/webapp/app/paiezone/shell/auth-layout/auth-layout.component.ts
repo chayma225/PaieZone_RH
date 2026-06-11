@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
     <!-- ── Header ── -->
     <header class="auth-hdr">
       <a class="brand" routerLink="/paiezone">
-        <div class="brand-mark">PZ</div>
+        <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;box-shadow:0 8px 24px rgba(124,58,237,.4);flex-shrink:0;position:relative;overflow:hidden">PZ</div>
         <div class="brand-name">paie<span class="it">zone</span></div>
       </a>
       <div class="lang-pill">🇹🇳 Français</div>
@@ -254,13 +254,13 @@ import { CommonModule } from '@angular/common';
         width: 38px;
         height: 38px;
         border-radius: 11px;
-        background: linear-gradient(135deg, #fff, #ddd6fe);
-        color: #0e0420;
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: #fff;
         display: grid;
         place-items: center;
         font-weight: 800;
         font-size: 13px;
-        box-shadow: 0 8px 24px rgba(196, 181, 253, 0.3);
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
         position: relative;
         overflow: hidden;
       }
@@ -271,7 +271,7 @@ import { CommonModule } from '@angular/common';
         right: 0;
         width: 14px;
         height: 14px;
-        background: #7c3aed;
+        background: rgba(255, 255, 255, 0.18);
         border-bottom-left-radius: 9px;
       }
       .it {

@@ -34,6 +34,7 @@ import tn.paiezone.rh.service.criteria.LeaveRequestCriteria;
 import tn.paiezone.rh.service.dto.EmployeeDTO;
 import tn.paiezone.rh.service.dto.LeaveRequestDTO;
 import tn.paiezone.rh.service.dto.LeaveTypeDTO;
+import tn.paiezone.rh.aop.logging.audit.Auditable;
 import tn.paiezone.rh.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -88,8 +89,23 @@ public class LeaveRequestResource {
         EmployeeDTO empDto = new EmployeeDTO();
         empDto.setId(empId);
 
+        Object ltIdObj = body.get("leaveTypeId");
+        Long ltId = (ltIdObj != null) ? Long.valueOf(ltIdObj.toString()) : 0L;
+
+        // Absence non justifiée : pas de type de congé à sélectionner
+        if (ltId == null || ltId == 0L) {
+            LocalDate startDate = LocalDate.parse(body.get("startDate").toString());
+            LocalDate endDate = body.get("endDate") != null ? LocalDate.parse(body.get("endDate").toString()) : startDate;
+            int days = body.get("numberOfDays") != null ? Integer.parseInt(body.get("numberOfDays").toString()) : 1;
+            String comment = body.get("comment") != null ? body.get("comment").toString() : null;
+            LeaveRequestDTO result = leaveRequestService.submitUnjustified(empId, startDate, endDate, days, comment);
+            return ResponseEntity.created(new URI("/api/leave-requests/" + result.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                .body(result);
+        }
+
         LeaveTypeDTO ltDto = new LeaveTypeDTO();
-        ltDto.setId(Long.valueOf(body.get("leaveTypeId").toString()));
+        ltDto.setId(ltId);
 
         LeaveRequestDTO dto = new LeaveRequestDTO();
         dto.setEmployee(empDto);
@@ -98,7 +114,7 @@ public class LeaveRequestResource {
         dto.setEndDate(LocalDate.parse(body.get("endDate").toString()));
         dto.setNumberOfDays(body.get("numberOfDays") != null ? Integer.valueOf(body.get("numberOfDays").toString()) : 1);
         dto.setEmployeeComment(body.get("comment") != null ? body.get("comment").toString() : null);
-        // RH peut enregistrer directement en APPROVED (ex: absence non justifiée)
+        // RH peut enregistrer directement en APPROVED
         String statusStr = body.get("status") != null ? body.get("status").toString() : null;
         boolean isRhOrAdmin = SecurityUtils.hasCurrentUserAnyOfAuthorities(
             AuthoritiesConstants.ADMIN,
@@ -271,6 +287,7 @@ public class LeaveRequestResource {
      */
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    @Auditable(action = "APPROVE", entityType = "LeaveRequest")
     public ResponseEntity<LeaveRequestDTO> approveLeaveRequest(@PathVariable("id") Long id) {
         LOG.debug("REST request to approve LeaveRequest : {}", id);
         String login = SecurityUtils.getCurrentUserLogin().orElse("system");
@@ -283,6 +300,7 @@ public class LeaveRequestResource {
      */
     @PutMapping("/{id}/reject")
     @PreAuthorize("hasAnyRole('ROLE_RH_COMPTABLE', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    @Auditable(action = "REJECT", entityType = "LeaveRequest")
     public ResponseEntity<LeaveRequestDTO> rejectLeaveRequest(
         @PathVariable("id") Long id,
         @RequestParam(required = false, defaultValue = "") String comment

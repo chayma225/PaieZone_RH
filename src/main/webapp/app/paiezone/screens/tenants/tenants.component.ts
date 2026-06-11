@@ -6,7 +6,7 @@ import { DataService } from '../../core/data.service';
 import { ApiService } from '../../core/api.service';
 import type { Company } from '../../core/types';
 
-type Action = 'suspend' | 'reactivate' | 'cancel';
+type Action = 'suspend' | 'reactivate' | 'cancel' | 'delete';
 
 const PLANS = [
   { value: 'STARTER', label: 'Starter (Essai)', price: '0 TND/mois' },
@@ -19,6 +19,7 @@ const CONFIRM_TEXT: Record<Action, (name: string) => string> = {
   suspend: name => 'Suspendre l’accès à « ' + name + ' » ? Tous les utilisateurs seront bloqués immédiatement.',
   reactivate: name => 'Réactiver « ' + name + ' » ? L’accès sera restauré immédiatement.',
   cancel: name => 'Résilier définitivement l’abonnement de « ' + name + ' » ? Cette action est irréversible.',
+  delete: name => '⚠️ SUPPRESSION DÉFINITIVE de « ' + name + ' » ? Employés, bulletins et contrats seront supprimés. Action IRRÉVERSIBLE.',
 };
 
 @Component({
@@ -135,6 +136,9 @@ const CONFIRM_TEXT: Record<Action, (name: string) => string> = {
                         <pz-icon name="XCircle" [size]="14" />
                       </button>
                     }
+                    <button class="act-btn red" style="border:1.5px solid #b91c1c" (click)="openConfirm(c, 'delete')" title="Supprimer définitivement">
+                      <pz-icon name="Trash2" [size]="14" />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -507,6 +511,7 @@ export default class TenantsComponent {
     if (a === 'suspend') return "Suspendre l'accès";
     if (a === 'reactivate') return "Réactiver l'entreprise";
     if (a === 'cancel') return "Résilier l'abonnement";
+    if (a === 'delete') return "Supprimer l'entreprise";
     return '';
   });
 
@@ -532,6 +537,18 @@ export default class TenantsComponent {
     const a = this.confirmAction();
     if (!c || !a || this.busy()) return;
     this.busy.set(true);
+
+    if (a === 'delete') {
+      this.api.deleteCompany(c.id).subscribe({
+        next: () => {
+          this.data.companies.update(list => list.filter(x => x.id !== c.id));
+          this.closeConfirm();
+          this.busy.set(false);
+        },
+        error: () => this.busy.set(false),
+      });
+      return;
+    }
 
     const call$ =
       a === 'suspend'

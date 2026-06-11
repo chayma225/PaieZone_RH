@@ -148,13 +148,14 @@ public class PayrollCalculationServiceImpl implements PayrollCalculationService 
 
         int paidLeaveDays = approvedLeaves
             .stream()
-            .filter(lr -> Boolean.TRUE.equals(lr.getLeaveType().getPaid()))
+            .filter(lr -> lr.getLeaveType() != null && Boolean.TRUE.equals(lr.getLeaveType().getPaid()))
             .mapToInt(LeaveRequest::getNumberOfDays)
             .sum();
 
+        // null leaveType = absence non justifiée = non payé → déduction
         int unpaidLeaveDaysCount = approvedLeaves
             .stream()
-            .filter(lr -> Boolean.FALSE.equals(lr.getLeaveType().getPaid()))
+            .filter(lr -> lr.getLeaveType() == null || Boolean.FALSE.equals(lr.getLeaveType().getPaid()))
             .mapToInt(LeaveRequest::getNumberOfDays)
             .sum();
 

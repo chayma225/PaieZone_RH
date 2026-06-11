@@ -30,7 +30,6 @@ public class LeaveRequestDTO implements Serializable {
     @NotNull
     private LeaveStatus status;
 
-    @NotNull
     private Instant requestedAt;
 
     private Instant processedAt;

@@ -29,6 +29,9 @@ export class DataService {
   readonly advances = signal<Advance[]>([]);
   readonly stats = signal<Record<string, number>>({});
 
+  // Global search query — set by top-nav, consumed by screens via computed()
+  readonly searchQuery = signal('');
+
   // Audit & tenant users — loaded lazily by admin screens
   readonly audit = signal<AuditEntry[]>([]);
   readonly tenantUsers = signal<TenantUser[]>([]);

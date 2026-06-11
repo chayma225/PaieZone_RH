@@ -1,0 +1,985 @@
+% ============================================================
+\section{User Stories du quatrième sprint}
+\label{sec:s4-userstories}
+% ============================================================
+
+Lors de la réunion de planification du Sprint 4, l'équipe Scrum a défini
+l'objectif du sprint autour de la valeur métier suivante~:
+«~Compléter PaieZone par les fonctionnalités de conformité, de
+comptabilité, de génération documentaire et d'assistance
+conversationnelle, pour offrir une solution SaaS pleinement
+opérationnelle.~». Quatre épics prioritaires ont été sélectionnés
+dans le backlog produit pour constituer le périmètre de ce sprint~:
+
+\begin{itemize}[label=\textbullet, leftmargin=0.6cm]
+    \item Gestion Comptable (Épic 13)
+    \item Conformité Réglementaire (Épic 14)
+    \item Documents Administratifs RH (Épic 15)
+    \item Assistant Conversationnel RH --- PaieBot (Épic 16)
+\end{itemize}
+
+Les besoins fonctionnels ont été formalisés sous forme de User Stories
+détaillées dans le Tableau~\ref{tab:user-stories-sprint4}.
+
+\begin{small}
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{@{}p{1.2cm} p{9.5cm} p{2.3cm}@{}}
+\caption{User Stories sélectionnées pour le quatrième sprint}
+\label{tab:user-stories-sprint4} \\
+\toprule
+\textbf{ID} & \textbf{User Story} & \textbf{Priorité} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\tablename~\thetable{} --- suite} \\
+\toprule
+\textbf{ID} & \textbf{User Story} & \textbf{Priorité} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+
+% ── Épic 13 : Gestion Comptable ──────────────────────────
+13.1 & En tant qu'Admin/RH, je veux configurer le plan comptable,
+       afin de structurer les comptes de la société et de garantir
+       la cohérence des exports comptables.
+     & Haute \\
+\addlinespace
+13.2 & En tant qu'Admin/RH, je veux exporter les données comptables
+       au format SAGE (.csv), afin de les intégrer directement dans
+       le logiciel comptable de la société.
+     & Haute \\
+\addlinespace
+
+% ── Épic 14 : Conformité Réglementaire ───────────────────
+14.1 & En tant que RH, je veux générer la déclaration CNSS salarié
+       par trimestre, afin de déclarer les cotisations salariales
+       à la CNSS~\cite{cnss_reg}.
+     & Critique \\
+\addlinespace
+14.2 & En tant que RH, je veux générer la déclaration CNSS patronal
+       par trimestre, afin de déclarer les cotisations patronales
+       auprès de la CNSS~\cite{cnss_reg}.
+     & Critique \\
+\addlinespace
+14.3 & En tant que RH, je veux générer la déclaration CAVIS par
+       trimestre, afin de satisfaire aux obligations de la Caisse
+       d'Assurance Vieillesse, Invalidité et Survivants~\cite{cnss_reg}.
+     & Haute \\
+\addlinespace
+14.4 & En tant que RH, je veux générer la déclaration IRPP annuelle,
+       afin de transmettre les retenues à la source à l'administration
+       fiscale tunisienne (DGI)~\cite{lf2026}.
+     & Critique \\
+\addlinespace
+
+% ── Épic 15 : Documents Administratifs RH ────────────────
+15.1 & En tant que RH, je veux générer une attestation de salaire en
+       PDF, afin de justifier les revenus d'un employé à sa demande.
+     & Haute \\
+\addlinespace
+15.2 & En tant que RH, je veux générer un certificat de travail en
+       PDF, afin d'attester formellement de la relation contractuelle
+       de l'employé avec la société~\cite{cdt}.
+     & Haute \\
+\addlinespace
+
+% ── Épic 16 : Assistant Conversationnel RH (PaieBot) ─────
+16.1 & En tant qu'utilisateur authentifié, je veux accéder à un
+       assistant conversationnel RH (PaieBot), afin d'obtenir des
+       réponses à mes questions administratives en langage
+       naturel~\cite{chatbot_hr}.
+     & Haute \\
+\addlinespace
+16.2 & En tant qu'employé, je veux consulter mes données personnelles
+       (salaire net, solde de congés, ancienneté, poste) via le
+       chatbot, afin d'y accéder directement sans naviguer dans
+       l'application.
+     & Haute \\
+\addlinespace
+16.3 & En tant qu'Admin/RH, je veux interroger les données RH de
+       ma société via le chatbot (effectif, masse salariale,
+       répartition par département), afin d'obtenir des
+       statistiques en langage naturel.
+     & Moyenne \\
+\addlinespace
+16.4 & En tant qu'employé, je veux demander un congé via le chatbot,
+       afin d'initier rapidement une demande d'absence sans naviguer
+       dans les menus.
+     & Moyenne \\
+\addlinespace
+16.5 & En tant qu'utilisateur, je veux poser des questions sur la
+       réglementation tunisienne (CNSS, IRPP, Code du Travail) au
+       chatbot, afin d'obtenir des réponses fondées sur les textes
+       légaux en vigueur~\cite{rag}.
+     & Moyenne \\
+
+\end{longtable}
+\end{small}
+\renewcommand{\arraystretch}{1.0}% ============================================================
+\section{Backlog du quatrième Sprint}
+\label{sec:s4-backlog}
+% ============================================================
+
+Le Backlog du produit de PaieZone, regroupant fonctionnalités et
+améliorations, est formalisé en User Stories organisées par thèmes
+fonctionnels. Le Tableau~\ref{tab:backlog-sprint4} détaille ce backlog
+pour le quatrième sprint, incluant les tâches techniques et leurs
+estimations en jours.
+
+\begin{small}
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{|p{2.8cm}|p{6.2cm}|p{6.2cm}|c|}
+\caption{Backlog détaillé du quatrième Sprint}
+\label{tab:backlog-sprint4} \\
+\hline
+\rowcolor[gray]{0.9} \textbf{Item} & \textbf{User Story} & \textbf{Tâches} & \makecell{\textbf{Est.}\\\textbf{(j)}} \\ \hline
+\endfirsthead
+\hline
+\rowcolor[gray]{0.9} \textbf{Item} & \textbf{User Story} & \textbf{Tâches} & \makecell{\textbf{Est.}\\\textbf{(j)}} \\ \hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+% ── Gestion Comptable ─────────────────────────────────────
+\multirow{2}{*}{\makecell[c]{\textbf{Gestion}\\ \textbf{Comptable}}}
+& \textbf{13.1} En tant qu'Admin/RH, je souhaite configurer le plan
+  comptable afin de structurer les comptes de la société.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Concevoir l'interface CRUD du plan comptable (créer,
+          modifier, supprimer des comptes).
+    \item Développer l'API REST de gestion du plan comptable.
+    \item Tester la cohérence des comptes avec les rubriques de paie.
+  \end{itemize}
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{13.2} En tant qu'Admin/RH, je souhaite exporter les données
+  comptables au format SAGE (.csv) afin de les intégrer dans le
+  logiciel comptable.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Implémenter le service de génération du fichier CSV au
+          format SAGE.
+    \item Ajouter le bouton «~Exporter SAGE (.csv)~» dans l'onglet
+          Comptabilité.
+    \item Tester la conformité du fichier produit avec le format
+          attendu par SAGE.
+  \end{itemize}
+& \textbf{2} \\ \hline
+
+% ── Conformité Réglementaire ──────────────────────────────
+\multirow{4}{*}{\makecell[c]{\textbf{Conformité}\\ \textbf{Réglementaire}}}
+& \textbf{14.1} En tant que RH, je souhaite générer la déclaration
+  CNSS salarié par trimestre.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Agréger les cotisations salariales CNSS par trimestre et
+          par employé.
+    \item Développer le service de génération du fichier déclaratif.
+    \item Implémenter le bouton de déclenchement dans l'onglet
+          Conformité.
+    \item Tester la conformité des montants déclarés avec les bulletins
+          calculés.
+  \end{itemize}
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{14.2} En tant que RH, je souhaite générer la déclaration
+  CNSS patronal par trimestre.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Agréger les cotisations patronales CNSS par trimestre et
+          par employé.
+    \item Développer le service de génération du fichier déclaratif
+          patronal.
+    \item Tester la cohérence des montants avec les paramètres
+          réglementaires en vigueur.
+  \end{itemize}
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{14.3} En tant que RH, je souhaite générer la déclaration
+  CAVIS par trimestre.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Implémenter l'agrégation des cotisations CAVIS
+          trimestrielles.
+    \item Développer le service de génération du fichier CAVIS.
+    \item Tester la prise en compte correcte des taux CAVIS dans
+          les calculs.
+  \end{itemize}
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{14.4} En tant que RH, je souhaite générer la déclaration
+  IRPP annuelle.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Agréger les retenues IRPP sur l'ensemble de l'exercice
+          fiscal.
+    \item Développer le service de génération de l'état récapitulatif
+          annuel.
+    \item Tester la conformité du document produit avec les exigences
+          de la DGI~\cite{lf2026}.
+  \end{itemize}
+& \textbf{2} \\ \hline
+
+% ── Documents Administratifs RH ───────────────────────────
+\multirow{2}{*}{\makecell[c]{\textbf{Documents}\\ \textbf{Administratifs}\\ \textbf{RH}}}
+& \textbf{15.1} En tant que RH, je souhaite générer une attestation
+  de salaire en PDF afin de la remettre à l'employé.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Concevoir le template HTML/CSS de l'attestation de salaire
+          (conformité aux formats légaux tunisiens).
+    \item Développer le service de génération PDF via
+          \textbf{Flying Saucer}~\cite{flyingsaucer} (\texttt{ITextRenderer}),
+          en injectant les données du dernier bulletin calculé.
+    \item Ajouter le bouton de téléchargement dans la page Employés.
+    \item Tester la conformité des données affichées (salaire brut,
+          net, poste, signature société).
+  \end{itemize}
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{15.2} En tant que RH, je souhaite générer un certificat
+  de travail en PDF afin d'attester de la relation contractuelle.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Concevoir le template HTML/CSS du certificat de travail
+          (conformité aux formats légaux tunisiens).
+    \item Développer le service de génération PDF via
+          \textbf{Flying Saucer}~\cite{flyingsaucer} (\texttt{ITextRenderer})
+          avec les données contractuelles.
+    \item Ajouter le bouton de téléchargement dans la page Employés.
+    \item Tester la conformité des informations (dates de contrat,
+          poste, société).
+  \end{itemize}
+& \textbf{2} \\ \hline
+
+% ── Assistant Conversationnel RH (PaieBot) ────────────────
+\multirow{5}{*}{\makecell[c]{\textbf{Assistant}\\ \textbf{Conversationnel}\\ \textbf{RH (PaieBot)}}}
+& \textbf{16.1} En tant qu'utilisateur authentifié, je souhaite
+  accéder à un assistant conversationnel RH afin d'obtenir des
+  réponses en langage naturel.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Intégrer \textbf{Ollama}~\cite{ollama} (modèle phi3~\cite{phi3})
+          comme moteur LLM local --- aucune donnée RH ne transite vers
+          des services cloud externes.
+    \item Implémenter le pipeline de \textbf{détection d'intention} à
+          quatre catégories~: \texttt{PERSONAL\_SQL},
+          \texttt{ADMIN\_SQL}, \texttt{LEGAL\_RAG}, \texttt{GENERAL}.
+    \item Développer le pipeline \textbf{Text-to-SQL} sécurisé~:
+          génération SQL par phi3 (T=0,05), nettoyage, validation
+          (blocage de DROP/DELETE/ALTER/...), injection CTE
+          multi-tenant (\texttt{SET search\_path}).
+    \item Implémenter le système \textbf{RAG}~\cite{rag}~: recherche
+          par mots-clés dans \texttt{KnowledgeDocument}, injection dans
+          le prompt système d'Ollama.
+    \item Ajouter la protection anti-hallucination (détection regex
+          sur les réponses phi3) et la protection inter-employés
+          (blocage des requêtes inter-tenant).
+    \item Concevoir et implémenter le composant Angular chatbot
+          flottant (\texttt{ChatbotComponent}).
+    \item Tester les 4 intentions et les cas limites de sécurité.
+  \end{itemize}
+& \textbf{3} \\ \cline{2-4}
+
+& \textbf{16.2} En tant qu'employé, je souhaite consulter mes
+  données personnelles via le chatbot afin d'y accéder directement.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Implémenter le pipeline \texttt{PERSONAL\_SQL} pour les
+          requêtes personnelles (salaire, congés, ancienneté, poste).
+    \item Développer le service de récupération sécurisée des données
+          employé depuis PostgreSQL~\cite{postgresql}.
+    \item Tester le formatage des résultats et l'isolation des données
+          par tenant.
+  \end{itemize}
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{16.3} En tant qu'Admin/RH, je souhaite interroger les
+  données RH de ma société via le chatbot afin d'obtenir des
+  statistiques en langage naturel.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Implémenter le pipeline \texttt{ADMIN\_SQL} avec droits
+          élargis pour les statistiques de l'entreprise (effectif,
+          masse salariale, répartition par département).
+    \item Restreindre l'accès au pipeline \texttt{ADMIN\_SQL} aux
+          rôles Admin et RH (contrôle RBAC~\cite{rbac}).
+    \item Tester l'isolation multi-tenant et la cohérence des
+          agrégations retournées.
+  \end{itemize}
+& \textbf{2} \\ \cline{2-4}
+
+& \textbf{16.4} En tant qu'employé, je souhaite demander un congé
+  via le chatbot afin d'initier rapidement une demande d'absence.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Implémenter la détection de l'intention «~congé~» dans le
+          pipeline de classification.
+    \item Développer la redirection vers la page de demande de congé
+          dédiée.
+    \item Tester le flux complet de détection et de redirection.
+  \end{itemize}
+& \textbf{1} \\ \cline{2-4}
+
+& \textbf{16.5} En tant qu'utilisateur, je souhaite poser des
+  questions sur la réglementation tunisienne (CNSS, IRPP, Code du
+  Travail) au chatbot afin d'obtenir des réponses légales fondées.
+& \begin{itemize}[leftmargin=*, noitemsep, topsep=0pt]
+    \item Alimenter la base \texttt{KnowledgeDocument} avec les textes
+          réglementaires tunisiens (CNSS, IRPP, Code du Travail,
+          Loi de Finances 2026~\cite{lf2026}).
+    \item Implémenter le pipeline \texttt{LEGAL\_RAG}~: recherche
+          par similarité + injection dans le prompt Ollama.
+    \item Tester la pertinence des réponses et la non-hallucination
+          sur des questions légales types.
+  \end{itemize}
+& \textbf{2} \\ \hline
+
+\end{longtable}
+\end{small}
+\renewcommand{\arraystretch}{1.0}
+\normalsize% -----------------------------------------------------------
+\subsection{Description textuelle des cas d'utilisation}
+% -----------------------------------------------------------
+
+Les descriptions textuelles suivantes formalisent les préconditions,
+scénarios nominaux et alternatifs des cas d'utilisation les plus
+critiques du Sprint 4. Elles constituent la référence contractuelle
+de validation avec le Product Owner. Quatre cas d'utilisation ont été
+retenus, correspondant aux quatre épics du sprint~: la gestion
+comptable, la conformité réglementaire, la génération de documents
+RH et l'assistant conversationnel PaieBot.
+
+% -----------------------------------------------------------
+\subsubsection{Cas d'utilisation UC01 : Gérer le plan comptable et exporter au format SAGE}
+% -----------------------------------------------------------
+
+Le tableau~\ref{tab:cu-comptable} présente la description textuelle
+détaillée du cas d'utilisation «~Gérer le plan comptable et exporter
+au format SAGE~».
+\mbox{}\\
+
+\begin{xltabular}{\textwidth}{|l|X|}
+\caption{Description textuelle du cas d'utilisation Gestion Comptable}
+\label{tab:cu-comptable} \\
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endhead
+\hline
+\endlastfoot
+\textbf{Titre}
+  & Gérer le plan comptable et exporter les écritures au format SAGE \\ \hline
+\textbf{Acteur principal}
+  & Admin / RH \\ \hline
+\textbf{Préconditions}
+  & L'utilisateur est authentifié avec le rôle Admin ou RH.
+    Des rubriques de paie sont configurées dans le système.
+    Au moins une période de paie est clôturée (\texttt{LOCKED})
+    pour permettre l'export. \\ \hline
+\textbf{Postconditions}
+  & Le plan comptable est mis à jour (création / modification /
+    suppression de comptes). Un fichier CSV conforme au format SAGE
+    est généré et proposé en téléchargement. \\ \hline
+\textbf{Scénario principal}
+  &
+\begin{enumerate}[nosep, leftmargin=*]
+    \item L'Admin/RH accède à l'onglet «~Comptabilité~» de la
+          plateforme.
+    \item Il consulte la liste des comptes du plan comptable de sa
+          société.
+    \item \textbf{Gestion du plan comptable}~: il crée, modifie ou
+          supprime un compte comptable via l'interface CRUD dédiée.
+    \item Le système valide la cohérence de la modification avec les
+          rubriques de paie existantes et enregistre les changements.
+    \item \textbf{Export SAGE}~: l'Admin/RH clique sur
+          «~Exporter SAGE (.csv)~».
+    \item Le système agrège les écritures comptables issues des
+          bulletins clôturés et génère le fichier CSV selon le
+          format attendu par SAGE.
+    \item Le fichier est proposé en téléchargement immédiat.
+\end{enumerate} \\ \hline
+\textbf{Scénarios alternatifs}
+  & \textbf{A1 : Compte comptable en doublon} $\rightarrow$
+    Le système refuse la création et signale le conflit à
+    l'utilisateur. \\ \cline{2-2}
+  & \textbf{A2 : Aucune période clôturée pour l'export}
+    $\rightarrow$ Le bouton «~Exporter~» est désactivé~; le
+    système affiche un message invitant à clôturer une période
+    de paie. \\ \cline{2-2}
+  & \textbf{A3 : Suppression d'un compte utilisé dans des
+    écritures existantes} $\rightarrow$ Le système bloque la
+    suppression et propose un archivage du compte. \\
+\end{xltabular}
+
+% -----------------------------------------------------------
+\subsubsection{Cas d'utilisation UC02 : Générer les déclarations de conformité réglementaire}
+% -----------------------------------------------------------
+
+Le tableau~\ref{tab:cu-conformite} présente la description textuelle
+détaillée du cas d'utilisation «~Générer les déclarations de
+conformité réglementaire~».
+\mbox{}\\
+
+\begin{xltabular}{\textwidth}{|l|X|}
+\caption{Description textuelle du cas d'utilisation Conformité Réglementaire}
+\label{tab:cu-conformite} \\
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endhead
+\hline
+\endlastfoot
+\textbf{Titre}
+  & Générer les déclarations de conformité réglementaire
+    (CNSS Salarié / CNSS Patronal / CAVIS / IRPP) \\ \hline
+\textbf{Acteur principal}
+  & RH \\ \hline
+\textbf{Préconditions}
+  & Des périodes de paie clôturées (\texttt{LOCKED}) existent pour
+    la période concernée. Les paramètres réglementaires (taux CNSS,
+    CAVIS, barèmes IRPP) sont configurés par le Super Admin. \\ \hline
+\textbf{Postconditions}
+  & Un fichier déclaratif (CSV ou PDF) est généré et mis à
+    disposition du RH pour téléchargement et transmission aux
+    organismes compétents (CNSS, DGI). \\ \hline
+\textbf{Scénario principal}
+  &
+\begin{enumerate}[nosep, leftmargin=*]
+    \item Le RH accède à l'onglet «~Conformité~» de la plateforme.
+    \item Il sélectionne le type de déclaration souhaitée
+          (CNSS Salarié, CNSS Patronal, CAVIS ou IRPP).
+    \item Pour les déclarations trimestrielles (CNSS, CAVIS),
+          il sélectionne le trimestre et l'année cibles.
+    \item Pour la déclaration IRPP, il sélectionne l'exercice
+          fiscal annuel.
+    \item Le système agrège les montants correspondants depuis
+          les bulletins clôturés.
+    \item Il génère le fichier déclaratif au format réglementaire
+          conforme aux exigences de la CNSS et de la DGI~\cite{lf2026}.
+    \item Le fichier est proposé en téléchargement au RH.
+\end{enumerate} \\ \hline
+\textbf{Scénarios alternatifs}
+  & \textbf{A1 : Aucune période clôturée pour la période demandée}
+    $\rightarrow$ Le système affiche un message indiquant l'absence
+    de données et bloque la génération. \\ \cline{2-2}
+  & \textbf{A2 : Paramètres réglementaires manquants ou non
+    configurés} $\rightarrow$ Le système lève une erreur bloquante
+    invitant le Super Admin à configurer les taux applicables. \\ \cline{2-2}
+  & \textbf{A3 : Bulletin recalculé après clôture (incohérence)}
+    $\rightarrow$ Le système détecte l'incohérence et avertit le RH
+    avant de générer la déclaration. \\
+\end{xltabular}
+
+% -----------------------------------------------------------
+\subsubsection{Cas d'utilisation UC03 : Générer les documents administratifs RH en PDF}
+% -----------------------------------------------------------
+
+Le tableau~\ref{tab:cu-documents} présente la description textuelle
+détaillée du cas d'utilisation «~Générer les documents administratifs
+RH en PDF~».
+\mbox{}\\
+
+\begin{xltabular}{\textwidth}{|l|X|}
+\caption{Description textuelle du cas d'utilisation Génération de Documents RH}
+\label{tab:cu-documents} \\
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endhead
+\hline
+\endlastfoot
+\textbf{Titre}
+  & Générer les documents administratifs RH en PDF
+    (attestation de salaire / certificat de travail) \\ \hline
+\textbf{Acteur principal}
+  & RH \\ \hline
+\textbf{Préconditions}
+  & L'utilisateur est authentifié avec le rôle RH ou Admin.
+    Le dossier de l'employé concerné est complet (informations
+    contractuelles et au moins un bulletin de paie calculé pour
+    l'attestation de salaire). \\ \hline
+\textbf{Postconditions}
+  & Un fichier PDF signé et conforme aux formats légaux tunisiens
+    est généré et téléchargeable depuis la fiche de l'employé~\cite{cdt}. \\ \hline
+\textbf{Scénario principal}
+  &
+\begin{enumerate}[nosep, leftmargin=*]
+    \item Le RH accède à la fiche d'un employé dans la plateforme.
+    \item Il sélectionne le type de document à générer~:
+          «~Attestation de salaire~» ou «~Certificat de travail~».
+    \item \textbf{Attestation de salaire}~: le système récupère
+          les données du dernier bulletin de paie calculé
+          (salaire brut, net, poste, département).
+    \item \textbf{Certificat de travail}~: le système récupère
+          les données contractuelles (date d'embauche, poste occupé,
+          type de contrat, société).
+    \item Le service de génération PDF utilise le moteur
+          \textbf{Flying Saucer}~\cite{flyingsaucer} (\texttt{ITextRenderer})
+          pour convertir le template HTML/CSS en PDF.
+    \item Le fichier PDF généré est proposé en téléchargement
+          immédiat au RH.
+\end{enumerate} \\ \hline
+\textbf{Scénarios alternatifs}
+  & \textbf{A1 : Aucun bulletin calculé pour l'attestation de
+    salaire} $\rightarrow$ Le système désactive le bouton
+    «~Attestation de salaire~» et affiche un message invitant
+    à calculer un bulletin pour cet employé. \\ \cline{2-2}
+  & \textbf{A2 : Données contractuelles incomplètes pour le
+    certificat de travail} $\rightarrow$ Le système signale les
+    champs manquants (ex.~: date d'embauche absente) et bloque
+    la génération. \\ \cline{2-2}
+  & \textbf{A3 : Erreur de rendu PDF (template invalide)}
+    $\rightarrow$ Le système retourne un message d'erreur technique
+    et journalise l'incident dans le journal d'audit. \\
+\end{xltabular}
+
+% -----------------------------------------------------------
+\subsubsection{Cas d'utilisation UC04 : Interagir avec l'assistant conversationnel RH (PaieBot)}
+% -----------------------------------------------------------
+
+Le tableau~\ref{tab:cu-chatbot} présente la description textuelle
+détaillée du cas d'utilisation «~Interagir avec l'assistant
+conversationnel RH~».
+\mbox{}\\
+
+\begin{xltabular}{\textwidth}{|l|X|}
+\caption{Description textuelle du cas d'utilisation Interagir avec le chatbot RH (PaieBot)}
+\label{tab:cu-chatbot} \\
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor[gray]{0.9} \textbf{Élément} & \textbf{Description} \\ \hline
+\endhead
+\hline
+\endlastfoot
+\textbf{Titre}
+  & Interagir avec l'assistant conversationnel RH (PaieBot) \\ \hline
+\textbf{Acteurs principaux}
+  & Employé --- RH --- Admin \\ \hline
+\textbf{Préconditions}
+  & L'utilisateur est authentifié sur la plateforme PaieZone.
+    Le service Ollama~\cite{ollama} (modèle phi3~\cite{phi3}) est
+    opérationnel sur l'infrastructure locale. \\ \hline
+\textbf{Postconditions}
+  & L'utilisateur obtient une réponse à sa question RH, est
+    redirigé vers la fonctionnalité adéquate (ex.~: demande de
+    congé), ou reçoit des statistiques formatées issues de la
+    base de données. \\ \hline
+\textbf{Scénario principal}
+  &
+\begin{enumerate}[nosep, leftmargin=*]
+    \item L'utilisateur clique sur le composant chatbot flottant
+          (\texttt{ChatbotComponent}) visible après connexion.
+    \item Il saisit sa question en langage naturel.
+    \item Le système détecte l'intention parmi quatre catégories~:
+          \texttt{PERSONAL\_SQL}, \texttt{ADMIN\_SQL},
+          \texttt{LEGAL\_RAG}, \texttt{GENERAL}.
+    \item \textbf{Intention \texttt{PERSONAL\_SQL}}~: Le pipeline
+          génère une requête SQL sécurisée via phi3 (T=0,05),
+          la valide (blocage DROP/DELETE/ALTER), l'exécute dans
+          le schéma tenant de l'employé et retourne le résultat
+          formaté (salaire, congés, ancienneté, poste).
+    \item \textbf{Intention \texttt{ADMIN\_SQL}} (Admin/RH
+          uniquement)~: Même pipeline avec droits élargis pour
+          les statistiques de l'entreprise (effectif, masse
+          salariale, répartition par département).
+    \item \textbf{Intention \texttt{LEGAL\_RAG}}~: Le pipeline
+          RAG~\cite{rag} recherche dans \texttt{KnowledgeDocument}
+          (CNSS, IRPP, Code du Travail, Loi de Finances 2026) et
+          génère une réponse contextualisée injectée dans le
+          prompt Ollama.
+    \item \textbf{Intention \texttt{GENERAL}}~: Réponse directe
+          par phi3 en mode conversationnel sans accès à la base
+          de données.
+    \item \textbf{Redirection congé} (US 16.4)~: si l'intention
+          détectée est une demande de congé, le chatbot informe
+          l'utilisateur et le redirige vers la page dédiée.
+    \item La réponse est affichée dans le composant chatbot
+          flottant.
+\end{enumerate} \\ \hline
+\textbf{Scénarios alternatifs}
+  & \textbf{A1 : Intention non reconnue} $\rightarrow$ Le chatbot
+    informe l'utilisateur et propose des exemples de questions
+    reconnues dans chaque catégorie. \\ \cline{2-2}
+  & \textbf{A2 : Tentative d'accès aux données d'un autre
+    employé} $\rightarrow$ Le système refuse avec un message de
+    confidentialité~; aucune donnée n'est exposée (protection
+    inter-tenant). \\ \cline{2-2}
+  & \textbf{A3 : SQL dangereux détecté (DROP/DELETE/ALTER)}
+    $\rightarrow$ La requête est rejetée par le validateur de
+    sécurité avant toute exécution. \\ \cline{2-2}
+  & \textbf{A4 : Réponse phi3 non conforme (hallucination
+    détectée)} $\rightarrow$ Le mécanisme de détection regex
+    intercepte la réponse et retourne un message d'erreur
+    générique à l'utilisateur. \\ \cline{2-2}
+  & \textbf{A5 : Service Ollama indisponible} $\rightarrow$
+    Le chatbot affiche un message d'indisponibilité temporaire
+    et journalise l'incident. \\
+\end{xltabular}<mxGraphModel dx="2093" dy="442" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;perimeterSpacing=5;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
+      <mxGeometry height="1120" width="836" x="1300" y="2040" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=18;fontStyle=1;fontFamily=Times New Roman;" value="Diagramme de cas d&#39;utilisation du Sprint 4" vertex="1">
+      <mxGeometry height="30" width="450" x="1493" y="2040" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Configurer le plan comptable" vertex="1">
+      <mxGeometry height="50" width="190" x="1403.73" y="2610" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-4" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" target="WbEiN1cBZWXrinS9yM-1-50">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Exporter les données&lt;div&gt;&amp;nbsp;comptables&amp;nbsp;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="70" width="200" x="1406" y="2110" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-6" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;endArrow=none;endFill=0;" target="WbEiN1cBZWXrinS9yM-1-49">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2146" y="2226" />
+          <mxPoint x="2146" y="2300" />
+          <mxPoint x="2176" y="2300" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Générer la déclaration&amp;nbsp;&lt;div&gt;CNSS Salarié (trimestrielle)&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="210" x="1406" y="2210" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-8" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;" target="WbEiN1cBZWXrinS9yM-1-49">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2146" y="2360" />
+          <mxPoint x="2146" y="2300" />
+          <mxPoint x="2176" y="2300" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Générer la déclaration&amp;nbsp;&lt;div&gt;CNSS Patronal (trimestrielle)&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="210" x="1406" y="2330" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-10" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.001;entryY=0.615;entryDx=0;entryDy=0;endArrow=none;endFill=0;exitX=0.735;exitY=0.058;exitDx=0;exitDy=0;exitPerimeter=0;entryPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-48">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1545" y="2500" />
+          <mxPoint x="2176" y="2500" />
+        </Array>
+        <mxPoint x="1579" y="2520" as="sourcePoint" />
+        <mxPoint x="2176" y="2520" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-11" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Générer la déclaration&lt;div&gt;&amp;nbsp;IRPP (annuelle)&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="210" x="1390.73" y="2505" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-12" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Sélectionner trimestre&lt;div&gt;&amp;nbsp;et année&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="195" x="1721" y="2270" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-13" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Choisir l&#39;année fiscale" vertex="1">
+      <mxGeometry height="30" width="155.27" x="1700.73" y="2520" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-14" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-7" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-12" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-15" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-9" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-12" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-16" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-11" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-13" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Générer une attestation&amp;nbsp;&lt;div&gt;de salaire (PDF)&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="200" x="1400.73" y="2680" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-18" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Générer un certificat de travail (PDF)" vertex="1">
+      <mxGeometry height="60" width="200" x="1400.73" y="2765" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-19" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Récupérer données employé,&lt;div&gt;&amp;nbsp;contrat et bulletin&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="210" x="1700.73" y="2720" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-20" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-17" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-19" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="-0.0021" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-21" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-18" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-19" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-22" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Accéder à l&#39;assistant conversationnel RH" vertex="1">
+      <mxGeometry height="60" width="200" x="1409" y="3050" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-23" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Demander un congé&amp;nbsp;&lt;div&gt;via le chatbot&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="200" x="1403.73" y="2860" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-24" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Consulter le bulletin&amp;nbsp;&lt;div&gt;de paie via le chatbot&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="200" x="1400.73" y="2972" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-25" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Rediriger vers la page&amp;nbsp;&lt;div&gt;de demande de congé&lt;/div&gt;" vertex="1">
+      <mxGeometry height="55" width="192" x="1718.73" y="2865" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-26" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Récupérer et proposer&lt;div&gt;&amp;nbsp;le dernier bulletin&lt;/div&gt;" vertex="1">
+      <mxGeometry height="55" width="200" x="1715.73" y="2974.5" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-27" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Détecter l&#39;intention&amp;nbsp;&lt;div&gt;de l&#39;utilisateur&lt;/div&gt;" vertex="1">
+      <mxGeometry height="50" width="195" x="1728" y="3052.5" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-28" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-22" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-27" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-29" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-23" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-25" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.0054" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="1703.73" y="2910" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-30" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-24" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-26" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="-0.0009" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-31" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="RH" vertex="1">
+      <mxGeometry height="60" width="30" x="1201" y="2505" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-32" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Employé" vertex="1">
+      <mxGeometry height="60" width="30" x="1200" y="2860" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-33" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="Utilisateur Authentifié" vertex="1">
+      <mxGeometry height="60" width="30" x="1200" y="3050" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-34" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;fontSize=13;fontStyle=1;fontFamily=Times New Roman;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-5" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1276" y="2530" />
+          <mxPoint x="1276" y="2145" />
+        </Array>
+        <mxPoint x="1236" y="2530" as="sourcePoint" />
+        <mxPoint x="1406" y="2150" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-35" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-31" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;fontSize=13;fontStyle=1;fontFamily=Times New Roman;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-3" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1276" y="2550" />
+          <mxPoint x="1276" y="2635" />
+        </Array>
+        <mxPoint x="1236" y="2540" as="sourcePoint" />
+        <mxPoint x="1416" y="2270" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-36" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="WbEiN1cBZWXrinS9yM-1-7" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1276" y="2530" />
+          <mxPoint x="1276" y="2240" />
+        </Array>
+        <mxPoint x="1236" y="2530" as="sourcePoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-37" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-31" style="endArrow=none;html=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;entryX=0.002;entryY=0.452;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;entryPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-9" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1276" y="2530" />
+          <mxPoint x="1276" y="2360" />
+          <mxPoint x="1406" y="2360" />
+        </Array>
+        <mxPoint x="1231" y="2520" as="sourcePoint" />
+        <mxPoint x="1361" y="2440" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-38" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-31" style="endArrow=none;html=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-11" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1391" y="2530" />
+        </Array>
+        <mxPoint x="1236" y="2540" as="sourcePoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-39" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;fontSize=13;fontStyle=1;fontFamily=Times New Roman;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-17" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1276" y="2550" />
+          <mxPoint x="1276" y="2710" />
+        </Array>
+        <mxPoint x="1236" y="2550" as="sourcePoint" />
+        <mxPoint x="1321" y="2780" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-40" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;fontSize=13;fontStyle=1;fontFamily=Times New Roman;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-18" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1275" y="2550" />
+          <mxPoint x="1275" y="2795" />
+        </Array>
+        <mxPoint x="1230" y="2550" as="sourcePoint" />
+        <mxPoint x="1465" y="2773" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-41" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-33" style="endArrow=none;html=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" target="WbEiN1cBZWXrinS9yM-1-22" value="">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-42" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-23" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1404" y="2890" />
+        </Array>
+        <mxPoint x="1236" y="2890" as="sourcePoint" />
+        <mxPoint x="1345" y="3030" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-43" edge="1" parent="1" style="endArrow=none;html=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="WbEiN1cBZWXrinS9yM-1-24" value="">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1275" y="2890" />
+          <mxPoint x="1275" y="3002" />
+        </Array>
+        <mxPoint x="1236" y="2890" as="sourcePoint" />
+        <mxPoint x="1365.9799999999998" y="3116" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-44" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=0;endSize=12;fontSize=13;fontStyle=1;fontFamily=Times New Roman;" value="">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1215.63" y="2940" as="sourcePoint" />
+        <mxPoint x="1215.63" y="3050" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-45" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;S&#39;authentifier&lt;/font&gt;" vertex="1">
+      <mxGeometry height="73" width="140" x="1986" y="2713.5" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-46" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;" target="WbEiN1cBZWXrinS9yM-1-47" value="">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="1842" y="3160" as="sourcePoint" />
+        <mxPoint x="2326.363680752841" y="3160" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-47" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="&lt;b&gt;&amp;lt;&amp;lt;Système&amp;gt;&amp;gt;&lt;/b&gt;&lt;div style=&quot;&quot;&gt;&lt;b&gt;&lt;span data-path-to-node=&quot;2,2,2,0&quot; data-index-in-node=&quot;0&quot;&gt;Moteur NLP&lt;/span&gt;&amp;nbsp;&lt;/b&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="120" x="2180" y="3047.5" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-48" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="&lt;b&gt;&amp;lt;&amp;lt;Système&amp;gt;&amp;gt;&lt;/b&gt;&lt;div style=&quot;&quot;&gt;&lt;b&gt;Direction Générale des Impôts&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;b&gt;(DGI)&lt;/b&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="120" x="2176" y="2464" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-49" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="&lt;b&gt;&amp;lt;&amp;lt;Système&amp;gt;&amp;gt;&lt;/b&gt;&lt;div style=&quot;&quot;&gt;&lt;b&gt;CNSS&lt;/b&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="120" x="2176" y="2270" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-50" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="&lt;b&gt;&amp;lt;&amp;lt;Système&amp;gt;&amp;gt;&lt;/b&gt;&lt;div style=&quot;&quot;&gt;&lt;b&gt;SAGE Comptabilité&amp;nbsp;&lt;/b&gt;&lt;/div&gt;" vertex="1">
+      <mxGeometry height="60" width="120" x="2176" y="2115" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-51" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-5" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;exitX=0.99;exitY=0.693;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.611;entryY=0.057;entryDx=0;entryDy=0;entryPerimeter=0;edgeStyle=orthogonalEdgeStyle;curved=0;" target="WbEiN1cBZWXrinS9yM-1-45" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="-0.1074" y="-21" as="geometry">
+        <mxPoint x="1" as="offset" />
+        <mxPoint x="1666" y="2680" as="sourcePoint" />
+        <mxPoint x="1784" y="2695" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-52" edge="1" parent="1" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;exitX=0.99;exitY=0.693;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;curved=0;" target="WbEiN1cBZWXrinS9yM-1-45" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.1269" y="-30" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="1616" y="2236" as="sourcePoint" />
+        <mxPoint x="2084" y="2728" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-53" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-9" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;exitX=0.946;exitY=0.771;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.399;entryY=0.017;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;curved=0;entryPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-45" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.1269" y="-30" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="2056" y="2320" as="sourcePoint" />
+        <mxPoint x="2496" y="2739" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-54" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-11" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;exitX=0.741;exitY=0.94;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.229;entryY=0.041;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;curved=0;entryPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-45" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.3877" y="-20" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1545" y="2568" />
+          <mxPoint x="2018" y="2568" />
+        </Array>
+        <mxPoint x="1548.93" y="2494.5" as="sourcePoint" />
+        <mxPoint x="1985.9299999999998" y="2774.5" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-55" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-3" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.6604" y="-30" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1594" y="2630" />
+          <mxPoint x="2002" y="2630" />
+        </Array>
+        <mxPoint x="1606" y="2540" as="sourcePoint" />
+        <mxPoint x="2002" y="2730" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-56" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-17" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=0.939;exitY=0.246;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.007;entryY=0.398;entryDx=0;entryDy=0;entryPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-45" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.647" y="-25" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1986" y="2695" />
+          <mxPoint x="1986" y="2730" />
+          <mxPoint x="1987" y="2730" />
+        </Array>
+        <mxPoint x="1910.73" y="2592" as="sourcePoint" />
+        <mxPoint x="1996" y="2730" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-57" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-18" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=0.99;exitY=0.647;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.7115" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1598.73" y="2802" />
+          <mxPoint x="2000.73" y="2802" />
+        </Array>
+        <mxPoint x="1920.73" y="2802" as="sourcePoint" />
+        <mxPoint x="2000.7404266027033" y="2769.050226403062" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-58" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-23" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=0.958;exitY=0.27;exitDx=0;exitDy=0;exitPerimeter=0;" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.7115" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1595.73" y="2825" />
+          <mxPoint x="2020.73" y="2825" />
+          <mxPoint x="2020.73" y="2783" />
+        </Array>
+        <mxPoint x="1770.73" y="2827" as="sourcePoint" />
+        <mxPoint x="2020.73" y="2782" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-59" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-24" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=0.942;exitY=0.273;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.389;entryY=1.011;entryDx=0;entryDy=0;entryPerimeter=0;" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.7115" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1590.73" y="2988" />
+          <mxPoint x="1590.73" y="2942" />
+          <mxPoint x="2034.73" y="2942" />
+        </Array>
+        <mxPoint x="1590.73" y="2933" as="sourcePoint" />
+        <mxPoint x="2035.1899999999996" y="2780.803" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-60" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-22" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=0.918;exitY=0.823;exitDx=0;exitDy=0;entryX=0.614;entryY=1.037;entryDx=0;entryDy=0;entryPerimeter=0;exitPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-45" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.5293" y="-14" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="1593" y="3120" />
+          <mxPoint x="2072" y="3120" />
+        </Array>
+        <mxPoint x="1916" y="3097" as="sourcePoint" />
+        <mxPoint x="2362" y="2890" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-61" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fontStyle=1;align=center;fontFamily=Times New Roman;" value="&lt;span style=&quot;color: rgb(20, 20, 19); text-align: start; background-color: rgb(255, 255, 255);&quot;&gt;&lt;font face=&quot;Times New Roman&quot;&gt;Générer déclaration CAVIS&lt;/font&gt;&lt;/span&gt;" vertex="1">
+      <mxGeometry height="60" width="210" x="1406" y="2420" as="geometry" />
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-62" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-61" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;fontSize=13;fontStyle=1;fontFamily=Times New Roman;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.249;entryY=0.976;entryDx=0;entryDy=0;entryPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-12" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="-0.5059" y="-3" as="geometry">
+        <mxPoint as="offset" />
+        <mxPoint x="1616" y="2351" as="sourcePoint" />
+        <mxPoint x="1763" y="2320" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="WbEiN1cBZWXrinS9yM-1-63" edge="1" parent="1" source="WbEiN1cBZWXrinS9yM-1-61" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=1;fontSize=13;fontStyle=1;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle;curved=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.33;entryY=0.068;entryDx=0;entryDy=0;entryPerimeter=0;" target="WbEiN1cBZWXrinS9yM-1-45" value="&amp;lt;include&amp;gt;">
+      <mxGeometry relative="1" x="0.6604" y="-30" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="2032" y="2450" />
+        </Array>
+        <mxPoint x="1676" y="2635" as="sourcePoint" />
+        <mxPoint x="2026" y="2710" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

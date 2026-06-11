@@ -13,6 +13,7 @@ import tn.paiezone.rh.domain.Department;
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
     boolean existsByCodeAndCompanyId(String code, Long companyId);
+    boolean existsByIdAndActiveFalse(Long id);
     long countByCompanyId(Long companyId);
     List<Department> findByCompanyId(Long companyId);
     Optional<Department> findByNameIgnoreCaseAndCompanyId(String name, Long companyId);
