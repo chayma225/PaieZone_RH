@@ -534,8 +534,8 @@ export default class AdminAuditComponent {
 
     if (action) list = list.filter(e => e.action === action);
     if (entity) list = list.filter(e => e.entity === entity);
-    if (from) list = list.filter(e => e.date >= from);
-    if (to) list = list.filter(e => e.date <= to + 'T23:59:59');
+    if (from) list = list.filter(e => e.dateIso >= from);
+    if (to) list = list.filter(e => e.dateIso <= to + 'T23:59:59');
 
     return list;
   });

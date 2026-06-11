@@ -780,6 +780,7 @@ export class ApiService {
               entityId: String(d.entityId ?? ''),
               ip: d.ipAddress ?? '',
               date: d.occurredAt ? new Date(d.occurredAt).toLocaleString('fr-FR') : '',
+              dateIso: d.occurredAt ?? '',
               detail: d.newValue ?? '',
             }) as AuditEntry,
         ),

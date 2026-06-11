@@ -20,16 +20,6 @@
   </nav>
 
   <div class="pz-top-right">
-    <div class="pz-topbar-search">
-      <pz-icon name="Search" [size]="14" [strokeWidth]="1.6" />
-      <input
-        placeholder="Rechercher…"
-        [value]="data.searchQuery()"
-        (input)="onSearch($any($event.target).value)"
-        (keydown.escape)="data.searchQuery.set('')"
-      />
-      <span class="kbd">⌘K</span>
-    </div>
     <div class="notif-anchor">
       <button class="pz-icon-btn" (click)="toggleNotif($event)" title="Notifications" [class.notif-active]="notifOpen()">
         <pz-icon name="Bell" />

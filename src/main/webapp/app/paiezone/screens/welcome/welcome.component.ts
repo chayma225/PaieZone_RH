@@ -250,13 +250,13 @@ const FAQS: { q: string; a: string; open: boolean }[] = [
         background: #fff;
       }
       .btn.outline {
-        background: transparent;
+        background: rgba(255, 255, 255, 0.12);
         color: #fff;
-        border-color: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.4);
       }
       .btn.outline:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.22);
+        border-color: rgba(255, 255, 255, 0.7);
       }
       .arrow {
         transition: transform 0.18s;

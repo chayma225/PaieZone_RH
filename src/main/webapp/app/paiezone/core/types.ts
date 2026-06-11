@@ -129,6 +129,7 @@ export interface AuditEntry {
   entityId: string;
   ip: string;
   date: string;
+  dateIso: string;
   detail: string;
 }
 
