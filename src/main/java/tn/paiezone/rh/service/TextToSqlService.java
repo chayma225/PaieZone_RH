@@ -163,8 +163,8 @@ public class TextToSqlService {
     // ─────────────────────────────────────────────────────────────
 
     public String processQuery(String question, IntentType intentType, UserSecurityContext ctx) {
-        // Guard : contexte incomplet → message clair
-        if (ctx.tenantSchema() == null) {
+        // Guard : companyId requis pour l'isolation multi-tenant
+        if (ctx.companyId() == null) {
             return "⚠️ Contexte entreprise indisponible. Contactez votre administrateur.";
         }
 
@@ -176,7 +176,7 @@ public class TextToSqlService {
         String fastSql = fastPathSql(question, isEmployee);
         if (fastSql != null) {
             log.debug("[TextToSQL] fast-path : {}", fastSql);
-            String secureSql = injectSecurityCte(fastSql, ctx.userProfileId(), isEmployee);
+            String secureSql = injectSecurityCte(fastSql, ctx.userProfileId(), isEmployee, ctx.companyId());
             try {
                 List<Map<String, Object>> results = executeInTenantSchema(secureSql, ctx.tenantSchema());
                 return formatResults(results);
@@ -212,7 +212,7 @@ public class TextToSqlService {
         }
 
         // 5. Injecter CTE sécurisée
-        String secureSql = injectSecurityCte(cleanSql, ctx.userProfileId(), isEmployee);
+        String secureSql = injectSecurityCte(cleanSql, ctx.userProfileId(), isEmployee, ctx.companyId());
         log.info("[TextToSQL] final : {}", secureSql);
 
         // 6. Exécuter
@@ -385,20 +385,20 @@ public class TextToSqlService {
     }
 
     // ─────────────────────────────────────────────────────────────
-    //  Injection CTE sécurisée (schema-per-tenant)
+    //  Injection CTE sécurisée (isolation par company_id)
     // ─────────────────────────────────────────────────────────────
 
-    public String injectSecurityCte(String sql, Long userProfileId, boolean isEmployee) {
-        // ADMIN : le SET search_path isole déjà par tenant → pas de filtre de ligne
-        // EMPLOYÉ : filtre par user_profile_id pour les données personnelles uniquement
-        String empFilter = isEmployee ? "WHERE user_profile_id = " + userProfileId : "";
+    public String injectSecurityCte(String sql, Long userProfileId, boolean isEmployee, Long companyId) {
+        // Les schémas PostgreSQL par tenant ne sont pas encore créés en base
+        // → on isole toujours via company_id sur les trois tables
+        String empFilter = isEmployee
+            ? "WHERE user_profile_id = " + userProfileId
+            : "WHERE company_id = " + companyId;
 
         return (
-            "WITH employee AS (SELECT * FROM employee " +
-            empFilter +
-            "), " +
-            "department AS (SELECT * FROM department), " +
-            "job_position AS (SELECT * FROM job_position) " +
+            "WITH employee AS (SELECT * FROM employee " + empFilter + "), " +
+            "department AS (SELECT * FROM department WHERE company_id = " + companyId + "), " +
+            "job_position AS (SELECT * FROM job_position WHERE company_id = " + companyId + ") " +
             sql
         );
     }
@@ -502,6 +502,10 @@ public class TextToSqlService {
             // "Employés par département ?"
             if (containsAny(n, "par departement", "repartition", "par dept") && containsAny(n, "employe")) {
                 return "SELECT d.name AS \"Département\", COUNT(*) AS \"Effectif\" FROM employee e JOIN department d ON e.department_id = d.id WHERE e.active = true GROUP BY d.name ORDER BY \"Effectif\" DESC";
+            }
+            // "Noms / liste / combien de départements ?"
+            if (containsAny(n, "departement", "departements", "dept")) {
+                return "SELECT d.name AS \"Département\", COUNT(e.id) AS \"Effectif\" FROM department d LEFT JOIN employee e ON e.department_id = d.id AND e.active = true GROUP BY d.id, d.name ORDER BY d.name";
             }
             // "Qui a été recruté cette année ?"
             if (containsAny(n, "recrute", "embauche", "embauche cette annee", "embauche en", "cette annee", "cette année", "nouvel employe")) {
